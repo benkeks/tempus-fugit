@@ -1,5 +1,5 @@
 {
-  "hello-world": {
+  "tempus-fugit": {
     "configuration": {
       "config": {
         "configName": "config",
@@ -14,7 +14,7 @@
         ],
         "webpackOptions": {
           "mode": "'development'",
-          "entry": "'./src/hw-client/game.ts.ts'",
+          "entry": "'././src/tempus-fugit-client/game.ts.ts'",
           "output": {
             "filename": "'[name].[chunkhash].js'",
             "path": "path.resolve(__dirname, 'dist')"
@@ -29,7 +29,7 @@
                 "test": "/.(ts|tsx)?$/",
                 "loader": "'ts-loader'",
                 "include": [
-                  "path.resolve(__dirname, 'src/hw-client')"
+                  "path.resolve(__dirname, './src/tempus-fugit-client')"
                 ],
                 "exclude": [
                   "/node_modules/"
