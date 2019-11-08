@@ -8,20 +8,14 @@
     "dev-production": "webpack --mode production && webpack-dev-server --mode production",
     "build": "webpack --mode production"
   },
-  "author": "Alessio Nicolo Perna",
-  "license": "ISC",
   "dependencies": {
-    "@webpack-cli/init": "^0.2.2",
     "phaser": "^3.20.1"
   },
   "devDependencies": {
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "copy-webpack-plugin": "^5.0.5",
-    "html-webpack-plugin": "^3.2.0",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
   }
+
 }
