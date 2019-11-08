@@ -1,9 +1,0 @@
-stages:
-  - deploy
-
-deploy_to_our_server:
-  stage: deploy
-  script:
-    - "npm install"
-    - "npm run dev"
-    - "~/copy_files.sh"
