@@ -3,9 +3,9 @@
 * Technologie: Phaser.io, TypeScript
 * Scrum: @Alessio
 * Product Owner: @Max
-* MRM: @Kejni
+* MRM: @Kejni @flo
 * DevOps: @Alessio
-* Devs: @Tobi @mustafa @flo
+* Devs: @Tobi @mustafa @flo @Kejni
 
 ## Spielbeschreibung
 
