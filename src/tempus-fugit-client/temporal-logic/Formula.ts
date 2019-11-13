@@ -79,6 +79,34 @@ export class Formula extends Proposition {
 
     /**
      * @author Tobias Loch
+     * @param vars dictionary of boolean arrays that define the assignment of all variables in the formula
+     * @description Assigns values to all given Variables in the formula.
+     * @example
+     * let f:Formula = new Formula("Ga&Gb");
+     * f.variables['a'].values = [true];
+     * f.variables['b'].values = [true];
+     *
+     * console.log(f.evaluate(0)); // output:true
+     * let vars:{} = {"a":[true, false], "b":[true, true]};
+     * f.applyAssignment(vars);
+     * console.log(f.variables['a'].values);
+     * console.log(f.variables['b'].values);
+     * console.log(f.evaluate(0)); // output: false
+     *
+     * */
+    public applyAssignment(vars:{[represenstation:string]:boolean[]}):void {
+        for (let i in this.variables) {
+            let v:Variable = this.variables[i];
+
+            if (v.representation in vars) {
+                console.log(vars[v.representation]);
+                v.values = [...vars[v.representation]];
+            }
+        }
+    }
+
+    /**
+     * @author Tobias Loch
      * @param representation the representation of the formula. If hjunctor is not given or undefined, the constructor calls parse(representation).
      * @param hjunctor the main junctor of the formula
      * */
