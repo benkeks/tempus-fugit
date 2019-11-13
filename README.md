@@ -1,5 +1,6 @@
 # Tempus fugit
 
+## Rollenverteilung
 * Technologie: Phaser.io, TypeScript
 * Scrum: @Alessio
 * Product Owner: @Max
@@ -8,8 +9,6 @@
 * Devs: @Tobi @mustafa @flo @Kejni
 
 ## Spielbeschreibung
-
-### Project Tempus Fugit
 Der Spieler muss sich in einer Reihe von Missionen gegen in Wellen auftauchende Feinde behaupten.
 Er tut dies, indem er Karten ausspielt, um entweder Upgrades zu erhalten oder direkte Auswirkungen auf den Feind zu erzielen. 
 Diese Karten und bereits erhaltene Upgrades werden aber erst nutzbar, wenn die rundenweise verteilbare Energie ihre LTL-Bedingungen erfüllt. 
