@@ -85,14 +85,12 @@ export class Formula extends Proposition {
      * let f:Formula = new Formula("Ga&Gb");
      * f.variables['a'].values = [true];
      * f.variables['b'].values = [true];
-     *
      * console.log(f.evaluate(0)); // output:true
      * let vars:{} = {"a":[true, false], "b":[true, true]};
      * f.applyAssignment(vars);
      * console.log(f.variables['a'].values);
      * console.log(f.variables['b'].values);
      * console.log(f.evaluate(0)); // output: false
-     *
      * */
     public applyAssignment(vars:{[represenstation:string]:boolean[]}):void {
         for (let i in this.variables) {
