@@ -2,16 +2,23 @@ import {Player} from "./player"
 import {Card} from "./card"
 
 export class Enemy {
-    maxHealth: number;
-    currentHealth: number;
+    name: String;
+    maxHP: number;
+    currentHP: number;
+    baseAttack: number;
+    specialEffects: String[];
 
-    constructor() {
-        this.maxHealth = 50;
-        this.currentHealth = this.maxHealth;
+    constructor(name: String, hp: number, baseAttack: number) {
+        this.name = name;
+        this.maxHP = hp;
+        this.currentHP = this.maxHP;
+        this.baseAttack = baseAttack;
+        this.specialEffects = [];
+
     }
 
     getHealth(): string {
-        return this.currentHealth.toString();
+        return this.currentHP.toString();
     }
 
     attack(player: Player, points: number) {
@@ -19,6 +26,10 @@ export class Enemy {
     }
 
     takeHit(hitPower: number) {
-        this.currentHealth -= hitPower;
+        this.currentHP -= hitPower;
+    }
+
+    isAlive() {
+        return this.currentHP > 0;
     }
 }

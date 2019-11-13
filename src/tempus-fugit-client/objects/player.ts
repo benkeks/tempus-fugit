@@ -4,18 +4,20 @@ import {Deck} from "./deck"
 import {Hand} from "./hand"
 
 export class Player {
-    maxHealth: number;
-    currentHealth: number;
+    name: String;
+    maxHP: number;
+    currentHP: number;
     hand: Hand;
 
-    constructor() {
-        this.maxHealth = 50;
-        this.currentHealth = this.maxHealth;
+    constructor(name: String) {
+        this.name = name;
+        this.maxHP = 50;
+        this.currentHP = this.maxHP;
         this.hand = new Hand();
     }
 
     getHealth(): string {
-        return this.currentHealth.toString();
+        return this.currentHP.toString();
     }
 
     attack(enemy: Enemy, n: number) {
@@ -23,7 +25,7 @@ export class Player {
     }
 
     takeHit(hitPower: number) {
-        this.currentHealth -= hitPower;
+        this.currentHP -= hitPower;
     }
 
     takeCard(deck: Deck) {
@@ -32,6 +34,10 @@ export class Player {
 
     getCard(n: number): Card {
         return this.hand.getCard(n);
+    }
+
+    isAlive() {
+        return this.currentHP > 0;
     }
 
 }
