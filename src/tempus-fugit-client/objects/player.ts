@@ -10,9 +10,9 @@ export class Player {
     baseAttack: number;
     hand: Hand;
 
-    constructor(name: String, baseAttack: number) {
+    constructor(name: String, hp: number, baseAttack: number) {
         this.name = name;
-        this.maxHP = 50;
+        this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.hand = new Hand();

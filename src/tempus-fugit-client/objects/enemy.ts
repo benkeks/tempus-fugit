@@ -8,12 +8,12 @@ export class Enemy {
     baseAttack: number;
     specialEffects: String[];
 
-    constructor(name: String, hp: number, baseAttack: number) {
+    constructor(name: String, hp: number, baseAttack: number, specialEffects: String[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
-        this.specialEffects = [];
+        this.specialEffects = specialEffects;
 
     }
 
@@ -21,12 +21,16 @@ export class Enemy {
         return this.currentHP.toString();
     }
 
-    attack(player: Player, specialEffects: String) {
+    evaluateSpecialEffect(specialEffect: String) {
+        return 19;
+    }
+
+    attack(player: Player, baseAttack: boolean, n: number) {
         var attackPoints = 0;
-        if (specialEffects = "base") {
+        if (baseAttack) {
             attackPoints = this.baseAttack;
         } else {
-            attackPoints = 20;
+            attackPoints = this.evaluateSpecialEffect(this.specialEffects[n]);
         }
         player.takeHit(attackPoints);
     }
