@@ -17,12 +17,18 @@ export class Enemy {
 
     }
 
-    getHealth(): string {
+    getHP(): string {
         return this.currentHP.toString();
     }
 
-    attack(player: Player, points: number) {
-        player.takeHit(points);
+    attack(player: Player, specialEffects: String) {
+        var attackPoints = 0;
+        if (specialEffects = "base") {
+            attackPoints = this.baseAttack;
+        } else {
+            attackPoints = 20;
+        }
+        player.takeHit(attackPoints);
     }
 
     takeHit(hitPower: number) {

@@ -7,21 +7,29 @@ export class Player {
     name: String;
     maxHP: number;
     currentHP: number;
+    baseAttack: number;
     hand: Hand;
 
-    constructor(name: String) {
+    constructor(name: String, baseAttack: number) {
         this.name = name;
         this.maxHP = 50;
         this.currentHP = this.maxHP;
+        this.baseAttack = baseAttack;
         this.hand = new Hand();
     }
 
-    getHealth(): string {
+    getHP(): string {
         return this.currentHP.toString();
     }
 
-    attack(enemy: Enemy, n: number) {
-        enemy.takeHit(this.hand.getCard(n).getPower());
+    attack(enemy: Enemy, baseAttack: boolean, n: number) {
+        var attackPoints = 0;
+        if (baseAttack) {
+            attackPoints = this.baseAttack
+        } else {
+            attackPoints = this.hand.getCard(n).getPower();
+        }
+        enemy.takeHit(attackPoints);
     }
 
     takeHit(hitPower: number) {
