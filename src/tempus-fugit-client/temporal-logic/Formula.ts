@@ -92,13 +92,17 @@ export class Formula extends Proposition {
      * console.log(f.variables['b'].values);
      * console.log(f.evaluate(0)); // output: false
      * */
-    public applyAssignment(vars:{[represenstation:string]:boolean[]}):void {
+    public applyAssignment(vars:{[represenstation:string]:Variable}):void {
         for (let i in this.variables) {
             let v:Variable = this.variables[i];
 
             if (v.representation in vars) {
-                console.log(vars[v.representation]);
-                v.values = [...vars[v.representation]];
+                let v1:Variable = vars[v.representation];
+
+                v.defaultValue = v1.defaultValue;
+                v.finiteStates = v1.finiteStates;
+                v.representation = v1.representation;
+                v.values = [...v1.values];
             }
         }
     }
