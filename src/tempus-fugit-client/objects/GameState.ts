@@ -4,6 +4,8 @@ import {Formula} from "../temporal-logic/Formula";
 export class GameState {
 
     public variables:{[represenstation:string]:Variable} = {};
+    public blocked:{[represenstation:string]:Variable} = {};
+
     public activeState:number;
 
     constructor() {
@@ -16,7 +18,11 @@ export class GameState {
 
             f.applyAssignment(this.variables);
             f.evaluate(this.activeState);
+        } else {
+            console.log("object type: " + typeof object);
+            throw new TypeError("Evaluate expects object of type formula!");
         }
     }
+
 
 }
