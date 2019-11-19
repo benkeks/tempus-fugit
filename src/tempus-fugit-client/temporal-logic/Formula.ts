@@ -99,10 +99,7 @@ export class Formula extends Proposition {
             if (v.representation in vars) {
                 let v1:Variable = vars[v.representation];
 
-                v.defaultValue = v1.defaultValue;
-                v.finiteStates = v1.finiteStates;
-                v.representation = v1.representation;
-                v.values = [...v1.values];
+                v.applyAssignment(v1);
             }
         }
     }
