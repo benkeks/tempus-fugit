@@ -2,13 +2,14 @@ import "phaser";
 import {MainScene} from "./scenes/main-scene";
 
 const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.AUTO,
     width: 800,
     height: 600,
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    backgroundColor: "#efefef",
+    backgroundColor: "#000",
     scene: [MainScene]
 };
 
