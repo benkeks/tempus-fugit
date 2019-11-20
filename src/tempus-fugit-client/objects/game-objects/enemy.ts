@@ -9,11 +9,11 @@ export class Enemy {
     specialEffects: String[];
     listener:EnemyListener[];
 
-    getHP(): number {
+   public getHP(): number {
         return this.currentHP;
     }
 
-    getName(): String {
+    public getName(): String {
         return this.name;
     }
 
@@ -31,7 +31,7 @@ export class Enemy {
         return 19;
     }
 
-    attack(player: Player, baseAttack: boolean, n: number) {
+    public attack(player: Player, baseAttack: boolean, n: number) {
         var attackPoints = 0;
         if (baseAttack) {
             attackPoints = this.baseAttack;
@@ -41,7 +41,7 @@ export class Enemy {
         player.takeHit(attackPoints);
     }
 
-    takeHit(hitPower: number) {
+    public takeHit(hitPower: number) {
         this.currentHP -= hitPower;
 
         for (let i in this.listener) {
@@ -49,7 +49,7 @@ export class Enemy {
         }
     }
 
-    isAlive() {
+    public isAlive() {
         return this.currentHP > 0;
     }
 
