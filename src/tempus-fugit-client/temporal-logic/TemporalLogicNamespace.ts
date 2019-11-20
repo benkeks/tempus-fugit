@@ -7,7 +7,6 @@ export * from "./Operator/Operator";
 export * from "./Operator/TwoParamOperator";
 export * from "./Operator/OneParamOperator";
 export * from "./Variable";
-export * from "./VariableListener";
 export * from "./Operator/And";
 export * from "./Operator/Bracket";
 export * from "./Operator/Consequence";

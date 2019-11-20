@@ -11,9 +11,9 @@ export class GameState {
     }
 
     private _variables:{[represenstation:string]:Variable} = {};
-    public variableStatus:{[representation:string]:VariableStatus};
+    public variableStatus:{[representation:string]:VariableStatus} = {};
 
-    public activeState:number;
+    public activeState:number = 0;
     public listener:GameStateListener[] = [];
 
     constructor() {}
@@ -47,10 +47,12 @@ export class GameState {
     /**
      *
      * this function changes the value of a variable at a given state. Afterwards it calls its listener only if it succeded.
-     *
+     * @param name the representation of the variable
+     * @param value the value that should be set
+     * @param state the state where the value should be set. Default: the active state
      * @return 0: if the change succeded, 1: if the value is blocked
      * */
-    public setVariable(name:string, state:number, value:boolean):number {
+    public setVariable(name:string, value:boolean, state:number=this.activeState):number {
         let v:Variable = this.getVariable(name);
         let vs:VariableStatus = this.getVariableStatus(name);
         let oldVariable:Variable = v.copy();
@@ -86,7 +88,7 @@ export class GameState {
 }
 
 class VariableStatus {
-    blocked:{[id:number] : boolean};
+    blocked:{[id:number] : boolean} = {};
 
     constructor() {
     }
