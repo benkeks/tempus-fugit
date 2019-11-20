@@ -17,15 +17,11 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // 10 example cards for hand and deck
-    for (let i = 0; i < 6; i++) {
-      this.load.image("card" + i, "../../assets/card.png");
-    }
-    this.load.image("stack", "../../assets/stack.png");
-    this.load.image("deck", "../../assets/deck.png");
-    this.load.image("card-outline", "../../assets/card-outline.png");
-    //this.load.image("player", "../../assets/player.png");
-    //this.load.image("enemy", "../../assets/enemy.png");
+    this.load.pack(
+        "preload",
+        "assets/pack.json",
+        "preload"
+    );
   }
 
   create(): void {
