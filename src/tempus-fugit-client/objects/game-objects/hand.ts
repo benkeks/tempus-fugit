@@ -2,9 +2,9 @@ import {Card} from "./card";
 import {PlayerListener} from "./player";
 
 export class Hand {
-    cards: Card[];
-    size: number;
-    listener:HandListener[];
+    cards: Card[]; // A list of cards contained in the hand
+    size: number; // The number of cards the hand can hold
+    listener:HandListener[]; // A list of objects listening to events happening to this hand
 
     /**
      * Constructor for the Hand class
@@ -24,10 +24,11 @@ export class Hand {
      * Puts a card at 'position' into the hand and informs hand listeners
      * @param card Card that should be added
      * @param position Position in the hand at which the card will be placed
+     * @return No return value
      * @example dummyPlayer.hand.addCard(dummyCard, 3);
      * @author Florian
      */
-    addCard(card: Card, position: number) {
+    addCard(card: Card, position: number): void {
         this.cards[position] = card;
 
         for (let i in this.listener) {
@@ -38,16 +39,18 @@ export class Hand {
     /**
      * Removes the card a 'position'
      * @param position Position at which the card should be removed
+     * @return No return value
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    removeCard(position: number) {
+    removeCard(position: number): void {
         this.cards[position] = new Card("Empty", "", "","", 0);
     }
 
     /**
      * Returns the card at position 'n'
      * @param n Position in the hand at which the card of interest is
+     * @return The selected card
      * @example dummyPlayer.hand.getCard(4);
      * @author Florian
      */

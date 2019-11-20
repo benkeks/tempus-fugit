@@ -38,7 +38,7 @@ export class Display implements PlayerListener, EnemyListener, HandListener, Dec
     }
 
     handChanged(pos: number, card: Card): void {
-        this.cardNames[pos] = card.name;
+        this.cardNames[pos] = card.getName();
     }
 
     numCardsChanged(numCards: number): void {
