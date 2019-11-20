@@ -4,19 +4,18 @@ export class Gameloop {
     private readonly numPhases: 5;
     private curPhase: number;
     private emitter: EventEmitter;
-    private turnCount: number;
+    private curTurn: number;
     private toPhase: Map<number, string>;
 
-    //TODO change everything heyyyyy
     constructor() {
         this.curPhase = 0;
         this.emitter = new EventEmitter();
-        this.turnCount = 0;
+        this.curTurn = 0;
 
         this.toPhase = new Map<number,string>();
         this.toPhase.set(0, 'draw-phase');
         this.toPhase.set(1, 'energy-phase');
-        this.toPhase.set(2, 'attack-phase');
+        this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'enemy-phase');
         this.toPhase.set(4, 'effect-phase');
     }
@@ -26,7 +25,7 @@ export class Gameloop {
      * --- Player's turn ---
      * 0 -> Draw Phase
      * 1 -> Energy Phase
-     * 2 -> Play/Attack Phase
+     * 2 -> Play Phase
      * --- Enemy's turn ---
      * 3 -> Enemy Phase
      * 4 -> Effect Phase
@@ -34,43 +33,75 @@ export class Gameloop {
      * emits an event for each phase, names can be seen in toPhase map
      * increments turn counter every time player turn is reached
      */
-    public nextPhase() {
+    public nextPhase():void {
         this.curPhase = (this.curPhase + 1) % this.numPhases;
-        let event = this.toPhase.get(this.curPhase);
-        this.emitter.emit(event);
+        this.emitter.emit(this.getPhaseString());
         if (this.curPhase === 0) {
             this.incrementTurnCount();
             this.emitter.emit('next-round');
         }
     }
 
-    public startCombat() {
+    /**
+     * Emits 'draw-phase' event to start the combat
+     */
+    public startCombat():void {
         this.emitter.emit('draw-phase');
     }
 
-    public getPhase() {
+    /**
+     * Returns the current phase as a string, in pascal case
+     */
+    public getPhaseString():string {
+        return this.toPhase.get(this.curPhase);
+    }
+
+    /**
+     * Returns the current phase as a number 0-4
+     * 0 -> Draw Phase
+     * 1 -> Energy Phase
+     * 2 -> Play Phase
+     * 3 -> Enemy Phase
+     * 4 -> Effect Phase
+     */
+    public getPhase():number {
         return this.curPhase;
     }
 
-    public getTurnCount() {
-        return this.turnCount;
+    /**
+     * return curTurn
+     */
+    public getTurnCount():number {
+        return this.curTurn;
     }
 
-    public resetGameLoop() {
+    /**
+     * sets curPhase and curTurn to 0
+     */
+    public resetGameLoop():void {
         this.resetPhase();
         this.resetTurnCount();
     }
 
-    public resetPhase() {
+    /**
+     * sets curPhase to 0
+     */
+    public resetPhase():void {
         this.curPhase = 0;
     }
 
-    public resetTurnCount() {
-        this.turnCount = 0;
+    /**
+     * sets curTurn to 0
+     */
+    public resetTurnCount():void {
+        this.curTurn = 0;
     }
 
-    public incrementTurnCount() {
-        this.turnCount++;
+    /**
+     * increase turn count by 1
+     */
+    public incrementTurnCount():void {
+        this.curTurn++;
     }
 
 }
