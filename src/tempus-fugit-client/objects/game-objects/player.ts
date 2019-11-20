@@ -5,24 +5,27 @@ import {Hand} from "./hand";
 
 
 export class Player {
-    private name: String;
-    private maxHP: number;
-    private currentHP: number;
-    private baseAttack: number;
-    hand: Hand;
-    listener:PlayerListener[];
+    private name: String; // Player's name
+    private maxHP: number; // Player's maximum hit points
+    private currentHP: number; // Player's currentHP
+    private baseAttack: number; // Player's attack strength without using a card
+    private states: String[]; // List of player's states, such as "burning", "healing" etc.
+    hand: Hand; // Hand containing the player's cards
+    listener:PlayerListener[]; // List of objects listening to player events
 
     /**
      * Setter for the player's hit points
      * @param value Number of hit points
+     * @return No return value
      * @author Florian
      */
-    public setHP(value: number) {
+    public setHP(value: number): void {
         this.maxHP = value;
     }
 
     /**
      * Getter for the player's hit points
+     * @return Return the current hit points
      * @author Florian
      */
     public getHP(): number {
@@ -31,6 +34,7 @@ export class Player {
 
     /**
      * Getter for the player's name
+     * @return Returns the player's name
      * @author Florian
      */
     public getName(): String {
@@ -40,6 +44,7 @@ export class Player {
     /**
      * Returns the nth card on the players hand
      * @param n Which card in the hand is returned
+     * @return Returns a specific card in the player's deck
      * @author Florian
      */
     public getCard(n: number): Card {
@@ -47,10 +52,13 @@ export class Player {
     }
 
     /**
-     * Constructor for the player class
+     * Constructor for the Player class
      * @param name Name of the player
      * @param hp Maximum hit points the player has
      * @param baseAttack Strength of the player's base attack
+     * @example
+     * new Player("Nice player", 20, 30);
+     * @author Florian
      */
     constructor(name: String, hp: number, baseAttack: number) {
         this.name = name;
@@ -58,19 +66,21 @@ export class Player {
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.hand = new Hand(5);
+        this.states = [];
         this.listener = [];
     }
 
     /**
-     * Attacks a given enemy
+     * Deals damage to a given enemy, either according to the base attack or according to a specified card
      * @param enemy The enemy that is attacked
      * @param baseAttack Whether base attack is used or not
      * @param n The position of the card that is played
      * @param gameState The current game state
+     * @example attack(dummyEnemy, false, 3, [false, true, true]);
+     * @return Does not have a return value
      * @author Florian
      */
-    // Deals damage to a given enemy, either according to the base attack or according to a specified card
-    public attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]) {
+    public attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]): void {
         var attackPoints = 0;
         if (baseAttack) {
             attackPoints = this.baseAttack
@@ -83,9 +93,11 @@ export class Player {
     /**
      * Causes player to lose 'number' HP; informs player listeners
      * @param hitPower The strength of the hit (i.e. how many HP are lost)
+     * @example dummyPlayer.takeHit(15);
+     * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number) {
+    public takeHit(hitPower: number): void {
         this.currentHP -= hitPower;
 
         for (let i in this.listener) {
@@ -96,20 +108,23 @@ export class Player {
     /**
      * Player takes the card on top of 'deck' and adds it to his hand
      * @param deck The deck that the card is taken from
+     * @example takeCard(someDeck);
+     * @return Does not have a return value
      * @author Florian
      */
     //
-    public takeCard(deck: Deck) {
+    public takeCard(deck: Deck): void {
         this.hand.addCard(deck.takeCardOnTop(), 0);
     }
 
 
-
     /**
      * Returns true if the player is still alive
+     * @example isThePlayerAlive = dummyPlayer.isAlive();
+     * @return Returns a boolean that indicates whether the player is alive
      * @author Florian
      */
-    public isAlive() {
+    public isAlive(): boolean {
         return this.currentHP > 0;
     }
 
