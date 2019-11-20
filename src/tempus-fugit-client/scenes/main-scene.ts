@@ -59,8 +59,6 @@ export class MainScene extends Phaser.Scene {
     // deck test
     let deck = new DeckGUI(this, 2250, 1075, "deck", new Deck());
 
-    // TODO: card clicks and add card to board when dragged
-
     this.configureCardEvents();
   }
 
@@ -97,26 +95,6 @@ export class MainScene extends Phaser.Scene {
       },
       this
     );
-   /*
-   *  this.input.on("pointerover", function(
-      pointer: Phaser.Input.Pointer,
-      gameObject: [Phaser.GameObjects.Sprite]
-    ) {
-      if (gameObject[0] instanceof CardGUI) {
-        gameObject[0].setScale(1.2);
-        gameObject[0].setDepth(10);
-      }
-    });
-
-    this.input.on("pointerout", function(
-      pointer: Phaser.Input.Pointer,
-      gameObject: [Phaser.GameObjects.Sprite]
-    ) {
-      if (gameObject[0] instanceof CardGUI) {
-        gameObject[0].setScale(1.0);
-        gameObject[0].setDepth(gameObject[0].z);
-      }
-    });*/
   }
   update(): void {}
 }
