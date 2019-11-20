@@ -7,6 +7,7 @@ export class Gameloop {
     private turnCount: number;
     private toPhase: Map<number, string>;
 
+    //TODO change everything heyyyyy
     constructor() {
         this.curPhase = 0;
         this.emitter = new EventEmitter();
@@ -46,6 +47,19 @@ export class Gameloop {
 
     public getPhase() {
         return this.curPhase;
+    }
+
+    public getTurnCount() {
+        return this.turnCount;
+    }
+
+    public resetGameLoop() {
+        this.resetPhase();
+        this.resetTurnCount();
+    }
+
+    public resetPhase() {
+        this.curPhase = 0;
     }
 
     public resetTurnCount() {
