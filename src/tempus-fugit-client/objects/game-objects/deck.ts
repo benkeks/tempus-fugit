@@ -2,11 +2,12 @@ import {Card} from "./card";
 import {PlayerListener} from "./player";
 
 export class Deck {
-    cards: Card[];
-    listener:DeckListener[];
+    cards: Card[]; // List of cards contained in the deck
+    listener:DeckListener[]; // List of objects listening to events happening in the deck
 
     /**
-     * Constructor for the Deck class
+     * Constructor for the Deck class (creates an empty deck)
+     * @author Florian
      */
     constructor() {
         this.cards = [];
@@ -16,10 +17,11 @@ export class Deck {
     /**
      * Puts the card on top of the deck and informs deck listeners
      * @param card The card that is to be added to the deck
+     * @return No return value
      * @example someDeck.addCard(dummyCard);
      * @author Florian
      */
-    addCard(card: Card) {
+    addCard(card: Card): void {
         this.cards.push(card);
         for (let i in this.listener) {
             this.listener[i].numCardsChanged(this.cards.length);
@@ -29,6 +31,8 @@ export class Deck {
     /**
      * Returns the card on top of the deck (i.e. the one that has been in the deck the longest)
      * @example myCard = someDeck.takeCardOnTop();
+     * @return Returns the card on top of the deck
+     * @example myNewCard = someDeck.takeCardOnTop();
      * @author Florian
      */
     takeCardOnTop(): Card {
