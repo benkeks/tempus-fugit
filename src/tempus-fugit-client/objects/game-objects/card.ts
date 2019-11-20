@@ -7,6 +7,15 @@ export class Card {
     formula: Formula;
     attackPower: number;
 
+    /**
+     * Constructor for the Card class
+     * @param name Name of the card
+     * @param description Description of the card
+     * @param image Description  of the card's image
+     * @param formula The formula of the card
+     * @param attackPower The attack power of the card
+     * @author Florian
+     */
     constructor(name: String, description: String, image: String, formula: String, attackPower: number) {
         this.name = name;
         this.description = description;
@@ -16,6 +25,11 @@ export class Card {
         this.attackPower = attackPower;
     }
 
+    /**
+     * This function checks whether an attack is in accordance with the game state. If it is, it returns the card's damage, otherwise 0.
+     * @param gameState A simple representation  of a game state. NOT the way it will eventually be implemented.
+     * @author Florian
+     */
     evaluateAttack(gameState: boolean[]): number {
         this.formula.variables['a'].values = gameState;
         if (this.formula.evaluate(0) == false) {
