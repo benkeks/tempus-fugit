@@ -1,0 +1,143 @@
+///<reference path="Proposition.ts"/>
+import {VariableListener} from "./VariableListener";
+import {Proposition, PropositionStatus} from "./Proposition";
+
+export class Variable extends Proposition {
+    get representation(): string {
+        return this._representation;
+    }
+
+    set representation(value: string) {
+        this._representation = value;
+        this.callRepChangedListener();
+    }
+
+    get values(): boolean[] {
+        return this._values;
+    }
+
+    set values(value: boolean[]) {
+        this._values = value;
+        this.firstValue = 0;
+        this.callValueChangedListener()
+    }
+
+    public static getAlphabet(): string {
+        return "[a-z](?:[a-z0-9])*";
+    }
+
+    protected _values:boolean[] = [];
+    private firstValue:number = 0;
+    public listener:VariableListener[] = [];
+
+    public getDefaultRepresentation():string {
+        return this.defaultRepresentation;
+    }
+
+    public defaultRepresentation = "v"+Variable.varCount++;
+    public static varCount:number = 0;
+    public defaultValue:boolean = false;
+    public finiteStates = true;
+
+    evaluateInternal(condition:number): PropositionStatus {
+        let pstat : PropositionStatus = new PropositionStatus();
+
+        pstat.successful = true;
+        pstat.valuesLength = this._values.length;
+        pstat.value = this.getValue(condition);
+        if (this.finiteStates) {
+            pstat.minStatus = this._values.length;
+        } else {
+            pstat.minStatus = pstat.valuesLength+1;
+        }
+
+        if ((condition >= this.values.length || condition < 0) && this.finiteStates) {
+            pstat.successful = false;
+        }
+
+        return pstat;
+    }
+
+    public callRepChangedListener():void {
+        for (let i in this.listener) {
+            let l:VariableListener = this.listener[i];
+
+            l.representationChanged(this);
+        }
+    }
+
+    public callValueChangedListener():void {
+        for (let i in this.listener) {
+            let l:VariableListener = this.listener[i];
+
+            l.valuesChanged(this);
+        }
+    }
+
+    generateRepresentation(recursive:boolean): string {
+        return this._representation;
+    }
+
+
+    /**
+     * @author Tobias Loch
+     * @description Returns a value at agiven temporal state. This value can be negative or positive. This function should be used if finitstate is false.
+     * @param state the state that you want to set. Can be negative aswell as positive numbers.
+     * @return boolean value of temporal state
+     * @example
+     * let v:Variable = new Variable("v");
+     * v.setValue(true,3);
+     * v.setValue(false,-1);
+     * console.log(v.getValue(3)); //output:true
+     * console.log(v.getValue(0)); //output: as defaultValue: true
+     * console.log(v.getValue(-1));//output:false
+     * */
+    public getValue(state:number):boolean {
+        state-=this.firstValue;
+        if (state >= 0 && state < this.values.length) {
+            return this.values[state];
+        } else {
+            return this.defaultValue;
+        }
+    }
+
+
+    /**
+     * @author Tobias Loch
+     * @description Sets the Value of a given state (default:after last given state). If the state index is not existent in values array, then it
+     * creates as much new states as needed(default:this.defaultvalue) to set the given state. Works also with negative states. This function should be used if finitstate is false.
+     * @param value the value that should be set
+     * @param state the state that you want to set. Can be negative aswell as positive numbers.
+     * @example
+     * let v:Variable = new Variable("v");
+     * v.setValue(true,3);
+     * v.setValue(false,-2);
+     * console.log(v.getValue(3)); //output:true
+     * console.log(v.getValue(0)); //output: as defaultValue: false
+     * console.log(v.getValue(-2));//output:false
+     * */
+    public setValue(value:boolean, state:number = this.values.length):void {
+        state -= this.firstValue;
+        while(state >= this.values.length || state < 0) {
+            if (state >= this.values.length) {
+                this.values.push(this.defaultValue);
+            } else {
+                this.values.unshift(this.defaultValue);
+                this.firstValue--;
+                state++;
+            }
+        }
+        this.values[state] = value;
+    }
+
+    public setAllFalse():void {
+        for (let i in this._values) {
+            this._values[i] = false;
+        }
+    }
+
+    constructor(representation:string=undefined, value:boolean[]=[]) {
+        super(representation);
+        this._values = value;
+    }
+}
