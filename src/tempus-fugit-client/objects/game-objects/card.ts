@@ -1,11 +1,52 @@
 import {Formula} from "../../temporal-logic/Formula";
 
 export class Card {
-    name: String;
-    description: String;
-    image: String;
-    formula: Formula;
-    attackPower: number;
+    private name: String; // Name of the card
+    private description: String; // Description of the card
+    private image: String; // A string describing the image on the card
+    private formula: Formula; // A formula attached to the card
+    private attackPower: number; // The stregth of an attack based on this card
+
+    /**
+     * Getter method for the name attribute
+     * @author Florian
+     */
+    public getName(): String {
+        return this.name;
+    }
+
+    /**
+     * Getter method for the description attribute
+     * @author Florian
+     */
+    public getDescription(): String {
+        return this.description;
+    }
+
+    /**
+     * Getter method for the image attribute
+     * @author Florian
+     */
+    public getImage(): String {
+        return this.image;
+    }
+
+    /**
+     * Getter method for the formula attribute
+     * @author Florian
+     */
+    public getFormula(): Formula {
+        return this.formula;
+    }
+
+
+    /**
+     * Getter method for the attack power attribute
+     * @author Florian
+     */
+    public getAttackPower(): number {
+        return this.attackPower;
+    }
 
     /**
      * Constructor for the Card class
@@ -30,7 +71,7 @@ export class Card {
      * @param gameState A simple representation  of a game state. NOT the way it will eventually be implemented.
      * @author Florian
      */
-    evaluateAttack(gameState: boolean[]): number {
+    public evaluateAttack(gameState: boolean[]): number {
         this.formula.variables['a'].values = gameState;
         if (this.formula.evaluate(0) == false) {
             return 0;
