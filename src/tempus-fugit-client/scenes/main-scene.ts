@@ -19,7 +19,7 @@ export class MainScene extends Phaser.Scene {
   preload(): void {
     this.load.pack(
         "preload",
-        "../src/tempus-fugit-client/assets/pack.json",
+        "assets/pack.json",
         "preload"
     );
   }

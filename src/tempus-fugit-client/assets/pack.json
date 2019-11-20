@@ -4,22 +4,22 @@
       {
         "type": "image",
         "key": "card",
-        "url": "src/tempus-fugit-client/assets/sprites/card.png"
+        "url": "assets/sprites/card.png"
       },
       {
         "type": "image",
         "key": "stack",
-        "url": "src/tempus-fugit-client/assets/sprites/stack.png"
+        "url": "assets/sprites/stack.png"
       },
       {
         "type": "image",
         "key": "deck",
-        "url": "src/tempus-fugit-client/assets/sprites/deck.png"
+        "url": "assets/sprites/deck.png"
       },
       {
         "type": "image",
         "key": "card-outline",
-        "url": "src/tempus-fugit-client/assets/sprites/card-outline.png"
+        "url": "assets/sprites/card-outline.png"
       }
     ]
   }
