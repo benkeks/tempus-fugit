@@ -3,48 +3,23 @@
     "files": [
       {
         "type": "image",
-        "key": "card1",
-        "url": "assets/sprites/card.png"
-      },
-      {
-        "type": "image",
-        "key": "card1",
-        "url": "assets/sprites/card.png"
-      },
-      {
-        "type": "image",
-        "key": "card3",
-        "url": "assets/sprites/card.png"
-      },
-      {
-        "type": "image",
-        "key": "card4",
-        "url": "assets/sprites/card.png"
-      },
-      {
-        "type": "image",
-        "key": "card5",
-        "url": "assets/sprites/card.png"
-      },
-      {
-        "type": "image",
         "key": "card",
-        "url": "assets/sprites/card.png"
+        "url": "src/tempus-fugit-client/assets/sprites/card.png"
       },
       {
         "type": "image",
         "key": "stack",
-        "url": "assets/sprites/stack.png"
+        "url": "src/tempus-fugit-client/assets/sprites/stack.png"
       },
       {
         "type": "image",
         "key": "deck",
-        "url": "assets/sprites/deck.png"
+        "url": "src/tempus-fugit-client/assets/sprites/deck.png"
       },
       {
         "type": "image",
         "key": "card-outline",
-        "url": "assets/sprites/card-outline.png"
+        "url": "src/tempus-fugit-client/assets/sprites/card-outline.png"
       }
     ]
   }

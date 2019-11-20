@@ -34,6 +34,9 @@ export class HandGUI extends Phaser.GameObjects.Group {
     }
   }
 
+
+  // TODO: addCard(card: Card)
+
   /**
    * replaces current hand
    * @param hand
@@ -55,7 +58,7 @@ export class HandGUI extends Phaser.GameObjects.Group {
         this.scene,
         i++ * 250 + 750,
         1100,
-        "card" + i, // TODO: change default texture "card" to ( texture saved in card object ? )
+        "card", // TODO: change default texture "card" to ( texture saved in card object ? )
         c
       );
       this.add(cardGUI, true);

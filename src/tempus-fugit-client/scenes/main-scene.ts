@@ -19,12 +19,13 @@ export class MainScene extends Phaser.Scene {
   preload(): void {
     this.load.pack(
         "preload",
-        "assets/pack.json",
+        "../src/tempus-fugit-client/assets/pack.json",
         "preload"
     );
   }
 
   create(): void {
+
     // stack test
     let stack = new StackGUI(this, 250, 1100, "stack");
     //stack.addCardGUI(c);
