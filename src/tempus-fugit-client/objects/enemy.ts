@@ -7,6 +7,15 @@ export class Enemy {
     currentHP: number;
     baseAttack: number;
     specialEffects: String[];
+    listener:EnemyListener[];
+
+    getHP(): number {
+        return this.currentHP;
+    }
+
+    getName(): String {
+        return this.name;
+    }
 
     constructor(name: String, hp: number, baseAttack: number, specialEffects: String[]) {
         this.name = name;
@@ -14,14 +23,11 @@ export class Enemy {
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.specialEffects = specialEffects;
+        this.listener = [];
 
     }
 
-    getHP(): string {
-        return this.currentHP.toString();
-    }
-
-    evaluateSpecialEffect(specialEffect: String) {
+    private evaluateSpecialEffect(specialEffect: String) {
         return 19;
     }
 
@@ -37,9 +43,19 @@ export class Enemy {
 
     takeHit(hitPower: number) {
         this.currentHP -= hitPower;
+
+        for (let i in this.listener) {
+            this.listener[i].enemyHpChanged(this.currentHP);
+        }
     }
 
     isAlive() {
         return this.currentHP > 0;
     }
+
+}
+
+
+export interface EnemyListener {
+    enemyHpChanged(changedTo: number): void;
 }

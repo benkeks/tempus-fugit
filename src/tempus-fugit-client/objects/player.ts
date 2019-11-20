@@ -1,51 +1,55 @@
 import {Enemy} from "./enemy"
 import {Card} from "./card"
 import {Deck} from "./deck"
-import {Hand} from "./hand"
+import {Hand} from "./hand";
+
 
 export class Player {
-    get maxHP(): number {
-        return this._maxHP;
-    }
-
-    set maxHP(value: number) {
-        let oldHp = value;
-
-        this._maxHP = value;
-
-        for (let i in this.listener) {
-            this.listener[i].hpchanged(oldHp, value, null);
-
-        }
-    }
-    name: String;
-    private _maxHP: number;
-    currentHP: number;
-    baseAttack: number;
+    private name: String;
+    private maxHP: number;
+    private currentHP: number;
+    private baseAttack: number;
     hand: Hand;
-
     listener:PlayerListener[];
+
+    getMaxHP(): number {
+        return this.maxHP;
+    }
+
+    setMaxHP(value: number) {
+        this.maxHP = value;
+    }
+
+    getHP(): number {
+        return this.currentHP;
+    }
+
+    getName(): String {
+        return this.name;
+    }
+
+    // Returns the nth card on the players hand
+    getCard(n: number): Card {
+        return this.hand.getCard(n);
+    }
+
 
     constructor(name: String, hp: number, baseAttack: number) {
         this.name = name;
-        this._maxHP = hp;
-        this.currentHP = this._maxHP;
+        this.maxHP = hp;
+        this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.hand = new Hand(5);
-    }
-
-    // Returns a string with the current HP
-    getHP(): string {
-        return this.currentHP.toString();
+        this.listener = [];
     }
 
     // Deals damage to a given enemy, either according to the base attack or according to a specified card
-    attack(enemy: Enemy, baseAttack: boolean, n: number) {
+    attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]) {
         var attackPoints = 0;
         if (baseAttack) {
             attackPoints = this.baseAttack
         } else {
-            attackPoints = this.hand.getCard(n).getPower();
+            attackPoints = this.hand.getCard(n).evaluateAttack(gameState);
         }
         enemy.takeHit(attackPoints);
     }
@@ -53,17 +57,17 @@ export class Player {
     // Causes player to lose 'number' HP
     takeHit(hitPower: number) {
         this.currentHP -= hitPower;
+
+        for (let i in this.listener) {
+            this.listener[i].playerHpChanged(this.currentHP);
+        }
     }
 
     // Player takes the card on top of 'deck' and adds it to his hand
     takeCard(deck: Deck) {
-        this.hand.addCard(deck.takeCardOnTop(), 1);
+        this.hand.addCard(deck.takeCardOnTop(), 0);
     }
 
-    // Returns the nth card on the players hand
-    getCard(n: number): Card {
-        return this.hand.getCard(n);
-    }
 
     // Returns true if the player is still alive
     isAlive() {
@@ -73,5 +77,5 @@ export class Player {
 }
 
 export interface PlayerListener {
-    hpchanged(oldHP: number, newHP: number, enemy: Enemy): void;
+    playerHpChanged(changedTo: number): void;
 }
