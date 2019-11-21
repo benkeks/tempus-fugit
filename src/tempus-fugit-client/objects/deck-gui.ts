@@ -5,10 +5,10 @@ export class DeckGUI extends Phaser.GameObjects.Sprite {
 
   constructor(
     scene: Phaser.Scene,
-    x: number,
-    y: number,
     texture: string,
-    deck: Deck
+    deck: Deck,
+    x: number = 1700,
+    y: number = 835
   ) {
     super(scene, x, y, texture);
     scene.add.existing(this);

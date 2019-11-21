@@ -5,8 +5,8 @@ export class BoardGUI {
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the board
   private readonly stack: StackGUI;
   private readonly scene: Phaser.Scene;
-  private cardGUIPosX: number = 1250; // position of cardGUI object on the board
-  private cardGUIPosY: number = 700;
+  private cardGUIPosX: number = 950; // position of cardGUI object on the board
+  private cardGUIPosY: number = 550;
 
   constructor(scene: Phaser.Scene, stack: StackGUI) {
     this.scene = scene;

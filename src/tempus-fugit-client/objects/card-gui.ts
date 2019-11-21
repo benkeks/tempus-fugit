@@ -1,8 +1,8 @@
 import { Card } from "./card";
 
 export class CardGUI extends Phaser.GameObjects.Sprite {
-  private readonly _cardOriginX: number; //initial x-position of cardGUI object, for dragging
-  private readonly _cardOriginY: number; //initial y-position of cardGUI object, for dragging
+  private _cardOriginX: number; //initial x-position of cardGUI object, for dragging
+  private _cardOriginY: number; //initial y-position of cardGUI object, for dragging
   private readonly _card: Card; // card object associated with cardGUI object
 
   constructor(
@@ -69,5 +69,14 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
 
   get cardOriginY(): number {
     return this._cardOriginY;
+  }
+
+
+  set cardOriginX(value: number) {
+    this._cardOriginX = value;
+  }
+
+  set cardOriginY(value: number) {
+    this._cardOriginY = value;
   }
 }

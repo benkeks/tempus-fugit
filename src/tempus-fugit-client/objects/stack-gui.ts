@@ -5,7 +5,7 @@ export class StackGUI extends Phaser.GameObjects.Image {
   private readonly _y: number;
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the stack
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
+  constructor(scene: Phaser.Scene,  texture: string, x: number = 200, y: number = 850) {
     super(scene, x, y, texture);
     scene.add.existing(this);
     this._x = x;

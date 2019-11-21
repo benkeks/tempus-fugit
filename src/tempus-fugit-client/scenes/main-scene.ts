@@ -17,17 +17,14 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.pack(
-        "preload",
-        "assets/pack.json",
-        "preload"
-    );
+    this.load.pack("preload", "assets/pack.json", "preload");
   }
 
   create(): void {
 
+
     // stack test
-    let stack = new StackGUI(this, 250, 1100, "stack");
+    let stack = new StackGUI(this, "stack");
     //stack.addCardGUI(c);
 
     // hand test
@@ -41,11 +38,11 @@ export class MainScene extends Phaser.Scene {
     /*
     handGui.moveToStack(cards[0]);
     handGui.moveToBoard(cards[2]);
+    handGui.addCard(new Card());
     handGui.moveToBoard(cards[3]);
     handGui.fadeOut();
     handGui.fadeIn();
     */
-
     // board test
     /*board.clear();
     let c1 = new CardGUI(this, 500, 500, 'card1', new Card());
@@ -54,7 +51,9 @@ export class MainScene extends Phaser.Scene {
     */
 
     // deck test
-    let deck = new DeckGUI(this, 2250, 1075, "deck", new Deck());
+    let deck = new DeckGUI(this, "deck", new Deck());
+
+
 
     this.configureCardEvents();
   }

@@ -30,12 +30,38 @@ export class HandGUI extends Phaser.GameObjects.Group {
   private setOutlines(): void {
     let i = 0;
     while (i < this.maxCards) {
-      this.scene.add.image(i++ * 250 + 750, 1100, "card-outline").setDepth(-1);
+      this.scene.add.image(i++ * 200 + 550, 850, "card-outline").setDepth(-1);
     }
   }
 
+  /**
+   * adds one card to hand if there is enough space for it
+   * @param card to be added
+   */
+  addCard(card: Card): void {
+    if (this.cardGUIs.length < this.maxCards) {
+      //reposition other cards on deck to remove any gaps on the board
+      for (let i in this.cardGUIs) {
+        let cardGUI = this.cardGUIs[i];
+        cardGUI.setPosition(parseInt(i) * 200 + 550, 850);
+        cardGUI.cardOriginX = parseInt(i) * 200 + 550;
+        cardGUI.cardOriginY = 850;
+      }
 
-  // TODO: addCard(card: Card)
+      // add card to hand, enable dragging
+      let cardGUI = new CardGUI(
+        this.scene,
+        this.cardGUIs.length * 200 + 550,
+        850,
+        "card",
+        card
+      );
+      this.add(cardGUI, true);
+      cardGUI.setInteractive();
+      cardGUI.enableDragging();
+      this.cardGUIs.push(cardGUI);
+    }
+  }
 
   /**
    * replaces current hand
@@ -56,8 +82,8 @@ export class HandGUI extends Phaser.GameObjects.Group {
       if (i >= this.maxCards) break;
       let cardGUI = new CardGUI(
         this.scene,
-        i++ * 250 + 750,
-        1100,
+        i++ * 200 + 550,
+        850,
         "card", // TODO: change default texture "card" to ( texture saved in card object ? )
         c
       );
