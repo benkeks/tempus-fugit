@@ -1,25 +1,26 @@
-import {GameState, GameStateListener} from "./objects/GameState";
-import {Variable} from "./temporal-logic/Variable";
+import "phaser"
+import GameConfig = Phaser.Types.Core.GameConfig;
 
-document.body.innerText = "Hello World";
-
-let text:string = "";
-let gs:GameState = new GameState();
-gs.listener.push(new class implements GameStateListener {
-    roundChanged(gameSate: GameState, lastRound: number): void {
-        text = text + "roundChanged!\n";
-        text = text + "active= " + gameSate.activeState + "  last=" + lastRound + "\n";
+const config: GameConfig = {
+    width: 1920,
+    height: 1080,
+    backgroundColor: 0x000000,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    scene: [],
+    physics: {
+        default: 'arcade'
     }
+};
 
-    variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: [boolean, boolean] }): void {
-        text = text + "variable changed!\n";
-        text = text + valueChanges[gs.activeState] + "\n";
+export class Game extends Phaser.Game {
+    constructor(config: GameConfig) {
+        super(config);
     }
-});
-
-while (true) {
-    text = "test";
-    gs.setVariable("a", !gs.getVariable("a").getValue(gs.activeState-1));
-    gs.changeRound();
-    window.alert(text);
 }
+
+window.onload = () => {
+    new Game(config);
+};
