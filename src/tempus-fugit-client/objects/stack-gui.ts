@@ -26,7 +26,7 @@ export class StackGUI extends Phaser.GameObjects.Image {
   /**
    * deletes all objects on the stack
    */
-  clear() {
+  clear():void {
     for (let cardGUI of this.cardGUIs) {
       cardGUI.destroy();
     }

@@ -24,7 +24,7 @@ export class TableGUI {
     this.scene = scene;
     this.x = x;
     this.y = y;
-    this.setEnergie(energy);
+    this.setEnergy(energy);
     this.createTable();
     this.createButton();
     this.round = 1;
@@ -33,7 +33,7 @@ export class TableGUI {
     /**
      * creates a new table at position (x,y) with 60 cells
      */
-  private createTable() {
+  private createTable():void {
     // cell width, height, and number
     let itemCount = 60;
     let cellWidth = 90;
@@ -202,7 +202,7 @@ export class TableGUI {
      * creates a new energy table
      * @param itemCount: energy count; number of red-dots
      */
-  setEnergie(itemCount: number): void {
+  setEnergy(itemCount: number): void {
       // destroy old table if available
       if (this.energyTable) {
           this.energyTable.destroy();
@@ -265,7 +265,7 @@ export class TableGUI {
     /**
      * creates for button for ending selection of boolean values
      */
-    private createButton() {
+    private createButton(): void {
         // @ts-ignore
         let buttons = this.scene.rexUI.add.buttons({
             x: 400,

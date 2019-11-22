@@ -1,10 +1,9 @@
 import {Player} from "./player";
-import {Enemy} from "./enemy";
 
 export class PlayerGUI extends Phaser.GameObjects.Sprite {
 
     private _hp: number; // health points
-    private player: Enemy; // player object associated with this gui
+    private player: Player; // player object associated with this gui
 
     constructor(
         scene: Phaser.Scene,

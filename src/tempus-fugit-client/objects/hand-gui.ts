@@ -98,7 +98,7 @@ export class HandGUI extends Phaser.GameObjects.Group {
    * moves a card to stack
    * @param card
    */
-  moveToStack(card: Card) {
+  moveToStack(card: Card):void {
     for (let i in this.cardGUIs) {
       if (this.cardGUIs[i].card == card) {
         let c = this.cardGUIs[i];
