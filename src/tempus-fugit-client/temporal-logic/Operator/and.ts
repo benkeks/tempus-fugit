@@ -1,6 +1,6 @@
-///<reference path="TwoParamOperator.ts"/>
-import {PropositionStatus} from "../Proposition";
-import {TwoParamOperator} from "./TwoParamOperator";
+///<reference path="two-param-operator.ts"/>
+import {PropositionStatus} from "../proposition";
+import {TwoParamOperator} from "./two-param-operator";
 
 export class And extends TwoParamOperator {
 

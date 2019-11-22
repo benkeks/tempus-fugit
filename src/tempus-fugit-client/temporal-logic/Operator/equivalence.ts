@@ -1,13 +1,14 @@
-///<reference path="TwoParamOperator.ts"/>
-import {TwoParamOperator} from "./TwoParamOperator";
-import {PropositionStatus} from "../Proposition";
+import {TwoParamOperator} from "./two-param-operator";
+import {PropositionStatus} from "../proposition";
 
-export class Or extends TwoParamOperator {
+export class Equivalence extends TwoParamOperator {
 
 
     public getDefaultRepresentation():string {
-        return "\\|";
+        return "<->";
     }
+
+    precedence = 2;
 
     evaluateInternal(condition: number): PropositionStatus {
         let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
@@ -16,12 +17,12 @@ export class Or extends TwoParamOperator {
         let status:PropositionStatus = new PropositionStatus();
         status.successful = leftStatus.successful && rightStatus.successful;
         status.minStatus = Math.min(leftStatus.minStatus, rightStatus.minStatus);
-        status.value = leftStatus.value || rightStatus.value;
+        status.value = (leftStatus.value && rightStatus.value) || (!leftStatus.value && !rightStatus.value);
 
         return status;
     }
 
     public static getAlphabet():string {
-        return "\\||\\+";
+        return "<->|<=>|=";
     }
 }

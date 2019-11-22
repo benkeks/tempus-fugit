@@ -1,6 +1,6 @@
-///<reference path="OneParamOperator.ts"/>
-import {TwoParamOperator} from "./TwoParamOperator";
-import {PropositionStatus} from "../Proposition";
+///<reference path="one-param-operator.ts"/>
+import {TwoParamOperator} from "./two-param-operator";
+import {PropositionStatus} from "../proposition";
 
 export class Until extends TwoParamOperator {
 

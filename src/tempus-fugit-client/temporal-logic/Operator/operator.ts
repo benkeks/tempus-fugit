@@ -1,7 +1,7 @@
-///<reference path="../Proposition.ts"/>
+///<reference path="../proposition.ts"/>
 
 
-import {Proposition} from "../Proposition";
+import {Proposition} from "../proposition";
 
 export abstract class Operator extends Proposition {
     public precedence:number;

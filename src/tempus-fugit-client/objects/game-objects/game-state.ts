@@ -1,5 +1,5 @@
-import {Variable} from "../../temporal-logic/Variable";
-import {Formula} from "../../temporal-logic/Formula";
+import {Variable} from "../../temporal-logic/variable";
+import {Formula} from "../../temporal-logic/formula";
 import {Card} from "./card";
 
 export class GameState {

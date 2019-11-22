@@ -1,8 +1,8 @@
-///<reference path="../Proposition.ts"/>
-///<reference path="Operator.ts"/>
-import {Operator} from "./Operator";
-import {Proposition} from "../Proposition";
-import {TwoParamOperator} from "./TwoParamOperator";
+///<reference path="../proposition.ts"/>
+///<reference path="operator.ts"/>
+import {Operator} from "./operator";
+import {Proposition} from "../proposition";
+import {TwoParamOperator} from "./two-param-operator";
 
 export abstract class OneParamOperator extends Operator{
     public get operand(): Proposition {

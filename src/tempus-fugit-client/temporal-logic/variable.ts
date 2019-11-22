@@ -1,5 +1,5 @@
-///<reference path="Proposition.ts"/>
-import {Proposition, PropositionStatus} from "./Proposition";
+///<reference path="proposition.ts"/>
+import {Proposition, PropositionStatus} from "./proposition";
 
 export class Variable extends Proposition {
     get representation(): string {

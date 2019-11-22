@@ -1,11 +1,11 @@
-import {Operator} from "./Operator";
-import {OneParamOperator} from "./OneParamOperator";
-import {Proposition, PropositionStatus} from "../Proposition";
-import {Global} from "./Global";
-import {Next} from "./Next";
-import {Until} from "./Until";
-import {Release} from "./Release";
-import {Eventual} from "./Eventual";
+import {Operator} from "./operator";
+import {OneParamOperator} from "./one-param-operator";
+import {Proposition, PropositionStatus} from "../proposition";
+import {Global} from "./global";
+import {Next} from "./next";
+import {Until} from "./until";
+import {Release} from "./release";
+import {Eventual} from "./eventual";
 
 export class Reverse extends OneParamOperator {
 

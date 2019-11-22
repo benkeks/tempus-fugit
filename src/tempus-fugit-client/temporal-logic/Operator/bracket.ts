@@ -1,5 +1,5 @@
-import {Operator} from "./Operator";
-import {PropositionStatus} from "../Proposition";
+import {Operator} from "./operator";
+import {PropositionStatus} from "../proposition";
 
 export class Bracket extends Operator {
 

@@ -1,6 +1,6 @@
-import {TwoParamOperator} from "./TwoParamOperator";
-import {PropositionStatus} from "../Proposition";
-import {Operator} from "./Operator";
+import {TwoParamOperator} from "./two-param-operator";
+import {PropositionStatus} from "../proposition";
+import {Operator} from "./operator";
 
 export class Consequence extends TwoParamOperator {
 
