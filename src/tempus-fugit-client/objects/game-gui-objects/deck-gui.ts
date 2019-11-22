@@ -1,4 +1,4 @@
-import { Deck } from "./deck";
+import { Deck } from "../game-objects/deck";
 
 export class DeckGUI extends Phaser.GameObjects.Sprite {
   private deck: Deck;

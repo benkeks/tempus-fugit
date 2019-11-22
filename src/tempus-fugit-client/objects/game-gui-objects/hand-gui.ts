@@ -1,8 +1,8 @@
 import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
 import { BoardGUI } from "./board-gui";
-import { Card } from "./card";
-import { Hand } from "./hand";
+import { Card } from "../game-objects/card";
+import { Hand } from "../game-objects/hand";
 
 export class HandGUI extends Phaser.GameObjects.Group {
   private hand: Hand; // hand object associated with handGUI object

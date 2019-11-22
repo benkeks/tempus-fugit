@@ -1,4 +1,4 @@
-import { Card } from "./card";
+import { Card } from "../game-objects/card";
 
 export class CardGUI extends Phaser.GameObjects.Sprite {
   private _cardOriginX: number; //initial x-position of cardGUI object, for dragging

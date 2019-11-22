@@ -1,4 +1,4 @@
-import {Player} from "./player";
+import {Player} from "../game-objects/player";
 
 export class PlayerGUI extends Phaser.GameObjects.Sprite {
 
