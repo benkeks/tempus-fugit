@@ -8,6 +8,16 @@
       },
       {
         "type": "image",
+        "key": "enemy",
+        "url": "assets/sprites/enemy.png"
+      },
+      {
+        "type": "image",
+        "key": "player",
+        "url": "assets/sprites/player.png"
+      },
+      {
+        "type": "image",
         "key": "stack",
         "url": "assets/sprites/stack.png"
       },

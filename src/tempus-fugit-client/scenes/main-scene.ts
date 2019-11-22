@@ -6,6 +6,12 @@ import { HandGUI } from "../objects/hand-gui";
 import { Hand } from "../objects/hand";
 import { DeckGUI } from "../objects/deck-gui";
 import { Deck } from "../objects/deck";
+import { TableGUI } from "../objects/table-gui";
+import {EnemyGUI} from "../objects/enemy-gui";
+import {PlayerGUI} from "../objects/player-gui";
+import {Enemy} from "../objects/enemy";
+import {Player} from "../objects/player";
+
 
 export class MainScene extends Phaser.Scene {
   private board: BoardGUI;
@@ -21,7 +27,14 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
+    // tests; to be replaced by game phases issue
 
+    let enemy = new EnemyGUI(this, 'enemy', new Enemy());
+
+    let player = new PlayerGUI(this, 'player', new Player());
+
+    let table = new TableGUI(this, 3);
+    //table.setEnergie(4);
 
     // stack test
     let stack = new StackGUI(this, "stack");

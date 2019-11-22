@@ -1,5 +1,6 @@
 import "phaser";
 import {MainScene} from "./scenes/main-scene";
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
@@ -10,6 +11,14 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: "#000",
+    plugins: {
+        scene: [{
+            key: 'rexUI',
+            plugin: UIPlugin,
+            mapping: 'rexUI'
+        },
+        ]
+    },
     scene: [MainScene]
 };
 
@@ -20,5 +29,6 @@ export class Game extends Phaser.Game {
 }
 
 window.addEventListener("load", () => {
-    new Game(config);
+    let game = new Game(config);
+    //console.log('plugins',  game.plugins.scenePlugins);
 });
