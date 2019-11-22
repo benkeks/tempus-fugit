@@ -32,7 +32,7 @@ export class GameState {
 
     public changeRound(round:number=this.activeState+1):number {
         if (this.activeState == round) {
-            return;
+            return 1;
         }
 
         let lastState:number=this.activeState;
