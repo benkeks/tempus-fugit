@@ -28,7 +28,7 @@ export class Game extends Phaser.Game {
     }
 }
 
-window.addEventListener("load", () => {
-    let game = new Game(config);
-    //console.log('plugins',  game.plugins.scenePlugins);
-});
+
+window.onload = () => {
+    new Game(config);
+};
