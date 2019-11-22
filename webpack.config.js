@@ -68,7 +68,8 @@ module.exports = {
 	},
 
 	devServer: {
-		open: true
+		open: true,
+		contentBase: path.resolve(__dirname, './dist/'),
 	},
 
 	resolve: {
@@ -76,7 +77,7 @@ module.exports = {
 	},
 	plugins: [
         new CopyPlugin([
-            //{ from: path.resolve(__dirname, 'src/orbit-client/assets'), to: 'assets' },
+            { from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'), to: 'assets' },
             { from: path.resolve(__dirname, 'index.html'), to: 'index.html' },
         ]),
     ]

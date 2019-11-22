@@ -1,25 +1,33 @@
-import "phaser"
-import GameConfig = Phaser.Types.Core.GameConfig;
+import "phaser";
+import {MainScene} from "./scenes/main-scene";
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 
-const config: GameConfig = {
-    width: 1920,
-    height: 1080,
-    backgroundColor: 0x000000,
+const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    scene: [],
-    physics: {
-        default: 'arcade'
-    }
+    backgroundColor: "#000",
+    plugins: {
+        scene: [{
+            key: 'rexUI',
+            plugin: UIPlugin,
+            mapping: 'rexUI'
+        },
+        ]
+    },
+    scene: [MainScene]
 };
 
 export class Game extends Phaser.Game {
-    constructor(config: GameConfig) {
+    constructor(config: Phaser.Types.Core.GameConfig) {
         super(config);
     }
 }
+
 
 window.onload = () => {
     new Game(config);

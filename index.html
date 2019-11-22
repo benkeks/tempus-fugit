@@ -12,7 +12,14 @@
     </style>
 </head>
 <body>
+<script>
+    // removes error:  ReferenceError: WEBGL_RENDERER is not defined at eval
+    let WEBGL_RENDERER = true;
+    let CANVAS_RENDERER = true;
+</script>
+<script src="bundle.js"></script>
     <script src="bundle.js"></script>
     <div id="content"></div>
+
 </body>
 </html>
