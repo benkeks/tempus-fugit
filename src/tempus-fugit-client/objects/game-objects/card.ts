@@ -1,4 +1,4 @@
-import {Formula} from "../../temporal-logic/Formula";
+import {Formula} from "../../temporal-logic/formula";
 
 export class Card {
     private name: String; // Name of the card

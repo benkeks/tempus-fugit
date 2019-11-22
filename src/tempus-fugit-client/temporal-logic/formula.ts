@@ -1,21 +1,21 @@
-///<reference path="Proposition.ts"/>
-import {Proposition, PropositionStatus} from "./Proposition";
-import {Variable} from "./Variable";
-import {And} from "./Operator/And";
-import {Eventual} from "./Operator/Eventual";
-import {Global} from "./Operator/Global";
-import {Next} from "./Operator/Next";
-import {Not} from "./Operator/Not";
-import {Or} from "./Operator/Or";
-import {Bracket} from "./Operator/Bracket";
-import {Consequence} from "./Operator/Consequence";
-import {Equivalence} from "./Operator/Equivalence";
-import {Reverse} from "./Operator/Reverse";
-import {Operator} from "./Operator/Operator";
-import {OneParamOperator} from "./Operator/OneParamOperator";
-import {TwoParamOperator} from "./Operator/TwoParamOperator";
-import {Until} from "./Operator/Until";
-import {Release} from "./Operator/Release";
+///<reference path="proposition.ts"/>
+import {Proposition, PropositionStatus} from "./proposition";
+import {Variable} from "./variable";
+import {And} from "./Operator/and";
+import {Eventual} from "./Operator/eventual";
+import {Global} from "./Operator/global";
+import {Next} from "./Operator/next";
+import {Not} from "./Operator/not";
+import {Or} from "./Operator/or";
+import {Bracket} from "./Operator/bracket";
+import {Consequence} from "./Operator/consequence";
+import {Equivalence} from "./Operator/equivalence";
+import {Reverse} from "./Operator/reverse";
+import {Operator} from "./Operator/operator";
+import {OneParamOperator} from "./Operator/one-param-operator";
+import {TwoParamOperator} from "./Operator/two-param-operator";
+import {Until} from "./Operator/until";
+import {Release} from "./Operator/release";
 
 export class Formula extends Proposition {
     public hjunctor:Proposition = undefined;
@@ -92,13 +92,14 @@ export class Formula extends Proposition {
      * console.log(f.variables['b'].values);
      * console.log(f.evaluate(0)); // output: false
      * */
-    public applyAssignment(vars:{[represenstation:string]:boolean[]}):void {
+    public applyAssignment(vars:{[represenstation:string]:Variable}):void {
         for (let i in this.variables) {
             let v:Variable = this.variables[i];
 
             if (v.representation in vars) {
-                console.log(vars[v.representation]);
-                v.values = [...vars[v.representation]];
+                let v1:Variable = vars[v.representation];
+
+                v.applyAssignment(v1);
             }
         }
     }

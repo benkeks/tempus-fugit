@@ -1,6 +1,6 @@
-///<reference path="OneParamOperator.ts"/>
-import {OneParamOperator} from "./OneParamOperator";
-import {PropositionStatus} from "../Proposition";
+///<reference path="one-param-operator.ts"/>
+import {OneParamOperator} from "./one-param-operator";
+import {PropositionStatus} from "../proposition";
 
 export class Next extends OneParamOperator {
 

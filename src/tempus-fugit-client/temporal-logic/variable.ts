@@ -1,6 +1,5 @@
-///<reference path="Proposition.ts"/>
-import {VariableListener} from "./VariableListener";
-import {Proposition, PropositionStatus} from "./Proposition";
+///<reference path="proposition.ts"/>
+import {Proposition, PropositionStatus} from "./proposition";
 
 export class Variable extends Proposition {
     get representation(): string {
@@ -9,7 +8,6 @@ export class Variable extends Proposition {
 
     set representation(value: string) {
         this._representation = value;
-        this.callRepChangedListener();
     }
 
     get values(): boolean[] {
@@ -19,7 +17,6 @@ export class Variable extends Proposition {
     set values(value: boolean[]) {
         this._values = value;
         this.firstValue = 0;
-        this.callValueChangedListener()
     }
 
     public static getAlphabet(): string {
@@ -28,7 +25,6 @@ export class Variable extends Proposition {
 
     protected _values:boolean[] = [];
     private firstValue:number = 0;
-    public listener:VariableListener[] = [];
 
     public getDefaultRepresentation():string {
         return this.defaultRepresentation;
@@ -56,22 +52,6 @@ export class Variable extends Proposition {
         }
 
         return pstat;
-    }
-
-    public callRepChangedListener():void {
-        for (let i in this.listener) {
-            let l:VariableListener = this.listener[i];
-
-            l.representationChanged(this);
-        }
-    }
-
-    public callValueChangedListener():void {
-        for (let i in this.listener) {
-            let l:VariableListener = this.listener[i];
-
-            l.valuesChanged(this);
-        }
     }
 
     generateRepresentation(recursive:boolean): string {
@@ -136,8 +116,23 @@ export class Variable extends Proposition {
         }
     }
 
+    public copy():Variable {
+        let v:Variable = new Variable(this.representation);
+        v.applyAssignment(this);
+
+        return v;
+    }
+
     constructor(representation:string=undefined, value:boolean[]=[]) {
         super(representation);
         this._values = value;
+    }
+
+    public applyAssignment(variable:Variable):void {
+        if (variable === undefined) return;
+
+        this.defaultValue = variable.defaultValue;
+        this.finiteStates = variable.finiteStates;
+        this.values = [...variable.values];
     }
 }
