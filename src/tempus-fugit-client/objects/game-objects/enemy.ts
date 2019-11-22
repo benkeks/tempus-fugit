@@ -2,12 +2,12 @@ import {Player} from "./player"
 import {Card} from "./card"
 
 export class Enemy {
-    name: String;
-    maxHP: number;
-    currentHP: number;
-    baseAttack: number;
-    specialEffects: String[];
-    listener:EnemyListener[];
+    private name: String; // The enemy's name
+    private maxHP: number; // The enemy's maximum hit points
+    private currentHP: number; // The enemy's current hit points
+    private baseAttack: number; // The enemy's base attack strength
+    private specialEffects: String[]; // A list of names of the enemy's special effects
+    public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
         return this.currentHP;
@@ -73,7 +73,7 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number) {
+    public takeHit(hitPower: number): void {
         this.currentHP -= hitPower;
 
         for (let i in this.listener) {
@@ -87,7 +87,7 @@ export class Enemy {
      * @return Returns a boolean that indicates whether the player is alive
      * @author Florian
      */
-    public isAlive() {
+    public isAlive(): boolean {
         return this.currentHP > 0;
     }
 
