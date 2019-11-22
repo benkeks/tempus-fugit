@@ -1,4 +1,4 @@
-import {Enemy} from "./enemy";
+import {Enemy} from "../game-objects/enemy";
 
 
 export class EnemyGUI extends Phaser.GameObjects.Sprite {

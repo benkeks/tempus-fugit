@@ -61,6 +61,12 @@ export class Hand {
         return this.cards[n];
     }
 
+    /**
+     * Returns all cards
+     */
+    getCards(): Card[]{
+        return this.cards;
+    }
 }
 
 /**
