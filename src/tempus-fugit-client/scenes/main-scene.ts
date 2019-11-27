@@ -50,6 +50,9 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
     this.handGUI.fadeOut();
 
+    this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
+    this.playerGUI.listener.push(this.tfgame.player);
+
     this.enemyGUIs = [];
     for (let e of this.tfgame.enemys) {
       this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
@@ -112,6 +115,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   enemyPhase(game: Game): void {
     console.log("enemyPhase");
+      this.handGUI.fadeOut();
   }
 
   energyPhase(game: Game): void {
@@ -120,5 +124,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   playPhase(game: Game): void {
     console.log("play Phase");
+    this.handGUI.fadeIn();
   }
 }

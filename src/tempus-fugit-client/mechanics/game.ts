@@ -7,7 +7,7 @@ import {Enemy} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 
 export class Game {
-    private readonly numPhases: 5;
+    private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;

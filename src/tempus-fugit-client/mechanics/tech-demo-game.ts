@@ -11,15 +11,15 @@ export class TechDemoGame extends Game{
     constructor() {
         super();
 
-        this.hand = new Hand(5);
         this.player = new Player("player1", 10, 3);
         this.enemys.push(new Enemy("e1", 5, 2,2, new Formula("Ga")));
+        this.hand = this.player.hand;
 
         this.gameState = new GameState();
         this.gameState.setVariable("a", false);
 
-        let c1:Card= new Card("test1", "", "none", "#Ga", 5);
-        let c2: Card = new Card("test2", "","none", "a", 2);
+        let c1:Card= new Card("test1", "", "card1", "#Ga", 5);
+        let c2: Card = new Card("test2", "","card2", "a", 2);
 
         this.deck.addCard(c1);
         this.deck.addCard(c2);
