@@ -53,17 +53,19 @@ export class GameState {
      *
      * */
     public evaluate(object:any):boolean {
-        if (typeof object === typeof Formula) {
+        //if (object.constructor.name === Formula.constructor.name) {
             let f: Formula = object as Formula;
 
             f.applyAssignment(this._variables);
             return f.evaluate(this.activeState);
-        } else if (typeof object === typeof Card) {
+        /*} else if (object.constructor.name === Card.constructor.name) {
             let c:Card = object as Card;
             return this.evaluate(c.getFormula());
         } else {
+            console.log(object.constructor.name)
+            console.log(Formula.constructor.name)
             throw new TypeError("Evaluate expects object of type Formula or Card!");
-        }
+        }*/
     }
 
     /***

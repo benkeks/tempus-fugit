@@ -18,7 +18,7 @@ export class TechDemoGame extends Game{
         this.gameState = new GameState();
         this.gameState.setVariable("a", false);
 
-        let c1:Card= new Card("test1", "", "card1", "#Ga", 5);
+        let c1:Card= new Card("test1", "", "card1", "a", 5);
         let c2: Card = new Card("test2", "","card2", "a", 2);
 
         this.deck.addCard(c1);
