@@ -150,6 +150,7 @@ export class GameState {
     public getVariable(name:string):Variable {
         if (!(name in this.variables)) {
             this.variables[name] = new Variable(name);
+            this.variables[name].finiteStates = false;
             this.variableStatus[name] = new VariableStatus();
         }
         return this.variables[name];
