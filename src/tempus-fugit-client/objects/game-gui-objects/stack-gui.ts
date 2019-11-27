@@ -1,5 +1,8 @@
 import { CardGUI } from "./card-gui";
 
+/**
+ * @author Mustafa
+ */
 export class StackGUI extends Phaser.GameObjects.Image {
   private readonly _x: number;
   private readonly _y: number;

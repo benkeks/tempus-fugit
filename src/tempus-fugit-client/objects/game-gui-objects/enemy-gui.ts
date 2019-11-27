@@ -1,10 +1,13 @@
-import {Enemy} from "../game-objects/enemy";
+import {Enemy, EnemyListener} from "../game-objects/enemy";
 
+/**
+ * @author Mustafa
+ */
+export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener{
 
-export class EnemyGUI extends Phaser.GameObjects.Sprite {
-
-    private _hp: number; // health points
     private enemy: Enemy; // enemy object associated with this gui
+    private hpText: Phaser.GameObjects.Text; // shows hp of enemy
+    private baseAttackText: Phaser.GameObjects.Text; // shows base attack of enemy
 
     constructor(
         scene: Phaser.Scene,
@@ -17,14 +20,25 @@ export class EnemyGUI extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture);
         this.scene.add.existing(this);
         this.enemy = enemy;
+
+        const textStyle = {
+            fontSize: '18px',
+            fontStyle: 'bold',
+            fontFamily: 'Arial',
+            color: '#cc0000'
+        };
+        this.hpText = this.scene.add.text(x - 110  , y - 50, 'hp: ' + enemy.getHP()).setStyle(textStyle);
+        // TODO: need enemy.getBaseAttack() function
+        this.baseAttackText = this.scene.add.text(x - 50  , y - 50, 'Attack: ' + 10).setStyle(textStyle);
+
+        // TODO: need enemy function to register as listener
     }
 
-
-    get hp(): number {
-        return this._hp;
-    }
-
-    set hp(value: number) {
-        this._hp = value;
+    /**
+     * change HP display of enemy
+     * @param changedTo
+     */
+    enemyHpChanged(changedTo: number): void {
+        this.hpText.setText('hp: ' + changedTo);
     }
 }

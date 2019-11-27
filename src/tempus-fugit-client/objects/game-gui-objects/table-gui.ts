@@ -1,62 +1,65 @@
-// For some reason i can load the plugin (rexUI; loaded in game config) but not reference it without a ts-ignore.
-// This may be the case because the plugin doesn't have type definitions, but i set noImplicitAny to false in the tsconfig file,
-// so there really should'nt be a problem here.
-// Other ways of loading the plugin have the same problem.
-// console.log(this) will show the plugin is installed, but this.rexUI yields an error; weird !
+import { GameState, GameStateListener } from "../game-objects/game-state";
+import { Variable } from "../../temporal-logic/variable";
 
 const COLOR_PRIMARY = 0x0f3491;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e05;
 const COLOR_RED = 0x9e0b00;
 const COLOR_BUTTON = 0x008888;
+const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
-export class TableGUI {
-  private readonly x: number; // x-position of table
-  private readonly y: number; // y-position of table
+/**
+ * @author Mustafa
+ */
+export class TableGUI implements GameStateListener {
   private readonly scene: Phaser.Scene;
-  private _booleanValues: boolean[]; // boolean values of variables, initially false
-  private table;    // table object
-  private energy: number; // number of energy for current round
   private energyTable; // table for red dots representing energy
-  private round: number; // current round
+  private gameState: GameState;
 
-  constructor(scene: Phaser.Scene, energy: number, x: number = 1000, y: number = 140) {
+  private variableTable; // table object
+  private readonly tableOffsetX: number; // x-position of table
+  private readonly tableOffsetY: number; // y-position of table
+  private readonly variableTableCellWidth = 90;
+  private readonly variableTableCellHeight = 60;
+  private readonly tableColumnCount = 15;
+
+  constructor(
+    scene: Phaser.Scene,
+    gameState: GameState,
+    tableOffsetX: number = 1000,
+    tableOffsetY: number = 140
+  ) {
     this.scene = scene;
-    this.x = x;
-    this.y = y;
-    this.setEnergy(energy);
-    this.createTable();
+    this.tableOffsetX = tableOffsetX;
+    this.tableOffsetY = tableOffsetY;
+    this.gameState = gameState;
+    this.createEnergyTable(0); // TODO: use energy count form gameState
+    this.createVariableTable([]); // TODO: use variables names from gameState
     this.createButton();
-    this.round = 1;
   }
 
-    /**
-     * creates a new table at position (x,y) with 60 cells
-     */
-  private createTable():void {
-    // cell width, height, and number
-    let itemCount = 60;
-    let cellWidth = 90;
-    let cellHeight = 60;
-
-    // boolean values of variables
-    this._booleanValues = new Array(itemCount).fill(false);
-
+  /**
+   * creates a new table at position (x,y)
+   * @param variables: list of variables in table
+   */
+  private createVariableTable(
+    variables: Variable[]
+  ): void {
     // items in table
+    const itemCount = this.tableColumnCount * variables.length;
     let items = [];
     for (let i = 0; i < itemCount; i++) {
       items.push({
-        id: i,
-        text: "false"
+        id: i
       });
     }
 
-    // table for boolean values of variables
+    // table for variable boolean values
     // @ts-ignore
-    this.table = this.scene.rexUI.add
+    this.variableTable = this.scene.rexUI.add
       .gridTable({
-        x: this.x,
-        y: this.y,
+        x: this.tableOffsetX,
+        y: this.tableOffsetY,
         // @ts-ignore
         background: this.scene.rexUI.add.roundRectangle(
           0,
@@ -68,11 +71,11 @@ export class TableGUI {
         ),
         // table config
         table: {
-          width: cellWidth * 15,
-          height: cellHeight * 4,
-          cellWidth: cellWidth,
-          cellHeight: cellHeight,
-          columns: 15,
+          width: this.variableTableCellWidth * this.tableColumnCount,
+          height: this.variableTableCellHeight * variables.length,
+          cellWidth: this.variableTableCellWidth,
+          cellHeight: this.variableTableCellHeight,
+          columns: this.tableColumnCount,
           mask: {
             padding: 2
           }
@@ -88,14 +91,9 @@ export class TableGUI {
             background: scene.rexUI.add
               .roundRectangle(0, 0, 20, 20, 0)
               .setStrokeStyle(2, COLOR_DARK),
-            icon: scene.rexUI.add.roundRectangle(
-              0,
-              0,
-              30,
-              30,
-              15,
-              COLOR_PRIMARY
-            ),
+            icon: scene.rexUI.add
+              .roundRectangle(0, 0, 30, 30, 15, COLOR_PRIMARY)
+              .setDepth(3),
             space: {
               left: 30
             }
@@ -105,33 +103,19 @@ export class TableGUI {
       .layout();
 
     // add items to table
-      this.table.setItems(items);
+    this.variableTable.setItems(items);
 
     // configure events
-      this.table
+    this.variableTable
       .on(
         "cell.click",
         function(cellContainer, cellIndex) {
-          // change boolean value, icon color of cell and available energy when clicked
-          // check if energy is available and round is correct
-              if (cellIndex == this.round -1 || cellIndex == this.round + 14  || cellIndex == this.round + 29  || cellIndex == this.round + 44) {
-                  if (this._booleanValues[cellIndex]) {
-                      this._booleanValues[cellIndex] = false;
-                      cellContainer.getElement("icon").setFillStyle(COLOR_PRIMARY, 1);
-                      this.energyTable.getElement('table').getCell(this.energy).getContainer().getElement("icon").setFillStyle(COLOR_RED, 1);
-                      this.energy++;
-
-                  } else if (this.energy > 0) {
-                      this._booleanValues[cellIndex] = true;
-                      cellContainer.getElement("icon").setFillStyle(COLOR_RED, 1);
-                      this.energy--;
-                      this.energyTable.getElement('table').getCell(this.energy).getContainer().getElement("icon").setFillStyle(0x000000, 1);
-                  }
-              }
+          // TODO: alert gameState that cell was clicked
         },
         this
       )
-      .on("cell.over", function(cellContainer, cellIndex) { // focus current cell when hovering over it
+      .on("cell.over", function(cellContainer, cellIndex) {
+        // focus current cell when hovering over it
         cellContainer
           .getElement("background")
           .setStrokeStyle(2, COLOR_LIGHT)
@@ -144,163 +128,252 @@ export class TableGUI {
           .setDepth(0);
       });
 
-
-
-      // Table for variable names;
+    // table for variable names;
+    // @ts-ignore
+    let variableNameTable = this.scene.rexUI.add
+      .gridTable({
+        x: 280,
+        y: this.tableOffsetY,
         // @ts-ignore
-        let variableTable = this.scene.rexUI.add
-            .gridTable({
-                x: 280,
-                y: this.y,
-                // @ts-ignore
-                background: this.scene.rexUI.add.roundRectangle(
-                    0,
-                    0,
-                    20,
-                    10,
-                    10,
-                    COLOR_PRIMARY
-                ),
-                // table config
-                table: {
-                    width: cellWidth,
-                    height: cellHeight * 4,
-                    cellWidth: cellWidth,
-                    cellHeight: cellHeight,
-                    columns: 1,
-                    mask: {
-                        padding: 2
-                    }
-                },
-                createCellContainerCallback: function(cell) {
-                    const scene = cell.scene,
-                        width = cell.width,
-                        height = cell.height;
-                    let names =  ['A', 'B', 'C', 'D'];
-                    return scene.rexUI.add.label({
-                        width: width,
-                        height: height,
-                        background: scene.rexUI.add
-                            .roundRectangle(0, 0, 20, 20, 0)
-                            .setStrokeStyle(2, COLOR_DARK),
-                        text: scene.add.text(0, 0, '  ' + names[cell.index], {
-                            fontSize: 24
-                        }),
-                    });
-                }
+        background: this.scene.rexUI.add.roundRectangle(
+          0,
+          0,
+          20,
+          10,
+          10,
+          COLOR_PRIMARY
+        ),
+        // table config
+        table: {
+          width: this.variableTableCellWidth,
+          height: this.variableTableCellHeight * variables.length,
+          cellWidth: this.variableTableCellWidth,
+          cellHeight: this.variableTableCellHeight,
+          columns: 1,
+          mask: {
+            padding: 2
+          }
+        },
+        createCellContainerCallback: function(cell) {
+          const scene = cell.scene,
+            width = cell.width,
+            height = cell.height;
+          return scene.rexUI.add.label({
+            width: width,
+            height: height,
+            background: scene.rexUI.add
+              .roundRectangle(0, 0, 20, 20, 0)
+              .setStrokeStyle(2, COLOR_DARK),
+            text: scene.add.text(0, 0, "  " + variables[cell.index], {
+              //TODO: change variables[cell.index] to variables[cell.index].representation ? ask gameState person where variable names are
+              fontSize: 24
             })
-            .layout();
-
-        // add items to table
-        let variableNames = [{id: 1, text: "A"},  {id: 2, text: "B"}, {id: 3, text: "C"}, {id: 4, text: "D"}];
-        variableTable.setItems(variableNames);
-
-
-  }
-
-    /**
-     * creates a new energy table
-     * @param itemCount: energy count; number of red-dots
-     */
-  setEnergy(itemCount: number): void {
-      // destroy old table if available
-      if (this.energyTable) {
-          this.energyTable.destroy();
-      }
-
-      let cellWidth = 40;
-      let cellHeight = 30;
-      this.energy = itemCount;
-
-      // items in table
-        let items = [];
-        for (let i = 0; i < itemCount; i++) {
-            items.push({
-                id: i
-            });
+          });
         }
+      })
+      .layout();
 
-        // @ts-ignore
-        this.energyTable = this.scene.rexUI.add
-            .gridTable({
-                x: 550,
-                y: 300,
-                // table config
-                table: {
-                    width: cellWidth * itemCount ,
-                    height: cellHeight,
-                    cellWidth: cellWidth,
-                    cellHeight: cellHeight,
-                    columns: itemCount,
-                    mask: {
-                        padding: 2
-                    }
-                },
-                createCellContainerCallback: function(cell) {
-                    const scene = cell.scene,
-                        width = cell.width,
-                        height = cell.height;
-
-                    return scene.rexUI.add.label({
-                        width: width,
-                        height: height,
-                        icon: scene.rexUI.add.roundRectangle(
-                            0,
-                            0,
-                            30,
-                            30,
-                            15,
-                            COLOR_RED
-                        )
-                    });
-                }
-            })
-            .layout();
-
-        // add items to table
-        this.energyTable.setItems(items);
+    // add items to table
+    items = [];
+    for (let i = 0; i < variables.length; i++) {
+      items.push({
+        id: i
+      });
     }
-
-
-    /**
-     * creates for button for ending selection of boolean values
-     */
-    private createButton(): void {
-        // @ts-ignore
-        let buttons = this.scene.rexUI.add.buttons({
-            x: 400,
-            y: 300,
-            orientation: 'y',
-            buttons: [
-                // @ts-ignore
-                this.scene.rexUI.add.label({
-                    width: 100,
-                    height: 40,
-                    // @ts-ignore
-                    background: this.scene.rexUI.add.roundRectangle(0, 0, 120, 60, 10, COLOR_BUTTON),
-                    text: this.scene.add.text(0, 0, 'Auswertung', {
-                        fontSize: 18
-                    }),
-                    space: {
-                        left: 10,
-                        right: 10,
-                    }
-                })
-            ],
-
-        })
-            .layout()
-
-        buttons
-            .on('button.click', function (button, index, pointer, event) {
-                this.round ++;
-                // TODO: button was clicked, begin next phase ??
-                console.log('Belegungen: ', this._booleanValues);
-            }, this);
-    }
-
-  get booleanValues(): boolean[] {
-    return this._booleanValues;
+    variableNameTable.setItems(items);
   }
 
+  /**
+   * creates a new energy table
+   * @param energyCount: number of energy dots
+   * @param offsetX : (optional with a default value) x position of table
+   * @param offsetY: (optional with a default value) y position of table
+   */
+  createEnergyTable(
+    energyCount: number,
+    offsetX: number = 490,
+    offsetY: number = 40
+  ): void {
+    // destroy old table if available
+    if (this.energyTable) {
+      this.energyTable.destroy();
+    }
+
+    const cellWidth = 40;
+    const cellHeight = 30;
+
+    // items in table
+    let items = [];
+    for (let i = 0; i < energyCount; i++) {
+      items.push({
+        id: i
+      });
+    }
+
+    // @ts-ignore
+    this.energyTable = this.scene.rexUI.add
+      .gridTable({
+        x: offsetX + energyCount * cellWidth * 0.5,
+        y: offsetY + 290, // TODO: replace with offsetY + this.gameState.variables.length * this.variableTableCellHeight * 0.5 + this.tableOffsetY ? ask gameState person how variables are stored
+        // table config
+        table: {
+          width: cellWidth * energyCount,
+          height: cellHeight,
+          cellWidth: cellWidth,
+          cellHeight: cellHeight,
+          columns: energyCount,
+          mask: {
+            padding: 2
+          }
+        },
+        createCellContainerCallback: function(cell) {
+          const scene = cell.scene,
+            width = cell.width,
+            height = cell.height;
+
+          return scene.rexUI.add.label({
+            width: width,
+            height: height,
+            icon: scene.rexUI.add.roundRectangle(0, 0, 30, 30, 15, COLOR_RED)
+          });
+        }
+      })
+      .layout();
+
+    // add items to table
+    this.energyTable.setItems(items);
+  }
+
+  /**
+   *  creates for button for ending selection of boolean values
+   */
+  private createButton(offsetX: number = 400, offsetY: number = 40): void {
+    // @ts-ignore
+    let buttons = this.scene.rexUI.add
+      .buttons({
+        x: offsetX,
+        y: offsetY + 260, // TODO: replace with offsetY + this.gameState.variables.length * this.variableTableCellHeight * 0.5 + this.tableOffsetY ? ask gameState person how variables are stored
+        orientation: "y",
+        buttons: [
+          // @ts-ignore
+          this.scene.rexUI.add.label({
+            width: 100,
+            height: 40,
+            // @ts-ignore
+            background: this.scene.rexUI.add.roundRectangle(
+              0,
+              0,
+              120,
+              60,
+              10,
+              COLOR_BUTTON
+            ),
+            text: this.scene.add.text(0, 0, "Auswertung", {
+              fontSize: 18
+            }),
+            space: {
+              left: 10,
+              right: 10
+            }
+          })
+        ]
+      })
+      .layout();
+
+    buttons.on(
+      "button.click",
+      function(button, index, pointer, event) {
+        // TODO: alert game State that button was clicked
+      },
+      this
+    );
+  }
+
+  /**
+   * change background color of table cell
+   * @param color: color to change background to
+   * @param column: position of cell
+   * @param row: position of cell
+   */
+  private setCellColor(color: number, column: number, row: number): void {
+    const tableIndex = column + row * this.tableColumnCount;
+    const icon = this.variableTable
+      .getElement("table")
+      .getCell(tableIndex)
+      .getContainer()
+      .getElement("icon");
+    const background = this.variableTable
+      .getElement("table")
+      .getCell(tableIndex)
+      .getContainer()
+      .getElement("background");
+
+    background.setFillStyle(color, 0.25);
+    if (icon.fillColor == COLOR_PRIMARY) icon.setFillStyle(color, 0);
+  }
+
+  /**
+   * change icon color of table cell
+   * @param color: color to change icon to
+   * @param column: position of cell
+   * @param row: position of cell
+   */
+  private setCellIconColor(color: number, column: number, row: number): void {
+    const tableIndex = column + row * this.tableColumnCount;
+    const icon = this.variableTable
+      .getElement("table")
+      .getCell(tableIndex)
+      .getContainer()
+      .getElement("icon");
+    if (color == COLOR_PRIMARY) {
+      icon.setFillStyle(color, 0);
+    } else {
+      icon.setFillStyle(color, 1);
+    }
+  }
+
+  /**
+   * change color of energy table at index
+   * @param color: color to change energy cell to
+   * @param index: position of cell
+   */
+  private setEnergyIconColor(color: number, index: number) {
+    this.energyTable
+      .getElement("table")
+      .getCell(index)
+      .getContainer()
+      .getElement("icon")
+      .setFillStyle(color, 1);
+  }
+
+  roundChanged(gameSate: GameState, lastRound: number): void {
+    // change color of coloumn
+    const nextRound = 0;  // TODO: The new Round Value can be accessed in gameState ??
+    const variables  = []; /// TODO: need function to get variable names
+    for (let index in variables) {
+      this.setCellColor(COLOR_PRIMARY_LIGHT, nextRound , parseInt(index));
+      this.setCellColor(COLOR_PRIMARY, lastRound , parseInt(index));
+    }
+  }
+
+  variableChanged(
+    gameState: GameState,
+    oldVariable: Variable,
+    variable: Variable,
+    valueChanges: { [p: number]: [boolean, boolean] }
+  ): void {
+
+    const row = 0; //TODO: gameState.round ??
+    const column = 0; //TODO: gameState.variables.indexOf(variable) ??
+    const energy = 0; //TODO: gameState.energy ??
+    const newValue = true; // TODO: if value of varialbe changes to true
+    if (newValue) {
+      this.setCellIconColor(COLOR_RED, row, column);
+      this.setEnergyIconColor( 0x000000, energy);
+    } else {
+      this.setCellIconColor(COLOR_PRIMARY, row, column);
+      this.setEnergyIconColor( COLOR_RED,energy-1);
+    }
+  }
 }
+

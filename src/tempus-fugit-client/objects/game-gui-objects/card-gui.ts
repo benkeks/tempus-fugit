@@ -1,5 +1,8 @@
 import { Card } from "../game-objects/card";
 
+/**
+ * @author Mustafa
+ */
 export class CardGUI extends Phaser.GameObjects.Sprite {
   private _cardOriginX: number; //initial x-position of cardGUI object, for dragging
   private _cardOriginY: number; //initial y-position of cardGUI object, for dragging
@@ -9,10 +12,9 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    texture: string,
     card: Card
   ) {
-    super(scene, x, y, texture);
+    super(scene, x, y, 'card'); // TODO card.getImage() should return string ; not String
     this.scene.add.existing(this);
     this.setInteractive();
     this._cardOriginX = x;
@@ -24,8 +26,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
    * displays card information
    */
   showInfo(): void {
-    // TODO: depends on card attributes, is triggered when user clicks the card
-    console.log("showInfo");
+    console.log(this.card.getDescription());
   }
 
   /**
