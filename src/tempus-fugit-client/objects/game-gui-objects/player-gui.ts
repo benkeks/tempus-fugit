@@ -11,7 +11,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     private player: Player; // player object associated with this gui
     private hpText: Phaser.GameObjects.Text; // shows hp of player
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of player
-    public listener: EnemyAttackListener[]; // List of objects listening to enemy attack events
+    public listener: EnemyAttackListener[] = []; // List of objects listening to enemy attack events
 
     constructor(
         scene: Phaser.Scene,
