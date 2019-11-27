@@ -16,11 +16,11 @@ export class Game {
     public listener:GameStateListener[] = [];
 
     public hand:Hand;
-    public deck:Deck;
+    public deck:Deck = new Deck();
     public player:Player;
     public gameState:GameState;
-    public enemys:Enemy[];
-    public cards:Card[];
+    public enemys:Enemy[] = [];
+    public cards:Card[] = [];
 
     // TODO: effect list
 
