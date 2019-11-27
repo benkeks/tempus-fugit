@@ -47,7 +47,7 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
       // add card to hand, enable dragging
       let cardGUI = new CardGUI(
         this.scene,
-        pos * 200 + 550,
+          pos * 200 + 550,
         850,
         card
       );

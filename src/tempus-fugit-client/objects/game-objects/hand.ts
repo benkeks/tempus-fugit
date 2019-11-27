@@ -37,6 +37,7 @@ export class Hand {
             for (let i of [0,1,2,3,4]) {
                 if (this.cards[i] == null) {
                     this.cards[i] = card;
+                    position = i;
                     break;
                 }
             }
