@@ -3,8 +3,28 @@
     "files": [
       {
         "type": "image",
-        "key": "card",
-        "url": "assets/sprites/card.png"
+        "key": "card1",
+        "url": "assets/sprites/Card_1_new.png"
+      },
+      {
+        "type": "image",
+        "key": "card2",
+        "url": "assets/sprites/Card_2.png"
+      },
+      {
+        "type": "image",
+        "key": "card3",
+        "url": "assets/sprites/Card_3_new.png"
+      },
+      {
+        "type": "image",
+        "key": "card4",
+        "url": "assets/sprites/Card_4.png"
+      },
+      {
+        "type": "image",
+        "key": "card5",
+        "url": "assets/sprites/Card_5.png"
       },
       {
         "type": "image",
