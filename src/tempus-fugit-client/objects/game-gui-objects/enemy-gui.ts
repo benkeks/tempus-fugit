@@ -5,7 +5,7 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
  */
 export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener{
 
-    private enemy: Enemy; // enemy object associated with this gui
+    public enemy: Enemy; // enemy object associated with this gui
     private hpText: Phaser.GameObjects.Text; // shows hp of enemy
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of enemy
 

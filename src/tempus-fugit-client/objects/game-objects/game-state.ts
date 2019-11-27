@@ -120,7 +120,7 @@ export class GameState {
         let v:Variable = this.getVariable(name);
         let oldVariable:Variable = v.copy();
         let changes:{[state:number]:boolean} = {};
-        if (v.getValue(state) == value) return 0;
+        //if (v.getValue(state) == value) return 0;
 
 
         v = this.variables[name];
