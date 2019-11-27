@@ -1,5 +1,7 @@
 import {Player} from "./player"
 import {Card} from "./card"
+import {GameState} from "./game-state"
+
 
 export class Enemy {
     private name: String; // The enemy's name
@@ -56,9 +58,9 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public attack(player: Player, baseAttack: boolean, n: number): void {
+    public attack(player: Player, gameState: GameState): void {
         var attackPoints = 0;
-        if (baseAttack) {
+        if (true) {
             attackPoints = this.baseAttack;
         } else {
             attackPoints = this.evaluateSpecialEffect(this.specialEffects[n]);
