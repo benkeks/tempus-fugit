@@ -2,18 +2,18 @@ import {Player} from "./player"
 import {Card} from "./card"
 
 export class Enemy {
-    private name: String; // The enemy's name
+    private name: string; // The enemy's name
     private maxHP: number; // The enemy's maximum hit points
     private currentHP: number; // The enemy's current hit points
-    private baseAttack: number; // The enemy's base attack strength
-    private specialEffects: String[]; // A list of names of the enemy's special effects
+    private _baseAttack: number; // The enemy's base attack strength
+    private specialEffects: string[]; // A list of names of the enemy's special effects
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
         return this.currentHP;
     }
 
-    public getName(): String {
+    public getName(): string {
         return this.name;
     }
 
@@ -26,11 +26,11 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: String, hp: number, baseAttack: number, specialEffects: String[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialEffects: string[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
-        this.baseAttack = baseAttack;
+        this._baseAttack = baseAttack;
         this.specialEffects = specialEffects;
         this.listener = [];
 
@@ -43,7 +43,7 @@ export class Enemy {
      * @example var hitPointReduction = evaluateSpecialEffect("Fire attack");
      * @author Florian
      */
-    private evaluateSpecialEffect(specialEffect: String): number {
+    private evaluateSpecialEffect(specialEffect: string): number {
         return 19;
     }
 
@@ -59,7 +59,7 @@ export class Enemy {
     public attack(player: Player, baseAttack: boolean, n: number): void {
         var attackPoints = 0;
         if (baseAttack) {
-            attackPoints = this.baseAttack;
+            attackPoints = this._baseAttack;
         } else {
             attackPoints = this.evaluateSpecialEffect(this.specialEffects[n]);
         }
@@ -91,6 +91,10 @@ export class Enemy {
         return this.currentHP > 0;
     }
 
+
+    get baseAttack(): number {
+        return this._baseAttack;
+    }
 }
 
 

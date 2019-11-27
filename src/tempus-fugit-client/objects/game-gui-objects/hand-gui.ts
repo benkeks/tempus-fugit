@@ -2,12 +2,12 @@ import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
 import { BoardGUI } from "./board-gui";
 import { Card } from "../game-objects/card";
-import {Hand, HandListener} from "../game-objects/hand";
+import { Hand, HandListener } from "../game-objects/hand";
 
 /**
  * @author Mustafa
  */
-export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
+export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
   private hand: Hand; // hand object associated with handGUI object
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
   private readonly stack: StackGUI;
@@ -23,9 +23,8 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
     super(scene);
     this.board = board;
     this.stack = stack;
-    this.replaceHand(hand);
     this.setOutlines();
-    // TODO: need hand function to register as listener
+    this.hand.listener.push(this);
   }
 
   /**
@@ -42,20 +41,11 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
    * adds one card to hand if there is enough space for it
    * @param card to be added
    */
-  addCard(card: Card): void {
-    if (this.cardGUIs.length < this.maxCards) {
-      //reposition other cards on deck to remove any gaps on the board
-      for (let i in this.cardGUIs) {
-        let cardGUI = this.cardGUIs[i];
-        cardGUI.setPosition(parseInt(i) * 200 + 550, 850);
-        cardGUI.cardOriginX = parseInt(i) * 200 + 550;
-        cardGUI.cardOriginY = 850;
-      }
-
+  addCard(card: Card, pos: number): void {
       // add card to hand, enable dragging
       let cardGUI = new CardGUI(
         this.scene,
-        this.cardGUIs.length * 200 + 550,
+        pos * 200 + 550,
         850,
         card
       );
@@ -63,47 +53,17 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
       cardGUI.setInteractive();
       cardGUI.enableDragging();
       this.cardGUIs.push(cardGUI);
-    }
-  }
-
-  /**
-   * replaces current hand
-   * @param hand
-   */
-  replaceHand(hand: Hand) {
-    // delete previous hand
-    for (let c of this.cardGUIs) {
-      this.stack.addCardGUI(c);
-      this.remove(c);
-    }
-    this.cardGUIs = [];
-
-    // create new hand
-    this.hand = hand;
-    let i = 0;
-    for (let c of hand.getCards()) {
-      if (i >= this.maxCards) break;
-      let cardGUI = new CardGUI(this.scene, i++ * 200 + 550, 850, c);
-      this.add(cardGUI, true);
-      cardGUI.setInteractive();
-      cardGUI.enableDragging();
-      this.cardGUIs.push(cardGUI);
-    }
   }
 
   /**
    * moves a card to stack
-   * @param card
+   * @param pos: position of cardGUI to remove
    */
-  moveToStack(card: Card): void {
-    for (let i in this.cardGUIs) {
-      if (this.cardGUIs[i].card == card) {
-        let c = this.cardGUIs[i];
-        this.stack.addCardGUI(c);
-        this.cardGUIs.splice(parseInt(i), 1);
-        this.remove(c);
-      }
-    }
+  moveToStack(pos: number): void {
+    let c = this.cardGUIs[pos];
+    this.stack.addCardGUI(c);
+    this.cardGUIs.splice(pos, 1);
+    this.remove(c);
   }
 
   /**
@@ -140,9 +100,16 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
     }
   }
 
-
+  /**
+   * deletes card at pos if @card = null, else adds card to position
+   * @param pos: position of card
+   * @param card: card to delete / add
+   */
   handChanged(pos: number, card: Card): void {
-    throw new Error("Method not implemented.");
-    // TODO: changed ?? add card to hand-gui ? move to board ? move to stack ?
+    if (card) {
+      this.addCard(card, pos);
+    } else {
+      this.moveToStack(pos);
+    }
   }
 }
