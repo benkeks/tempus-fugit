@@ -63,7 +63,7 @@ export class Enemy {
         if (true) {
             attackPoints = this.baseAttack;
         } else {
-            attackPoints = this.evaluateSpecialEffect(this.specialEffects[n]);
+            attackPoints = this.evaluateSpecialEffect(this.specialEffects[0]);
         }
         player.takeHit(attackPoints);
     }
