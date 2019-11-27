@@ -137,7 +137,7 @@ export class Player {
     }
 
     public attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void {
-        var attackPoints = 0;
+        var attackPoints = 3;
         if (gameState.evaluate(card.getFormula())) {
             attackPoints = card.getAttackPower();
         } else {
