@@ -2,6 +2,7 @@ import {Enemy} from "./enemy"
 import {Card} from "./card"
 import {Deck} from "./deck"
 import {Hand} from "./hand";
+import {GameState} from "./game-state";
 
 
 export class Player {
@@ -126,6 +127,16 @@ export class Player {
      */
     public isAlive(): boolean {
         return this.currentHP > 0;
+    }
+
+    public attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void {
+        var attackPoints = 0;
+        if (gameState.evaluate(card.getFormula())) {
+            attackPoints = card.getAttackPower();
+        } else {
+            attackPoints = this.baseAttack;
+        }
+        enemy.takeHit(attackPoints);
     }
 
 }

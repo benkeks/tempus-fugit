@@ -100,11 +100,11 @@ export class Game {
     }
 
     private enemyPhase():void {
-        this.enemys.map(e => e.attack(this.player));
+        this.enemys.map(e => e.attack(this.player, this.gameState));
     }
 
     private effectPhase():void {
-
+        
     }
 
     /**
