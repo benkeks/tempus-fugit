@@ -20,6 +20,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   private enemyGUIs:EnemyGUI[];
   private stackGUI:StackGUI;
   private boardGUI:BoardGUI;
+  private phaseText: Phaser.GameObjects.Text;
 
   private enemys: Enemy[];
 
@@ -56,6 +57,8 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     for (let e of this.tfgame.enemys) {
       this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
     }
+
+    this.phaseText = this.add.text(100,100,"Draw Phase");
 
     this.tfgame.startCombat();
       this.tfgame.player.takeCard(this.tfgame.deck);
@@ -107,28 +110,34 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   update(): void {}
 
   drawPhase(game: Game): void {
-      game.nextPhase();
+
+    this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
     console.log("drawPhase");
+    game.nextPhase();
   }
 
   effectPhase(game: Game): void {
     console.log("effect Phase");
       this.handGUI.fadeOut();
+    this.phaseText.setText("Effect Phase");
   }
 
   enemyPhase(game: Game): void {
     console.log("enemyPhase");
       this.handGUI.fadeOut();
+    this.phaseText.setText("Enemy Phase");
   }
 
   energyPhase(game: Game): void {
     console.log("energy Phase");
       this.handGUI.fadeOut();
+    this.phaseText.setText("Energy Phase");
   }
 
   playPhase(game: Game): void {
     console.log("play Phase");
     this.handGUI.fadeIn();
+    this.phaseText.setText("Play Phase");
   }
 }

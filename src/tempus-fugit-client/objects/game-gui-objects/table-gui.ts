@@ -280,7 +280,7 @@ export class TableGUI implements GameStateListener {
               10,
               COLOR_BUTTON
             ),
-            text: this.scene.add.text(0, 0, "next", {
+            text: this.scene.add.text(0, 0, "  next", {
               fontSize: 18
             }),
             space: {
