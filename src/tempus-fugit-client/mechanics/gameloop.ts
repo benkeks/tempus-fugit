@@ -1,4 +1,9 @@
 import EventEmitter = Phaser.Events.EventEmitter;
+import {Deck} from "../objects/game-objects/deck";
+import {Player} from "../objects/game-objects/player";
+import {Hand} from "../objects/game-objects/hand";
+import {GameState} from "../objects/game-objects/game-state";
+import {Enemy} from "../objects/game-objects/enemy";
 
 export class Gameloop {
     private readonly numPhases: 5;
@@ -102,6 +107,49 @@ export class Gameloop {
      */
     public incrementTurnCount():void {
         this.curTurn++;
+    }
+
+    /**
+     * Darw a card, go to next phase
+     *
+     * @param deck
+     * @param player
+     */
+    public drawPhaseHandler(deck: Deck, player: Player) {
+
+    }
+
+    /**
+     * Enable gamestate changes
+     *
+     * @param state
+     */
+    public energyPhaseHandler(state: GameState) {
+
+    }
+
+    /**
+     * Disable gamestate changes
+     * Enable cards
+     *
+     */
+    public playPhaseHandler(player: Player, enemies: Enemy[]) {
+
+    }
+
+    /**
+     * Disable cards
+     * Trigger enemy attack
+     */
+    public enemyPhaseHandler(player: Player, enemy: Enemy[]) {
+
+    }
+
+    /**
+     * Trigger all player and enemy effects
+     */
+    public effectPhaseHandler(player: Player, enemies: Enemy[]) {
+
     }
 
 }
