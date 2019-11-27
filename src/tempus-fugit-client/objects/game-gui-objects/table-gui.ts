@@ -356,12 +356,7 @@ export class TableGUI implements GameStateListener {
     }
   }
 
-  variableChanged(
-    gameState: GameState,
-    oldVariable: Variable,
-    variable: Variable,
-    valueChanges: { [p: number]: [boolean, boolean] }
-  ): void {
+  variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }): void {
 
     const row = 0; //TODO: gameState.round ??
     const column = 0; //TODO: gameState.variables.indexOf(variable) ??
@@ -374,6 +369,9 @@ export class TableGUI implements GameStateListener {
       this.setCellIconColor(COLOR_PRIMARY, row, column);
       this.setEnergyIconColor( COLOR_RED,energy-1);
     }
+  }
+
+  energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number): void {
   }
 }
 
