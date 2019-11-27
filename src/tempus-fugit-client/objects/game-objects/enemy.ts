@@ -5,7 +5,7 @@ import {Formula} from "../../temporal-logic/formula";
 
 
 export class Enemy {
-    private name: String; // The enemy's name
+    private name: string; // The enemy's name
     private maxHP: number; // The enemy's maximum hit points
     private currentHP: number; // The enemy's current hit points
     private baseAttack: number; // The enemy's base attack strength
@@ -17,7 +17,7 @@ export class Enemy {
         return this.currentHP;
     }
 
-    public getName(): String {
+    public getName(): string {
         return this.name;
     }
 
@@ -48,7 +48,7 @@ export class Enemy {
      * @example var hitPointReduction = evaluateSpecialEffect("Fire attack");
      * @author Florian
      */
-    private evaluateSpecialEffect(specialEffect: String): number {
+    private evaluateSpecialEffect(specialEffect: string): number {
         return 19;
     }
 
@@ -96,6 +96,10 @@ export class Enemy {
         return this.currentHP > 0;
     }
 
+
+    get baseAttack(): number {
+        return this._baseAttack;
+    }
 }
 
 

@@ -6,11 +6,11 @@ import {GameState} from "./game-state";
 
 
 export class Player {
-    private name: String; // Player's name
+    private name: string; // Player's name
     private maxHP: number; // Player's maximum hit points
     private currentHP: number; // Player's currentHP
-    private baseAttack: number; // Player's attack strength without using a card
-    private states: String[]; // List of player's states, such as "burning", "healing" etc.
+    private _baseAttack: number; // Player's attack strength without using a card
+    private states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
 
@@ -38,7 +38,7 @@ export class Player {
      * @return Returns the player's name
      * @author Florian
      */
-    public getName(): String {
+    public getName(): string {
         return this.name;
     }
 
@@ -61,11 +61,11 @@ export class Player {
      * new Player("Nice player", 20, 30);
      * @author Florian
      */
-    constructor(name: String, hp: number, baseAttack: number) {
+    constructor(name: string, hp: number, baseAttack: number) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
-        this.baseAttack = baseAttack;
+        this._baseAttack = baseAttack;
         this.hand = new Hand(5);
         this.states = [];
         this.listener = [];
@@ -84,7 +84,7 @@ export class Player {
     public attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]): void {
         var attackPoints = 0;
         if (baseAttack) {
-            attackPoints = this.baseAttack
+            attackPoints = this._baseAttack
         } else {
             attackPoints = this.hand.getCard(n).evaluateAttack(gameState);
         }
