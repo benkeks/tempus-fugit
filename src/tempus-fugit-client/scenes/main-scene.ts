@@ -1,20 +1,30 @@
-import { CardGUI } from "../objects/game-gui-objects/card-gui";
-import { BoardGUI } from "../objects/game-gui-objects/board-gui";
-import { StackGUI } from "../objects/game-gui-objects/stack-gui";
 import { Card } from "../objects/game-objects/card";
-import { HandGUI } from "../objects/game-gui-objects/hand-gui";
-import { Hand } from "../objects/game-objects/hand";
-import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
-import { Deck } from "../objects/game-objects/deck";
-import { TableGUI } from "../objects/game-gui-objects/table-gui";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
-import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
 import {Enemy} from "../objects/game-objects/enemy";
-import {Player} from "../objects/game-objects/player";
+import {CardGUI} from "../objects/game-gui-objects/card-gui";
+import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
+import {TechDemoGame} from "../mechanics/tech-demo-game";
+import {BoardGUI} from "../objects/game-gui-objects/board-gui";
+import {TableGUI} from "../objects/game-gui-objects/table-gui";
+import {HandGUI} from "../objects/game-gui-objects/hand-gui";
+import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
+import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
+import {StackGUI} from "../objects/game-gui-objects/stack-gui";
+import {Game, GameStateListener} from "../mechanics/game";
 
 
-export class MainScene extends Phaser.Scene {
-  private board: BoardGUI;
+export class MainScene extends Phaser.Scene implements GameStateListener {
+  private playerGUI: PlayerGUI;
+  private gameStateGUI: TableGUI;
+  private handGUI:HandGUI;
+  private deckGUI:DeckGUI;
+  private enemyGUIs:EnemyGUI[];
+  private stackGUI:StackGUI;
+  private boardGUI:BoardGUI;
+  private phaseText: Phaser.GameObjects.Text;
+
+  private enemys: Enemy[];
+
+  private tfgame:Game;
 
   constructor() {
     super({
@@ -27,48 +37,33 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-
-    /*
-
-    // tests; to be replaced by game phases issue
-    let table = new TableGUI(this, 3);
-    //table.setEnergie(4);
-
-    // stack test
-    let stack = new StackGUI(this, "stack");
-    //stack.addCardGUI(c);
-
-    // hand test
-    let hand = new Hand(5);
-    let cards = [];
-    hand.addCard(new Card(), 1);
-    for (let i = 0; i < 5; i++) cards.push(new Card());
-    hand.setCards(cards);
-    this.board = new BoardGUI(this, stack);
-    let handGui = new HandGUI(this, hand, stack, this.board);
-
-
-    handGui.moveToStack(cards[0]);
-    handGui.moveToBoard(cards[2]);
-    handGui.addCard(new Card());
-    handGui.moveToBoard(cards[3]);
-    handGui.fadeOut();
-    handGui.fadeIn();
-
-    // board test
-    board.clear();
-    let c1 = new CardGUI(this, 500, 500, 'card1', new Card());
-    this.board.addCardGUI(c1);
-    this.board.moveToStack(c1);
-     */
-
-
-    // deck test
-    let deck = new DeckGUI(this, "deck", new Deck());
-
-
-
     this.configureCardEvents();
+
+    this.tfgame = new TechDemoGame();
+    this.tfgame.listener.push(this);
+
+    this.stackGUI = new StackGUI(this, "stack");
+    this.boardGUI = new BoardGUI(this, this.stackGUI);
+
+    this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
+    this.handGUI = new HandGUI(this, this.tfgame.hand, this.stackGUI, this.boardGUI);
+    this.gameStateGUI = new TableGUI(this, this.tfgame);
+
+
+    this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
+    this.playerGUI.listener.push(this.tfgame.player);
+
+    this.enemyGUIs = [];
+    for (let e of this.tfgame.enemys) {
+      this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
+    }
+
+    this.phaseText = this.add.text(100,100,"Draw Phase");
+
+    this.tfgame.startCombat();
+      this.tfgame.player.takeCard(this.tfgame.deck);
+
+      this.handGUI.fadeOut();
   }
 
   private configureCardEvents(): void {
@@ -93,12 +88,19 @@ export class MainScene extends Phaser.Scene {
       ) {
         if (gameObject instanceof CardGUI) {
           gameObject.setDepth(1);
-          gameObject.x = gameObject.cardOriginX;
-          gameObject.y = gameObject.cardOriginY;
-
-          // play card if dragged to upper half of screen
-          if (pointer.upY < window.innerHeight / 2) {
-            this.board.addCardGUI(gameObject);
+          const card: Card = gameObject.card;
+          const enemy: Enemy = this.enemyGUIs[0].enemy;
+          // TODO: set up collision between cards and enemies attack
+          // position of enemy hardcoded here
+          if (pointer.upY >= 300 && pointer.upX >= 1200) {
+            for (let listener of this.playerGUI.listener)
+              listener.attackEnemy(card, enemy, this.tfgame.gameState);
+              this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
+              console.log('player attacked enemy with card');
+          } else {
+            console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
+            gameObject.x = gameObject.cardOriginX;
+            gameObject.y = gameObject.cardOriginY;
           }
         }
       },
@@ -106,4 +108,36 @@ export class MainScene extends Phaser.Scene {
     );
   }
   update(): void {}
+
+  drawPhase(game: Game): void {
+
+    this.phaseText.setText("Draw Phase");
+      this.handGUI.fadeOut();
+    console.log("drawPhase");
+    game.nextPhase();
+  }
+
+  effectPhase(game: Game): void {
+    console.log("effect Phase");
+      this.handGUI.fadeOut();
+    this.phaseText.setText("Effect Phase");
+  }
+
+  enemyPhase(game: Game): void {
+    console.log("enemyPhase");
+      this.handGUI.fadeOut();
+    this.phaseText.setText("Enemy Phase");
+  }
+
+  energyPhase(game: Game): void {
+    console.log("energy Phase");
+      this.handGUI.fadeOut();
+    this.phaseText.setText("Energy Phase");
+  }
+
+  playPhase(game: Game): void {
+    console.log("play Phase");
+    this.handGUI.fadeIn();
+    this.phaseText.setText("Play Phase");
+  }
 }

@@ -21,6 +21,7 @@ export class GameState {
     set maxEnergy(value: number) {
         let old:number = this._maxEnergy;
         this._maxEnergy = value;
+        this.energy = value;
 
         this.listener.map(obj => obj.energyChanged(this, -1, -1, old, value));
     }
@@ -35,13 +36,15 @@ export class GameState {
     private _variables:{[represenstation:string]:Variable} = {};
     public variableStatus:{[representation:string]:VariableStatus} = {};
 
-    private _maxEnergy:number = 3;
-    private _energy:number = this._maxEnergy;
+    private _maxEnergy:number = 2;
+    private _energy:number = 0;
 
     public activeState:number = 0;
     public listener:GameStateListener[] = [];
 
-    constructor() {}
+    constructor() {
+        this.energy = this.maxEnergy;
+    }
 
     /**
      * applies the assignment of the given formula and evaluates it.
@@ -51,18 +54,19 @@ export class GameState {
      *
      * */
     public evaluate(object:any):boolean {
-        if (typeof object === typeof Formula) {
+        //if (object.constructor.name === Formula.constructor.name) {
             let f: Formula = object as Formula;
 
             f.applyAssignment(this._variables);
             return f.evaluate(this.activeState);
-        } else if (typeof object === typeof Card) {
+        /*} else if (object.constructor.name === Card.constructor.name) {
             let c:Card = object as Card;
             return this.evaluate(c.getFormula());
         } else {
-            console.log("object type: " + typeof object);
+            console.log(object.constructor.name)
+            console.log(Formula.constructor.name)
             throw new TypeError("Evaluate expects object of type Formula or Card!");
-        }
+        }*/
     }
 
     /***
@@ -75,8 +79,7 @@ export class GameState {
         if (this.activeState == round) {
             return 1;
         }
-
-
+        this.energy = this.maxEnergy;
         let lastState:number=this.activeState;
         this.activeState = round;
 
@@ -84,6 +87,26 @@ export class GameState {
         this.listener.map(obj => obj.roundChanged(this, lastState, this.activeState));
 
         return 0;
+    }
+
+    public setVariableUser(name:string, value:boolean, state:number=this.activeState):number {
+        let vs:VariableStatus = this.getVariableStatus(name);
+
+        if (state !== this.activeState) return 3;
+
+        if (this.energy > 0 && value) {
+            this.energy--;
+        } else if (this.energy < this.maxEnergy && !value) {
+            this.energy++;
+        } else {
+            return 2;
+        }
+
+        if (vs.isBlocked(state)) {
+            return 1;
+        }
+
+        return this.setVariable(name, value, state);
     }
 
     /**
@@ -94,31 +117,28 @@ export class GameState {
      * @param state the state where the value should be set. Default: the active state
      * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available
      * */
-    public setVariable(name:string, value:boolean, state:number=this.activeState, useEnergy:boolean=true):number {
+    public setVariable(name:string, value:boolean, state:number=this.activeState):number {
         let v:Variable = this.getVariable(name);
-        let vs:VariableStatus = this.getVariableStatus(name);
         let oldVariable:Variable = v.copy();
         let changes:{[state:number]:boolean} = {};
+        //if (v.getValue(state) == value) return 0;
 
-        if (useEnergy && state == this.activeState) {
-            if (this.energy > 0) {
-                this.energy -= 1;
-            } else {
-                return 2;
-            }
-        }
-
-        if (vs.isBlocked(state)) {
-            return 1;
-        } else {
-            v = this.variables[name];
-            changes[state] = value;
-            v.setValue(value, state);
-        }
+        changes[state] = value;
+        v.setValue(value, state);
 
         this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
 
         return 0;
+    }
+
+    public invertVariableUser(variable:string, state:number=this.activeState):number {
+        let v:Variable = this.getVariable(variable);
+        return this.setVariableUser(variable, !v.getValue(state), state);
+    }
+
+    public invertVariable(variable:string, state:number=this.activeState):number {
+        let v:Variable = this.getVariable(variable);
+        return this.setVariable(variable, !v.getValue(state), state);
     }
 
     public getVariableStatus(name:string):VariableStatus {
@@ -131,6 +151,7 @@ export class GameState {
     public getVariable(name:string):Variable {
         if (!(name in this.variables)) {
             this.variables[name] = new Variable(name);
+            this.variables[name].finiteStates = false;
             this.variableStatus[name] = new VariableStatus();
         }
         return this.variables[name];

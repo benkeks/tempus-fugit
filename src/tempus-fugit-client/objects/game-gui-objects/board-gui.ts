@@ -1,6 +1,8 @@
 import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
 
+// TODO: when showing  cards on board, show card but smaller
+
 /**
  * @author Mustafa
  */

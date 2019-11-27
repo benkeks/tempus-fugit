@@ -2,14 +2,22 @@ import {Enemy} from "./enemy"
 import {Card} from "./card"
 import {Deck} from "./deck"
 import {Hand} from "./hand";
+import {GameState} from "./game-state";
 
 
 export class Player {
-    private name: String; // Player's name
-    private maxHP: number; // Player's maximum hit points
-    private currentHP: number; // Player's currentHP
-    private baseAttack: number; // Player's attack strength without using a card
-    private states: String[]; // List of player's states, such as "burning", "healing" etc.
+    get baseAttack(): number {
+        return this._baseAttack;
+    }
+
+    set baseAttack(value: number) {
+        this._baseAttack = value;
+    }
+    public name: string; // Player's name
+    public maxHP: number; // Player's maximum hit points
+    public currentHP: number; // Player's currentHP
+    private _baseAttack: number; // Player's attack strength without using a card
+    public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
 
@@ -37,7 +45,7 @@ export class Player {
      * @return Returns the player's name
      * @author Florian
      */
-    public getName(): String {
+    public getName(): string {
         return this.name;
     }
 
@@ -60,11 +68,11 @@ export class Player {
      * new Player("Nice player", 20, 30);
      * @author Florian
      */
-    constructor(name: String, hp: number, baseAttack: number) {
+    constructor(name: string, hp: number, baseAttack: number) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
-        this.baseAttack = baseAttack;
+        this._baseAttack = baseAttack;
         this.hand = new Hand(5);
         this.states = [];
         this.listener = [];
@@ -83,7 +91,7 @@ export class Player {
     public attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]): void {
         var attackPoints = 0;
         if (baseAttack) {
-            attackPoints = this.baseAttack
+            attackPoints = this._baseAttack
         } else {
             attackPoints = this.hand.getCard(n).evaluateAttack(gameState);
         }
@@ -114,7 +122,7 @@ export class Player {
      */
     //
     public takeCard(deck: Deck): void {
-        this.hand.addCard(deck.takeCardOnTop(), 0);
+        this.hand.addCard(deck.takeCardOnTop());
     }
 
 
@@ -126,6 +134,16 @@ export class Player {
      */
     public isAlive(): boolean {
         return this.currentHP > 0;
+    }
+
+    public attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void {
+        var attackPoints = 3;
+        if (gameState.evaluate(card.getFormula())) {
+            attackPoints = card.getAttackPower();
+        } else {
+            attackPoints = this._baseAttack;
+        }
+        enemy.takeHit(attackPoints);
     }
 
 }

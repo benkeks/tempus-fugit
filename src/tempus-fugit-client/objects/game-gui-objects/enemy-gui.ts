@@ -5,7 +5,7 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
  */
 export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener{
 
-    private enemy: Enemy; // enemy object associated with this gui
+    public enemy: Enemy; // enemy object associated with this gui
     private hpText: Phaser.GameObjects.Text; // shows hp of enemy
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of enemy
 
@@ -14,7 +14,7 @@ export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener
         texture: string,
         enemy: Enemy,
         hp: number = 100,
-        x: number = 500,
+        x: number = 1500,
         y: number = 500
     ) {
         super(scene, x, y, texture);
@@ -28,10 +28,8 @@ export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener
             color: '#cc0000'
         };
         this.hpText = this.scene.add.text(x - 110  , y - 50, 'hp: ' + enemy.getHP()).setStyle(textStyle);
-        // TODO: need enemy.getBaseAttack() function
-        this.baseAttackText = this.scene.add.text(x - 50  , y - 50, 'Attack: ' + 10).setStyle(textStyle);
-
-        // TODO: need enemy function to register as listener
+        this.baseAttackText = this.scene.add.text(x - 50  , y - 50, 'Attack: ' + enemy.baseAttack).setStyle(textStyle);
+        this.enemy.listener.push(this);
     }
 
     /**

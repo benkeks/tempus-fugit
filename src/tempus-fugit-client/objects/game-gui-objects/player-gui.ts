@@ -1,4 +1,7 @@
 import {Player, PlayerListener} from "../game-objects/player";
+import {Card} from "../game-objects/card";
+import {Enemy} from "../game-objects/enemy";
+import {GameState} from "../game-objects/game-state";
 
 /**
  * @author Mustafa
@@ -8,13 +11,14 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     private player: Player; // player object associated with this gui
     private hpText: Phaser.GameObjects.Text; // shows hp of player
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of player
+    public listener: EnemyAttackListener[] = []; // List of objects listening to enemy attack events
 
     constructor(
         scene: Phaser.Scene,
         texture: string,
         player: Player,
         hp: number = 100,
-        x: number = 1500,
+        x: number = 500,
         y: number = 500
     ) {
         super(scene, x, y, texture);
@@ -27,10 +31,8 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
             color: '#cc0000'
         };
         this.hpText = this.scene.add.text(x - 110  , y - 50, 'hp: ' + player.getHP()).setStyle(textStyle);
-        // TODO: need player.getBaseAttack() function
-        this.baseAttackText = this.scene.add.text(x - 50  , y - 50, 'Attack: ' + 10).setStyle(textStyle);
-
-        // TODO: need player function to register as listener
+        this.baseAttackText = this.scene.add.text(x - 50  , y - 50, 'Attack: ' + player.baseAttack).setStyle(textStyle);
+        this.player.listener.push(this);
     }
 
     /**
@@ -40,4 +42,11 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     playerHpChanged(changedTo: number): void {
         this.hpText.setText('hp: ' + changedTo);
     }
+}
+
+/**
+ * Interface for objects that listen when user attacks enemy with a card
+ */
+export interface EnemyAttackListener {
+    attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void;
 }
