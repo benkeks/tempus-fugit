@@ -1,5 +1,6 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
+import {Game} from "../../mechanics/game";
 
 const COLOR_PRIMARY = 0x0f3491;
 const COLOR_LIGHT = 0x7b5e57;
@@ -15,6 +16,7 @@ export class TableGUI implements GameStateListener {
   private readonly scene: Phaser.Scene;
   private energyTable; // table for red dots representing energy
   private _gameState: GameState;
+  private game:Game;
 
   private variableTable; // table object
   private readonly tableOffsetX: number; // x-position of table
@@ -26,22 +28,24 @@ export class TableGUI implements GameStateListener {
 
   constructor(
     scene: Phaser.Scene,
-    gameState: GameState,
+    game: Game,
     tableOffsetX: number = 1000,
     tableOffsetY: number = 140
   ) {
     this.scene = scene;
     this.tableOffsetX = tableOffsetX;
     this.tableOffsetY = tableOffsetY;
-    this.gameState = gameState;
-    this.createEnergyTable(gameState.energy);
+    this.gameState = game.gameState;
+    this.game = game;
+
+    this.createEnergyTable(this.gameState.energy);
     let i = 0;
-    for (let key in gameState.variables)
+    for (let key in this.gameState.variables)
       this.variables[key] = i++;
 
     this.createVariableTable(Object.keys(this.variables));
     this.createButton();
-    this.roundChanged(gameState, -1, gameState.activeState);
+    this.roundChanged(this.gameState, -1, this.gameState.activeState);
   }
 
   /**
@@ -292,8 +296,9 @@ export class TableGUI implements GameStateListener {
       "button.click",
       function(button, index, pointer, event) {
         // TODO: alert game State that button was clicked
-        this._gameState.changeRound();
+        //this._gameState.changeRound();
         console.log('changes round after click');
+        this.game.nextPhase();
       },
       this
     );

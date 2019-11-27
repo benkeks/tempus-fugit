@@ -24,6 +24,8 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
     this.board = board;
     this.stack = stack;
     this.setOutlines();
+    this.hand = hand;
+
     this.hand.listener.push(this);
   }
 

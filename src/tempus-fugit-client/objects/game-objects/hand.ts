@@ -4,7 +4,7 @@ import {PlayerListener} from "./player";
 export class Hand {
     cards: Card[]; // A list of cards contained in the hand
     size: number; // The number of cards the hand can hold
-    listener:HandListener[]; // A list of objects listening to events happening to this hand
+    listener:HandListener[] = []; // A list of objects listening to events happening to this hand
 
     /**
      * Constructor for the Hand class

@@ -62,7 +62,6 @@ export class GameState {
             let c:Card = object as Card;
             return this.evaluate(c.getFormula());
         } else {
-            console.log("object type: " + typeof object);
             throw new TypeError("Evaluate expects object of type Formula or Card!");
         }
     }
@@ -78,7 +77,6 @@ export class GameState {
             return 1;
         }
         this.energy = this.maxEnergy;
-        console.log("round changed: " + round);
         let lastState:number=this.activeState;
         this.activeState = round;
 
@@ -128,8 +126,6 @@ export class GameState {
         v.setValue(value, state);
 
         this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
-
-        console.log('setVariable: name: ' + name + ' value: ' + value + ' state: ' + state + ' energy: ' + this.energy); // TODO: delete
 
         return 0;
     }

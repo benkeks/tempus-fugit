@@ -6,11 +6,18 @@ import {GameState} from "./game-state";
 
 
 export class Player {
-    private name: string; // Player's name
-    private maxHP: number; // Player's maximum hit points
-    private currentHP: number; // Player's currentHP
+    get baseAttack(): number {
+        return this._baseAttack;
+    }
+
+    set baseAttack(value: number) {
+        this._baseAttack = value;
+    }
+    public name: string; // Player's name
+    public maxHP: number; // Player's maximum hit points
+    public currentHP: number; // Player's currentHP
     private _baseAttack: number; // Player's attack strength without using a card
-    private states: string[]; // List of player's states, such as "burning", "healing" etc.
+    public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
 
@@ -134,7 +141,7 @@ export class Player {
         if (gameState.evaluate(card.getFormula())) {
             attackPoints = card.getAttackPower();
         } else {
-            attackPoints = this.baseAttack;
+            attackPoints = this._baseAttack;
         }
         enemy.takeHit(attackPoints);
     }

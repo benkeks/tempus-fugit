@@ -5,12 +5,12 @@ import {Formula} from "../../temporal-logic/formula";
 
 
 export class Enemy {
-    private name: string; // The enemy's name
-    private maxHP: number; // The enemy's maximum hit points
-    private currentHP: number; // The enemy's current hit points
-    private baseAttack: number; // The enemy's base attack strength
-    private specialAttack: number; // The enemy's base attack strength
-    private formula: Formula; // A formula attached to the card
+    public name: string; // The enemy's name
+    public maxHP: number; // The enemy's maximum hit points
+    public currentHP: number; // The enemy's current hit points
+    public baseAttack: number; // The enemy's base attack strength
+    public specialAttack: number; // The enemy's base attack strength
+    public formula: Formula; // A formula attached to the card
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
@@ -30,7 +30,7 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: String, hp: number, baseAttack: number, specialAttack: number, forumula: Formula) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: number, forumula: Formula) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
@@ -94,11 +94,6 @@ export class Enemy {
      */
     public isAlive(): boolean {
         return this.currentHP > 0;
-    }
-
-
-    get baseAttack(): number {
-        return this._baseAttack;
     }
 }
 

@@ -51,6 +51,10 @@ export class Game {
      * increments turn counter every time player turn is reached
      */
     public nextPhase():void {
+        if (this.curPhase === this.numPhases-1) {
+            this.endOfRound();
+        }
+
         this.curPhase = (this.curPhase + 1) % this.numPhases;
 
         switch (this.curPhase) {
@@ -87,8 +91,6 @@ export class Game {
         if (!this.hand.isFull()) {
             this.hand.addCard(this.deck.takeCardOnTop());
         }
-
-        this.gameState.changeRound();
     }
 
     private energyPhase():void {
@@ -104,14 +106,20 @@ export class Game {
     }
 
     private effectPhase():void {
-        
+    }
+
+    private endOfRound():void {
+        this.gameState.changeRound();
+
+        this.curTurn++;
     }
 
     /**
      * Emits 'draw-phase' event to start the combat
      */
     public startCombat():void {
-        this.emitter.emit('draw-phase');
+        this.curPhase = 0;
+        this.drawPhase();
     }
 
     /**
