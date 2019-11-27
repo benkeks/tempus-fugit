@@ -1,7 +1,11 @@
-import { Deck } from "../game-objects/deck";
+import {Deck, DeckListener} from "../game-objects/deck";
 
-export class DeckGUI extends Phaser.GameObjects.Sprite {
+/**
+ * @author Mustafa
+ */
+export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener{
   private deck: Deck;
+  private text: Phaser.GameObjects.Text; // shows number of cards
 
   constructor(
     scene: Phaser.Scene,
@@ -14,5 +18,19 @@ export class DeckGUI extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     this.deck = deck;
     this.scene = scene;
+    // TODO need function to get number of cards in deck from deck class
+    this.text = this.scene.add.text(x-35  , y+100, '').setStyle({
+      fontFamily: 'Arial',
+    });
+    // TODO: need function in deck class to add listener
+    // this.deck.addListener(this);
+  }
+
+  /**
+   * display number of cards in deck
+   * @param numCards: number of cards
+   */
+  numCardsChanged(numCards: number): void {
+    this.text.setText(numCards  + ' Karten');
   }
 }

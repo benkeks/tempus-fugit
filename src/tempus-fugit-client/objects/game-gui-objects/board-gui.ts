@@ -1,6 +1,9 @@
 import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
 
+/**
+ * @author Mustafa
+ */
 export class BoardGUI {
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the board
   private readonly stack: StackGUI;

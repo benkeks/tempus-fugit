@@ -2,9 +2,12 @@ import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
 import { BoardGUI } from "./board-gui";
 import { Card } from "../game-objects/card";
-import { Hand } from "../game-objects/hand";
+import {Hand, HandListener} from "../game-objects/hand";
 
-export class HandGUI extends Phaser.GameObjects.Group {
+/**
+ * @author Mustafa
+ */
+export class HandGUI extends Phaser.GameObjects.Group implements HandListener{
   private hand: Hand; // hand object associated with handGUI object
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
   private readonly stack: StackGUI;
@@ -22,6 +25,7 @@ export class HandGUI extends Phaser.GameObjects.Group {
     this.stack = stack;
     this.replaceHand(hand);
     this.setOutlines();
+    // TODO: need hand function to register as listener
   }
 
   /**
@@ -53,7 +57,6 @@ export class HandGUI extends Phaser.GameObjects.Group {
         this.scene,
         this.cardGUIs.length * 200 + 550,
         850,
-        "card",
         card
       );
       this.add(cardGUI, true);
@@ -80,13 +83,7 @@ export class HandGUI extends Phaser.GameObjects.Group {
     let i = 0;
     for (let c of hand.getCards()) {
       if (i >= this.maxCards) break;
-      let cardGUI = new CardGUI(
-        this.scene,
-        i++ * 200 + 550,
-        850,
-        "card", // TODO: change default texture "card" to ( texture saved in card object ? )
-        c
-      );
+      let cardGUI = new CardGUI(this.scene, i++ * 200 + 550, 850, c);
       this.add(cardGUI, true);
       cardGUI.setInteractive();
       cardGUI.enableDragging();
@@ -98,7 +95,7 @@ export class HandGUI extends Phaser.GameObjects.Group {
    * moves a card to stack
    * @param card
    */
-  moveToStack(card: Card):void {
+  moveToStack(card: Card): void {
     for (let i in this.cardGUIs) {
       if (this.cardGUIs[i].card == card) {
         let c = this.cardGUIs[i];
@@ -141,5 +138,11 @@ export class HandGUI extends Phaser.GameObjects.Group {
         this.cardGUIs.splice(parseInt(i), 1);
       }
     }
+  }
+
+
+  handChanged(pos: number, card: Card): void {
+    throw new Error("Method not implemented.");
+    // TODO: changed ?? add card to hand-gui ? move to board ? move to stack ?
   }
 }
