@@ -1,11 +1,28 @@
 import EventEmitter = Phaser.Events.EventEmitter;
+import { Hand } from "../objects/game-objects/hand";
+import {Deck} from "../objects/game-objects/deck";
+import {Player} from "../objects/game-objects/player";
+import {GameState} from "../objects/game-objects/game-state";
+import {Enemy} from "../objects/game-objects/enemy";
+import {Card} from "../objects/game-objects/card";
 
-export class Gameloop {
+export class Game {
     private readonly numPhases: 5;
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
     private toPhase: Map<number, string>;
+
+    public listener:GameStateListener[] = [];
+
+    public hand:Hand;
+    public deck:Deck = new Deck();
+    public player:Player;
+    public gameState:GameState;
+    public enemys:Enemy[] = [];
+    public cards:Card[] = [];
+
+    // TODO: effect list
 
     constructor() {
         this.curPhase = 0;
@@ -35,11 +52,59 @@ export class Gameloop {
      */
     public nextPhase():void {
         this.curPhase = (this.curPhase + 1) % this.numPhases;
-        this.emitter.emit(this.getPhaseString());
+
+        switch (this.curPhase) {
+            case 0:
+                this.drawPhase();
+                this.listener.map(l => l.drawPhase(this));
+                break;
+            case 1:
+                this.energyPhase();
+                this.listener.map(l => l.energyPhase(this));
+                break;
+            case 2:
+                this.playPhase();
+                this.listener.map(l => l.playPhase(this));
+                break;
+            case 3:
+                this.enemyPhase();
+                this.listener.map(l => l.enemyPhase(this));
+                break;
+            case 4:
+                this.effectPhase();
+                this.listener.map(l => l.effectPhase(this));
+                break;
+        }
+
+        /*this.emitter.emit(this.getPhaseString());
         if (this.curPhase === 0) {
             this.incrementTurnCount();
             this.emitter.emit('next-round');
+        }*/
+    }
+
+    private drawPhase():void {
+        if (!this.hand.isFull()) {
+            this.hand.addCard(this.deck.takeCardOnTop());
         }
+
+        this.gameState.changeRound();
+    }
+
+    private energyPhase():void {
+
+    }
+
+    private playPhase():void {
+
+    }
+
+    private enemyPhase():void {
+        this.enemys.map(e => e.attack(this.player, this.gameState));
+    }
+
+    private effectPhase():void {
+        
     }
 
     /**
@@ -103,5 +168,12 @@ export class Gameloop {
     public incrementTurnCount():void {
         this.curTurn++;
     }
+}
 
+export interface GameStateListener {
+    drawPhase(game:Game):void;
+    energyPhase(game:Game):void;
+    playPhase(game:Game):void;
+    enemyPhase(game:Game):void;
+    effectPhase(game:Game):void;
 }

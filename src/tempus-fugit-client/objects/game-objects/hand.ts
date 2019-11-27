@@ -15,7 +15,7 @@ export class Hand {
         this.cards = [];
         this.size = size;
         for (var i = 0;i < this.size;i++) {
-            this.cards[i] = new Card("Empty", "", "","", 0);
+            this.cards[i] = null;
         }
         this.listener = [];
     }
@@ -24,17 +24,41 @@ export class Hand {
      * Puts a card at 'position' into the hand and informs hand listeners
      * @param card Card that should be added
      * @param position Position in the hand at which the card will be placed
-     * @return No return value
+     * @return Returns 1 if it worked, otherwise 0
      * @example dummyPlayer.hand.addCard(dummyCard, 3);
      * @author Florian
      */
-    addCard(card: Card, position: number): void {
-        this.cards[position] = card;
+    public addCard(card: Card, position: number = -1): number {
+        if (this.isFull()) return 0;
+
+        if (position != -1) {
+            this.cards[position] = card;
+        } else {
+            for (let i of [0,1,2,3,4]) {
+                if (this.cards[i] == null) {
+                    this.cards[i] = card;
+                    break;
+                }
+            }
+        }
 
         for (let i in this.listener) {
             this.listener[i].handChanged(position, card);
         }
+        return 1;
     }
+
+    // Checks whether the hand is full
+    public isFull(): boolean {
+        var full = true;
+        for (let i of [0,1,2,3,4]) {
+            if (this.cards[i] == null) {
+                full = false;
+            }
+        }
+        return full;
+    }
+
 
     /**
      * Removes the card a 'position'
@@ -43,7 +67,7 @@ export class Hand {
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    removeCard(position: number): void {
+    public removeCard(position: number): void {
         this.cards[position] = new Card("Empty", "", "","", 0);
     }
 
@@ -54,7 +78,7 @@ export class Hand {
      * @example dummyPlayer.hand.getCard(4);
      * @author Florian
      */
-    getCard(n: number): Card {
+    public getCard(n: number): Card {
         if (n < 0  || n >= this.size) {
             return null;
         }

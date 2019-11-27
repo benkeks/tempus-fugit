@@ -1,18 +1,12 @@
-import { CardGUI } from "../objects/game-gui-objects/card-gui";
-import { BoardGUI } from "../objects/game-gui-objects/board-gui";
-import { StackGUI } from "../objects/game-gui-objects/stack-gui";
 import { Card } from "../objects/game-objects/card";
-import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { Hand } from "../objects/game-objects/hand";
-import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
 import { Deck } from "../objects/game-objects/deck";
-import { TableGUI } from "../objects/game-gui-objects/table-gui";
-import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
-import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
-import { Enemy } from "../objects/game-objects/enemy";
-import { Player } from "../objects/game-objects/player";
-import { GameState } from "../objects/game-objects/game-state";
-import { Formula } from "../temporal-logic/formula";
+import {Enemy} from "../objects/game-objects/enemy";
+import {Player} from "../objects/game-objects/player";
+import {BoardGUI} from "../objects/game-gui-objects/board-gui";
+import {CardGUI} from "../objects/game-gui-objects/card-gui";
+import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
+
 
 export class MainScene extends Phaser.Scene {
   private playerGUI: PlayerGUI;
