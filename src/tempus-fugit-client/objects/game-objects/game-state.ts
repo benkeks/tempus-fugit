@@ -57,7 +57,6 @@ export class GameState {
             let f: Formula = object as Formula;
 
             f.applyAssignment(this._variables);
-            console.log(this._variables);
             return f.evaluate(this.activeState);
         /*} else if (object.constructor.name === Card.constructor.name) {
             let c:Card = object as Card;
@@ -123,7 +122,6 @@ export class GameState {
         let changes:{[state:number]:boolean} = {};
         //if (v.getValue(state) == value) return 0;
 
-        console.log(v);
         changes[state] = value;
         v.setValue(value, state);
 
