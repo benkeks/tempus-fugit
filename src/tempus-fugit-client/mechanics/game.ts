@@ -50,12 +50,12 @@ export class Game {
      * emits an event for each phase, names can be seen in toPhase map
      * increments turn counter every time player turn is reached
      */
-    public nextPhase():void {
+    public nextPhase(next:number = (this.curPhase + 1) % this.numPhases):void {
         if (this.curPhase === this.numPhases-1) {
             this.endOfRound();
         }
 
-        this.curPhase = (this.curPhase + 1) % this.numPhases;
+        this.curPhase = next;
 
         switch (this.curPhase) {
             case 0:
@@ -89,7 +89,8 @@ export class Game {
 
     private drawPhase():void {
         if (!this.hand.isFull()) {
-            this.hand.addCard(this.deck.takeCardOnTop());
+            //this.hand.addCard(this.deck.takeCardOnTop());
+            this.player.takeCard(this.deck);
         }
     }
 
@@ -119,7 +120,7 @@ export class Game {
      */
     public startCombat():void {
         this.curPhase = 0;
-        this.drawPhase();
+        this.nextPhase(0);
     }
 
     /**

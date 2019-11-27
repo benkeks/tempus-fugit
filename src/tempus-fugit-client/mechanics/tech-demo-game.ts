@@ -11,11 +11,12 @@ export class TechDemoGame extends Game{
     constructor() {
         super();
 
-        this.player = new Player("player1", 10, 3);
+        this.player = new Player("player1", 10, 1);
         this.enemys.push(new Enemy("e1", 5, 2,4, new Formula("Ga")));
         this.hand = this.player.hand;
 
         this.gameState = new GameState();
+        this.gameState.maxEnergy = 4;
         this.gameState.setVariable("a", false);
         this.gameState.setVariable("b", false);
         this.gameState.setVariable("c", false);
@@ -30,6 +31,16 @@ export class TechDemoGame extends Game{
         //let c1:Card= new Card("test1", "", "card1", "a", 5);
         //let c2: Card = new Card("test2", "","card2", "a", 2);
 
+        this.deck.addCard(c1);
+        this.deck.addCard(c2);
+        this.deck.addCard(c3);
+        this.deck.addCard(c4);
+        this.deck.addCard(c5);
+        this.deck.addCard(c1);
+        this.deck.addCard(c2);
+        this.deck.addCard(c3);
+        this.deck.addCard(c4);
+        this.deck.addCard(c5);
         this.deck.addCard(c1);
         this.deck.addCard(c2);
         this.deck.addCard(c3);

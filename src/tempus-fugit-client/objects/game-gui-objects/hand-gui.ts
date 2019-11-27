@@ -57,6 +57,13 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
       this.cardGUIs.push(cardGUI);
   }
 
+  getCardGUIIndex(cardGUI: CardGUI): number {
+    for (let index in this.cardGUIs) {
+      if (this.cardGUIs[parseInt(index)] == cardGUI) return parseInt(index);
+    }
+    return -1;
+  }
+
   /**
    * moves a card to stack
    * @param pos: position of cardGUI to remove

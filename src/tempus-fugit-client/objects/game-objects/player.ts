@@ -122,7 +122,7 @@ export class Player {
      */
     //
     public takeCard(deck: Deck): void {
-        this.hand.addCard(deck.takeCardOnTop(), 0);
+        this.hand.addCard(deck.takeCardOnTop());
     }
 
 

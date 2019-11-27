@@ -48,7 +48,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.handGUI = new HandGUI(this, this.tfgame.hand, this.stackGUI, this.boardGUI);
     this.gameStateGUI = new TableGUI(this, this.tfgame);
 
-    this.handGUI.fadeOut();
 
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
@@ -59,7 +58,9 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     }
 
     this.tfgame.startCombat();
-    this.tfgame.nextPhase();
+      this.tfgame.player.takeCard(this.tfgame.deck);
+
+      this.handGUI.fadeOut();
   }
 
   private configureCardEvents(): void {
@@ -91,7 +92,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
           if (pointer.upY >= 300 && pointer.upX >= 1200) {
             for (let listener of this.playerGUI.listener)
               listener.attackEnemy(card, enemy, this.tfgame.gameState);
-              this.stackGUI.addCardGUI(gameObject);
+              this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
               console.log('player attacked enemy with card');
           } else {
             console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
@@ -106,11 +107,14 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   update(): void {}
 
   drawPhase(game: Game): void {
+      game.nextPhase();
+      this.handGUI.fadeOut();
     console.log("drawPhase");
   }
 
   effectPhase(game: Game): void {
     console.log("effect Phase");
+      this.handGUI.fadeOut();
   }
 
   enemyPhase(game: Game): void {
@@ -120,6 +124,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   energyPhase(game: Game): void {
     console.log("energy Phase");
+      this.handGUI.fadeOut();
   }
 
   playPhase(game: Game): void {

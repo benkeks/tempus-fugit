@@ -21,6 +21,7 @@ export class GameState {
     set maxEnergy(value: number) {
         let old:number = this._maxEnergy;
         this._maxEnergy = value;
+        this.energy = value;
 
         this.listener.map(obj => obj.energyChanged(this, -1, -1, old, value));
     }
