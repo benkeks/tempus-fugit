@@ -35,13 +35,15 @@ export class GameState {
     private _variables:{[represenstation:string]:Variable} = {};
     public variableStatus:{[representation:string]:VariableStatus} = {};
 
-    private _maxEnergy:number = 3;
-    private _energy:number = this._maxEnergy;
+    private _maxEnergy:number = 2;
+    private _energy:number = 0;
 
     public activeState:number = 0;
     public listener:GameStateListener[] = [];
 
-    constructor() {}
+    constructor() {
+        this.energy = this.maxEnergy;
+    }
 
     /**
      * applies the assignment of the given formula and evaluates it.
@@ -75,8 +77,8 @@ export class GameState {
         if (this.activeState == round) {
             return 1;
         }
-
-
+        this.energy = this.maxEnergy;
+        console.log("round changed: " + round);
         let lastState:number=this.activeState;
         this.activeState = round;
 
@@ -84,6 +86,26 @@ export class GameState {
         this.listener.map(obj => obj.roundChanged(this, lastState, this.activeState));
 
         return 0;
+    }
+
+    public setVariableUser(name:string, value:boolean, state:number=this.activeState):number {
+        let vs:VariableStatus = this.getVariableStatus(name);
+
+        if (state !== this.activeState) return 3;
+
+        if (this.energy > 0 && value) {
+            this.energy--;
+        } else if (this.energy < this.maxEnergy && !value) {
+            this.energy++;
+        } else {
+            return 2;
+        }
+
+        if (vs.isBlocked(state)) {
+            return 1;
+        }
+
+        return this.setVariable(name, value, state);
     }
 
     /**
@@ -94,31 +116,32 @@ export class GameState {
      * @param state the state where the value should be set. Default: the active state
      * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available
      * */
-    public setVariable(name:string, value:boolean, state:number=this.activeState, useEnergy:boolean=true):number {
+    public setVariable(name:string, value:boolean, state:number=this.activeState):number {
         let v:Variable = this.getVariable(name);
-        let vs:VariableStatus = this.getVariableStatus(name);
         let oldVariable:Variable = v.copy();
         let changes:{[state:number]:boolean} = {};
+        if (v.getValue(state) == value) return 0;
 
-        if (useEnergy && state == this.activeState) {
-            if (this.energy > 0) {
-                this.energy -= 1;
-            } else {
-                return 2;
-            }
-        }
 
-        if (vs.isBlocked(state)) {
-            return 1;
-        } else {
-            v = this.variables[name];
-            changes[state] = value;
-            v.setValue(value, state);
-        }
+        v = this.variables[name];
+        changes[state] = value;
+        v.setValue(value, state);
 
         this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
 
+        console.log('setVariable: name: ' + name + ' value: ' + value + ' state: ' + state + ' energy: ' + this.energy); // TODO: delete
+
         return 0;
+    }
+
+    public invertVariableUser(variable:string, state:number=this.activeState):number {
+        let v:Variable = this.getVariable(variable);
+        return this.setVariableUser(variable, !v.getValue(state), state);
+    }
+
+    public invertVariable(variable:string, state:number=this.activeState):number {
+        let v:Variable = this.getVariable(variable);
+        return this.setVariable(variable, !v.getValue(state), state);
     }
 
     public getVariableStatus(name:string):VariableStatus {

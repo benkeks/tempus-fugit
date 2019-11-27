@@ -14,7 +14,7 @@ const COLOR_PRIMARY_LIGHT = 0x00ff77;
 export class TableGUI implements GameStateListener {
   private readonly scene: Phaser.Scene;
   private energyTable; // table for red dots representing energy
-  private gameState: GameState;
+  private _gameState: GameState;
 
   private variableTable; // table object
   private readonly tableOffsetX: number; // x-position of table
@@ -22,6 +22,7 @@ export class TableGUI implements GameStateListener {
   private readonly variableTableCellWidth = 90;
   private readonly variableTableCellHeight = 60;
   private readonly tableColumnCount = 15;
+  private variables: { [name: string] : number} = {}; // dic for mapping variable names an their index
 
   constructor(
     scene: Phaser.Scene,
@@ -33,9 +34,14 @@ export class TableGUI implements GameStateListener {
     this.tableOffsetX = tableOffsetX;
     this.tableOffsetY = tableOffsetY;
     this.gameState = gameState;
-    this.createEnergyTable(0); // TODO: use energy count form gameState
-    this.createVariableTable([]); // TODO: use variables names from gameState
+    this.createEnergyTable(gameState.energy);
+    let i = 0;
+    for (let key in gameState.variables)
+      this.variables[key] = i++;
+
+    this.createVariableTable(Object.keys(this.variables));
     this.createButton();
+    this.roundChanged(gameState, -1, gameState.activeState);
   }
 
   /**
@@ -43,7 +49,7 @@ export class TableGUI implements GameStateListener {
    * @param variables: list of variables in table
    */
   private createVariableTable(
-    variables: Variable[]
+    variables: string[]
   ): void {
     // items in table
     const itemCount = this.tableColumnCount * variables.length;
@@ -110,7 +116,10 @@ export class TableGUI implements GameStateListener {
       .on(
         "cell.click",
         function(cellContainer, cellIndex) {
-          // TODO: alert gameState that cell was clicked
+          const column = cellIndex % this.tableColumnCount
+          const row =  Math.floor(cellIndex / this.tableColumnCount);
+          const variableName  = Object.keys(this.variables).find(key => this.variables[key] === row);
+          this._gameState.invertVariableUser(variableName, column);
         },
         this
       )
@@ -165,7 +174,6 @@ export class TableGUI implements GameStateListener {
               .roundRectangle(0, 0, 20, 20, 0)
               .setStrokeStyle(2, COLOR_DARK),
             text: scene.add.text(0, 0, "  " + variables[cell.index], {
-              //TODO: change variables[cell.index] to variables[cell.index].representation ? ask gameState person where variable names are
               fontSize: 24
             })
           });
@@ -214,7 +222,7 @@ export class TableGUI implements GameStateListener {
     this.energyTable = this.scene.rexUI.add
       .gridTable({
         x: offsetX + energyCount * cellWidth * 0.5,
-        y: offsetY + 290, // TODO: replace with offsetY + this.gameState.variables.length * this.variableTableCellHeight * 0.5 + this.tableOffsetY ? ask gameState person how variables are stored
+        y: offsetY + Object.keys(this._gameState.variables).length * this.variableTableCellHeight * 0.5 + this.tableOffsetY,
         // table config
         table: {
           width: cellWidth * energyCount,
@@ -252,7 +260,7 @@ export class TableGUI implements GameStateListener {
     let buttons = this.scene.rexUI.add
       .buttons({
         x: offsetX,
-        y: offsetY + 260, // TODO: replace with offsetY + this.gameState.variables.length * this.variableTableCellHeight * 0.5 + this.tableOffsetY ? ask gameState person how variables are stored
+        y: offsetY + Object.keys(this._gameState.variables).length * this.variableTableCellHeight * 0.5 + this.tableOffsetY,
         orientation: "y",
         buttons: [
           // @ts-ignore
@@ -284,6 +292,8 @@ export class TableGUI implements GameStateListener {
       "button.click",
       function(button, index, pointer, event) {
         // TODO: alert game State that button was clicked
+        this._gameState.changeRound();
+        console.log('changes round after click');
       },
       this
     );
@@ -346,32 +356,48 @@ export class TableGUI implements GameStateListener {
       .setFillStyle(color, 1);
   }
 
-  roundChanged(gameSate: GameState, lastRound: number): void {
+  get gameState(): GameState {
+    return this._gameState;
+  }
+
+  set gameState(value: GameState) {
+    this._gameState = value;
+    value.listener.push(this);
+  }
+
+  roundChanged(gameSate: GameState, lastRound: number, activeRound:number): void {
     // change color of coloumn
-    const nextRound = 0;  // TODO: The new Round Value can be accessed in gameState ??
-    const variables  = []; /// TODO: need function to get variable names
+    const nextRound = activeRound;
+    const variables  = Object.keys(this._gameState.variables);
     for (let index in variables) {
       this.setCellColor(COLOR_PRIMARY_LIGHT, nextRound , parseInt(index));
-      this.setCellColor(COLOR_PRIMARY, lastRound , parseInt(index));
+      if (lastRound >= 0) this.setCellColor(COLOR_PRIMARY, lastRound , parseInt(index));
     }
+
+    this.createEnergyTable(this.gameState.maxEnergy);
   }
 
   variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }): void {
 
-    const row = 0; //TODO: gameState.round ??
-    const column = 0; //TODO: gameState.variables.indexOf(variable) ??
-    const energy = 0; //TODO: gameState.energy ??
-    const newValue = true; // TODO: if value of varialbe changes to true
-    if (newValue) {
-      this.setCellIconColor(COLOR_RED, row, column);
-      this.setEnergyIconColor( 0x000000, energy);
-    } else {
-      this.setCellIconColor(COLOR_PRIMARY, row, column);
-      this.setEnergyIconColor( COLOR_RED,energy-1);
+    for (let key in valueChanges) {
+      const row = parseInt(key);
+      const column = this.variables[variable.representation];
+      const newValue = valueChanges[key]
+      if (newValue) {
+        this.setCellIconColor(COLOR_RED, row, column);
+      } else {
+        this.setCellIconColor(COLOR_PRIMARY, row, column);
+      }
     }
   }
 
   energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number): void {
+    // only changes one energy
+   if (oldEnergy > newEnergy) {
+     this.setEnergyIconColor( 0x000000, newEnergy);
+   }else {
+     this.setEnergyIconColor( COLOR_RED, newEnergy-1);
+   }
   }
 }
 

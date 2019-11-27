@@ -18,12 +18,10 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener{
     scene.add.existing(this);
     this.deck = deck;
     this.scene = scene;
-    // TODO need function to get number of cards in deck from deck class
-    this.text = this.scene.add.text(x-35  , y+100, '').setStyle({
+    this.text = this.scene.add.text(x-35  , y+100, deck.cards.length + ' Karten').setStyle({
       fontFamily: 'Arial',
     });
-    // TODO: need function in deck class to add listener
-    // this.deck.addListener(this);
+    this.deck.listener.push(this);
   }
 
   /**

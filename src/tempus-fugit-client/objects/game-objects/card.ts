@@ -1,9 +1,9 @@
 import {Formula} from "../../temporal-logic/formula";
 
 export class Card {
-    private name: String; // Name of the card
-    private description: String; // Description of the card
-    private image: String; // A string describing the image on the card
+    private name: string; // Name of the card
+    private description: string; // Description of the card
+    private image: string; // A string describing the image on the card
     private formula: Formula; // A formula attached to the card
     private attackPower: number; // The stregth of an attack based on this card
 
@@ -11,7 +11,7 @@ export class Card {
      * Getter method for the name attribute
      * @author Florian
      */
-    public getName(): String {
+    public getName(): string {
         return this.name;
     }
 
@@ -19,7 +19,7 @@ export class Card {
      * Getter method for the description attribute
      * @author Florian
      */
-    public getDescription(): String {
+    public getDescription(): string {
         return this.description;
     }
 
@@ -27,7 +27,7 @@ export class Card {
      * Getter method for the image attribute
      * @author Florian
      */
-    public getImage(): String {
+    public getImage(): string {
         return this.image;
     }
 
@@ -57,7 +57,7 @@ export class Card {
      * @param attackPower The attack power of the card
      * @author Florian
      */
-    constructor(name: String, description: String, image: String, formula: String, attackPower: number) {
+    constructor(name: string, description: string, image: string, formula: string, attackPower: number) {
         this.name = name;
         this.description = description;
         this.image = image;

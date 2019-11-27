@@ -7,14 +7,17 @@ import { Hand } from "../objects/game-objects/hand";
 import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
 import { Deck } from "../objects/game-objects/deck";
 import { TableGUI } from "../objects/game-gui-objects/table-gui";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
-import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
-import {Enemy} from "../objects/game-objects/enemy";
-import {Player} from "../objects/game-objects/player";
-
+import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
+import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
+import { Enemy } from "../objects/game-objects/enemy";
+import { Player } from "../objects/game-objects/player";
+import { GameState } from "../objects/game-objects/game-state";
+import { Formula } from "../temporal-logic/formula";
 
 export class MainScene extends Phaser.Scene {
-  private board: BoardGUI;
+  private playerGUI: PlayerGUI;
+  private gameState: GameState;
+  private enemy: Enemy;
 
   constructor() {
     super({
@@ -27,47 +30,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-
-    /*
-
-    // tests; to be replaced by game phases issue
-    let table = new TableGUI(this, 3);
-    //table.setEnergie(4);
-
-    // stack test
-    let stack = new StackGUI(this, "stack");
-    //stack.addCardGUI(c);
-
-    // hand test
-    let hand = new Hand(5);
-    let cards = [];
-    hand.addCard(new Card(), 1);
-    for (let i = 0; i < 5; i++) cards.push(new Card());
-    hand.setCards(cards);
-    this.board = new BoardGUI(this, stack);
-    let handGui = new HandGUI(this, hand, stack, this.board);
-
-
-    handGui.moveToStack(cards[0]);
-    handGui.moveToBoard(cards[2]);
-    handGui.addCard(new Card());
-    handGui.moveToBoard(cards[3]);
-    handGui.fadeOut();
-    handGui.fadeIn();
-
-    // board test
-    board.clear();
-    let c1 = new CardGUI(this, 500, 500, 'card1', new Card());
-    this.board.addCardGUI(c1);
-    this.board.moveToStack(c1);
-     */
-
-
-    // deck test
-    let deck = new DeckGUI(this, "deck", new Deck());
-
-
-
     this.configureCardEvents();
   }
 
@@ -96,9 +58,16 @@ export class MainScene extends Phaser.Scene {
           gameObject.x = gameObject.cardOriginX;
           gameObject.y = gameObject.cardOriginY;
 
-          // play card if dragged to upper half of screen
-          if (pointer.upY < window.innerHeight / 2) {
-            this.board.addCardGUI(gameObject);
+          const card: Card = gameObject.card;
+          const enemy: Enemy = this.enemy;
+
+          // TODO: set up collision between cards and enemies attack
+          // position of enemy hardcoded here
+          if (pointer.upY >= 1400 && pointer.upX >= 400) {
+            console.log('player attacked enemy with card');
+            for (let listener of this.playerGUI.listener) {
+              listener.attackEnemy(card, enemy, this.gameState);
+            }
           }
         }
       },
