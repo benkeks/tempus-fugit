@@ -1,6 +1,7 @@
 import {Player} from "./player"
 import {Card} from "./card"
 import {GameState} from "./game-state"
+import {Formula} from "../../temporal-logic/formula";
 
 
 export class Enemy {
@@ -8,7 +9,8 @@ export class Enemy {
     private maxHP: number; // The enemy's maximum hit points
     private currentHP: number; // The enemy's current hit points
     private baseAttack: number; // The enemy's base attack strength
-    private specialEffects: String[]; // A list of names of the enemy's special effects
+    private specialAttack: number; // The enemy's base attack strength
+    private formula: Formula; // A formula attached to the card
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
@@ -28,12 +30,13 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: String, hp: number, baseAttack: number, specialEffects: String[]) {
+    constructor(name: String, hp: number, baseAttack: number, specialAttack: number, forumula: Formula) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
-        this.specialEffects = specialEffects;
+        this.specialAttack = specialAttack;
+        this.formula = forumula;
         this.listener = [];
 
     }
@@ -60,10 +63,10 @@ export class Enemy {
      */
     public attack(player: Player, gameState: GameState): void {
         var attackPoints = 0;
-        if (true) {
-            attackPoints = this.baseAttack;
+        if (gameState.evaluate(this.formula)) {
+            attackPoints = this.specialAttack;
         } else {
-            attackPoints = this.evaluateSpecialEffect(this.specialEffects[0]);
+            attackPoints = this.baseAttack;
         }
         player.takeHit(attackPoints);
     }
