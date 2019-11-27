@@ -1,6 +1,8 @@
 import "phaser";
 import {MainScene} from "./scenes/main-scene";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
+import {StartingScene} from "./scenes/starting-scene";
+import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
@@ -16,10 +18,14 @@ const config: Phaser.Types.Core.GameConfig = {
             key: 'rexUI',
             plugin: UIPlugin,
             mapping: 'rexUI'
-        },
-        ]
+        }],
+        global: [{
+            key: 'WebFontLoader',
+            plugin: WebFontLoaderPlugin,
+            start: true
+        }]
     },
-    scene: [MainScene]
+    scene: [StartingScene, MainScene]
 };
 
 export class Game extends Phaser.Game {
