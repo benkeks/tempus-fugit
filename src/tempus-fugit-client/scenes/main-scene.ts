@@ -84,19 +84,17 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       ) {
         if (gameObject instanceof CardGUI) {
           gameObject.setDepth(1);
-          gameObject.x = gameObject.cardOriginX;
-          gameObject.y = gameObject.cardOriginY;
-
           const card: Card = gameObject.card;
           const enemy: Enemy = this.enemy;
-
           // TODO: set up collision between cards and enemies attack
           // position of enemy hardcoded here
-          if (pointer.upY >= 1400 && pointer.upX >= 400) {
-            console.log('player attacked enemy with card');
-            for (let listener of this.playerGUI.listener) {
-              listener.attackEnemy(card, enemy, this.gameState);
-            }
+          console.log('player attacked enemy with card   ' + pointer.upY + "---" + pointer.upX);
+          if (pointer.upY >= 300 && pointer.upX >= 1200) {
+            for (let listener of this.playerGUI.listener)
+              listener.attackEnemy(card, enemy, this.tfgame.gameState);
+          } else {
+            gameObject.x = gameObject.cardOriginX;
+            gameObject.y = gameObject.cardOriginY;
           }
         }
       },
