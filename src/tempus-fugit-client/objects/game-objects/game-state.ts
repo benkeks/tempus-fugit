@@ -3,6 +3,27 @@ import {Formula} from "../../temporal-logic/formula";
 import {Card} from "./card";
 
 export class GameState {
+    get energy(): number {
+        return this._energy;
+    }
+
+    set energy(value: number) {
+        let old:number = this._energy;
+        this._energy = value;
+
+        this.listener.map(obj => obj.energyChanged(this, old, value, -1, -1));
+    }
+
+    get maxEnergy(): number {
+        return this._maxEnergy;
+    }
+
+    set maxEnergy(value: number) {
+        let old:number = this._maxEnergy;
+        this._maxEnergy = value;
+
+        this.listener.map(obj => obj.energyChanged(this, -1, -1, old, value));
+    }
     get variables(): { [p: string]: Variable } {
         return this._variables;
     }
@@ -14,11 +35,21 @@ export class GameState {
     private _variables:{[represenstation:string]:Variable} = {};
     public variableStatus:{[representation:string]:VariableStatus} = {};
 
+    private _maxEnergy:number = 3;
+    private _energy:number = this._maxEnergy;
+
     public activeState:number = 0;
     public listener:GameStateListener[] = [];
 
     constructor() {}
 
+    /**
+     * applies the assignment of the given formula and evaluates it.
+     *
+     * @param object can be a Formula or a Card
+     * @return the truth value of the formula
+     *
+     * */
     public evaluate(object:any):boolean {
         if (typeof object === typeof Formula) {
             let f: Formula = object as Formula;
@@ -34,16 +65,23 @@ export class GameState {
         }
     }
 
+    /***
+     *  changes the roundIndex and triggers an event.
+     *
+     * @param round next round index. Default: activeState+1
+     * @return 0: if succceed; 1: if the round is the active Round
+     */
     public changeRound(round:number=this.activeState+1):number {
         if (this.activeState == round) {
             return 1;
         }
 
+
         let lastState:number=this.activeState;
         this.activeState = round;
 
         // calling listener
-        this.listener.map(obj => obj.roundChanged(this, lastState));
+        this.listener.map(obj => obj.roundChanged(this, lastState, this.activeState));
 
         return 0;
     }
@@ -54,19 +92,27 @@ export class GameState {
      * @param name the representation of the variable
      * @param value the value that should be set
      * @param state the state where the value should be set. Default: the active state
-     * @return 0: if the change succeded, 1: if the value is blocked
+     * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available
      * */
-    public setVariable(name:string, value:boolean, state:number=this.activeState):number {
+    public setVariable(name:string, value:boolean, state:number=this.activeState, useEnergy:boolean=true):number {
         let v:Variable = this.getVariable(name);
         let vs:VariableStatus = this.getVariableStatus(name);
         let oldVariable:Variable = v.copy();
-        let changes:{[state:number]:[boolean,boolean]} = {};
+        let changes:{[state:number]:boolean} = {};
+
+        if (useEnergy && state == this.activeState) {
+            if (this.energy > 0) {
+                this.energy -= 1;
+            } else {
+                return 2;
+            }
+        }
 
         if (vs.isBlocked(state)) {
             return 1;
         } else {
             v = this.variables[name];
-            changes[state] = [v.getValue(state), value];
+            changes[state] = value;
             v.setValue(value, state);
         }
 
@@ -113,15 +159,31 @@ export interface GameStateListener {
      * @param lastRound The value of the round before the change. The new Round Value can be accessed in gameState
      *
      * */
-    roundChanged(gameSate:GameState, lastRound:number):void;
+    roundChanged(gameSate:GameState, lastRound:number, activeRound:number):void;
 
     /**
      * This function gets called if a Variable is being changed.
      * @param gameState a reference to the gamestate Object where the variable got changed.
      * @param oldVariable the Variable before the change
      * @param variable the Variable after the change
-     * @param valueChanges the values that got changed in the event for each state. It contains the value before and after [before,after]
-     *
+     * @param valueChanges the values that got changed in the event for each state.
+     * @example
+     *  let varName:string=variable.representation;
+     *  let newValue:boolean = variable.value;
+     *  for (i in valueChanges) {
+     *      console.log("change: " + valueChanges[i]);
+     *  }
      * */
-    variableChanged(gameState:GameState, oldVariable:Variable, variable:Variable, valueChanges:{[state:number]:[boolean,boolean]}):void;
+    //TODO: Variablename und index und neuer wert
+    variableChanged(gameState:GameState, oldVariable:Variable, variable:Variable, valueChanges:{[state:number]:boolean}):void;
+
+    /**
+     *  this function is being called if the energy values are changed.
+     * @param gameState a reference to the gamestate Object which triggered the event
+     * @param oldEnergy the Energy before the change
+     * @param newEnergy the Energy value after the change
+     * @param oldMaxEnergy the maximum Energy before the change
+     * @param newMaxEnergy the maximum Energy after the change
+     */
+    energyChanged(gameState:GameState, oldEnergy:number, newEnergy:number, oldMaxEnergy:number, newMaxEnergy:number):void;
 }
