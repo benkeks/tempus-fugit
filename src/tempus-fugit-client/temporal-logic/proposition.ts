@@ -50,6 +50,10 @@
             return this.getAlphabet();
         }
 
+        public getDefaultUnicodeRepresentation(x):string {
+            throw new Error("Unicode Representation not defined!");
+        }
+
         /**
          * @author Tobias Loch
          * @param condition the temporal state that should be evaluated
@@ -70,7 +74,7 @@
             let status: PropositionStatus = this.evaluateInternal(condition);
 
             if (!status.successful) {
-                throw new RangeError("For one of the propositions in the formula, there is no value for the given condition!");
+                return undefined;
             }
 
             return status.value;
@@ -87,7 +91,10 @@
 
     export class PropositionStatus {
         public value: boolean = false;
-        public valuesLength = 0;
-        public minStatus: number = 0;
+        public valuesLength:number = 0;
+
+        public minStatus:number = 0; // propositions can be evaluated in range [minStatus,maxStatus]
+        public maxStatus:number = 0;
+
         public successful: boolean = false;
     }

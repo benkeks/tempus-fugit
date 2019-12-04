@@ -4,6 +4,9 @@ import {PropositionStatus} from "../proposition";
 
 export class Eventual extends OneParamOperator {
 
+    public static getDefaultUnicodeRepresentation(x): string {
+        return "\u25CA";
+    }
 
     public getDefaultRepresentation():string {
         return "E";
@@ -17,8 +20,9 @@ export class Eventual extends OneParamOperator {
 
         status.value = false;
         status.successful = false;
+        status.maxStatus = operandStatus.maxStatus;
         status.minStatus = operandStatus.minStatus;
-        while (i<status.minStatus && !status.value && i >= 0 && operandStatus.successful) {
+        while (i<=status.maxStatus && !status.value && i >= status.minStatus && operandStatus.successful) {
             status.value = operandStatus.value;
             status.successful = true;
 

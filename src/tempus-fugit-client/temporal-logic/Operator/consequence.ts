@@ -14,6 +14,16 @@ export class Consequence extends TwoParamOperator {
         }
     }
 
+    public static getDefaultUnicodeRepresentation(x): string {
+        if (Consequence.isLeft(x)) {
+            return "\u2190";
+        } else if (Consequence.isRight(x)) {
+            return "\u2192";
+        }
+
+        throw new Error("Consequence is neither left nor right!");
+    }
+
     get representation(): string {
         return this._representation;
     }
@@ -32,9 +42,10 @@ export class Consequence extends TwoParamOperator {
         let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
 
         let status:PropositionStatus = new PropositionStatus();
-        status.successful = leftStatus.successful && rightStatus.successful;
+        status.successful = leftStatus.successful || rightStatus.successful;
+        status.maxStatus = Math.max(leftStatus.maxStatus, rightStatus.maxStatus);
         status.minStatus = Math.min(leftStatus.minStatus, rightStatus.minStatus);
-        console.log(this.representation);
+
         if (Consequence.isLeft(this.representation)) {
             status.value = (!rightStatus.value) || leftStatus.value;
         } else {

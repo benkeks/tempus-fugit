@@ -38,7 +38,7 @@ export class Reverse extends OneParamOperator {
 
     evaluateInternal(condition: number): PropositionStatus {
         if (this.operand instanceof Operator) {
-            this.operand.direction = -1;
+            this.operand.direction *= -1;
         }
         return this.operand.evaluateInternal(condition);
     }
