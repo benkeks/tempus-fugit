@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Not extends OneParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u00AC";
-    }
-
     public getDefaultRepresentation():string {
         return "!";
     }

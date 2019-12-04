@@ -14,16 +14,6 @@ export class Consequence extends TwoParamOperator {
         }
     }
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        if (Consequence.isLeft(x)) {
-            return "\u2190";
-        } else if (Consequence.isRight(x)) {
-            return "\u2192";
-        }
-
-        throw new Error("Consequence is neither left nor right!");
-    }
-
     get representation(): string {
         return this._representation;
     }

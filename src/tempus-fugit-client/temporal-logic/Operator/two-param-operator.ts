@@ -17,22 +17,25 @@ export abstract class TwoParamOperator extends Operator{
         this.rightOperand = rightOperand;
     }
 
-    generateRepresentation(recursive: boolean): string {
-        if (!recursive) return this.representation;
-        let representation:string = this.representation;
+    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true): string {
+        let ownRep:string = this.representation;
+        if (defaultRepresentation) ownRep = this.getDefaultRepresentation();
+
+        if (!recursive) return ownRep;
+        let representation:string = ownRep;
 
 
         if (this.leftOperand instanceof Operator && (<Operator>this.leftOperand).precedence < this.precedence) {
-            representation = " (" + this.leftOperand.generateRepresentation(recursive) + ") " + representation;
+            representation = " (" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation) + ") " + representation;
         } else {
-            representation = this.leftOperand.generateRepresentation(recursive) + " " + representation;
+            representation = this.leftOperand.generateRepresentation(recursive, defaultRepresentation) + " " + representation;
         }
 
 
         if (this.rightOperand instanceof Operator && (<Operator>this.rightOperand).precedence <= this.precedence) {
-            representation = representation + " (" + this.rightOperand.generateRepresentation(recursive) + ") ";
+            representation = representation + " (" + this.rightOperand.generateRepresentation(recursive, defaultRepresentation) + ") ";
         } else {
-            representation = representation + " " + this.rightOperand.generateRepresentation(recursive);
+            representation = representation + " " + this.rightOperand.generateRepresentation(recursive, defaultRepresentation);
         }
 
         return representation;

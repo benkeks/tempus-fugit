@@ -22,20 +22,23 @@ export abstract class OneParamOperator extends Operator{
         this.precedence = 4;
     }
 
-    generateRepresentation(recursive: boolean): string {
-        if (!recursive) return this.representation;
+    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true): string {
+        let ownRep:string = this.representation;
+        if (defaultRepresentation) ownRep = this.getDefaultRepresentation();
+
+        if (!recursive) return ownRep;
         let representation:string = "";
 
         if (this._operand instanceof TwoParamOperator) {
             representation = " (" + this._operand.generateRepresentation(recursive) + ") ";
         } else {
-            representation = this._operand.generateRepresentation(recursive);
+            representation = this._operand.generateRepresentation(recursive, defaultRepresentation);
         }
 
         if (this.associativity == Operator.LEFT_ASSOCIATIVE) {
-            return (representation + this.representation);
+            return (representation + ownRep);
         } else {
-            return (this.representation + representation);
+            return (ownRep + representation);
         }
     }
 }

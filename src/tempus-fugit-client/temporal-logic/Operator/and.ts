@@ -4,10 +4,6 @@ import {TwoParamOperator} from "./two-param-operator";
 
 export class And extends TwoParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u2227";
-    }
-
     public getDefaultRepresentation():string {
         return "&";
     }

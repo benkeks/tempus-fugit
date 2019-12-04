@@ -34,12 +34,12 @@ export class Formula extends Proposition {
         return this.hjunctor.evaluateInternal(condition);
     }
 
-    generateRepresentation(recursive:boolean = true): string {
+    generateRepresentation(recursive:boolean = true, defaultRepresentation:boolean=true): string {
         if (!recursive) {
             return this.representation;
         }
         else {
-            return this.hjunctor.generateRepresentation(recursive);
+            return this.hjunctor.generateRepresentation(recursive, defaultRepresentation);
         }
     }
 
@@ -170,16 +170,18 @@ export class Formula extends Proposition {
     public parse(formula:any):Proposition {
         if (typeof formula === "string") {
             return this.parse(Formula.scan(formula as string));
-        } else if (!(formula instanceof Array)) {
-            let somethingIsNotString = false;
+        } else if (formula instanceof Array) {
+            let somethingIsNotProposition = false;
             formula.forEach(function(item:any){
-                if(typeof item !== 'string'){
-                    somethingIsNotString = true;
+                if(!(item instanceof Proposition)){
+                    somethingIsNotProposition = true;
                 }
             });
-            if(somethingIsNotString || formula.length == 0){
-                throw new Error("Formula has to be of type String or Proposition[]");
+            if(somethingIsNotProposition || formula.length == 0){
+                throw new TypeError("Formula has to be of type String or Proposition[]");
             }
+        } else {
+            throw new TypeError("Formula has to be of type String or Proposition[]");
         }
 
         let operatorStack:Operator[] = [];
@@ -201,7 +203,8 @@ export class Formula extends Proposition {
                         }
 
                         if (operatorStack.length==0) {
-                            throw new Error("The number of open and close brackets is not equal!");
+                            let fs:string = Array.from(formula, e => (e as Proposition).representation).join("");
+                            throw new SyntaxError("The number of open and close brackets is not equal! Formula: " + fs);
                         }
 
                         outputQueue.push(o);
@@ -227,17 +230,23 @@ export class Formula extends Proposition {
 
                 outputQueue.push(token);
             } else {
-                throw new Error("A Token is being read which type is not known!");
+                let fs:string = Array.from(formula, e => (e as Proposition).representation).join("");
+                throw new SyntaxError("A Token is being read which type is not known! Formula: " + fs);
             }
         }
 
         while(operatorStack.length>0) {
             let p:Proposition=operatorStack.pop();
             if (p instanceof Bracket) {
-                throw new Error("The number of open and close brackets is not equal!");
+                let fs:string = Array.from(formula, e => (e as Proposition).representation).join("");
+                throw new SyntaxError("The number of open and close brackets is not equal! Formula: " + fs);
             }
             outputQueue.push(p);
         }
+
+        /*for (let o of outputQueue) { // print outputqueue
+            console.log(o.representation);
+        }*/
 
         if (outputQueue.length > 0){
             this.hjunctor = outputQueue[outputQueue.length-1];
@@ -258,6 +267,15 @@ export class Formula extends Proposition {
                     i-=2;
                 }
             }
+        }
+
+        if (outputQueue.length > 1) {
+            console.log("Operators that could not be parsed: ");
+            for (let o of outputQueue) { // print outputqueue
+                console.log(o.representation);
+            }
+            let fs:string = Array.from(formula, e => (e as Proposition).representation).join("");
+            throw new SyntaxError("There are operators without operands in the String. Formula:" + fs);
         }
 
         return this.hjunctor;

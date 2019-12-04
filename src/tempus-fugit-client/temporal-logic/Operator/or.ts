@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Or extends TwoParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u2228";
-    }
-
     public getDefaultRepresentation():string {
         return "\\|";
     }

@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Release extends TwoParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u1D4E";
-    }
-
     public getDefaultRepresentation():string {
         return "R";
     }

@@ -3,9 +3,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Equivalence extends TwoParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u2194";
-    }
 
     public getDefaultRepresentation():string {
         return "<->";
