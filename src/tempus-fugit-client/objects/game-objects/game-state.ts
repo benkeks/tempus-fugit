@@ -118,10 +118,16 @@ export class GameState {
      * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available
      * */
     public setVariable(name:string, value:boolean, state:number=this.activeState):number {
-        let v:Variable = this.getVariable(name);
+        let v:Variable;
+        if (!(name in this.variables)) {
+            v = new Variable(name);
+            this.variables[name] = v;
+
+            this.variableStatus[name] = new VariableStatus();
+        } else v = this.getVariable(name);
+
         let oldVariable:Variable = v.copy();
         let changes:{[state:number]:boolean} = {};
-        //if (v.getValue(state) == value) return 0;
 
         changes[state] = value;
         v.setValue(value, state);
@@ -149,11 +155,6 @@ export class GameState {
     }
 
     public getVariable(name:string):Variable {
-        if (!(name in this.variables)) {
-            this.variables[name] = new Variable(name);
-            this.variables[name].finiteStates = false;
-            this.variableStatus[name] = new VariableStatus();
-        }
         return this.variables[name];
     }
 }
@@ -195,7 +196,6 @@ export interface GameStateListener {
      *      console.log("change: " + valueChanges[i]);
      *  }
      * */
-    //TODO: Variablename und index und neuer wert
     variableChanged(gameState:GameState, oldVariable:Variable, variable:Variable, valueChanges:{[state:number]:boolean}):void;
 
     /**

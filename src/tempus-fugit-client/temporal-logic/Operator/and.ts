@@ -4,6 +4,10 @@ import {TwoParamOperator} from "./two-param-operator";
 
 export class And extends TwoParamOperator {
 
+    public static getDefaultUnicodeRepresentation(x): string {
+        return "\u2227";
+    }
+
     public getDefaultRepresentation():string {
         return "&";
     }
@@ -13,7 +17,8 @@ export class And extends TwoParamOperator {
         let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
 
         let status:PropositionStatus = new PropositionStatus();
-        status.successful = leftStatus.successful && rightStatus.successful;
+        status.successful = leftStatus.successful || rightStatus.successful;
+        status.maxStatus = Math.max(leftStatus.maxStatus, rightStatus.maxStatus);
         status.minStatus = Math.min(leftStatus.minStatus, rightStatus.minStatus);
         status.value = leftStatus.value && rightStatus.value;
 

@@ -17,8 +17,9 @@ export class Until extends TwoParamOperator {
 
         status.value = true;
         status.successful = false;
+        status.maxStatus = Math.max(leftStatus.maxStatus, rightStatus.maxStatus);
         status.minStatus = Math.min(leftStatus.minStatus, rightStatus.minStatus);
-        while (i<status.minStatus && i>= 0 && leftStatus.successful && rightStatus.successful) {
+        while (i<=status.maxStatus && i>= status.minStatus && leftStatus.successful && rightStatus.successful) {
             status.successful = true;
 
             if (rightStatus.value) {

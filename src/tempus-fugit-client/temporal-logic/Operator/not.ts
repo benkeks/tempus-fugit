@@ -4,6 +4,9 @@ import {PropositionStatus} from "../proposition";
 
 export class Not extends OneParamOperator {
 
+    public static getDefaultUnicodeRepresentation(x): string {
+        return "\u00AC";
+    }
 
     public getDefaultRepresentation():string {
         return "!";
@@ -14,6 +17,7 @@ export class Not extends OneParamOperator {
 
         let status:PropositionStatus = new PropositionStatus();
         status.successful = operandStatus.successful;
+        status.maxStatus = operandStatus.maxStatus;
         status.minStatus = operandStatus.minStatus;
         status.value = !operandStatus.value;
 

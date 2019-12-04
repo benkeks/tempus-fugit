@@ -42,12 +42,14 @@ export class Variable extends Proposition {
         pstat.valuesLength = this._values.length;
         pstat.value = this.getValue(condition);
         if (this.finiteStates) {
-            pstat.minStatus = this._values.length;
+            pstat.maxStatus = this.firstValue + this._values.length-1;
+            pstat.minStatus = this.firstValue;
         } else {
-            pstat.minStatus = pstat.valuesLength+1;
+            pstat.maxStatus = this.firstValue + pstat.valuesLength;
+            pstat.minStatus = this.firstValue - 1;
         }
 
-        if ((condition >= this.values.length || condition < 0) && this.finiteStates) {
+        if ((condition > pstat.maxStatus || condition < pstat.minStatus) && this.finiteStates) {
             pstat.successful = false;
         }
 
@@ -128,11 +130,24 @@ export class Variable extends Proposition {
         this._values = value;
     }
 
-    public applyAssignment(variable:Variable):void {
-        if (variable === undefined) return;
+    public applyAssignment(assignment):void {
+        if (assignment instanceof Array) {
+            var somethingIsNotString = false;
+            assignment.forEach(function(item){
+                if(typeof item !== 'string'){
+                    somethingIsNotString = true;
+                }
+            });
 
-        this.defaultValue = variable.defaultValue;
-        this.finiteStates = variable.finiteStates;
-        this.values = [...variable.values];
+            if (somethingIsNotString) return;
+
+            this.values = [...assignment];
+        } else if (assignment instanceof Variable) {
+            this.defaultValue = assignment.defaultValue;
+            this.finiteStates = assignment.finiteStates;
+            this.applyAssignment(assignment.values);
+        } else {
+            console.warn("The given assignment is neither a boolean array nor a variable! typeof assignment" + typeof assignment);
+        }
     }
 }

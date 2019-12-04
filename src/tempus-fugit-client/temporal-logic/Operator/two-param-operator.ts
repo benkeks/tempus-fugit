@@ -23,16 +23,16 @@ export abstract class TwoParamOperator extends Operator{
 
 
         if (this.leftOperand instanceof Operator && (<Operator>this.leftOperand).precedence < this.precedence) {
-            representation = "(" + this.leftOperand.generateRepresentation(recursive) + ")" + representation;
+            representation = " (" + this.leftOperand.generateRepresentation(recursive) + ") " + representation;
         } else {
-            representation = this.leftOperand.generateRepresentation(recursive) + representation;
+            representation = this.leftOperand.generateRepresentation(recursive) + " " + representation;
         }
 
 
         if (this.rightOperand instanceof Operator && (<Operator>this.rightOperand).precedence <= this.precedence) {
-            representation = representation + "(" + this.rightOperand.generateRepresentation(recursive) + ")";
+            representation = representation + " (" + this.rightOperand.generateRepresentation(recursive) + ") ";
         } else {
-            representation = representation + this.rightOperand.generateRepresentation(recursive);
+            representation = representation + " " + this.rightOperand.generateRepresentation(recursive);
         }
 
         return representation;
