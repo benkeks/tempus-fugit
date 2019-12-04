@@ -57,7 +57,7 @@ export class GameState {
         //if (object.constructor.name === Formula.constructor.name) {
             let f: Formula = object as Formula;
 
-            f.applyAssignment(this._variables);
+            f.applyAssignment(this.variables);
             return f.evaluate(this.activeState);
         /*} else if (object.constructor.name === Card.constructor.name) {
             let c:Card = object as Card;

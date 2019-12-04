@@ -138,7 +138,9 @@ export class Player {
 
     public attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void {
         var attackPoints = 3;
-        if (gameState.evaluate(card.getFormula())) {
+        let val:boolean = gameState.evaluate(card.getFormula());
+
+        if (val) {
             attackPoints = card.getAttackPower();
         } else {
             attackPoints = this._baseAttack;

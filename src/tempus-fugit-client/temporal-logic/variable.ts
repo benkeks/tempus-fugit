@@ -132,14 +132,14 @@ export class Variable extends Proposition {
 
     public applyAssignment(assignment):void {
         if (assignment instanceof Array) {
-            var somethingIsNotString = false;
+            var somethingIsNotBoolean = false;
             assignment.forEach(function(item){
-                if(typeof item !== 'string'){
-                    somethingIsNotString = true;
+                if(typeof item !== 'boolean'){
+                    somethingIsNotBoolean = true;
                 }
             });
 
-            if (somethingIsNotString) return;
+            if (somethingIsNotBoolean) return;
 
             this.values = [...assignment];
         } else if (assignment instanceof Variable) {
