@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Eventual extends OneParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u25CA";
-    }
-
     public getDefaultRepresentation():string {
         return "E";
     }

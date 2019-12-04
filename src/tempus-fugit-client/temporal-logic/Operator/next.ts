@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Next extends OneParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u26AC";
-    }
-
     public getDefaultRepresentation():string {
         return "X";
     }

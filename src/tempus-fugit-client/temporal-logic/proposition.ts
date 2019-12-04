@@ -17,16 +17,18 @@
         /**
          * @author Tobias Loch
          * @param recursive if false it just returns the initiated representation, otherwise it walks through the syntax tree
+         * @param defaultRepresentation if true the generator uses default values so that every semantical equivalent term has the same string. If false it generates it by the given characters.
          * @return if recursive=true -> the representation of the proposition and its children
          *          otherwise         -> the representation of the proposition itsself
          * @description generates the representation of this proposition by moving through the syntax tree if recursive is true.
          * @example
-         *      let formula:Formula = new Formula("(  a ->...b )U c"); // computes a new formula
-         *      console.log(formula.generateRepresentation(true)); // prints: (a->b)Uc
-         *      console.log(formula.generateRepresentation(false)); // prints: (  a ->...b )U c
+         *      let formula:Formula = new Formula("(  Fa ->...b )U c"); // computes a new formula
+         *      console.log(formula.generateRepresentation(true, false)); // prints: (Fa->b)Uc
+         *      console.log(formula.generateRepresentation(false, false)); // prints: (  Fa ->...b )U c
+         *      console.log(formula.generateRepresentation(false, true)); // prints: (Ea->b)Uc
          *
          * */
-        public abstract generateRepresentation(recursive:boolean): string;
+        public abstract generateRepresentation(recursive:boolean, defaultRepresentation:boolean): string;
 
         /**
          * @author Tobias Loch
@@ -48,10 +50,6 @@
 
         public getAlphabet():string {
             return this.getAlphabet();
-        }
-
-        public getDefaultUnicodeRepresentation(x):string {
-            throw new Error("Unicode Representation not defined!");
         }
 
         /**

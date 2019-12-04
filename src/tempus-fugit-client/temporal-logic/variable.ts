@@ -56,8 +56,8 @@ export class Variable extends Proposition {
         return pstat;
     }
 
-    generateRepresentation(recursive:boolean): string {
-        return this._representation;
+    generateRepresentation(recursive:boolean, defaultRepresentation=true): string {
+        return this.representation;
     }
 
 

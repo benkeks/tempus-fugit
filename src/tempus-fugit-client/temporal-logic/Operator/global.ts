@@ -4,10 +4,6 @@ import {PropositionStatus} from "../proposition";
 
 export class Global extends OneParamOperator {
 
-    public static getDefaultUnicodeRepresentation(x): string {
-        return "\u25FB";
-    }
-
     public getDefaultRepresentation():string {
         return "G";
     }
