@@ -1,3 +1,5 @@
+import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
+
 export class StartingScene extends Phaser.Scene {
   constructor() {
     super({
