@@ -50,7 +50,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
     let t2:string[][] = [["1", "you are stronger than expected!"]];
     let s2:StoryDialog = new StoryDialog(t2);
-    s2.triggerFunction = function (game:Mission) {return game.enemys[0].currentHP <=2};
+    s2.triggerFunction = function (game:Mission) {return game.enemys[0][0].currentHP <=2};
     this.tfgame.dialogs.push(s2);
     this.tfgame.dialogs.push(storyDialog);
 
@@ -61,12 +61,11 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.handGUI = new HandGUI(this, this.tfgame.hand, this.stackGUI, this.boardGUI);
     this.gameStateGUI = new TableGUI(this, this.tfgame);
 
-
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
 
     this.enemyGUIs = [];
-    for (let e of this.tfgame.enemys) {
+    for (let e of this.tfgame.getEnemies()) {
       this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
     }
 
@@ -176,5 +175,14 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       }
     });
     keyObj.emit("down");
+  }
+
+  gameover(game: Mission): void {
+  }
+
+  storyMonolog(game: Mission, monolog: string): void {
+  }
+
+  waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
   }
 }

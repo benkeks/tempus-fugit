@@ -3,16 +3,29 @@ import { Hand } from "../objects/game-objects/hand";
 import {Deck} from "../objects/game-objects/deck";
 import {Player} from "../objects/game-objects/player";
 import {GameState} from "../objects/game-objects/game-state";
-import {Enemy} from "../objects/game-objects/enemy";
+import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 import {StoryDialog} from "./story-dialog";
 
-export class Mission {
+export class Mission implements EnemyListener {
+    get enemys(): { [p: number]: Enemy[] } {
+        return this._enemys;
+    }
+
+    set enemys(value: { [p: number]: Enemy[] }) {
+        this._enemys = value;
+
+        for (let i in value) {
+            let eList:Enemy[] = value[i];
+
+            eList.map(e => e.listener.push(this))
+        }
+    }
     private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
-    private toPhase: Map<number, string>;
+//    private toPhase: Map<number, string>;
 
     public listener:GameStateListener[] = [];
 
@@ -20,27 +33,31 @@ export class Mission {
     public deck:Deck = new Deck();
     public player:Player;
     public gameState:GameState;
-    public enemys:Enemy[] = [];
+    private _enemys:{[wave:number]:Enemy[]} = {};
+    private aliveEnemiesCount:number = -1;
     public cards:Card[] = [];
 
+    public monologs:{[wave:number]:string} = {};
     public dialogs:StoryDialog[] = [];
 
+    public waveCounter;
     // TODO: effect list
 
     constructor() {
         this.curPhase = 0;
         this.emitter = new EventEmitter();
         this.curTurn = 0;
+        this.waveCounter = 0;
 
-        this.toPhase = new Map<number,string>();
+/*        this.toPhase = new Map<number,string>();
         this.toPhase.set(0, 'draw-phase');
         this.toPhase.set(1, 'energy-phase');
         this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'enemy-phase');
         this.toPhase.set(4, 'effect-phase');
-    }
+*/    }
 
-    private checkStoryEvents() {
+    private checkDialogEvents() {
         for (let i=0; i < this.dialogs.length; i++) {
             let d:StoryDialog = this.dialogs[i];
             if (d.isTriggered(this)) {
@@ -67,9 +84,6 @@ export class Mission {
         if (this.curPhase === this.numPhases-1) {
             this.endOfRound();
         }
-
-        this.checkStoryEvents();
-
         this.curPhase = next;
 
         switch (this.curPhase) {
@@ -100,11 +114,27 @@ export class Mission {
             this.incrementTurnCount();
             this.emitter.emit('next-round');
         }*/
+
+        this.checkDialogEvents();
+    }
+
+    public nextWave(next:number = this.waveCounter+1 % this.getMaxWaveCount()):void {
+        this.waveCounter = next;
+
+        if (this.waveCounter >= this.getMaxWaveCount()) {
+            this.listener.map(l => l.gameover(this));
+            return;
+        }
+
+        this.aliveEnemiesCount = this.enemys[this.waveCounter].length;
+        this.nextPhase(0);
+        this.listener.map(l => l.waveChanged(this, next, this.enemys[this.waveCounter]));
+
+        this.listener.map(l => l.storyMonolog(this, this.monologs[this.waveCounter]));
     }
 
     private drawPhase():void {
         if (!this.hand.isFull()) {
-            //this.hand.addCard(this.deck.takeCardOnTop());
             this.player.takeCard(this.deck);
         }
     }
@@ -118,7 +148,7 @@ export class Mission {
     }
 
     private enemyPhase():void {
-        this.enemys.map(e => e.attack(this.player, this.gameState));
+        this.enemys[this.waveCounter].map(e => e.attack(this.player, this.gameState));
     }
 
     private effectPhase():void {
@@ -127,7 +157,7 @@ export class Mission {
     private endOfRound():void {
         this.gameState.changeRound();
 
-        this.curTurn++;
+        this.curTurn;
     }
 
     /**
@@ -135,14 +165,7 @@ export class Mission {
      */
     public startCombat():void {
         this.curPhase = 0;
-        this.nextPhase(0);
-    }
-
-    /**
-     * Returns the current phase as a string, in pascal case
-     */
-    public getPhaseString():string {
-        return this.toPhase.get(this.curPhase);
+        this.nextWave(0);
     }
 
     /**
@@ -176,21 +199,38 @@ export class Mission {
      * sets curPhase to 0
      */
     public resetPhase():void {
-        this.curPhase = 0;
+        this.curPhase = -1;
     }
 
     /**
      * sets curTurn to 0
      */
     public resetTurnCount():void {
-        this.curTurn = 0;
+        this.curTurn = -1;
     }
 
-    /**
-     * increase turn count by 1
-     */
-    public incrementTurnCount():void {
-        this.curTurn++;
+    public getEnemies():Enemy[] {
+        return this.enemys[this.waveCounter];
+    }
+
+    public getMaxWaveCount():number {
+        return this.enemys[this.waveCounter].length;
+    }
+
+    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
+        let aliveChange:number = 0;
+
+        if (changedFrom <= 0 && changedTo > 0) {
+            aliveChange = 1;
+        } else if (changedFrom > 0 && changedTo <= 0) {
+            aliveChange = -1;
+        }
+
+        this.aliveEnemiesCount += aliveChange;
+
+        if (this.aliveEnemiesCount <= 0) {
+            this.nextWave();
+        }
     }
 }
 
@@ -201,4 +241,7 @@ export interface GameStateListener {
     enemyPhase(game:Mission):void;
     effectPhase(game:Mission):void;
     storyDialog(game:Mission, dialog:StoryDialog):void;
+    storyMonolog(game:Mission, monolog:string):void;
+    waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
+    gameover(game:Mission):void;
 }
