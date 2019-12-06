@@ -42,7 +42,7 @@ export class EnemyGUI extends Phaser.GameObjects.Sprite implements EnemyListener
      * change HP display of enemy
      * @param changedTo
      */
-    enemyHpChanged(changedTo: number): void {
+    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
         this.hpText.setText('hp: ' + changedTo);
     }
 }

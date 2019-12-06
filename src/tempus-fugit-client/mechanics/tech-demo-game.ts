@@ -1,19 +1,20 @@
-import {Mission} from "./mission";
 import {Card} from "../objects/game-objects/card";
-import {Hand} from "../objects/game-objects/hand";
 import {Player} from "../objects/game-objects/player";
 import {Enemy} from "../objects/game-objects/enemy";
 import {Formula} from "../temporal-logic/formula";
 import {GameState} from "../objects/game-objects/game-state";
+import {Mission} from "./mission";
 
-export class TechDemoGame extends Mission{
+export class TechDemoGame extends Mission {
 
     constructor() {
         super();
 
         this.player = new Player("player1", 10, 1);
-        this.enemys.push(new Enemy("e1", 5, 2,4, new Formula("Ga")));
-        this.hand = this.player.hand;
+
+        this.enemys = {
+            0:[new Enemy("e1", 5, 2,4, new Formula("Ga"))]
+        };
 
         this.gameState = new GameState();
         this.gameState.maxEnergy = 4;

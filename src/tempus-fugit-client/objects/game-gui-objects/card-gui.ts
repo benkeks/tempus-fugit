@@ -15,7 +15,6 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
     card: Card
   ) {
     super(scene, x, y, card.getImage());
-    this.scene.add.existing(this);
     this.setInteractive();
     this._cardOriginX = x;
     this._cardOriginY = y;

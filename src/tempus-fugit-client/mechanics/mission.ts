@@ -1,5 +1,4 @@
 import EventEmitter = Phaser.Events.EventEmitter;
-import { Hand } from "../objects/game-objects/hand";
 import {Deck} from "../objects/game-objects/deck";
 import {Player} from "../objects/game-objects/player";
 import {GameState} from "../objects/game-objects/game-state";
@@ -25,11 +24,10 @@ export class Mission implements EnemyListener {
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
-//    private toPhase: Map<number, string>;
+    private toPhase: Map<number, string>;
 
     public listener:GameStateListener[] = [];
 
-    public hand:Hand;
     public deck:Deck = new Deck();
     public player:Player;
     public gameState:GameState;
@@ -49,13 +47,13 @@ export class Mission implements EnemyListener {
         this.curTurn = 0;
         this.waveCounter = 0;
 
-/*        this.toPhase = new Map<number,string>();
+        this.toPhase = new Map<number,string>();
         this.toPhase.set(0, 'draw-phase');
         this.toPhase.set(1, 'energy-phase');
         this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'enemy-phase');
         this.toPhase.set(4, 'effect-phase');
-*/    }
+    }
 
     private checkDialogEvents() {
         for (let i=0; i < this.dialogs.length; i++) {
@@ -134,7 +132,7 @@ export class Mission implements EnemyListener {
     }
 
     private drawPhase():void {
-        if (!this.hand.isFull()) {
+        if (!this.player.hand.isFull()) {
             this.player.takeCard(this.deck);
         }
     }
@@ -157,7 +155,7 @@ export class Mission implements EnemyListener {
     private endOfRound():void {
         this.gameState.changeRound();
 
-        this.curTurn;
+        this.curTurn++;
     }
 
     /**
@@ -165,6 +163,7 @@ export class Mission implements EnemyListener {
      */
     public startCombat():void {
         this.curPhase = 0;
+        this.curTurn = 0;
         this.nextWave(0);
     }
 

@@ -9,7 +9,7 @@ import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
 import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {Mission, GameStateListener} from "../mechanics/Mission";
+import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
 import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
 
@@ -42,8 +42,8 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.configureCardEvents();
 
     this.tfgame = new TechDemoGame();
+    this.enemyGUIs = [];
     this.tfgame.listener.push(this);
-
 
     let t1:string[][] = [["1", "we dont like u!"], ["0", "me neither"], ["1", "ok lets fight!"]];
     let storyDialog:StoryDialog = new StoryDialog(t1);
@@ -56,18 +56,14 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
+    this.enemyGUIs.push(new EnemyGUI(this, "enemy", this.tfgame.getEnemies()[0]));
 
     this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-    this.handGUI = new HandGUI(this, this.tfgame.hand, this.stackGUI, this.boardGUI);
+    this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.boardGUI);
     this.gameStateGUI = new TableGUI(this, this.tfgame);
 
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
-
-    this.enemyGUIs = [];
-    for (let e of this.tfgame.getEnemies()) {
-      this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
-    }
 
     this.phaseText = this.add.text(100,100,"Draw Phase");
 
@@ -118,7 +114,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       this
     );
   }
-  update(): void {}
 
   drawPhase(game: Mission): void {
 
@@ -175,6 +170,8 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       }
     });
     keyObj.emit("down");
+
+
   }
 
   gameover(game: Mission): void {
@@ -184,5 +181,13 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   }
 
   waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
+    for (let i=0; i < enemies.length; i++) {
+      let enemy:Enemy = enemies[i];
+
+      if (i >= this.enemyGUIs.length) {
+        this.enemyGUIs.push(new EnemyGUI(this, undefined, undefined));
+      }
+
+    }
   }
 }
