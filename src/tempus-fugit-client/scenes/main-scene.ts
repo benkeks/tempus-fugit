@@ -9,7 +9,9 @@ import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
 import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {Mission, GameStateListener} from "../mechanics/mission";
+import {Mission, GameStateListener} from "../mechanics/Mission";
+import {StoryDialog} from "../mechanics/story-dialog";
+import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -41,6 +43,16 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
     this.tfgame = new TechDemoGame();
     this.tfgame.listener.push(this);
+
+
+    let t1:string[][] = [["1", "we dont like u!"], ["0", "me neither"], ["1", "ok lets fight!"]];
+    let storyDialog:StoryDialog = new StoryDialog(t1);
+    storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
+    let t2:string[][] = [["1", "you are stronger than expected!"]];
+    let s2:StoryDialog = new StoryDialog(t2);
+    s2.triggerFunction = function (game:Mission) {return game.enemys[0].currentHP <=2};
+    this.tfgame.dialogs.push(s2);
+    this.tfgame.dialogs.push(storyDialog);
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
@@ -139,5 +151,30 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
+  }
+
+
+  private activeBubble:SpeechBubble = undefined;
+  storyDialog(game: Mission, dialog: StoryDialog): void {
+    let keyObj = this.input.keyboard.addKey("N");
+    keyObj.on("down", e => {
+      if (this.activeBubble) {
+        this.activeBubble.hide();
+      }
+      this.activeBubble = undefined;
+      let s:string[] = dialog.readLine();
+      if (s !== null) {
+        if (s[0] == "0") {
+          this.playerGUI.speechBubble.show(s[1]);
+          this.activeBubble = this.playerGUI.speechBubble;
+        } else {
+          this.activeBubble = this.enemyGUIs[0].speechBubble;
+          this.enemyGUIs[0].speechBubble.show(s[1]);
+        }
+      } else {
+        keyObj.destroy();
+      }
+    });
+    keyObj.emit("down");
   }
 }

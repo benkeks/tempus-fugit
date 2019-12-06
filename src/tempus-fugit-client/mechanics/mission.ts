@@ -5,6 +5,7 @@ import {Player} from "../objects/game-objects/player";
 import {GameState} from "../objects/game-objects/game-state";
 import {Enemy} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
+import {StoryDialog} from "./story-dialog";
 
 export class Mission {
     private readonly numPhases:number = 5;
@@ -22,6 +23,8 @@ export class Mission {
     public enemys:Enemy[] = [];
     public cards:Card[] = [];
 
+    public dialogs:StoryDialog[] = [];
+
     // TODO: effect list
 
     constructor() {
@@ -35,6 +38,16 @@ export class Mission {
         this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'enemy-phase');
         this.toPhase.set(4, 'effect-phase');
+    }
+
+    private checkStoryEvents() {
+        for (let i=0; i < this.dialogs.length; i++) {
+            let d:StoryDialog = this.dialogs[i];
+            if (d.isTriggered(this)) {
+                this.listener.map(l => l.storyDialog(this, d));
+                this.dialogs.splice(i, 1);
+            }
+        }
     }
 
     /**
@@ -54,6 +67,8 @@ export class Mission {
         if (this.curPhase === this.numPhases-1) {
             this.endOfRound();
         }
+
+        this.checkStoryEvents();
 
         this.curPhase = next;
 
@@ -185,4 +200,5 @@ export interface GameStateListener {
     playPhase(game:Mission):void;
     enemyPhase(game:Mission):void;
     effectPhase(game:Mission):void;
+    storyDialog(game:Mission, dialog:StoryDialog):void;
 }
