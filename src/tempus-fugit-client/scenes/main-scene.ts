@@ -9,7 +9,7 @@ import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
 import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {Game, GameStateListener} from "../mechanics/game";
+import {Mission, GameStateListener} from "../mechanics/mission";
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -24,7 +24,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   private enemys: Enemy[];
 
-  private tfgame:Game;
+  private tfgame:Mission;
 
   constructor() {
     super({
@@ -109,7 +109,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   }
   update(): void {}
 
-  drawPhase(game: Game): void {
+  drawPhase(game: Mission): void {
 
     this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
@@ -117,25 +117,25 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     game.nextPhase();
   }
 
-  effectPhase(game: Game): void {
+  effectPhase(game: Mission): void {
     console.log("effect Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Effect Phase");
   }
 
-  enemyPhase(game: Game): void {
+  enemyPhase(game: Mission): void {
     console.log("enemyPhase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Enemy Phase");
   }
 
-  energyPhase(game: Game): void {
+  energyPhase(game: Mission): void {
     console.log("energy Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Energy Phase");
   }
 
-  playPhase(game: Game): void {
+  playPhase(game: Mission): void {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");

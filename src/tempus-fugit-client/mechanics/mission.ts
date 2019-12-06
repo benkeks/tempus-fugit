@@ -6,7 +6,7 @@ import {GameState} from "../objects/game-objects/game-state";
 import {Enemy} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 
-export class Game {
+export class Mission {
     private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
@@ -180,9 +180,9 @@ export class Game {
 }
 
 export interface GameStateListener {
-    drawPhase(game:Game):void;
-    energyPhase(game:Game):void;
-    playPhase(game:Game):void;
-    enemyPhase(game:Game):void;
-    effectPhase(game:Game):void;
+    drawPhase(game:Mission):void;
+    energyPhase(game:Mission):void;
+    playPhase(game:Mission):void;
+    enemyPhase(game:Mission):void;
+    effectPhase(game:Mission):void;
 }

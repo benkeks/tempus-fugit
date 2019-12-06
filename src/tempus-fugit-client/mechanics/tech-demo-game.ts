@@ -1,4 +1,4 @@
-import {Game} from "./game";
+import {Mission} from "./mission";
 import {Card} from "../objects/game-objects/card";
 import {Hand} from "../objects/game-objects/hand";
 import {Player} from "../objects/game-objects/player";
@@ -6,7 +6,7 @@ import {Enemy} from "../objects/game-objects/enemy";
 import {Formula} from "../temporal-logic/formula";
 import {GameState} from "../objects/game-objects/game-state";
 
-export class TechDemoGame extends Game{
+export class TechDemoGame extends Mission{
 
     constructor() {
         super();
