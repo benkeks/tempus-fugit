@@ -1,4 +1,3 @@
-import Sprite = Phaser.GameObjects.Sprite;
 import Scene = Phaser.Scene;
 
 export class SpeechBubble {
@@ -72,7 +71,7 @@ export class SpeechBubble {
 
         //  Bubble shadow
         this.bubbleGraphics.fillStyle(0x222222, 0.5);
-        this.bubbleGraphics.fillRoundedRect(6, 6, this.bubbleWidth, this.bubbleHeight, 16);
+        this.bubbleGraphics.strokeRoundedRect(6, 6, this.bubbleWidth, this.bubbleHeight, 16);
 
         //  Bubble color
         this.bubbleGraphics.fillStyle(0xffffff, 1);

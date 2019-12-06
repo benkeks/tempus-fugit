@@ -2,9 +2,9 @@ import {Game} from "./game";
 
 export class StoryDialog {
 
-    public text:string[][];
     public activeLine:number = -1;
-
+    
+    public text:string[][];
     public triggerFunction:Function;
 
     public isTriggered(game:Game):boolean {
