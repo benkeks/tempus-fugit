@@ -1,7 +1,7 @@
 {
     "tutorial": {
         "background":"",
-        "wave": 2,
+        "waves": 2,
         "enemies": [
             {"1":["slime1", "slime2"]},
             {"2":["slime3", "slime3", "goblin"]}
@@ -19,7 +19,7 @@
     },
     "mission1": {
         "background":"",
-        "wave": 5,
+        "waves": 5,
         "enemies": [
             {"1":["slime1", "slime2"]},
             {"2":["slime2", "slime3", "slime2"]},
