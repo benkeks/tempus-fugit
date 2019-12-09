@@ -59,11 +59,14 @@ export class Card {
      */
     constructor(name: string, description: string, image: string, formula: string, attackPower: number) {
         this.name = name;
+        console.log(formula);
+        console.log(name);
         this.description = description;
         this.image = image;
         this.formula = new Formula();
         this.formula.parse(formula);
         this.attackPower = attackPower;
+        console.log(name + " is being created");
     }
 
     /**

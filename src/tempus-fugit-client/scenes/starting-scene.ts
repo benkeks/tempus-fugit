@@ -1,6 +1,7 @@
 import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
 import {StoryDialog} from "../mechanics/story-dialog";
 import {Mission} from "../mechanics/mission";
+import {Card} from "../objects/game-objects/card";
 
 export class StartingScene extends Phaser.Scene {
   constructor() {
@@ -34,31 +35,20 @@ export class StartingScene extends Phaser.Scene {
       return result;
     }
 
-    var text = loadFile("/test.json");
-    var text2 = loadFile("/test2.json");
-    var json = JSON.parse(text);
-    var json2 = JSON.parse(text2);
-    console.log(text);
+    var text = loadFile("/assets/cards/cards.json");
+    let ps = [];
+    let cards:Card[] = [];
+    let json = JSON.parse(text);
+    for (let t of json.cards) {
+      console.log(t);
+      let p = Object.setPrototypeOf(t, Card.prototype);
+      ps.push(p);
+      cards.push(Object.create(p));
+    }
 
-    let p = Object.setPrototypeOf(json, StoryDialog.prototype);
-    let p1 = Object.setPrototypeOf(json2, StoryDialog.prototype);
-
-    let sd1:StoryDialog = Object.create(p);
-    let sd2:StoryDialog = Object.create(p1);
-    let sd3:StoryDialog = Object.create(p1);
-    sd3.triggerFunction = function(mission) {return false};
-
-    console.log(sd1.text);
-    console.log(sd2.text);
-    let m:Mission = new Mission();
-    console.log(sd1.isTriggered(m));
-    console.log(sd2.isTriggered(m));
-    console.log(sd3.isTriggered(m));
-    console.log("nextphase");
-    m.nextPhase();
-    console.log(sd1.isTriggered(m));
-    console.log(sd2.isTriggered(m));
-    console.log(sd3.isTriggered(m));
+    //console.log(text);
+    console.log(cards);
+    let c1:Card = cards[0];
 
     const title = this.add.text(
         window.innerWidth / 2 ,
