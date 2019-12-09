@@ -5,10 +5,23 @@ export class StoryDialog {
     public activeLine:number = -1;
     
     public text:string[][];
-    public triggerFunction:Function;
+    public triggerFunction:Function = undefined;
+    public triggerFunctionString:string;
 
-    public isTriggered(game:Mission):boolean {
-        return this.triggerFunction(game);
+    public parsetriggerFunctionString(triggerFunction:string=undefined) {
+        if (!triggerFunction) {
+            triggerFunction = this.triggerFunctionString;
+        }
+
+        this.triggerFunction = eval("(function(mission){" + triggerFunction + "})");
+    }
+
+    public isTriggered(mission:Mission):boolean {
+        if (!this.triggerFunction) {
+            this.parsetriggerFunctionString();
+        }
+
+        return this.triggerFunction(mission);
     }
 
     constructor(text:string[][]) {
