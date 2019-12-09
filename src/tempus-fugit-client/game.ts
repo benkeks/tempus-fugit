@@ -6,10 +6,11 @@ import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugi
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
+    width: 1920,
+    height: 1080,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
-        width: 1920,
-        height: 1080
+        autoCenter:Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: "#000",
     plugins: {
