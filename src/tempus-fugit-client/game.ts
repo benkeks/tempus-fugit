@@ -4,10 +4,29 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import {StartingScene} from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
 
+export abstract class GameInfo {
+    public static readonly X_AXIS = 0;
+    public static readonly Y_AXIS = 1;
+
+    public static width:number = 1920;
+    public static height:number = 1080;
+
+    public static convertRelativeCoordinates(axis:number, coordinate:number):number {
+        if (axis == this.X_AXIS) {
+            return (coordinate/100.0) * this.width;
+        } else if (this.Y_AXIS) {
+            return (coordinate/100.0) * this.height;
+        } else {
+            throw new TypeError("Axis has to be 0 or 1!");
+        }
+
+    }
+}
+
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 1920,
-    height: 1080,
+    width: GameInfo.width,
+    height: GameInfo.height,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
         autoCenter:Phaser.Scale.CENTER_BOTH

@@ -1,7 +1,6 @@
-export class StartingScene extends Phaser.Scene {
+import {GameInfo} from "../game";
 
-  public static readonly X_AXIS = 0;
-  public static readonly Y_AXIS = 0;
+export class StartingScene extends Phaser.Scene {
 
   constructor() {
     super({
@@ -16,16 +15,6 @@ export class StartingScene extends Phaser.Scene {
         families: ["Comfortaa"]
       }
     });
-  }
-
-  public static convertRelativeCoordinates(scene:Phaser.Scene, axis:number, coordinate:number):number {
-    if (axis == this.X_AXIS) {
-      return (coordinate/100) * scene.scale.width;
-    } else if (this.Y_AXIS) {
-      return (coordinate/100) * scene.scale.height;
-    } else {
-      throw new TypeError("Axis has to be 0 or 1!");
-    }
 
   }
 
@@ -35,8 +24,8 @@ export class StartingScene extends Phaser.Scene {
 
 
     const title = this.add.text(
-        StartingScene.convertRelativeCoordinates(this, StartingScene.X_AXIS, 50) ,
-        StartingScene.convertRelativeCoordinates(this, StartingScene.Y_AXIS, 10),
+        GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) ,
+        GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 20),
         "Tempus Fugit",
         { fontSize: 120, fontFamily: "Comfortaa" }
     );
@@ -44,8 +33,8 @@ export class StartingScene extends Phaser.Scene {
     .setColor("#fff");
 
     const tutText = this.add.text(
-        StartingScene.convertRelativeCoordinates(this, StartingScene.X_AXIS, 50),
-        StartingScene.convertRelativeCoordinates(this, StartingScene.Y_AXIS, 25),
+        GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
+        GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50),
       "Tutorial",
       { fontSize: 100, fontFamily: "Comfortaa" }
     );
@@ -53,8 +42,8 @@ export class StartingScene extends Phaser.Scene {
     tutText.setColor("#fff");
 
     const playText = this.add.text(
-        StartingScene.convertRelativeCoordinates(this, StartingScene.X_AXIS, 50),
-        StartingScene.convertRelativeCoordinates(this, StartingScene.Y_AXIS, 35),
+        GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
+        GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 70),
       "Play",
       { fontSize: 100, fontFamily: "Comfortaa" }
     );

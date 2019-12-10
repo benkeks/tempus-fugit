@@ -10,6 +10,8 @@ import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
 import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
 import {Game, GameStateListener} from "../mechanics/game";
+import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
+import AnimationFrame = Phaser.Animations.AnimationFrame;
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -17,7 +19,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   private gameStateGUI: TableGUI;
   private handGUI:HandGUI;
   private deckGUI:DeckGUI;
-  private enemyGUIs:EnemyGUI[];
+  private enemyGUI:EnemyGuiLayout;
   private stackGUI:StackGUI;
   private boardGUI:BoardGUI;
   private phaseText: Phaser.GameObjects.Text;
@@ -34,6 +36,15 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
+
+
+    this.load.spritesheet('slime1',
+        'assets/sprites/enemies/slime1/slime1-Sheet.png',
+        { frameWidth: 64, frameHeight: 64 });
+
+    //this.load.atlas('slime1',
+    //    'assets/sprites/enemies/slime1/slime1-Sheet.png',
+    //    "assets/sprites/enemies/slime1/slime1-sheet.json");
   }
 
   create(): void {
@@ -53,10 +64,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
 
-    this.enemyGUIs = [];
-    for (let e of this.tfgame.enemys) {
-      this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
-    }
+    this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.enemys);
 
     this.phaseText = this.add.text(100,100,"Draw Phase");
 

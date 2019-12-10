@@ -11,6 +11,7 @@ export class Enemy {
     public baseAttack: number; // The enemy's base attack strength
     public specialAttack: number; // The enemy's base attack strength
     public formula: Formula; // A formula attached to the card
+    public image:string;
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {

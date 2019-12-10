@@ -12,7 +12,11 @@ export class TechDemoGame extends Game{
         super();
 
         this.player = new Player("player1", 10, 1);
-        this.enemys.push(new Enemy("e1", 5, 2,4, new Formula("Ga")));
+        let enemy:Enemy = new Enemy("slime1", 5, 2,4, new Formula("Ga"));
+        enemy.image = enemy.name;
+        this.enemys.push(enemy);
+        this.enemys.push(enemy);
+        this.enemys.push(enemy);
         this.hand = this.player.hand;
 
         this.gameState = new GameState();
