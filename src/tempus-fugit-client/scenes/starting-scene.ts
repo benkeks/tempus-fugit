@@ -27,7 +27,7 @@ export class StartingScene extends Phaser.Scene {
         GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) ,
         GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 20),
         "Tempus Fugit",
-        { fontSize: 120, fontFamily: "Comfortaa" }
+        { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "Comfortaa" }
     );
     title.setOrigin(0.5)
     .setColor("#fff");
@@ -36,7 +36,7 @@ export class StartingScene extends Phaser.Scene {
         GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
         GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50),
       "Tutorial",
-      { fontSize: 100, fontFamily: "Comfortaa" }
+      { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "Comfortaa" }
     );
     tutText.setOrigin(0.5);
     tutText.setColor("#fff");
@@ -45,7 +45,7 @@ export class StartingScene extends Phaser.Scene {
         GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
         GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 70),
       "Play",
-      { fontSize: 100, fontFamily: "Comfortaa" }
+      { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "Comfortaa" }
     );
     playText.setOrigin(0.5)
     playText.setInteractive();

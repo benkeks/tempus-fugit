@@ -16,7 +16,7 @@ export class TechDemoGame extends Game{
         enemy.image = enemy.name;
         this.enemys.push(enemy);
         this.enemys.push(enemy);
-        this.enemys.push(enemy);
+        //this.enemys.push(enemy);
         this.hand = this.player.hand;
 
         this.gameState = new GameState();

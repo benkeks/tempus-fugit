@@ -23,10 +23,11 @@ export abstract class GameInfo {
     }
 }
 
-const config: Phaser.Types.Core.GameConfig = {
+const config = {
     type: Phaser.AUTO,
     width: GameInfo.width,
     height: GameInfo.height,
+    pixelArt:true,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
         autoCenter:Phaser.Scale.CENTER_BOTH

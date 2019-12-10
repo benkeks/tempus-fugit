@@ -37,14 +37,14 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
 
-
+    // TODO: implement multiatlas version
     this.load.spritesheet('slime1',
         'assets/sprites/enemies/slime1/slime1-Sheet.png',
         { frameWidth: 64, frameHeight: 64 });
 
-    //this.load.atlas('slime1',
-    //    'assets/sprites/enemies/slime1/slime1-Sheet.png',
-    //    "assets/sprites/enemies/slime1/slime1-sheet.json");
+    /*this.load.atlas('slime1',
+        'assets/sprites/enemies/slime1/slime1-Sheet.png',
+        "assets/sprites/enemies/slime1/slime1-sheet.json");*/
   }
 
   create(): void {

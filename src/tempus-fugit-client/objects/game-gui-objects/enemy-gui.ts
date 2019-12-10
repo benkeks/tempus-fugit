@@ -1,4 +1,5 @@
 import {Enemy, EnemyListener} from "../game-objects/enemy";
+import {GameInfo} from "../../game";
 
 /**
  * @author Mustafa
