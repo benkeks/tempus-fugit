@@ -115,8 +115,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     );
   }
 
-  drawPhase(game: Mission): void {
-
+  drawPhase(game: Mission) {
     this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
     console.log("drawPhase");

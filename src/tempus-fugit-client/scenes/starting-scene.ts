@@ -24,6 +24,7 @@ export class StartingScene extends Phaser.Scene {
   create() {
     console.log("booting");
 
+    /*
     function loadFile(filePath) {
       var result = null;
       var xmlhttp = new XMLHttpRequest();
@@ -44,11 +45,13 @@ export class StartingScene extends Phaser.Scene {
       let p = Object.setPrototypeOf(t, Card.prototype);
       ps.push(p);
       cards.push(Object.create(p));
+
     }
 
     //console.log(text);
     console.log(cards);
     let c1:Card = cards[0];
+    console.log(c1.getAttackPower());*/
 
     const title = this.add.text(
         window.innerWidth / 2 ,
