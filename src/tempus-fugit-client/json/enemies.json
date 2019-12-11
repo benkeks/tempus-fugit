@@ -7,8 +7,8 @@
             "baseAttack":"2",
             "specialAttack":"1",
             "formula":"",
-            "sprite"size:: []"",
-            ""
+            "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
+            "size": [64, 64]
 
         },
         {
@@ -18,8 +18,8 @@
             "baseAttack":"3",
             "specialAttack":"2",
             "formula":"",
-            "sprite":"assets/sprites/enemies/slime1/slime1-Sheet.png",
-            "size": [64, 64] 
+            "sprite":"",
+            "size": []
         },
         {
             "name":"slime3",
