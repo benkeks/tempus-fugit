@@ -12,6 +12,8 @@ import {StackGUI} from "../objects/game-gui-objects/stack-gui";
 import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
 import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
+import {StandGUI} from "../objects/game-gui-objects/stand-gui";
+import {Stand} from "../objects/game-objects/stand";
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -22,6 +24,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   private enemyGUIs:EnemyGUI[];
   private stackGUI:StackGUI;
   private boardGUI:BoardGUI;
+  private standGUI:StandGUI;
   private phaseText: Phaser.GameObjects.Text;
 
   private enemys: Enemy[];
@@ -50,7 +53,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
     let t2:string[][] = [["1", "you are stronger than expected!"]];
     let s2:StoryDialog = new StoryDialog(t2);
-    s2.triggerFunction = function (game:Mission) {return game.enemys[0][0].currentHP <=2};
+    s2.triggerFunction = function (game:Mission) {return game.enemies[0][0].currentHP <=2};
     this.tfgame.dialogs.push(s2);
     this.tfgame.dialogs.push(storyDialog);
 
@@ -58,9 +61,12 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.boardGUI = new BoardGUI(this, this.stackGUI);
     this.enemyGUIs.push(new EnemyGUI(this, "enemy", this.tfgame.getEnemies()[0]));
 
+    this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
+    this.standGUI.hide();
+
     this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
     this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.boardGUI);
-    this.gameStateGUI = new TableGUI(this, this.tfgame);
+    this.gameStateGUI = new TableGUI(this, this.tfgame)
 
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
@@ -144,6 +150,12 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
+  }
+
+  standPhase(game: Mission): void {
+    console.log("stand Phase");
+    this.handGUI.fadeIn();
+    this.phaseText.setText("Stand Phase");
   }
 
 
