@@ -1,5 +1,6 @@
 import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {GameInfo} from "../../game";
+import {SpeechBubble} from "./speech-bubble";
 
 /**
  * @author Mustafa
@@ -12,6 +13,8 @@ export class EnemyGUI extends Phaser.GameObjects.Container implements EnemyListe
     private hpText: Phaser.GameObjects.Text; // shows hp of enemy
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of enemy
     private sprite:Phaser.GameObjects.Sprite;
+
+    public speechBubble:SpeechBubble;
 
     constructor(
         scene: Phaser.Scene,
@@ -83,7 +86,7 @@ export class EnemyGUI extends Phaser.GameObjects.Container implements EnemyListe
      * change HP display of enemy
      * @param changedTo
      */
-    enemyHpChanged(changedTo: number): void {
+    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
         this.setHP(changedTo);
     }
 }

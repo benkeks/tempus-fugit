@@ -7,7 +7,7 @@ import { Hand, HandListener } from "../game-objects/hand";
 /**
  * @author Mustafa
  */
-export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
+export class HandGUI extends Phaser.GameObjects.Container implements HandListener {
   private hand: Hand; // hand object associated with handGUI object
   private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
   private readonly stack: StackGUI;
@@ -27,6 +27,7 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
     this.hand = hand;
 
     this.hand.listener.push(this);
+    scene.add.existing(this);
   }
 
   /**
@@ -51,7 +52,8 @@ export class HandGUI extends Phaser.GameObjects.Group implements HandListener {
         850,
         card
       );
-      this.add(cardGUI, true);
+      this.add(cardGUI);
+
       cardGUI.setInteractive();
       cardGUI.enableDragging();
       this.cardGUIs.push(cardGUI);
