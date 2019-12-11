@@ -79,10 +79,11 @@ export class Enemy {
      * @author Florian
      */
     public takeHit(hitPower: number): void {
+        let before:number = this.currentHP;
         this.currentHP -= hitPower;
 
         for (let i in this.listener) {
-            this.listener[i].enemyHpChanged(this.currentHP);
+            this.listener[i].enemyHpChanged(this, before, this.currentHP);
         }
     }
 
@@ -103,5 +104,5 @@ export class Enemy {
  * @author Florian
  */
 export interface EnemyListener {
-    enemyHpChanged(changedTo: number): void;
+    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
 }

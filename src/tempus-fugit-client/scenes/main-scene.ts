@@ -9,7 +9,9 @@ import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
 import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {Game, GameStateListener} from "../mechanics/game";
+import {Mission, GameStateListener} from "../mechanics/mission";
+import {StoryDialog} from "../mechanics/story-dialog";
+import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -24,7 +26,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   private enemys: Enemy[];
 
-  private tfgame:Game;
+  private tfgame:Mission;
 
   constructor() {
     super({
@@ -41,23 +43,28 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.configureCardEvents();
 
     this.tfgame = new TechDemoGame();
+    this.enemyGUIs = [];
     this.tfgame.listener.push(this);
+
+    let t1:string[][] = [["1", "we dont like u!"], ["0", "me neither"], ["1", "ok lets fight!"]];
+    let storyDialog:StoryDialog = new StoryDialog(t1);
+    storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
+    let t2:string[][] = [["1", "you are stronger than expected!"]];
+    let s2:StoryDialog = new StoryDialog(t2);
+    s2.triggerFunction = function (game:Mission) {return game.enemys[0][0].currentHP <=2};
+    this.tfgame.dialogs.push(s2);
+    this.tfgame.dialogs.push(storyDialog);
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
+    this.enemyGUIs.push(new EnemyGUI(this, "enemy", this.tfgame.getEnemies()[0]));
 
     this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-    this.handGUI = new HandGUI(this, this.tfgame.hand, this.stackGUI, this.boardGUI);
+    this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.boardGUI);
     this.gameStateGUI = new TableGUI(this, this.tfgame);
-
 
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
-
-    this.enemyGUIs = [];
-    for (let e of this.tfgame.enemys) {
-      this.enemyGUIs.push(new EnemyGUI(this, "enemy", e));
-    }
 
     this.phaseText = this.add.text(100,100,"Draw Phase");
 
@@ -119,37 +126,79 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       this
     );
   }
-  update(): void {}
 
-  drawPhase(game: Game): void {
-
+  drawPhase(game: Mission) {
     this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
     console.log("drawPhase");
     game.nextPhase();
   }
 
-  effectPhase(game: Game): void {
+  effectPhase(game: Mission): void {
     console.log("effect Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Effect Phase");
   }
 
-  enemyPhase(game: Game): void {
+  enemyPhase(game: Mission): void {
     console.log("enemyPhase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Enemy Phase");
   }
 
-  energyPhase(game: Game): void {
+  energyPhase(game: Mission): void {
     console.log("energy Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Energy Phase");
   }
 
-  playPhase(game: Game): void {
+  playPhase(game: Mission): void {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
+  }
+
+
+  private activeBubble:SpeechBubble = undefined;
+  storyDialog(game: Mission, dialog: StoryDialog): void {
+    let keyObj = this.input.keyboard.addKey("N");
+    keyObj.on("down", e => {
+      if (this.activeBubble) {
+        this.activeBubble.hide();
+      }
+      this.activeBubble = undefined;
+      let s:string[] = dialog.readLine();
+      if (s !== null) {
+        if (s[0] == "0") {
+          this.playerGUI.speechBubble.show(s[1]);
+          this.activeBubble = this.playerGUI.speechBubble;
+        } else {
+          this.activeBubble = this.enemyGUIs[0].speechBubble;
+          this.enemyGUIs[0].speechBubble.show(s[1]);
+        }
+      } else {
+        keyObj.destroy();
+      }
+    });
+    keyObj.emit("down");
+
+
+  }
+
+  gameover(game: Mission): void {
+  }
+
+  storyMonolog(game: Mission, monolog: string): void {
+  }
+
+  waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
+    for (let i=0; i < enemies.length; i++) {
+      let enemy:Enemy = enemies[i];
+
+      if (i >= this.enemyGUIs.length) {
+        this.enemyGUIs.push(new EnemyGUI(this, undefined, undefined));
+      }
+
+    }
   }
 }

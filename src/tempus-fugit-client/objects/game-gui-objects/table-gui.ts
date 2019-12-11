@@ -1,6 +1,6 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
-import { Game } from "../../mechanics/game";
+import { Mission } from "../../mechanics/mission";
 
 const COLOR_PRIMARY = 0x0f3491;
 const COLOR_LIGHT = 0x7b5e57;
@@ -16,7 +16,7 @@ export class TableGUI implements GameStateListener {
     private readonly scene: Phaser.Scene;
     private energyTable; // table for red dots representing energy
     private _gameState: GameState;
-    private game: Game;
+    private game: Mission;
 
     private variableTable; // table object
     private readonly tableOffsetX: number; // x-position of table
@@ -28,7 +28,7 @@ export class TableGUI implements GameStateListener {
 
     constructor(
         scene: Phaser.Scene,
-        game: Game,
+        game: Mission,
         tableOffsetX: number = 1000,
         tableOffsetY: number = 140
     ) {
