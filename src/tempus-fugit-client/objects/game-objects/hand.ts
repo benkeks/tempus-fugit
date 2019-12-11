@@ -69,7 +69,7 @@ export class Hand {
      * @author Florian
      */
     public removeCard(position: number): void {
-        this.cards[position] = new Card("Empty", "", "","", 0);
+        this.cards[position] = new Card("Empty", "", "","", 0, false, null, "");
     }
 
     /**

@@ -23,11 +23,11 @@ export class TechDemoGame extends Mission {
         this.gameState.setVariable("c", false);
         this.gameState.setVariable("d", false);
 
-        let c1:Card = new Card("test1", "", "card1", "b&(c|(OEb))", 2);
-        let c2:Card = new Card("test2", "","card2", "!#G(a&!b)", 2);
-        let c3:Card = new Card("test3", "","card3", "#Oa&(d|!b)", 2);
-        let c4:Card = new Card("test4", "","card4", "OEc", 2);
-        let c5:Card = new Card("test5", "","card5", "OEc&(#Oa|b)", 2);
+        let c1:Card = new Card("test1", "", "card1", "b&(c|(OEb))", 2, true, null, "enemy.takeHit(this.getAttackPower());");
+        let c2:Card = new Card("test2", "","card2", "!#G(a&!b)", 2, true, null, "enemy.takeHit(this.getAttackPower());");
+        let c3:Card = new Card("test3", "","card3", "#Oa&(d|!b)", 2, true, null, "enemy.takeHit(this.getAttackPower());");
+        let c4:Card = new Card("test4", "","card4", "OEc", 2, false, null, "enemy.takeHit(this.getAttackPower());");
+        let c5:Card = new Card("test5", "","card5", "OEc&(#Oa|b)", 2, false, null, "enemy.takeHit(this.getAttackPower());");
 
         //let c1:Card= new Card("test1", "", "card1", "a", 5);
         //let c2: Card = new Card("test2", "","card2", "a", 2);

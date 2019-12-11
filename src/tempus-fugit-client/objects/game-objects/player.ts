@@ -3,6 +3,7 @@ import {Card} from "./card"
 import {Deck} from "./deck"
 import {Hand} from "./hand";
 import {GameState} from "./game-state";
+import {Mission} from "../../mechanics/mission";
 
 
 export class Player {
@@ -20,6 +21,7 @@ export class Player {
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
+
 
     /**
      * Setter for the player's hit points
@@ -88,15 +90,15 @@ export class Player {
      * @return Does not have a return value
      * @author Florian
      */
-    public attack(enemy: Enemy, baseAttack: boolean, n: number, gameState: boolean[]): void {
-        var attackPoints = 0;
-        if (baseAttack) {
-            attackPoints = this._baseAttack
-        } else {
-            attackPoints = this.hand.getCard(n).evaluateAttack(gameState);
+    public applyCard(card: Card, enemy: Enemy, gameState: GameState, mission: Mission): void {
+        let val:boolean = gameState.evaluate(card.getFormula());
+        if (card.isBaseAttackCard && !val) {
+            enemy.takeHit((this.baseAttack));
+        } else if (val) {
+            card.action(mission,enemy);
         }
-        enemy.takeHit(attackPoints);
     }
+
 
     /**
      * Causes player to lose 'number' HP; informs player listeners
@@ -136,17 +138,6 @@ export class Player {
         return this.currentHP > 0;
     }
 
-    public attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void {
-        var attackPoints = 3;
-        let val:boolean = gameState.evaluate(card.getFormula());
-
-        if (val) {
-            attackPoints = card.getAttackPower();
-        } else {
-            attackPoints = this._baseAttack;
-        }
-        enemy.takeHit(attackPoints);
-    }
 
 }
 
