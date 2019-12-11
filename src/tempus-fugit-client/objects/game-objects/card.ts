@@ -1,4 +1,7 @@
 import {Formula} from "../../temporal-logic/formula";
+import {Stand} from "../../objects/game-objects/stand";
+import {Mission} from "../../mechanics/mission";
+import {Enemy} from "./enemy";
 
 export class Card {
     private name: string; // Name of the card
@@ -6,6 +9,22 @@ export class Card {
     private image: string; // A string describing the image on the card
     private formula: Formula; // A formula attached to the card
     private attackPower: number; // The stregth of an attack based on this card
+    public isBaseAttackCard: boolean; // Determines whether the card deals base attack when formula is not fulfilled or not
+    private stand: Stand; // The stand that is associeted with the card
+    public action:Function;
+
+
+
+
+
+    /**
+     * Getter method for the stand attribute
+     * @author Florian
+     */
+    public getStand(): Stand {
+        return this.stand;
+    }
+
 
     /**
      * Getter method for the name attribute
@@ -57,15 +76,25 @@ export class Card {
      * @param attackPower The attack power of the card
      * @author Florian
      */
-    constructor(name: string, description: string, image: string, formula: string, attackPower: number) {
+    constructor(name: string, description: string, image: string, formula: string, attackPower: number, isBaseAttackCard: boolean, stand: Stand, actionString: string) {
         this.name = name;
         this.description = description;
         this.image = image;
         this.formula = new Formula();
         this.formula.parse(formula);
         this.attackPower = attackPower;
-        console.log(name + " is being created");
+        this.isBaseAttackCard = isBaseAttackCard;
+        this.stand = stand;
+        this.action = eval("(function(mission, enemy){"+actionString+"})");
     }
+
+
+    public performAction(mission: Mission, enemy: Enemy)  {
+        return this.action(mission, enemy);
+    }
+
+
+
 
     /**
      * This function checks whether an attack is in accordance with the game state. If it is, it returns the card's damage, otherwise 0.

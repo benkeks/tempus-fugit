@@ -3,6 +3,7 @@ import {Card} from "../game-objects/card";
 import {Enemy} from "../game-objects/enemy";
 import {GameState} from "../game-objects/game-state";
 import {SpeechBubble} from "./speech-bubble";
+import {Mission} from "../../mechanics/mission";
 
 /**
  * @author Mustafa
@@ -54,5 +55,5 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
  * Interface for objects that listen when user attacks enemy with a card
  */
 export interface EnemyAttackListener {
-    attackEnemy(card: Card, enemy: Enemy, gameState: GameState): void;
+    applyCard(card: Card, enemy: Enemy, gameState: GameState, mission: Mission): void;
 }

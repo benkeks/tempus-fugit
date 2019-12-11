@@ -101,7 +101,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
           // position of enemy hardcoded here
           if (pointer.upY >= 300 && pointer.upX >= 1200) {
             for (let listener of this.playerGUI.listener)
-              listener.attackEnemy(card, enemy, this.tfgame.gameState);
+              listener.applyCard(card, enemy, this.tfgame.gameState, this.tfgame);
               this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
               console.log('player attacked enemy with card');
           } else {
