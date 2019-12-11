@@ -33,6 +33,35 @@ export class StartingScene extends Phaser.Scene {
     console.log("booting");
 
 
+    /*
+    function loadFile(filePath) {
+      var result = null;
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", filePath, false);
+      xmlhttp.send();
+      if (xmlhttp.status==200) {
+        result = xmlhttp.responseText;
+      }
+      return result;
+    }
+
+    var text = loadFile("/assets/cards/cards.json");
+    let ps = [];
+    let cards:Card[] = [];
+    let json = JSON.parse(text);
+    for (let t of json.cards) {
+      console.log(t);
+      let p = Object.setPrototypeOf(t, Card.prototype);
+      ps.push(p);
+      cards.push(Object.create(p));
+
+    }
+
+    //console.log(text);
+    console.log(cards);
+    let c1:Card = cards[0];
+    console.log(c1.getAttackPower());*/
+
 
     const title = this.add.text(
         StartingScene.convertRelativeCoordinates(this, StartingScene.X_AXIS, 50) ,
