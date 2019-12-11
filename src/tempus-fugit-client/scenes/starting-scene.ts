@@ -35,14 +35,14 @@ export class StartingScene extends Phaser.Scene {
 
     /*
     function loadFile(filePath) {
-      var result = null;
+      var fd = null;
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.open("GET", filePath, false);
       xmlhttp.send();
       if (xmlhttp.status==200) {
-        result = xmlhttp.responseText;
+        fd = xmlhttp.responseText;
       }
-      return result;
+      return fd;
     }
 
     var text = loadFile("/assets/cards/cards.json");

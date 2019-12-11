@@ -31,9 +31,10 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       key: "MainScene"
     });
   }
-
+  
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
+    MainScene.loadFile("json/mission.json");
   }
 
   create(): void {
@@ -64,6 +65,17 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       this.tfgame.player.takeCard(this.tfgame.deck);
 
       this.handGUI.fadeOut();
+  }
+
+  public static loadFile(filePath): string{
+    let fd = null;
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", filePath, false);
+    xmlhttp.send();
+    if (xmlhttp.status==200) {
+      fd = xmlhttp.responseText;
+    }
+    return fd;
   }
 
   private configureCardEvents(): void {
