@@ -1,3 +1,8 @@
+import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
+import {StoryDialog} from "../mechanics/story-dialog";
+import {Mission} from "../mechanics/mission";
+import {Card} from "../objects/game-objects/card";
+
 export class StartingScene extends Phaser.Scene {
 
   public static readonly X_AXIS = 0;
