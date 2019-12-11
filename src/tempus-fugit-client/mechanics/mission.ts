@@ -20,6 +20,8 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
+
+    public location:string;
     private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
