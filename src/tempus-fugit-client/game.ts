@@ -8,6 +8,8 @@ export abstract class GameInfo {
     public static readonly X_AXIS = 0;
     public static readonly Y_AXIS = 1;
 
+    public static hovering;
+
     public static width:number = 1920;
     public static height:number = 1080;
 
@@ -27,7 +29,6 @@ const config = {
     type: Phaser.AUTO,
     width: GameInfo.width,
     height: GameInfo.height,
-    pixelArt:true,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
         autoCenter:Phaser.Scale.CENTER_BOTH

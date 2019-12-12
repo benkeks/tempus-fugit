@@ -7,12 +7,16 @@ import {BoardGUI} from "../objects/game-gui-objects/board-gui";
 import {TableGUI} from "../objects/game-gui-objects/table-gui";
 import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
 import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
 import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
-import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
+import {CharacterGui} from "../objects/game-gui-objects/character-gui";
+import {FontUtils} from "../objects/game-gui-objects/font-utils";
+import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
+import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
+import Rectangle = Phaser.GameObjects.Rectangle;
+import {GameInfo} from "../game";
 
 
 export class MainScene extends Phaser.Scene implements GameStateListener {
@@ -47,8 +51,10 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   }
 
   create(): void {
+    //FontUtils.addSpriteIntoFont(this.game, "Arial", "swordFont", 0x2694);
+    //FontUtils.addSpriteIntoFont(this.game, "Arial", "heartFont", 0x2764);
+
     this.configureCardEvents();
-    console.log(this.scene.get("slime1"));
 
     this.tfgame = new TechDemoGame();
     this.tfgame.listener.push(this);
@@ -80,23 +86,59 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       this.tfgame.player.takeCard(this.tfgame.deck);
 
       this.handGUI.fadeOut();
+
+    /*const textStyle = {
+      fontSize: '18px',
+      fontStyle: 'bold',
+      fontFamily: 'Arial',
+      color: '#cc0000'
+    };
+
+      let ch:CharacterGui = new CharacterGui(this, 500,500);
+      ch.addSpriteByTexture("player");
+      ch.addText("Text1 ist ein \nwichtiger teil!", textStyle);
+      ch.addText("Text2", textStyle);
+      ch.addText("Text3", textStyle);
+      ch.revalidate();*/
+
+    let rect:Rectangle = this.add.rectangle(530,800, 200,200, 0xAAAAAA, 1);
+    rect.setInteractive();
+    this.input.setDraggable(rect, true);
+
+    this.arrow = new DecisionArrow(this);
+    this.arrow.setPosition(100, 500);
+  }
+
+  public arrow:DecisionArrow;
+  update(time: number, delta: number): void {
+    this.arrow.update(time, delta);
   }
 
   private configureCardEvents(): void {
-    // enable dragging of objects
+    /*// enable dragging of objects
     this.input.on("drag", function(
       pointer: Phaser.Input.Pointer,
       gameObject: Phaser.GameObjects.Sprite,
       dragX: number,
       dragY: number
     ) {
-      gameObject.setDepth(10);
-      gameObject.x = dragX;
-      gameObject.y = dragY;
+      if (gameObject instanceof CardGUI) {
+        gameObject.setDepth(10);
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+      }
+    });*/
+
+    this.input.on("pointerover", function(e, object) {
+      GameInfo.hovering = object;
+    });
+
+    this.input.on("pointerout", function(e, object) {
+      GameInfo.hovering = undefined;
     });
 
     // return to original position when drag is done
-    this.input.on(
+    /*this.input.on(
       "dragend",
       function(
         pointer: Phaser.Input.Pointer,
@@ -121,7 +163,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
         }
       },
       this
-    );
+    );*/
   }
 
   drawPhase(game: Mission) {

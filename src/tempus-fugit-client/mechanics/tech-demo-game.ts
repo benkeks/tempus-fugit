@@ -13,6 +13,7 @@ export class TechDemoGame extends Mission {
         this.player = new Player("player1", 10, 1);
 
         let e:Enemy = new Enemy("slime1", 5, 2,4, new Formula("Ga"));
+        e.image = e.name;
         this.enemys = {
             0:[e, e],
                 1:[e,e,e]

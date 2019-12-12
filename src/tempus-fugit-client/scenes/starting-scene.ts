@@ -3,6 +3,9 @@ import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
 import {StoryDialog} from "../mechanics/story-dialog";
 import {Mission} from "../mechanics/mission";
 import {Card} from "../objects/game-objects/card";
+import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
+import Rectangle = Phaser.GameObjects.Rectangle;
+import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -24,8 +27,6 @@ export class StartingScene extends Phaser.Scene {
 
   create() {
     console.log("booting");
-
-
 
     const title = this.add.text(
         GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) ,
