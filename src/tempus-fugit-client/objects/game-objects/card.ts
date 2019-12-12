@@ -64,7 +64,6 @@ export class Card {
         this.formula = new Formula();
         this.formula.parse(formula);
         this.attackPower = attackPower;
-        console.log(name + " is being created");
     }
 
     /**

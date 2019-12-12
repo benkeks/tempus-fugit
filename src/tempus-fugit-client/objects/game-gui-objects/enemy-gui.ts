@@ -14,8 +14,6 @@ export class EnemyGUI extends Phaser.GameObjects.Container implements EnemyListe
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of enemy
     private sprite:Phaser.GameObjects.Sprite;
 
-    public speechBubble:SpeechBubble;
-
     constructor(
         scene: Phaser.Scene,
         enemy: Enemy,
@@ -38,14 +36,14 @@ export class EnemyGUI extends Phaser.GameObjects.Container implements EnemyListe
             color: '#cc0000'
         };
 
+        this.sprite = this.scene.add.sprite(0,0,texture, 0);
+
         this.scene.anims.create({
             key: "standing",
             frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
             frameRate: 10,
             repeat: -1
-        }) as Phaser.Animations.Animation;
-
-        this.sprite = this.scene.add.sprite(0,0,texture, 0);
+        });
 
         this.hpText = this.scene.add.text(0, 0, "").setStyle(textStyle);
         this.baseAttackText = this.scene.add.text(0, 0, "").setStyle(textStyle);
@@ -53,9 +51,7 @@ export class EnemyGUI extends Phaser.GameObjects.Container implements EnemyListe
         this.setHP(enemy.currentHP);
         this.setBaseAttack(enemy.baseAttack);
 
-        console.log(this.scene.anims.get("standing"));
-
-        this.sprite.anims.play("standing");
+        //this.sprite.anims.play("standing");
 
         this.add(this.sprite);
         this.add(this.hpText);

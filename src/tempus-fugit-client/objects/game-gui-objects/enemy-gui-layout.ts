@@ -4,7 +4,7 @@ import {EnemyGUI} from "./enemy-gui";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
-    private enemies:EnemyGUI[] = [];
+    public enemies:EnemyGUI[] = [];
 
     public static enemyLayout:{[count:number]:number[][]};
 

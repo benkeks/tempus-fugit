@@ -25,8 +25,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   private boardGUI:BoardGUI;
   private phaseText: Phaser.GameObjects.Text;
 
-  private enemys: Enemy[];
-
   private tfgame:Mission;
 
   constructor() {
@@ -50,6 +48,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
   create(): void {
     this.configureCardEvents();
+    console.log(this.scene.get("slime1"));
 
     this.tfgame = new TechDemoGame();
     this.tfgame.listener.push(this);
@@ -65,7 +64,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
-    this.enemyGUIs.push(new EnemyGUI(this, "enemy", this.tfgame.getEnemies()[0]));
 
     this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
     this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.boardGUI);
@@ -107,7 +105,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
         if (gameObject instanceof CardGUI) {
           gameObject.setDepth(1);
           const card: Card = gameObject.card;
-          const enemy: Enemy = this.enemyGUIs[0].enemy;
+          const enemy: Enemy = this.enemyGUI.enemies[0];
           // TODO: set up collision between cards and enemies attack
           // position of enemy hardcoded here
           if (pointer.upY >= 300 && pointer.upX >= 1200) {
@@ -157,29 +155,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.phaseText.setText("Play Phase");
   }
 
-
-  private activeBubble:SpeechBubble = undefined;
   storyDialog(game: Mission, dialog: StoryDialog): void {
-    let keyObj = this.input.keyboard.addKey("N");
-    keyObj.on("down", e => {
-      if (this.activeBubble) {
-        this.activeBubble.hide();
-      }
-      this.activeBubble = undefined;
-      let s:string[] = dialog.readLine();
-      if (s !== null) {
-        if (s[0] == "0") {
-          this.playerGUI.speechBubble.show(s[1]);
-          this.activeBubble = this.playerGUI.speechBubble;
-        } else {
-          this.activeBubble = this.enemyGUIs[0].speechBubble;
-          this.enemyGUIs[0].speechBubble.show(s[1]);
-        }
-      } else {
-        keyObj.destroy();
-      }
-    });
-    keyObj.emit("down");
 
 
   }
@@ -191,13 +167,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   }
 
   waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
-    for (let i=0; i < enemies.length; i++) {
-      let enemy:Enemy = enemies[i];
-
-      if (i >= this.enemyGUIs.length) {
-        this.enemyGUIs.push(new EnemyGUI(this, undefined, undefined));
-      }
-
-    }
+    this.enemyGUI.setEnemies(enemies);
   }
 }
