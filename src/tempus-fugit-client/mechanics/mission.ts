@@ -149,7 +149,6 @@ export class Mission implements EnemyListener {
         if (!this.player.hand.isFull()) {
             var card = this.player.takeCard(this.deck);
             card.getStand().listener.push(this);
-            this.stands.push(card.getStand());
         }
     }
 
@@ -164,9 +163,10 @@ export class Mission implements EnemyListener {
     private standPhase(): void {
         for (var stand of this.getStands()) {
             if (stand.active) {
+                console.log(stand.targets.length);
                 for (var target of stand.targets) {
                     target.takeHit(stand.standAttack);
-                    console.log("Stand attacked!");
+                    console.log("Stand attacked with " + stand.standAttack + "!");
                 }
                 stand.decreaseRoundsRemaining();
                 if (stand.getRoundsRemaining() <= 0) {

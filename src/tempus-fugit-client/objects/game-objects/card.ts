@@ -86,8 +86,12 @@ export class Card {
         this.isBaseAttackCard = isBaseAttackCard;
         this.stand = new Stand(this, standRounds, standsAttack, standName,null);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
-        mission.pushStand(this.stand);
+        if (standName != "") {
+            mission.pushStand(this.stand);
+        }
     }
+
+
 
 
     public performAction(mission: Mission, enemy: Enemy)  {
