@@ -21,6 +21,11 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
+    
+    public pushStand(stand: Stand) {
+        this.stands.push(stand);
+    }
+    
     public static Missions: {[name:string]:string} = {};
     public name: string;
     public background: string;
