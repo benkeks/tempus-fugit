@@ -14,6 +14,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     public dot:Graphics;
 
     public color:number = 0xFFFFFF;
+    public defaultColor:number = 0xFFFFFF;
     public hoverColor:number = 0xFF0000;
 
     public rectangleSpeed:number;
@@ -32,7 +33,8 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         this.rectangleSpeed = rectangleSpeed;
         this.rectangleWidth = rectangleWidth;
 
-        this.triangle = scene.add.triangle(0,400, 0, 0, 40, 0, 20, 50, this.color, 1);
+        this.triangle = scene.add.triangle(0,400, 0, 0, 2, 0, 1, 3, this.color, 1);
+        this.triangle.setScale(15,15);
 
         this.dot = scene.add.graphics({x:0, y:0});
         this.dot.fillStyle(this.color, 1);
@@ -64,8 +66,12 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
 
                 if (GameInfo.hovering && GameInfo.hovering[0] instanceof EnemyGUI) {
                     this.triangle.setFillStyle(this.hoverColor, 1);
+                    this.color = this.hoverColor;
+                    this.rectangleSpeed = 100;
                 } else {
                     this.triangle.setFillStyle(this.color, 1);
+                    this.color = this.defaultColor;
+                    this.rectangleSpeed = 50;
                 }
             }, this);
 
@@ -94,6 +100,10 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         if (!this.draggingObject) return;
         
         for (let rect of this.shownRectangles) {
+            if (this.color != rect.fillColor) {
+                rect.setFillStyle(this.color);
+            }
+
             rect.setPosition(rect.x, rect.y+(this.rectangleSpeed* (1/delta)));
         }
 
@@ -117,8 +127,13 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         }
 
         while (head && head.y + head.height > this.triangle.y) {
-            head.setVisible(false);
             this.shownRectangles.shift();
+
+            if (this.spawning == head) {
+                this.spawning.setPosition(this.spawning.x, this.rectangleDist+1);
+            }
+
+            head.setVisible(false);
             head.destroy(true);
 
             head = (this.shownRectangles.length > 0) ? this.shownRectangles[0] : undefined;
