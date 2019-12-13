@@ -21,13 +21,15 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
-
+    
     public pushStand(stand: Stand) {
         this.stands.push(stand);
     }
-
-    public location:string;
-    private readonly numPhases:number = 6;
+    
+    public static Missions: {[name:string]:string} = {};
+    public name: string;
+    public background: string;
+    private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
@@ -44,7 +46,7 @@ export class Mission implements EnemyListener {
     public cards:Card[] = [];
 
     public monologs:{[wave:number]:string} = {};
-    public dialogs:StoryDialog[] = [];
+    public dialogue:StoryDialog[] = [];
 
     public waveCounter;
     // TODO: effect list
@@ -65,11 +67,11 @@ export class Mission implements EnemyListener {
     }
 
     private checkDialogEvents() {
-        for (let i=0; i < this.dialogs.length; i++) {
-            let d:StoryDialog = this.dialogs[i];
+        for (let i=0; i < this.dialogue.length; i++) {
+            let d:StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
                 this.listener.map(l => l.storyDialog(this, d));
-                this.dialogs.splice(i, 1);
+                this.dialogue.splice(i, 1);
             }
         }
     }

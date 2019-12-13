@@ -36,9 +36,10 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       key: "MainScene"
     });
   }
-
+  
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
+    MainScene.loadFile("json/mission.json");
   }
 
   create(): void {
@@ -54,8 +55,8 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     let t2:string[][] = [["1", "you are stronger than expected!"]];
     let s2:StoryDialog = new StoryDialog(t2);
     s2.triggerFunction = function (game:Mission) {return game.enemies[0][0].currentHP <=2};
-    this.tfgame.dialogs.push(s2);
-    this.tfgame.dialogs.push(storyDialog);
+    this.tfgame.dialogue.push(s2);
+    this.tfgame.dialogue.push(storyDialog);
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
@@ -77,6 +78,17 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       this.tfgame.player.takeCard(this.tfgame.deck);
 
       this.handGUI.fadeOut();
+  }
+
+  public static loadFile(filePath): string{
+    let fd = null;
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", filePath, false);
+    xmlhttp.send();
+    if (xmlhttp.status==200) {
+      fd = xmlhttp.responseText;
+    }
+    return fd;
   }
 
   private configureCardEvents(): void {
