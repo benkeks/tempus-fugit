@@ -84,7 +84,7 @@ export class Card {
         this.formula.parse(formula);
         this.attackPower = attackPower;
         this.isBaseAttackCard = isBaseAttackCard;
-        this.stand = new Stand(this, standRounds, standsAttack, standName,null);
+        this.stand = new Stand(this, standRounds, standsAttack, standName,image,null);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
         if (standName != "") {
             mission.pushStand(this.stand);

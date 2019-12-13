@@ -1,6 +1,7 @@
 
 import {Stand, StandListener} from "../game-objects/stand";
 import {Mission} from "../../mechanics/mission";
+import {CardGUI} from "./card-gui";
 
 
 /**
@@ -14,6 +15,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
     public rounds: number;
     private upperText: Phaser.GameObjects.Text; // shows name and attack of stand
     private lowerText: Phaser.GameObjects.Text; // shows remaining rounds of stand
+    private miniCardGUI: Phaser.GameObjects.Sprite;
 
     private textStyle = {
         fontSize: '18px',
@@ -63,6 +65,15 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.setTint(0xFFFFFF);
     }
 
+    public turnRed() {
+        this.setTint(0xFF0000);
+        this.miniCardGUI.setTint(0xFF0000);
+    }
+
+    public turnNormal() {
+        this.setTint(0xFFFFFF);
+        this.miniCardGUI.setTint(0xFFFFFF);
+    }
 
     /**
      * change HP display of enemy
@@ -72,9 +83,16 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.stand = stand;
         this.show();
         this.updateText(true);
+        this.miniCardGUI = this.scene.add.sprite(this.x+100, this.y, this.stand.getCard().getImage());
+        this.miniCardGUI.setScale(0.4);
+    }
+
+    public updateStandText(): void {
+        this.updateText(true);
     }
 
     public deactiveStand(stand: Stand): void {
+        this.miniCardGUI.destroy(true);
         this.stand = null;
         this.hide();
         this.updateText(false);

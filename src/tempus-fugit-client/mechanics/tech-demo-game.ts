@@ -27,7 +27,7 @@ export class TechDemoGame extends Mission {
         let c1:Card = new Card(this, "test1", "", "card1", "b&(c|(OEb))", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower());");
         let c2:Card = new Card(this,"test2", "","card2", "!#G(a&!b)", 2, false, 5, 1, "Magic Stand","this.stand.spawn(enemy);");
         let c3:Card = new Card(this,"test3", "","card3", "#Oa&(d|!b)", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower());");
-        let c4:Card = new Card(this,"test4", "","card4", "c", 2, false, 6,2 , "Another Stand","this.stand.spawn(enemy);");
+        let c4:Card = new Card(this,"test4", "","card4", "0Ec", 2, false, 6,2 , "Another Stand","this.stand.spawn(enemy);");
         //0E
         let c5:Card = new Card(this,"test5", "","card5", "OEc&(#Oa|b)", 2, false, 0,0, "",  "enemy.takeHit(this.getAttackPower());");
 

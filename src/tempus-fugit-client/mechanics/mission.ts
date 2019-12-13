@@ -163,6 +163,7 @@ export class Mission implements EnemyListener {
     private standPhase(): void {
         for (var stand of this.getStands()) {
             if (stand.active) {
+                stand.turnRed();
                 console.log(stand.targets.length);
                 for (var target of stand.targets) {
                     target.takeHit(stand.standAttack);
@@ -180,7 +181,13 @@ export class Mission implements EnemyListener {
     }
 
     private enemyPhase():void {
+        for (var stand of this.getStands()) {
+            if (stand.active) {
+                stand.turnNormal();
+            }
+        }
         this.enemies[this.waveCounter].map(e => e.attack(this.player, this.gameState));
+
     }
 
     private effectPhase():void {
@@ -270,13 +277,11 @@ export class Mission implements EnemyListener {
         }
     }
 
-    public activateStand(stand: Stand) {
-
-    }
-
-    public deactiveStand(stand: Stand) {
-
-    }
+    public activateStand(stand: Stand) {}
+    public deactiveStand(stand: Stand) {}
+    public updateStandText(){}
+    public turnRed(){}
+    public turnNormal(){}
 }
 
 export interface GameStateListener {

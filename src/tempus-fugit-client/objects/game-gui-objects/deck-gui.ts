@@ -1,4 +1,5 @@
 import {Deck, DeckListener} from "../game-objects/deck";
+import {CardGUI} from "./card-gui";
 
 /**
  * @author Mustafa

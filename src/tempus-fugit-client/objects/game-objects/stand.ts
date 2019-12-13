@@ -5,7 +5,8 @@ import {GameState} from "./game-state"
 
 
 export class Stand {
-    public name: string;
+    public name: string; // Stand's name
+    public cardImage: string; // Image of the card attached to the stand
     private card: Card; // The card that is associated with the stand
     private roundsRemaining: number; // The rounds that the stand will still be alive
     public standAttack: number // Strength of attack
@@ -21,7 +22,7 @@ export class Stand {
     public decreaseRoundsRemaining() {
         this.roundsRemaining -= 1;
         for (var l of this.listener) {
-            l.activateStand(this);
+            l.updateStandText();
         }
     }
 
@@ -30,8 +31,9 @@ export class Stand {
         return this.roundsRemaining;
     }
 
-    constructor(card: Card, roundsActive: number, standAttack: number, standName: string, targets: Enemy[]) {
+    constructor(card: Card, roundsActive: number, standAttack: number, standName: string, cardImage: string, targets: Enemy[]) {
         this.name = standName;
+        this.cardImage = cardImage;
         this.card = card;
         this.roundsRemaining = roundsActive;
         this.standAttack = standAttack;
@@ -60,6 +62,20 @@ export class Stand {
         this.roundsRemaining -= 1;
     }
 
+
+    public turnRed() {
+        for (let i in this.listener) {
+            this.listener[i].turnRed();
+        }
+    }
+
+
+    public turnNormal() {
+        for (let i in this.listener) {
+            this.listener[i].turnNormal();
+        }
+    }
+
 }
 
 
@@ -79,4 +95,7 @@ export interface EnemyListener {
 export interface StandListener {
     activateStand(stand: Stand): void;
     deactiveStand(stand: Stand):void;
+    updateStandText(): void;
+    turnRed(): void;
+    turnNormal(): void;
 }
