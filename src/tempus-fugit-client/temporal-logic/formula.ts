@@ -177,7 +177,7 @@ export class Formula extends Proposition {
                     somethingIsNotProposition = true;
                 }
             });
-            if(somethingIsNotProposition || formula.length == 0){
+            if(somethingIsNotProposition){
                 throw new TypeError("Formula has to be of type String or Proposition[]");
             }
         } else {

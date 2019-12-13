@@ -14,6 +14,7 @@ export class Attack {
 
     constructor (formula: string, attackStrength: number) {
         this.formula = new Formula();
+        console.log(formula);
         this.formula.parse(formula);
         this.attackStrength = attackStrength;
     }

@@ -14,9 +14,9 @@ export class TechDemoGame extends Mission {
 
         this.player = new Player("player1", 10, 1);
 
-        this.enemies = {
-            0:[new Enemy("e1", 5, 2,new Attack("a", 2), [new Attack("d", 3)])]
-        };
+        //this.enemies = {
+        //    0:[new Enemy("e1", 5, 2,new Attack("a", 2), [new Attack("d", 3)])]
+        //};
 
         this.gameState = new GameState();
         this.gameState.maxEnergy = 4;

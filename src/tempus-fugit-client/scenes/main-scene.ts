@@ -27,8 +27,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   private standGUI:StandGUI;
   private phaseText: Phaser.GameObjects.Text;
 
-  private enemys: Enemy[];
-
   private tfgame:Mission;
 
   constructor() {
@@ -39,7 +37,11 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
-    MainScene.loadFile("json/mission.json");
+    let jsonFile:string = MainScene.loadFile("json/enemies.json");
+
+    Enemy.createFromJSON(jsonFile, this);
+
+    console.log(Enemy.enemies);
   }
 
   create(): void {
@@ -171,29 +173,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   }
 
 
-  private activeBubble:SpeechBubble = undefined;
   storyDialog(game: Mission, dialog: StoryDialog): void {
-    let keyObj = this.input.keyboard.addKey("N");
-    keyObj.on("down", e => {
-      if (this.activeBubble) {
-        this.activeBubble.hide();
-      }
-      this.activeBubble = undefined;
-      let s:string[] = dialog.readLine();
-      if (s !== null) {
-        if (s[0] == "0") {
-          this.playerGUI.speechBubble.show(s[1]);
-          this.activeBubble = this.playerGUI.speechBubble;
-        } else {
-          this.activeBubble = this.enemyGUIs[0].speechBubble;
-          this.enemyGUIs[0].speechBubble.show(s[1]);
-        }
-      } else {
-        keyObj.destroy();
-      }
-    });
-    keyObj.emit("down");
-
 
   }
 

@@ -5,12 +5,12 @@
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{
-                "formula":"",
+                "formula":"Ga",
                 "attackStrength": 1
             },
             "reactAttack":[
                 {
-                    "formula":"",
+                    "formula":"d->a",
                     "attackStrength": 1
                 }
             ],

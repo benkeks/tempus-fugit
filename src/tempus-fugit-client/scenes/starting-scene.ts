@@ -1,5 +1,3 @@
-import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
-import {StoryDialog} from "../mechanics/story-dialog";
 import {Mission} from "../mechanics/mission";
 import {Card} from "../objects/game-objects/card";
 

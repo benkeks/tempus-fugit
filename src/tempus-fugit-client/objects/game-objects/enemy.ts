@@ -118,11 +118,19 @@ export class Enemy {
     /**
      * 
      */
-    public static createFromJSON(jString): void {
+    public static createFromJSON(jString:string, scene:Phaser.Scene): void {
         let json = JSON.parse(jString);
+
         for (let e of json.enemies) {
+            scene.load.spritesheet(e.name,
+                e.sprite,
+                {frameWidth:e.size[0], frameHeight:e.size[1]});
+
             let arr = [];
-            for (let i of e.reactAttack) arr.push(new Attack(i.formula, i.attackStrength));
+            for (let i of e.reactAttack) {
+                console.log(i.formula + "   " + i.attackStrength);
+                arr.push(new Attack(i.formula, i.attackStrength));
+            }
 
             let enemy = new Enemy(
                 e.name,
