@@ -55,5 +55,5 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
  * Interface for objects that listen when user attacks enemy with a card
  */
 export interface EnemyAttackListener {
-    applyCard(card: Card, enemy: Enemy, gameState: GameState, mission: Mission): void;
+    applyCard(card: Card, enemy: Enemy, mission: Mission): void;
 }

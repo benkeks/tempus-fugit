@@ -168,7 +168,7 @@ export class Mission implements EnemyListener {
                 stand.turnRed();
                 console.log(stand.targets.length);
                 for (var target of stand.targets) {
-                    target.takeHit(stand.standAttack);
+                    target.takeHit(stand.standAttack, this.gameState, this.player);
                     console.log("Stand attacked with " + stand.standAttack + "!");
                 }
                 stand.decreaseRoundsRemaining();
