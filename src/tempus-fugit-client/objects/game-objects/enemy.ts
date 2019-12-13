@@ -7,6 +7,8 @@ import {Attack} from "./attack"
 
 
 export class Enemy {
+    public static enemies:{[name:string]:Enemy} = {};
+    
     public name: string; // The enemy's name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
@@ -14,6 +16,8 @@ export class Enemy {
     public specialAttack: Attack; // The enemy's base attack strength
     public reactAttacks: Attack[]; // List of react effects
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
+    public sprite:string;
+    public size:number[];
 
    public getHP(): number {
         return this.currentHP;
@@ -32,13 +36,15 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: Attack, reactAttacks: Attack[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Attack, reactAttacks: Attack[], sprite:string, size:number[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.specialAttack = specialAttack;
         this.reactAttacks = reactAttacks;
+        this.sprite = sprite;
+        this.size = size;
         this.listener = [];
 
     }
@@ -108,6 +114,29 @@ export class Enemy {
     public isAlive(): boolean {
         return this.currentHP > 0;
     }
+
+    /**
+     * 
+     */
+    public static createFromJSON(jString): void {
+        let json = JSON.parse(jString);
+        for (let e of json.enemies) {
+            let arr = [];
+            for (let i of e.reactAttack) arr.push(new Attack(i.formula, i.attackStrength));
+
+            let enemy = new Enemy(
+                e.name,
+                e.maxHP,
+                e.baseAttack,
+                e.specialAttack = new Attack(e.specialAttack.formula, e.specialAttack.attackStrength),
+                arr,
+                e.sprite,
+                e.size
+            );
+            this.enemies[e.name] = enemy;
+        }
+    }
+
 }
 
 

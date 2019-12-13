@@ -2,52 +2,87 @@
     "enemies":[
         {
             "name":"slime1",
-            "maxHP":"15",
-            "currentHP":"15",
-            "baseAttack":"2",
-            "specialAttack":"1",
-            "formula":"",
+            "maxHP":15,
+            "baseAttack":2,
+            "specialAttack":{
+                "formula":"",
+                "attackStrength": 1
+            },
+            "reactAttack":[
+                {
+                    "formula":"",
+                    "attackStrength": 1
+                }
+            ],
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
             "size": [64, 64]
 
         },
         {
             "name":"slime2",
-            "maxHP":"20",
-            "currentHP":"20",
-            "baseAttack":"3",
-            "specialAttack":"2",
-            "formula":"",
+            "maxHP":20,
+            "baseAttack":3,
+            "specialAttack":{
+                "formula":"",
+                "attackStrength": 2
+            },
+            "reactAttack":[
+                {
+                    "formula":"",
+                    "attackStrength": 2
+                }
+            ],
             "sprite":"",
             "size": []
         },
         {
             "name":"slime3",
-            "maxHP":"25",
-            "currentHP":"25",
-            "baseAttack":"4",
-            "specialAttack":"3",
-            "formula":"",
+            "maxHP":25,
+            "baseAttack":4,
+            "specialAttack":{
+                "formula":"",
+                "attackStrength": 3
+            },
+            "reactAttack":[
+                {
+                    "formula":"",
+                    "attackStrength": 3
+                }
+            ],
             "sprite":"",
             "size": []
         },
         {
             "name":"slime_mother",
-            "maxHP":"60",
-            "currentHP":"60",
-            "baseAttack":"7",
-            "specialAttack":"5",
-            "formula":"",
+            "maxHP":60,
+            "baseAttack":7,
+            "specialAttack":{
+                "formula":"",
+                "attackStrength": 5
+            },
+            "reactAttack":[
+                {
+                    "formula":"",
+                    "attackStrength": 5
+                }
+            ],
             "sprite":"",
             "size": []
         },
         {
             "name":"goblin",
-            "maxHP":"35",
-            "currentHP":"35",
-            "baseAttack":"5",
-            "specialAttack":"2",
-            "formula":"",
+            "maxHP":35,
+            "baseAttack":5,
+            "specialAttack":{
+                "formula":"",
+                "attackStrength": 4
+            },
+            "reactAttack":[
+                {
+                    "formula":"",
+                    "attackStrength": 4
+                }
+            ],
             "sprite":"",
             "size": []
         }
