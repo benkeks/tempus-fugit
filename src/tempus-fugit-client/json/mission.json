@@ -1,6 +1,7 @@
 {
-    "missions":{
-        "tutorial": {
+    "missions":[
+        {   
+            "name": "tutorial",
             "background":"",
             "waves": 2,
             "enemies": [
@@ -18,7 +19,8 @@
             ]
     
         },
-        "mission1": {
+        {   
+            "name": "mission1",
             "background":"",
             "waves": 5,
             "enemies": [
@@ -41,5 +43,6 @@
                 }
             ]
         }
-    }
+        
+    ]
 }
