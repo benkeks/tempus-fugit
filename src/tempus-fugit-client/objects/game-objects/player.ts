@@ -96,6 +96,7 @@ export class Player {
             enemy.takeHit((this.baseAttack));
         } else if (val) {
             card.action(mission,enemy);
+            console.log("Valid");
         }
     }
 
@@ -123,8 +124,10 @@ export class Player {
      * @author Florian
      */
     //
-    public takeCard(deck: Deck): void {
-        this.hand.addCard(deck.takeCardOnTop());
+    public takeCard(deck: Deck): Card {
+        var card = deck.takeCardOnTop();
+        this.hand.addCard(card);
+        return card;
     }
 
 

@@ -50,6 +50,11 @@
         "type": "image",
         "key": "card-outline",
         "url": "assets/sprites/card-outline.png"
+      },
+      {
+	"type": "image",
+	"key": "stand",
+	"url": "assets/sprites/stand.png"
       }
     ]
   }
