@@ -21,20 +21,10 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
-<<<<<<< HEAD
     public static Missions: {[name:string]:string} = {};
     public name: string;
     public background: string;
     private readonly numPhases:number = 5;
-=======
-
-    public pushStand(stand: Stand) {
-        this.stands.push(stand);
-    }
-
-    public location:string;
-    private readonly numPhases:number = 6;
->>>>>>> 5a95fb12955b5513068421cb3d17c0c32c40102f
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
