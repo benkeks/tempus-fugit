@@ -103,6 +103,8 @@ export class CharacterGui extends Phaser.GameObjects.Container {
 
     public setText(index:number, text:string):void {
         let t:Text = this.texts[index];
+        console.log(text);
+        console.log(t);
         t.setText(text);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;
@@ -111,10 +113,12 @@ export class CharacterGui extends Phaser.GameObjects.Container {
     }
 
     public isHovered(xCursor:number, yCursor:number):boolean {
-        let x1:number = this.sprite.x;
-        let y1:number = this.sprite.y;
-        let x2:number = x1 + this.sprite.displayWidth;
-        let y2:number = y1 + this.sprite.displayHeight;
+        let xOffset = -this.displayWidth/2;
+
+        let x1:number = this.x+xOffset;
+        let y1:number = this.y;
+        let x2:number = x1 + this.displayWidth;
+        let y2:number = y1 + this.displayHeight;
 
         return xCursor > x1 && xCursor < x2 && yCursor > y1  && yCursor < y2;
     }

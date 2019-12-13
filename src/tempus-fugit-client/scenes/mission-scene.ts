@@ -11,32 +11,29 @@ import {StackGUI} from "../objects/game-gui-objects/stack-gui";
 import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
 import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
-import {CharacterGui} from "../objects/game-gui-objects/character-gui";
-import {FontUtils} from "../objects/game-gui-objects/font-utils";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
-import Rectangle = Phaser.GameObjects.Rectangle;
-import {GameInfo} from "../game";
+import {StandGUI} from "../objects/game-gui-objects/stand-gui";
 
 
-export class MainScene extends Phaser.Scene implements GameStateListener {
-  private playerGUI: PlayerGUI;
-  private gameStateGUI: TableGUI;
-  private handGUI:HandGUI;
-  private deckGUI:DeckGUI;
-  private enemyGUI:EnemyGuiLayout;
-  private stackGUI:StackGUI;
-  private boardGUI:BoardGUI;
-  private phaseText: Phaser.GameObjects.Text;
+export class MissionScene extends Phaser.Scene implements GameStateListener {
+    public playerGUI: PlayerGUI;
+    public gameStateGUI: TableGUI;
+    public handGUI:HandGUI;
+    public deckGUI:DeckGUI;
+    public enemyGUI:EnemyGuiLayout;
+    public stackGUI:StackGUI;
+    public boardGUI:BoardGUI;
+    public standGUI:StandGUI;
+    public phaseText: Phaser.GameObjects.Text;
 
-  private tfgame:Mission;
+    public tfgame:Mission;
 
   constructor() {
     super({
       key: "MainScene"
     });
   }
-
+  
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
 
@@ -48,6 +45,8 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     /*this.load.atlas('slime1',
         'assets/sprites/enemies/slime1/slime1-Sheet.png',
         "assets/sprites/enemies/slime1/slime1-sheet.json");*/
+
+    //MissionScene.loadFile("json/mission.json");
   }
 
   create(): void {
@@ -62,16 +61,19 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
     let t2:string[][] = [["1", "you are stronger than expected!"]];
     let s2:StoryDialog = new StoryDialog(t2);
-    s2.triggerFunction = function (game:Mission) {return game.enemys[0][0].currentHP <=2};
-    this.tfgame.dialogs.push(s2);
-    this.tfgame.dialogs.push(storyDialog);
+    s2.triggerFunction = function (game:Mission) {return game.enemies[0][0].currentHP <=2};
+    this.tfgame.dialogue.push(s2);
+    this.tfgame.dialogue.push(storyDialog);
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
 
+    this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
+    this.standGUI.hide();
+
     this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
     this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.boardGUI);
-    this.gameStateGUI = new TableGUI(this, this.tfgame);
+    this.gameStateGUI = new TableGUI(this, this.tfgame)
 
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
@@ -91,6 +93,58 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   public arrow:DecisionArrow;
   update(time: number, delta: number): void {
     this.arrow.update(time, delta);
+  }
+  public static loadFile(filePath): string{
+    let fd = null;
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", filePath, false);
+    xmlhttp.send();
+    if (xmlhttp.status==200) {
+      fd = xmlhttp.responseText;
+    }
+    return fd;
+  }
+
+  private configureCardEvents(): void {
+    // enable dragging of objects
+    this.input.on("drag", function(
+      pointer: Phaser.Input.Pointer,
+      gameObject: Phaser.GameObjects.Sprite,
+      dragX: number,
+      dragY: number
+    ) {
+      gameObject.setDepth(10);
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    });
+
+    // return to original position when drag is done
+    this.input.on(
+      "dragend",
+      function(
+        pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.Sprite
+      ) {
+        if (gameObject instanceof CardGUI) {
+          gameObject.setDepth(1);
+          const card: Card = gameObject.card;
+          const enemy: Enemy = this.enemyGUIs[0].enemy;
+          // TODO: set up collision between cards and enemies attack
+          // position of enemy hardcoded here
+          if (pointer.upY >= 300 && pointer.upX >= 1200) {
+            for (let listener of this.playerGUI.listener)
+              listener.applyCard(card, enemy, this.tfgame.gameState, this.tfgame);
+              this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
+              console.log('player attacked enemy with card');
+          } else {
+            console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
+            gameObject.x = gameObject.cardOriginX;
+            gameObject.y = gameObject.cardOriginY;
+          }
+        }
+      },
+      this
+    );
   }
 
   drawPhase(game: Mission) {
@@ -122,6 +176,12 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
+  }
+
+  standPhase(game: Mission): void {
+    console.log("stand Phase");
+    this.handGUI.fadeOut();
+    this.phaseText.setText("Stand Phase");
   }
 
   storyDialog(game: Mission, dialog: StoryDialog): void {

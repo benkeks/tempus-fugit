@@ -1,5 +1,5 @@
 import "phaser";
-import {MainScene} from "./scenes/main-scene";
+import {MissionScene} from "./scenes/mission-scene";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import {StartingScene} from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
@@ -46,7 +46,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, MainScene]
+    scene: [StartingScene, MissionScene]
 };
 
 export class Game extends Phaser.Game {

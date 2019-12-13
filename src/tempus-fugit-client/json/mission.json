@@ -1,43 +1,48 @@
 {
-    "tutorial": {
-        "background":"",
-        "waves": 2,
-        "enemies": [
-            {"1":["slime1", "slime2"]},
-            {"2":["slime3", "slime3", "goblin"]}
-        ],
-        "monologue":[
-            {"1": "As you're advancing, more monsters start to appear. Watch out!"}
-        ],
-        "dialogue": [
-            {
-                "triggerFunction":"",
-                "text": [["slime1","Please put me out of my misery"], ["player", "What the hell?!"]]
-            }
-        ]
-
-    },
-    "mission1": {
-        "background":"",
-        "waves": 5,
-        "enemies": [
-            {"1":["slime1", "slime2"]},
-            {"2":["slime2", "slime3", "slime2"]},
-            {"3":["slime3", "slime3", "goblin"]},
-            {"4":["goblin", "slime3", "goblin"]},
-            {"5":["goblin", "slime_mother", "goblin"]}
-        ],
-        "monologue":[
-            {"1": "You're walking deeper into the woods... What is it with these slimes?"},
-            {"2": "Onwards you hear a misterious sound. It seems like someone is following you."},
-            {"3": "More goblins seem to come your way, the ground is somewhat... shaking?"},
-            {"4": "The shaking becomes stronger and stronger, something nasty is coming your way. Be careful!"}
-        ],
-        "dialogue": [
-            {
-                "triggerFunction":"",
-                "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
-            }
-        ]
-    }
+    "missions":[
+        {   
+            "name": "tutorial",
+            "background":"",
+            "waves": 2,
+            "enemies": [
+                {"1":["slime1", "slime2"]},
+                {"2":["slime3", "slime3", "goblin"]}
+            ],
+            "monologue":[
+                {"1": "As you're advancing, more monsters start to appear. Watch out!"}
+            ],
+            "dialogue": [
+                {
+                    "triggerFunction":"",
+                    "text": [["slime1","Please put me out of my misery"], ["player", "What the hell?!"]]
+                }
+            ]
+    
+        },
+        {   
+            "name": "mission1",
+            "background":"",
+            "waves": 5,
+            "enemies": [
+                {"1":["slime1", "slime2"]},
+                {"2":["slime2", "slime3", "slime2"]},
+                {"3":["slime3", "slime3", "goblin"]},
+                {"4":["goblin", "slime3", "goblin"]},
+                {"5":["goblin", "slime_mother", "goblin"]}
+            ],
+            "monologue":[
+                {"1": "You're walking deeper into the woods... What is it with these slimes?"},
+                {"2": "Onwards you hear a misterious sound. It seems like someone is following you."},
+                {"3": "More goblins seem to come your way, the ground is somewhat... shaking?"},
+                {"4": "The shaking becomes stronger and stronger, something nasty is coming your way. Be careful!"}
+            ],
+            "dialogue": [
+                {
+                    "triggerFunction":"",
+                    "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
+                }
+            ]
+        }
+        
+    ]
 }

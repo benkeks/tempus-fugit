@@ -7,6 +7,7 @@ import {GameInfo} from "../../game";
 import EPSILON = Phaser.Math.EPSILON;
 import {CardGUI} from "./card-gui";
 import {Player} from "../game-objects/player";
+import {MissionScene} from "../../scenes/mission-scene";
 
 export class DecisionArrow extends Phaser.GameObjects.Container {
 
@@ -24,18 +25,15 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     public rectangleDist:number = 10;
 
     public draggingObject:CardGUI = undefined;
-    public enemies:EnemyGUI[] = undefined;
-    public player:Player = undefined;
+    public missionScene:MissionScene;
 
-    constructor(scene:Phaser.Scene,
-                enemies:EnemyGUI[],
-                player:Player,
+    constructor(scene:MissionScene,
                 rectangleWidth:number = 20,
                 rectangleSpeed:number = 50) {
         super(scene);
         scene.add.existing(this);
         this.setVisible(false);
-        this.enemies = enemies;
+        this.missionScene = scene;
 
         this.rectangleSpeed = rectangleSpeed;
         this.rectangleWidth = rectangleWidth;
@@ -75,7 +73,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
                         this.triangle.setPosition(this.triangle.x, dist);
                         this.setVisible(true);
 
-                        if (GameInfo.hovering && GameInfo.hovering[0] instanceof EnemyGUI) {
+                        if (this.cursorHoversEnemy(pointer.x, pointer.y)) {
                             this.triangle.setFillStyle(this.hoverColor, 1);
                             this.color = this.hoverColor;
                             this.rectangleSpeed = 100;
@@ -95,11 +93,10 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
                 this.scene.input.activePointer.smoothFactor = 0;
                 this.scene.sys.canvas.style.cursor = "default";
 
-                for (let e of enemies) {
-                    if (e.isHovered(pointer.x, pointer.y)) {
-                        this.playCard(e, this.draggingObject);
-                        break;
-                    }
+                let e = this.cursorHoversEnemy(pointer.x, pointer.y);
+                if (e) {
+                    // TODO: remove card from hand
+                    this.playCard(e, this.draggingObject);
                 }
 
                 this.draggingObject = undefined;
@@ -107,8 +104,17 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
             }, this);
     }
 
+    public cursorHoversEnemy(xCursor:number, yCursor:number):EnemyGUI {
+        for (let e of this.missionScene.enemyGUI.enemies) {
+            if (e.isHovered(xCursor, yCursor)) {
+                return e;
+            }
+        }
+        return undefined;
+    }
+
     public playCard(enemy:EnemyGUI, card:CardGUI) {
-        this.player.
+        this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.gameStateGUI.gameState, this.missionScene.tfgame);
     }
 
     update(time, delta): void {

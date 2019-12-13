@@ -29,7 +29,7 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
 
         this.addSpriteByTexture(texture);
 
-        this.attributeText = this.addText("", {fontSize: '18px',
+        this.attributeText = this.addText("abc", {fontSize: '18px',
             fontStyle: 'bold',
             fontFamily: 'Arial',
             color: '#FF0000'});
@@ -48,6 +48,6 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
      * @param changedTo
      */
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
-
+        this.updateEnemyAttributes();
     }
 }

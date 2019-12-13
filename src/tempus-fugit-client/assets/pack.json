@@ -60,7 +60,12 @@
 	  "type":"image",
 	  "key":"heartFont",
 	  "url":"assets/font/fontletter/heart.PNG"
-	  }
+	  },
+      {
+	"type": "image",
+	"key": "stand",
+	"url": "assets/sprites/stand.png"
+      }
     ]
   }
 }

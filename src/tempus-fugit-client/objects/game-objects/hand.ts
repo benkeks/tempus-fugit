@@ -70,8 +70,8 @@ export class Hand {
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    public removeCard(position: number): void {
-        this.cards[position] = new Card("Empty", "", "","", 0);
+    public removeCard(position: number,mission): void {
+        this.cards[position] = new Card(mission,"Empty", "", "","", 0, false, 0,0, "","");
     }
 
     /**

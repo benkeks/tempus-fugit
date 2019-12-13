@@ -7,7 +7,9 @@
             "baseAttack":"2",
             "specialAttack":"1",
             "formula":"",
-            "sprite":"assets/sprites/enemies/slime1/slime1-Sheet.png"
+            "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
+            "size": [64, 64]
+
         },
         {
             "name":"slime2",
@@ -16,7 +18,8 @@
             "baseAttack":"3",
             "specialAttack":"2",
             "formula":"",
-            "sprite":""
+            "sprite":"",
+            "size": []
         },
         {
             "name":"slime3",
@@ -25,7 +28,8 @@
             "baseAttack":"4",
             "specialAttack":"3",
             "formula":"",
-            "sprite":""
+            "sprite":"",
+            "size": []
         },
         {
             "name":"slime_mother",
@@ -34,7 +38,8 @@
             "baseAttack":"7",
             "specialAttack":"5",
             "formula":"",
-            "sprite":""
+            "sprite":"",
+            "size": []
         },
         {
             "name":"goblin",
@@ -43,7 +48,8 @@
             "baseAttack":"5",
             "specialAttack":"2",
             "formula":"",
-            "sprite":""
+            "sprite":"",
+            "size": []
         }
     ]
 }
