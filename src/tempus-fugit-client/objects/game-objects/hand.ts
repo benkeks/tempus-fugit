@@ -44,7 +44,7 @@ export class Hand {
         }
 
         for (let i in this.listener) {
-            this.listener[i].handChanged(position, card);
+            this.listener[i].addCard(card);
         }
         return 1;
     }
@@ -69,7 +69,9 @@ export class Hand {
      * @author Florian
      */
     public removeCard(position: number, mission): void {
-        this.cards[position] = new Card(mission, "Empty", "", "", "", 0, false, 0, 0, "", "");
+        for (let i in this.listener) {
+            this.listener[i].addCard(this.cards[position]);
+        }
     }
 
     /**
