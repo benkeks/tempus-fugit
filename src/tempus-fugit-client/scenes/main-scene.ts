@@ -54,8 +54,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     //FontUtils.addSpriteIntoFont(this.game, "Arial", "swordFont", 0x2694);
     //FontUtils.addSpriteIntoFont(this.game, "Arial", "heartFont", 0x2764);
 
-    this.configureCardEvents();
-
     this.tfgame = new TechDemoGame();
     this.tfgame.listener.push(this);
 
@@ -87,83 +85,12 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
 
       this.handGUI.fadeOut();
 
-    /*const textStyle = {
-      fontSize: '18px',
-      fontStyle: 'bold',
-      fontFamily: 'Arial',
-      color: '#cc0000'
-    };
-
-      let ch:CharacterGui = new CharacterGui(this, 500,500);
-      ch.addSpriteByTexture("player");
-      ch.addText("Text1 ist ein \nwichtiger teil!", textStyle);
-      ch.addText("Text2", textStyle);
-      ch.addText("Text3", textStyle);
-      ch.revalidate();*/
-
-    let rect:Rectangle = this.add.rectangle(530,800, 200,200, 0xAAAAAA, 1);
-    rect.setInteractive();
-    this.input.setDraggable(rect, true);
-
     this.arrow = new DecisionArrow(this);
-    this.arrow.setPosition(100, 500);
   }
 
   public arrow:DecisionArrow;
   update(time: number, delta: number): void {
     this.arrow.update(time, delta);
-  }
-
-  private configureCardEvents(): void {
-    /*// enable dragging of objects
-    this.input.on("drag", function(
-      pointer: Phaser.Input.Pointer,
-      gameObject: Phaser.GameObjects.Sprite,
-      dragX: number,
-      dragY: number
-    ) {
-      if (gameObject instanceof CardGUI) {
-        gameObject.setDepth(10);
-        gameObject.x = dragX;
-        gameObject.y = dragY;
-      }
-    });*/
-
-    this.input.on("pointerover", function(e, object) {
-      GameInfo.hovering = object;
-    });
-
-    this.input.on("pointerout", function(e, object) {
-      GameInfo.hovering = undefined;
-    });
-
-    // return to original position when drag is done
-    /*this.input.on(
-      "dragend",
-      function(
-        pointer: Phaser.Input.Pointer,
-        gameObject: Phaser.GameObjects.Sprite
-      ) {
-        if (gameObject instanceof CardGUI) {
-          gameObject.setDepth(1);
-          const card: Card = gameObject.card;
-          const enemy: Enemy = this.enemyGUI.enemies[0];
-          // TODO: set up collision between cards and enemies attack
-          // position of enemy hardcoded here
-          if (pointer.upY >= 300 && pointer.upX >= 1200) {
-            for (let listener of this.playerGUI.listener)
-              listener.attackEnemy(card, enemy, this.tfgame.gameState);
-              this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
-              console.log('player attacked enemy with card');
-          } else {
-            console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
-            gameObject.x = gameObject.cardOriginX;
-            gameObject.y = gameObject.cardOriginY;
-          }
-        }
-      },
-      this
-    );*/
   }
 
   drawPhase(game: Mission) {

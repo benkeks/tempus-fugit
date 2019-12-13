@@ -5,6 +5,8 @@ import GameObject = Phaser.GameObjects.GameObject;
 import {EnemyGUI} from "./enemy-gui";
 import {GameInfo} from "../../game";
 import EPSILON = Phaser.Math.EPSILON;
+import {CardGUI} from "./card-gui";
+import {Player} from "../game-objects/player";
 
 export class DecisionArrow extends Phaser.GameObjects.Container {
 
@@ -14,25 +16,32 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     public dot:Graphics;
 
     public color:number = 0xFFFFFF;
+    public defaultColor:number = 0xFFFFFF;
     public hoverColor:number = 0xFF0000;
 
     public rectangleSpeed:number;
     public rectangleWidth:number;
     public rectangleDist:number = 10;
 
-    public draggingObject:GameObject = undefined;
+    public draggingObject:CardGUI = undefined;
+    public enemies:EnemyGUI[] = undefined;
+    public player:Player = undefined;
 
     constructor(scene:Phaser.Scene,
+                enemies:EnemyGUI[],
+                player:Player,
                 rectangleWidth:number = 20,
                 rectangleSpeed:number = 50) {
         super(scene);
         scene.add.existing(this);
         this.setVisible(false);
+        this.enemies = enemies;
 
         this.rectangleSpeed = rectangleSpeed;
         this.rectangleWidth = rectangleWidth;
 
-        this.triangle = scene.add.triangle(0,400, 0, 0, 40, 0, 20, 50, this.color, 1);
+        this.triangle = scene.add.triangle(0,400, 0, 0, 2, 0, 1, 3, this.color, 1);
+        this.triangle.setScale(15,15);
 
         this.dot = scene.add.graphics({x:0, y:0});
         this.dot.fillStyle(this.color, 1);
@@ -47,26 +56,34 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
-                if (!this.draggingObject) {
-                    this.draggingObject = gameObject;
-                    this.setPosition(pointer.x, pointer.y);
-                }
+                if (!(gameObject instanceof CardGUI)) return;
 
-                let px = pointer.x - this.x;
-                let py = pointer.y - this.y;
+                        if (!this.draggingObject) {
+                            this.draggingObject = gameObject;
+                            this.setPosition(pointer.x, pointer.y);
+                            this.scene.input.activePointer.smoothFactor = 0.5;
+                            this.scene.sys.canvas.style.cursor = "none";
+                        }
 
-                let rotation:number = Math.atan(py / px)-Math.PI/2;
-                if (pointer.x < this.x) rotation = rotation-Math.PI;
-                this.setRotation(rotation);
-                let dist = Math.sqrt(px*px + py*py);
-                this.triangle.setPosition(this.triangle.x, dist);
-                this.setVisible(true);
+                        let px = pointer.x - this.x;
+                        let py = pointer.y - this.y;
 
-                if (GameInfo.hovering && GameInfo.hovering[0] instanceof EnemyGUI) {
-                    this.triangle.setFillStyle(this.hoverColor, 1);
-                } else {
-                    this.triangle.setFillStyle(this.color, 1);
-                }
+                        let rotation:number = Math.atan(py / px)-Math.PI/2;
+                        if (pointer.x < this.x) rotation = rotation-Math.PI;
+                        this.setRotation(rotation);
+                        let dist = Math.sqrt(px*px + py*py);
+                        this.triangle.setPosition(this.triangle.x, dist);
+                        this.setVisible(true);
+
+                        if (GameInfo.hovering && GameInfo.hovering[0] instanceof EnemyGUI) {
+                            this.triangle.setFillStyle(this.hoverColor, 1);
+                            this.color = this.hoverColor;
+                            this.rectangleSpeed = 100;
+                        } else {
+                            this.triangle.setFillStyle(this.color, 1);
+                            this.color = this.defaultColor;
+                            this.rectangleSpeed = 50;
+                        }
             }, this);
 
         this.scene.input.on(
@@ -75,25 +92,33 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
+                this.scene.input.activePointer.smoothFactor = 0;
+                this.scene.sys.canvas.style.cursor = "default";
+
+                for (let e of enemies) {
+                    if (e.isHovered(pointer.x, pointer.y)) {
+                        this.playCard(e, this.draggingObject);
+                        break;
+                    }
+                }
+
                 this.draggingObject = undefined;
                 this.setVisible(false);
-                console.log(GameInfo.hovering);
             }, this);
+    }
 
-        this.scene.input.on(
-            "hover",
-            function(
-                pointer: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Sprite
-            ) {
-                console.log(gameObject);
-            }, this);
+    public playCard(enemy:EnemyGUI, card:CardGUI) {
+        this.player.
     }
 
     update(time, delta): void {
         if (!this.draggingObject) return;
         
         for (let rect of this.shownRectangles) {
+            if (this.color != rect.fillColor) {
+                rect.setFillStyle(this.color);
+            }
+
             rect.setPosition(rect.x, rect.y+(this.rectangleSpeed* (1/delta)));
         }
 
@@ -117,8 +142,13 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         }
 
         while (head && head.y + head.height > this.triangle.y) {
-            head.setVisible(false);
             this.shownRectangles.shift();
+
+            if (this.spawning == head) {
+                this.spawning.setPosition(this.spawning.x, this.rectangleDist+1);
+            }
+
+            head.setVisible(false);
             head.destroy(true);
 
             head = (this.shownRectangles.length > 0) ? this.shownRectangles[0] : undefined;

@@ -110,23 +110,12 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         this.revalidate();
     }
 
-/*    public centerSprite():void {
-        let x1:number = this.hpText.x;
-        let y1:number = this.hpText.y;
-        let x2:number = this.baseAttackText.x + this.baseAttackText.width;
-        let y2:number = this.baseAttackText.y + this.baseAttackText.height;
+    public isHovered(xCursor:number, yCursor:number):boolean {
+        let x1:number = this.sprite.x;
+        let y1:number = this.sprite.y;
+        let x2:number = x1 + this.sprite.displayWidth;
+        let y2:number = y1 + this.sprite.displayHeight;
 
-        this.sprite.setPosition(((x1+x2)/2), y2);
+        return xCursor > x1 && xCursor < x2 && yCursor > y1  && yCursor < y2;
     }
-
-    public setBaseAttack(attack:number):void {
-        this.baseAttackText.setText('Attack: ' + attack);
-        this.centerSprite();
-    }
-
-    public setHP(hp:number):void {
-        this.hpText.setText('hp: ' + hp);
-        this.baseAttackText.setPosition(this.hpText.width + EnemyGUI.TEXT_PADDING, this.baseAttackText.y);
-        this.centerSprite();
-    }*/
 }
