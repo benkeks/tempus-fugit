@@ -90,10 +90,10 @@ export class Player {
      * @return Does not have a return value
      * @author Florian
      */
-    public applyCard(card: Card, enemy: Enemy, gameState: GameState, mission: Mission): void {
-        let val:boolean = gameState.evaluate(card.getFormula());
+    public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
+        let val:boolean = mission.gameState.evaluate(card.getFormula());
         if (card.isBaseAttackCard && !val) {
-            enemy.takeHit((this.baseAttack));
+            enemy.takeHit((this.baseAttack), mission.gameState, this);
         } else if (val) {
             card.action(mission,enemy);
             console.log("Valid");

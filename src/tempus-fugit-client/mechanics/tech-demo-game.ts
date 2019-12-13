@@ -5,6 +5,7 @@ import {Formula} from "../temporal-logic/formula";
 import {GameState} from "../objects/game-objects/game-state";
 import {Mission} from "./mission";
 import {Stand} from "../objects/game-objects/stand";
+import {Attack} from "../objects/game-objects/attack";
 
 export class TechDemoGame extends Mission {
 
@@ -14,7 +15,7 @@ export class TechDemoGame extends Mission {
         this.player = new Player("player1", 10, 1);
 
         this.enemies = {
-            0:[new Enemy("e1", 5, 2,4, new Formula("Ga"))]
+            0:[new Enemy("e1", 5, 2,new Attack("a", 2), [new Attack("d", 3)])]
         };
 
         this.gameState = new GameState();
@@ -24,12 +25,12 @@ export class TechDemoGame extends Mission {
         this.gameState.setVariable("c", false);
         this.gameState.setVariable("d", false);
 
-        let c1:Card = new Card(this, "test1", "", "card1", "b&(c|(OEb))", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower());");
+        let c1:Card = new Card(this, "test1", "", "card1", "b&(c|(OEb))", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
         let c2:Card = new Card(this,"test2", "","card2", "!#G(a&!b)", 2, false, 5, 1, "Magic Stand","this.stand.spawn(enemy);");
-        let c3:Card = new Card(this,"test3", "","card3", "#Oa&(d|!b)", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower());");
+        let c3:Card = new Card(this,"test3", "","card3", "#Oa&(d|!b)", 2, true, 0, 0, "","enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
         let c4:Card = new Card(this,"test4", "","card4", "0Ec", 2, false, 6,2 , "Another Stand","this.stand.spawn(enemy);");
         //0E
-        let c5:Card = new Card(this,"test5", "","card5", "OEc&(#Oa|b)", 2, false, 0,0, "",  "enemy.takeHit(this.getAttackPower());");
+        let c5:Card = new Card(this,"test5", "","card5", "OEc&(#Oa|b)", 2, false, 0,0, "",  "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
 
         //let c1:Card= new Card("test1", "", "card1", "a", 5);
         //let c2: Card = new Card("test2", "","card2", "a", 2);
