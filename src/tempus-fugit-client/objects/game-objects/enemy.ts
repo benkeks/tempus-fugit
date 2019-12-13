@@ -2,6 +2,8 @@ import {Player} from "./player"
 import {Card} from "./card"
 import {GameState} from "./game-state"
 import {Formula} from "../../temporal-logic/formula";
+import {Attack} from "./attack"
+
 
 
 export class Enemy {
@@ -9,8 +11,8 @@ export class Enemy {
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
-    public specialAttack: number; // The enemy's base attack strength
-    public formula: Formula; // A formula attached to the card
+    public specialAttack: Attack; // The enemy's base attack strength
+    public reactAttacks: Attack[]; // List of react effects
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
@@ -30,13 +32,13 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: number, forumula: Formula) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Attack, reactAttacks: Attack[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.specialAttack = specialAttack;
-        this.formula = forumula;
+        this.reactAttacks = reactAttacks;
         this.listener = [];
 
     }
@@ -63,8 +65,8 @@ export class Enemy {
      */
     public attack(player: Player, gameState: GameState): void {
         var attackPoints = 0;
-        if (gameState.evaluate(this.formula)) {
-            attackPoints = this.specialAttack;
+        if (gameState.evaluate(this.specialAttack.getFormula())) {
+            attackPoints = this.specialAttack.getAttackStrength();
         } else {
             attackPoints = this.baseAttack;
         }
@@ -78,13 +80,23 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number): void {
+    public takeHit(hitPower: number, gameState: GameState, player: Player): void {
         let before:number = this.currentHP;
         this.currentHP -= hitPower;
 
         for (let i in this.listener) {
             this.listener[i].enemyHpChanged(this, before, this.currentHP);
         }
+
+        // Flip-Effect: Attacks player when attacked and if formula is fulfilled
+        for (var reactAttack of this.reactAttacks) {
+            if (gameState.evaluate(reactAttack.getFormula())) {
+                console.log(player);
+                player.takeHit(reactAttack.getAttackStrength());
+                console.log("React attacked!");
+            }
+        }
+
     }
 
     /**
