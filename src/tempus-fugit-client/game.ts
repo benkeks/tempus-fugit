@@ -1,7 +1,7 @@
 import "phaser";
-import {MainScene} from "./scenes/main-scene";
+import { MainScene } from "./scenes/main-scene";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
-import {StartingScene} from "./scenes/starting-scene";
+import { StartingScene } from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -10,7 +10,7 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 1080,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
-        autoCenter:Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: "#000",
     plugins: {
