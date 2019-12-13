@@ -8,11 +8,11 @@ import {StoryDialog} from "./story-dialog";
 import {Stand} from "../objects/game-objects/stand";
 
 export class Mission implements EnemyListener {
-    get enemies(): { [p: number]: Enemy[] } {
+    get enemies(): Enemy[][]  {
         return this._enemies;
     }
 
-    set enemies(value: { [p: number]: Enemy[] }) {
+    set enemies(value:Enemy[][]) {
         this._enemies = value;
 
         for (let i in value) {
@@ -26,29 +26,28 @@ export class Mission implements EnemyListener {
         this.stands.push(stand);
     }
     
-    public static Missions: {[name:string]:string} = {};
+    public static Missions: {[name:string]:Mission} = {};
     public name: string;
     public background: string;
-    private readonly numPhases:number = 5;
-    private curPhase: number;
-    private emitter: EventEmitter;
-    private curTurn: number;
-    private toPhase: Map<number, string>;
+    public waveCounter: number;
+    public _enemies: Enemy[][] = [];
+    public monologue: {[wave: string]: string} = {};
+    public dialogue: StoryDialog[] = [];
+
+    public readonly numPhases:number = 5;
+    public curPhase: number;
+    public emitter: EventEmitter;
+    public curTurn: number;
+    public toPhase: Map<number, string>;
 
     public listener:GameStateListener[] = [];
 
     public deck:Deck = new Deck();
     public player:Player;
     public gameState:GameState;
-    private _enemies:{[wave:number]:Enemy[]} = {};
-    private stands:Stand[] = [];
-    private aliveEnemiesCount:number = -1;
+    public stands:Stand[] = [];
+    public aliveEnemiesCount:number = -1;
     public cards:Card[] = [];
-
-    public monologs:{[wave:number]:string} = {};
-    public dialogue:StoryDialog[] = [];
-
-    public waveCounter;
     // TODO: effect list
 
     constructor() {
@@ -144,7 +143,7 @@ export class Mission implements EnemyListener {
         this.nextPhase(0);
         this.listener.map(l => l.waveChanged(this, next, this.enemies[this.waveCounter]));
 
-        this.listener.map(l => l.storyMonolog(this, this.monologs[this.waveCounter]));
+        this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
     }
 
     private drawPhase():void {
@@ -211,12 +210,16 @@ export class Mission implements EnemyListener {
     }
 
     /**
-     * Returns the current phase as a number 0-4
+     * Switches phases
+     * --- Player's turn ---
      * 0 -> Draw Phase
      * 1 -> Energy Phase
      * 2 -> Play Phase
-     * 3 -> Enemy Phase
-     * 4 -> Effect Phase
+     * 3 -> Stand Phase
+     * --- Enemy's turn ---
+     * 4 -> Enemy Phase
+     * 5 -> Effect Phase
+     *
      */
     public getPhase():number {
         return this.curPhase;
@@ -278,6 +281,21 @@ export class Mission implements EnemyListener {
             this.nextWave();
         }
     }
+
+    public static createFromJSON(jString): void{
+        let json = JSON.parse(jString);
+        for (let m of json.missions) {
+            let mission = new Mission()
+            mission.name = m.name;
+            mission.background = m.background;
+            mission.waveCounter = m.waves;
+            mission.enemies = m.enemies;
+            mission.monologue = m.monologue;
+            let sd:StoryDialog = new StoryDialog(m.dialogue.text);
+            sd.triggerFunctionString = m.dialogue.triggerFunction;
+          }
+    }
+
 
     public activateStand(stand: Stand) {}
     public deactiveStand(stand: Stand) {}
