@@ -5,14 +5,15 @@ import {GameState} from "../objects/game-objects/game-state";
 import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 import {StoryDialog} from "./story-dialog";
+import {Stand} from "../objects/game-objects/stand";
 
 export class Mission implements EnemyListener {
-    get enemys(): { [p: number]: Enemy[] } {
-        return this._enemys;
+    get enemies(): { [p: number]: Enemy[] } {
+        return this._enemies;
     }
 
-    set enemys(value: { [p: number]: Enemy[] }) {
-        this._enemys = value;
+    set enemies(value: { [p: number]: Enemy[] }) {
+        this._enemies = value;
 
         for (let i in value) {
             let eList:Enemy[] = value[i];
@@ -20,10 +21,20 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
+<<<<<<< HEAD
     public static Missions: {[name:string]:string} = {};
     public name: string;
     public background: string;
     private readonly numPhases:number = 5;
+=======
+
+    public pushStand(stand: Stand) {
+        this.stands.push(stand);
+    }
+
+    public location:string;
+    private readonly numPhases:number = 6;
+>>>>>>> 5a95fb12955b5513068421cb3d17c0c32c40102f
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
@@ -34,7 +45,8 @@ export class Mission implements EnemyListener {
     public deck:Deck = new Deck();
     public player:Player;
     public gameState:GameState;
-    private _enemys:{[wave:number]:Enemy[]} = {};
+    private _enemies:{[wave:number]:Enemy[]} = {};
+    private stands:Stand[] = [];
     private aliveEnemiesCount:number = -1;
     public cards:Card[] = [];
 
@@ -55,7 +67,8 @@ export class Mission implements EnemyListener {
         this.toPhase.set(1, 'energy-phase');
         this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'enemy-phase');
-        this.toPhase.set(4, 'effect-phase');
+        this.toPhase.set(4, 'stand-phase');
+        this.toPhase.set(5, 'effect-phase');
     }
 
     private checkDialogEvents() {
@@ -74,9 +87,10 @@ export class Mission implements EnemyListener {
      * 0 -> Draw Phase
      * 1 -> Energy Phase
      * 2 -> Play Phase
+     * 3 -> Stand Phase
      * --- Enemy's turn ---
-     * 3 -> Enemy Phase
-     * 4 -> Effect Phase
+     * 4 -> Enemy Phase
+     * 5 -> Effect Phase
      *
      * emits an event for each phase, names can be seen in toPhase map
      * increments turn counter every time player turn is reached
@@ -101,10 +115,14 @@ export class Mission implements EnemyListener {
                 this.listener.map(l => l.playPhase(this));
                 break;
             case 3:
+                this.standPhase();
+                this.listener.map(l => l.standPhase(this));
+                break;
+            case 4:
                 this.enemyPhase();
                 this.listener.map(l => l.enemyPhase(this));
                 break;
-            case 4:
+            case 5:
                 this.effectPhase();
                 this.listener.map(l => l.effectPhase(this));
                 break;
@@ -127,16 +145,17 @@ export class Mission implements EnemyListener {
             return;
         }
 
-        this.aliveEnemiesCount = this.enemys[this.waveCounter].length;
+        this.aliveEnemiesCount = this.enemies[this.waveCounter].length;
         this.nextPhase(0);
-        this.listener.map(l => l.waveChanged(this, next, this.enemys[this.waveCounter]));
+        this.listener.map(l => l.waveChanged(this, next, this.enemies[this.waveCounter]));
 
         this.listener.map(l => l.storyMonolog(this, this.monologs[this.waveCounter]));
     }
 
     private drawPhase():void {
         if (!this.player.hand.isFull()) {
-            this.player.takeCard(this.deck);
+            var card = this.player.takeCard(this.deck);
+            card.getStand().listener.push(this);
         }
     }
 
@@ -148,8 +167,34 @@ export class Mission implements EnemyListener {
 
     }
 
+    private standPhase(): void {
+        for (var stand of this.getStands()) {
+            if (stand.active) {
+                stand.turnRed();
+                console.log(stand.targets.length);
+                for (var target of stand.targets) {
+                    target.takeHit(stand.standAttack);
+                    console.log("Stand attacked with " + stand.standAttack + "!");
+                }
+                stand.decreaseRoundsRemaining();
+                if (stand.getRoundsRemaining() <= 0) {
+                    stand.active = false;
+                    for (var l of stand.listener) {
+                        l.deactiveStand(stand);
+                    }
+                }
+            }
+        }
+    }
+
     private enemyPhase():void {
-        this.enemys[this.waveCounter].map(e => e.attack(this.player, this.gameState));
+        for (var stand of this.getStands()) {
+            if (stand.active) {
+                stand.turnNormal();
+            }
+        }
+        this.enemies[this.waveCounter].map(e => e.attack(this.player, this.gameState));
+
     }
 
     private effectPhase():void {
@@ -212,11 +257,15 @@ export class Mission implements EnemyListener {
     }
 
     public getEnemies():Enemy[] {
-        return this.enemys[this.waveCounter];
+        return this.enemies[this.waveCounter];
+    }
+
+    public getStands():Stand[] {
+        return this.stands;
     }
 
     public getMaxWaveCount():number {
-        return this.enemys[this.waveCounter].length;
+        return this.enemies[this.waveCounter].length;
     }
 
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
@@ -234,12 +283,19 @@ export class Mission implements EnemyListener {
             this.nextWave();
         }
     }
+
+    public activateStand(stand: Stand) {}
+    public deactiveStand(stand: Stand) {}
+    public updateStandText(){}
+    public turnRed(){}
+    public turnNormal(){}
 }
 
 export interface GameStateListener {
     drawPhase(game:Mission):void;
     energyPhase(game:Mission):void;
     playPhase(game:Mission):void;
+    standPhase(game:Mission):void;
     enemyPhase(game:Mission):void;
     effectPhase(game:Mission):void;
     storyDialog(game:Mission, dialog:StoryDialog):void;
