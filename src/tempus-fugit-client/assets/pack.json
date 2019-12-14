@@ -65,6 +65,10 @@
 	"type": "image",
 	"key": "stand",
 	"url": "assets/sprites/stand.png"
+      },
+	  {"type": "image",
+	"key": "blue",
+	"url": "assets/sprites/blue.png"
       }
     ]
   }

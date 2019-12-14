@@ -1,4 +1,5 @@
 import { Card } from "../game-objects/card";
+import Tween = Phaser.Tweens.Tween;
 
 /**
  * @author Mustafa
@@ -7,6 +8,9 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
   private _cardOriginX: number; //initial x-position of cardGUI object, for dragging
   private _cardOriginY: number; //initial y-position of cardGUI object, for dragging
   private readonly _card: Card; // card object associated with cardGUI object
+
+  public fIn:Tween;
+  public fOut:Tween;
 
   constructor(
     scene: Phaser.Scene,
@@ -19,6 +23,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
     this._cardOriginX = x;
     this._cardOriginY = y;
     this._card = card;
+
   }
 
   /**
@@ -31,7 +36,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
   /**
    * tints cardGUI black
    */
-  fadeOut(): void {
+  fadeOut(duration:number = 100): void {
     this.setTint(0x575757);
   }
 

@@ -13,6 +13,7 @@ import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
 import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
 import {StandGUI} from "../objects/game-gui-objects/stand-gui";
+import {CardChannel} from "../objects/game-gui-objects/card-channel";
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
@@ -27,6 +28,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     public phaseText: Phaser.GameObjects.Text;
 
     public tfgame:Mission;
+    public cardChannel:CardChannel;
 
   constructor() {
     super({
@@ -87,12 +89,15 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
       this.handGUI.fadeOut();
 
-    this.arrow = new DecisionArrow(this);
+    //this.arrow = new DecisionArrow(this);
+    this.cardChannel = new CardChannel(this);
   }
 
   public arrow:DecisionArrow;
   update(time: number, delta: number): void {
-    this.arrow.update(time, delta);
+    if (this.cardChannel) {
+      this.cardChannel.decisionArrow.update(time, delta);
+    }
   }
   public static loadFile(filePath): string{
     let fd = null;

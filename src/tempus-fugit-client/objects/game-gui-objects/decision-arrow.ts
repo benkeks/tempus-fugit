@@ -1,13 +1,10 @@
 import Triangle = Phaser.GameObjects.Triangle;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Graphics = Phaser.GameObjects.Graphics;
-import GameObject = Phaser.GameObjects.GameObject;
 import {EnemyGUI} from "./enemy-gui";
-import {GameInfo} from "../../game";
-import EPSILON = Phaser.Math.EPSILON;
 import {CardGUI} from "./card-gui";
-import {Player} from "../game-objects/player";
 import {MissionScene} from "../../scenes/mission-scene";
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
 export class DecisionArrow extends Phaser.GameObjects.Container {
 
@@ -15,6 +12,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     public shownRectangles:Rectangle[] = [];
     public spawning:Rectangle = undefined;
     public dot:Graphics;
+    public dotParticles:ParticleEmitter;
 
     public color:number = 0xFFFFFF;
     public defaultColor:number = 0xFFFFFF;
@@ -24,8 +22,11 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     public rectangleWidth:number;
     public rectangleDist:number = 10;
 
-    public draggingObject:CardGUI = undefined;
     public missionScene:MissionScene;
+
+    public particleContainer;
+    public emitter;
+    public dZone:Phaser.Geom.Rectangle;
 
     constructor(scene:MissionScene,
                 rectangleWidth:number = 20,
@@ -41,67 +42,68 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         this.triangle = scene.add.triangle(0,400, 0, 0, 2, 0, 1, 3, this.color, 1);
         this.triangle.setScale(15,15);
 
-        this.dot = scene.add.graphics({x:0, y:0});
-        this.dot.fillStyle(this.color, 1);
-        this.dot.fillCircle(0, 0, 10);
+        //this.dot = scene.add.graphics({x:0, y:0});
+        //this.dot.fillStyle(this.color, 0);
+        //this.dot.lineStyle(3, this.color, 1);
+        //this.dot.fillCircle(0, 0, 40);
 
-        this.add(this.triangle);
-        this.add(this.dot);
+        this.dZone = new DeathZone(this.triangle);
 
-        this.scene.input.on(
-            "drag",
-            function(
-                pointer: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Sprite
-            ) {
-                if (!(gameObject instanceof CardGUI)) return;
-
-                        if (!this.draggingObject) {
-                            this.draggingObject = gameObject;
-                            this.setPosition(pointer.x, pointer.y);
-                            this.scene.input.activePointer.smoothFactor = 0.5;
-                            this.scene.sys.canvas.style.cursor = "none";
-                        }
-
-                        let px = pointer.x - this.x;
-                        let py = pointer.y - this.y;
-
-                        let rotation:number = Math.atan(py / px)-Math.PI/2;
-                        if (pointer.x < this.x) rotation = rotation-Math.PI;
-                        this.setRotation(rotation);
-                        let dist = Math.sqrt(px*px + py*py);
-                        this.triangle.setPosition(this.triangle.x, dist);
-                        this.setVisible(true);
-
-                        if (this.cursorHoversEnemy(pointer.x, pointer.y)) {
-                            this.triangle.setFillStyle(this.hoverColor, 1);
-                            this.color = this.hoverColor;
-                            this.rectangleSpeed = 100;
-                        } else {
-                            this.triangle.setFillStyle(this.color, 1);
-                            this.color = this.defaultColor;
-                            this.rectangleSpeed = 50;
-                        }
-            }, this);
-
-        this.scene.input.on(
-            "dragend",
-            function(
-                pointer: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Sprite
-            ) {
-                this.scene.input.activePointer.smoothFactor = 0;
-                this.scene.sys.canvas.style.cursor = "default";
-
-                let e = this.cursorHoversEnemy(pointer.x, pointer.y);
-                if (e) {
-                    // TODO: remove card from hand
-                    this.playCard(e, this.draggingObject);
+        this.particleContainer = this.scene.add.particles("blue");
+        /*this.emitter = this.particleContainer.createEmitter({
+            x:{min:-25, max:25},
+            y:{min:10, max:-10},
+            speed: 1000,
+            lifespan: 500,
+            blendMode: 'ADD',
+            scaleX: 0.3,
+            scaleY: 0.3,
+            moveToY: 100,
+            moveToX:0,
+            quantity: 5,
+            deathZone: {
+                      type: 'onEnter',  // 'onEnter', or 'onLeave'
+                      source: this.dZone     // Geom like Circle or Rect that supports a 'contains' function
                 }
+        });
 
-                this.draggingObject = undefined;
-                this.setVisible(false);
-            }, this);
+        this.add(this.particleContainer);*/
+        this.add(this.triangle);
+        //this.add(this.dot);
+    }
+
+    public dragend(pointer:Phaser.Input.Pointer, gameObject:CardGUI) {
+        this.setVisible(false);
+
+        this.emitter.killAll();
+        this.scene.input.activePointer.smoothFactor = 0;
+        this.scene.sys.canvas.style.cursor = "default";
+    }
+
+    public updateDrag(pointer:Phaser.Input.Pointer):void {
+        this.setVisible(true);
+
+        let px = pointer.x - this.x;
+        let py = pointer.y - this.y;
+
+        let rotation:number = Math.atan(py / px)-Math.PI/2;
+        if (pointer.x < this.x) rotation = rotation-Math.PI;
+        this.setRotation(rotation);
+        let dist = Math.sqrt(px*px + py*py);
+        this.triangle.setPosition(this.triangle.x, dist);
+
+        //this.emitter.moveToY.propertyValue = dist;
+        this.setVisible(true);
+
+        if (this.cursorHoversEnemy(pointer.x, pointer.y)) {
+            this.triangle.setFillStyle(this.hoverColor, 1);
+            this.color = this.hoverColor;
+            this.rectangleSpeed = 100;
+        } else {
+            this.triangle.setFillStyle(this.color, 1);
+            this.color = this.defaultColor;
+            this.rectangleSpeed = 50;
+        }
     }
 
     public cursorHoversEnemy(xCursor:number, yCursor:number):EnemyGUI {
@@ -118,8 +120,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
     }
 
     update(time, delta): void {
-        if (!this.draggingObject) return;
-        
+        if (!this.visible) return;
         for (let rect of this.shownRectangles) {
             if (this.color != rect.fillColor) {
                 rect.setFillStyle(this.color);
@@ -161,7 +162,6 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         }
 
         if (this.spawning!==undefined &&  this.spawning.y < this.rectangleDist) {
-            //console.log(this.spawning.height + "      " + this.spawning.y);
             if (this.spawning.height < this.rectangleWidth) {
                 this.spawning.setSize(this.spawning.width, this.spawning.height + this.rectangleSpeed* (1/delta));
 
@@ -180,8 +180,21 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         newRect.setOrigin(0.5,0);
         this.add(newRect);
         newRect.setSize(20, height);
+        newRect.setDepth(0);
 
         return newRect;
     }
 
+}
+
+class DeathZone extends Phaser.Geom.Rectangle{
+    public triangle;
+    constructor(triangle) {
+        super();
+        this.triangle = triangle;
+    }
+
+    public contains(x:number, y:number):boolean {
+        return y >= this.triangle.y;
+    }
 }
