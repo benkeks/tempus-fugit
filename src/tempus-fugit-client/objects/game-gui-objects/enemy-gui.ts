@@ -28,6 +28,7 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
         this.defaultStrokeColor = 0xFFFFFF;
 
         this.addSpriteByTexture(texture);
+        this.sprite.setScale(2,2);
 
         this.attributeText = this.addText("abc", {fontSize: '18px',
             fontStyle: 'bold',
