@@ -13,6 +13,7 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
     public enemy: Enemy; // enemy object associated with this gui
     public attributeText:Text;
     public toolTip:ToolTip;
+    public toolTipText:Text;
 
     constructor(
         scene: Phaser.Scene,
@@ -47,7 +48,11 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
         this.setInteractive();
 
         this.toolTip = new ToolTip(scene, 0, 0, this);
-        this.toolTip.addText("Das ist ein tooltip", {});
+        this.toolTip.addText(enemy.name, CharacterGui.ALIGN_CENTRE,{fontSize:"26px"});
+        this.toolTipText = this.toolTip.addText(enemy.description, CharacterGui.ALIGN_LEFT);
+        this.toolTip.fixedMaxTextWidth = true;
+        this.toolTip.maxTextWidth = 400;
+        this.toolTip.revalidate();
     }
 
     public updateEnemyAttributes():void {

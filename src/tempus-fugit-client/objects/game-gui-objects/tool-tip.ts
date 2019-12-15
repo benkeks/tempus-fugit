@@ -1,4 +1,3 @@
-import Container = Phaser.GameObjects.Container;
 import {CharacterGui} from "./character-gui";
 
 export class ToolTip extends CharacterGui {
@@ -38,34 +37,8 @@ export class ToolTip extends CharacterGui {
            if (this.faderTimer) this.faderTimer.destroy();
            this.fadeOut();
         }, this);
+        this.setDepth(10);
 
         this.setVisible(false);
     }
-
-    public fadeIn(duration=100) {
-        this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: {from: 0, to: 1},
-            ease: "Linear",
-            duration: duration,
-            repeat: 0,
-            yoyo: false
-        });
-        this.setVisible(true);
-    }
-    public fadeOut(duration=100) {
-        this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: {from: 1, to: 0},
-            ease: "Linear",
-            duration: duration,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-                this.setVisible(false)
-            },
-            onCompleteScope:this
-        });
-    }
-
 }

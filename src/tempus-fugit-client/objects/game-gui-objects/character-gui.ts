@@ -1,11 +1,16 @@
 import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
+import Line = Phaser.GameObjects.Line;
 
 export class CharacterGui extends Phaser.GameObjects.Container {
 
+    public static readonly ALIGN_LEFT:string = "left";
+    public static readonly ALIGN_CENTRE:string = "centre";
+
     protected sprite:Phaser.GameObjects.Sprite;
     protected texts:Text[] = [];
-    protected rectangles:Rectangle[] = [];
+
+    protected separatingLines:Line[] = [];
     protected strokeRectWidth = 2;
     protected strokeRect:Rectangle = undefined;
 
@@ -13,7 +18,7 @@ export class CharacterGui extends Phaser.GameObjects.Container {
     public xPadding:number = 20;
 
     public maxTextWidth:number = 0;
-    public heights:number[] = [];
+    public fixedMaxTextWidth:boolean=false;
 
     public defaultColor:number = 0xAAAA;
     public defaultStrokeColor:number = 0xFFFF;
@@ -29,7 +34,7 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         this.setPosition(x,y);
 
         this.scene.input.keyboard.addKey("D").on("down", e => {
-            this.setPosition(this.x+10, this.y);
+            this.strokeRect.setPosition(this.strokeRect.x+10, this.y);
         })
     }
 
@@ -37,29 +42,63 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         let dHeight : number = 0;
         if (this.sprite) dHeight = this.sprite.displayHeight;
         let y:number = dHeight;
+        this.separatingLines[0].setVisible(false);
 
         for (let i in this.texts) {
             let t:Text = this.texts[i];
-            let rect:Rectangle = this.rectangles[i];
+            let line:Line = this.separatingLines[i];
+            let x:number = 0;
+            if (t.style.align == CharacterGui.ALIGN_LEFT) x = -this.maxTextWidth;
+
+            if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
 
             t.setOrigin(0.5,0);
             t.setPosition(0, y+this.yPadding);
-            rect.setOrigin(0.5,0);
-            rect.setPosition(0, y);
+            t.setZ(1);
+            t.setDepth(1);
+            //t.setResolution(1);
+
+            line.setOrigin(0,0);
+            line.setDepth(1);
+            let w:number = this.maxTextWidth+2*this.xPadding;
+            line.setTo(0,0, w, 0);
+            line.setPosition(-w/2, y);
             let height:number = t.displayHeight + (2* this.yPadding);
-            rect.setDisplaySize(this.maxTextWidth + 2*this.xPadding, height);
+            //rect.setDisplaySize(this.maxTextWidth + 2*this.xPadding, height);
 
             y += height;
         }
 
         this.setSize(this.maxTextWidth + 2*this.xPadding, y);
 
-        let strokeWidth:number = this.strokeRect.lineWidth;
+        if (this.strokeRect) {
+            this.remove(this.strokeRect);
+            this.strokeRect.destroy(true);
+        }
+        let strokeWidth:number = this.strokeRectWidth;
 
+        this.strokeRect = this.scene.add.rectangle(0, dHeight - strokeWidth,this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight, this.defaultColor,1);
+        this.strokeRect.setZ(-1);
+        this.strokeRect.setDepth(-1);
+        this.strokeRect.setStrokeStyle(this.strokeRectWidth, this.defaultStrokeColor);
         this.strokeRect.setOrigin(0.5,0);
-        this.strokeRect.setPosition(0, dHeight - strokeWidth);
+        this.add(this.strokeRect);
+        this.sendToBack(this.strokeRect);
+
+        this.strokeRect.setDepth(-1);
+
+        //this.sort("alpha", this.sorter);
+
         //this.strokeRect.setSize(this.maxTextWidth+strokeWidth, y+strokeWidth)
-        this.strokeRect.setDisplaySize(this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight);
+        //this.strokeRect.setDisplaySize(this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight);
+    }
+
+    private sorter(child1, child2) {
+        console.log(this.strokeRect);
+        if (child1 == this.strokeRect) {
+            return true;
+        }
+        return child1.alpha < child2.alpha;
     }
 
     public addSpriteByTexture(texture:string) {
@@ -68,23 +107,14 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         this.add(this.sprite);
     }
 
-    public addText(text:string, font:Object={fontSize: '18px',fontStyle: 'bold',fontFamily: 'Arial',color: '#FF0000'}, height:number=50):Text {
-        if (!this.strokeRect) {
-            this.strokeRect = this.scene.add.rectangle(0,0,100,100, 0,0);
-            this.strokeRect.setStrokeStyle(this.strokeRectWidth, this.defaultStrokeColor);
-            this.add(this.strokeRect);
-        }
-
-        let rect:Rectangle = this.scene.add.rectangle(0,0,100,100);
+    public addText(text:string, alignment:string=CharacterGui.ALIGN_CENTRE, font:Object={fontSize: '18px',fontStyle: 'bold',fontFamily: 'Arial',color: '#FF0000'}):Text {
+        let line:Line = this.scene.add.line(0,0,0,0, 100,0,this.defaultStrokeColor, 1);
         let t:Text = this.scene.add.text(0,0, text, font);
-        this.heights.push(height);
+        t.style.align = alignment;
 
-        rect.setStrokeStyle(1, this.defaultStrokeColor, 1);
-        rect.setFillStyle(this.defaultColor, 1);
-
-        this.rectangles.push(rect);
+        this.separatingLines.push(line);
         this.texts.push(t);
-        this.add(rect);
+        this.add(line);
         this.add(t);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;
@@ -112,5 +142,33 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         let y2:number = y1 + this.displayHeight;
 
         return xCursor > x1 && xCursor < x2 && yCursor > y1  && yCursor < y2;
+    }
+
+    public fadeIn(duration=200) {
+        this.setAlpha(0);
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: {from: 0, to: 1},
+            ease: "Linear",
+            duration: duration,
+            repeat: 0,
+            yoyo: false
+        });
+        this.setVisible(true);
+    }
+    public fadeOut(duration=200) {
+        this.setAlpha(1);
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: {from: 1, to: 0},
+            ease: "Linear",
+            duration: duration,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.setVisible(false)
+            },
+            onCompleteScope:this
+        });
     }
 }

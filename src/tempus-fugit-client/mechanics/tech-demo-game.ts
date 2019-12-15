@@ -14,6 +14,7 @@ export class TechDemoGame extends Mission {
         this.player = new Player("player1", 10, 1);
 
         let e:Enemy = new Enemy("slime1", 5, 2,4, new Formula("Ga"));
+        e.description = "A slime that do not like people! Some more Text that is really long!!!";
         e.image = e.name;
         this.enemies = {
             0:[e, e],
