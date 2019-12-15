@@ -2,6 +2,7 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
+import {DamageText} from "./damage-text";
 
 /**
  * @author Mustafa
@@ -12,6 +13,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
     public attributeText:Text;
     public toolTip:ToolTip;
     public toolTipText:Text;
+
+    //public damageText:Phaser.GameObjects.Text;
+    //public posY:number;
 
     constructor(
         scene: Phaser.Scene,
@@ -53,17 +57,44 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
+
+        /*this.damageText = scene.add.text(x,y,"abc",{});
+        this.damageText.setVisible(false);
+        this.add(this.damageText);*/
     }
 
     public updateEnemyAttributes():void {
         super.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
     }
 
+    /*
+    public popText(text:string):void {
+        //this.damageText.setText(text);
+        this.setVisible(true);
+
+        this.posY = this.y;
+        this.scene.add.tween({
+            targets: this,
+            alpha:{from: 0.2, to: 1},
+            y:{from: this.y, to:this.y-50},
+            ease: "Linear",
+            duration: 100,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.setVisible(false);
+                this.setPosition(this.x, this.posY);
+            },
+            onCompleteScope: this
+        });
+    }*/
+
     /**
      * change HP display of enemy
      * @param changedTo
      */
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
+        //this.popText((changedTo-changedFrom).toString());
         this.updateEnemyAttributes();
     }
 }

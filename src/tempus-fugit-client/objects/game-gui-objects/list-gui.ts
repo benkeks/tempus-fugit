@@ -32,10 +32,6 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.scene.add.existing(this);
 
         this.setPosition(x,y);
-
-        this.scene.input.keyboard.addKey("D").on("down", e => {
-            this.strokeRect.setPosition(this.strokeRect.x+10, this.y);
-        })
     }
 
     public revalidate() {
