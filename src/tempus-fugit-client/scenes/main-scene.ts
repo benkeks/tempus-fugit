@@ -62,7 +62,7 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
         this.standGUI.hide();
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI);
+        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -77,45 +77,45 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     }
 
     private configureCardEvents(): void {
-        // enable dragging of objects
-        this.input.on("drag", function (
-            pointer: Phaser.Input.Pointer,
-            gameObject: Phaser.GameObjects.Sprite,
-            dragX: number,
-            dragY: number
-        ) {
-            gameObject.setDepth(10);
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-        });
+        // // enable dragging of objects
+        // this.input.on("drag", function (
+        //     pointer: Phaser.Input.Pointer,
+        //     gameObject: Phaser.GameObjects.Sprite,
+        //     dragX: number,
+        //     dragY: number
+        // ) {
+        //     gameObject.setDepth(10);
+        //     gameObject.x = dragX;
+        //     gameObject.y = dragY;
+        // });
 
-        // return to original position when drag is done
-        this.input.on(
-            "dragend",
-            function (
-                pointer: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Sprite
-            ) {
-                if (gameObject instanceof CardGUI) {
-                    gameObject.setDepth(1);
-                    const card: Card = gameObject.card;
-                    const enemy: Enemy = this.enemyGUIs[0].enemy;
-                    // TODO: set up collision between cards and enemies attack
-                    // position of enemy hardcoded here
-                    if (pointer.upY >= 300 && pointer.upX >= 1200) {
-                        for (let listener of this.playerGUI.listener)
-                            listener.applyCard(card, enemy, this.tfgame.gameState, this.tfgame);
-                        this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
-                        console.log('player attacked enemy with card');
-                    } else {
-                        console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
-                        gameObject.x = gameObject.cardOriginX;
-                        gameObject.y = gameObject.cardOriginY;
-                    }
-                }
-            },
-            this
-        );
+        // // return to original position when drag is done
+        // this.input.on(
+        //     "dragend",
+        //     function (
+        //         pointer: Phaser.Input.Pointer,
+        //         gameObject: Phaser.GameObjects.Sprite
+        //     ) {
+        //         if (gameObject instanceof CardGUI) {
+        //             gameObject.setDepth(1);
+        //             const card: Card = gameObject.card;
+        //             const enemy: Enemy = this.enemyGUIs[0].enemy;
+        //             // TODO: set up collision between cards and enemies attack
+        //             // position of enemy hardcoded here
+        //             if (pointer.upY >= 300 && pointer.upX >= 1200) {
+        //                 for (let listener of this.playerGUI.listener)
+        //                     listener.applyCard(card, enemy, this.tfgame.gameState, this.tfgame);
+        //                 this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
+        //                 console.log('player attacked enemy with card');
+        //             } else {
+        //                 console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
+        //                 gameObject.x = gameObject.cardOriginX;
+        //                 gameObject.y = gameObject.cardOriginY;
+        //             }
+        //         }
+        //     },
+        //     this
+        // );
     }
 
     drawPhase(game: Mission) {

@@ -30,56 +30,62 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
  */
 
 module.exports = {
-	mode: 'development',
-	entry: './src/tempus-fugit-client/game.ts',
+    mode: 'development',
+    entry: './src/tempus-fugit-client/game.ts',
 
-	output: {
-		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'dist')
-	},
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    },
 
-	//plugins: [new webpack.ProgressPlugin(), new HtmlWebpackPlugin()],
+    //plugins: [new webpack.ProgressPlugin(), new HtmlWebpackPlugin()],
 
-	module: {
-		rules: [
-			{
-				test: /.(ts|tsx)?$/,
-				loader: 'ts-loader',
-				include: [path.resolve(__dirname, './src/tempus-fugit-client')],
-				exclude: [/node_modules/]
-			}
-		]
-	},
+    module: {
+        rules: [{
+            test: /.(ts|tsx)?$/,
+            loader: 'ts-loader',
+            include: [path.resolve(__dirname, './src/tempus-fugit-client')],
+            exclude: [/node_modules/]
+        }]
+    },
 
-	optimization: {
-		splitChunks: {
-			cacheGroups: {
-				vendors: {
-					priority: -10,
-					test: /[\\/]node_modules[\\/]/
-				}
-			},
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    priority: -10,
+                    test: /[\\/]node_modules[\\/]/
+                }
+            },
 
-			chunks: 'async',
-			minChunks: 1,
-			minSize: 30000,
-			name: true
-		}
-	},
+            chunks: 'async',
+            minChunks: 1,
+            minSize: 30000,
+            name: true
+        }
+    },
 
-	devServer: {
-		open: true,
-		contentBase: path.resolve(__dirname, './dist/'),
-	},
+    devServer: {
+        open: true,
+        contentBase: path.resolve(__dirname, './dist/'),
+    },
 
-	resolve: {
-		extensions: ['.tsx', '.ts', '.js']
-	},
-	plugins: [
-        new CopyPlugin([
-            { from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'), to: 'assets' },
-            { from: path.resolve(__dirname, 'index.html'), to: 'index.html' },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js']
+    },
+    plugins: [
+        new CopyPlugin([{
+                from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'),
+                to: 'assets'
+            },
+            {
+                from: path.resolve(__dirname, 'index.html'),
+                to: 'index.html'
+            },
         ]),
-    ]
+    ],
+    watchOptions: {
+        poll: true
+    }
 
 };
