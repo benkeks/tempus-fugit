@@ -2,7 +2,6 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
-import {DamageText} from "./damage-text";
 
 /**
  * @author Mustafa
