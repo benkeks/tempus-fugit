@@ -1,6 +1,4 @@
 import {Enemy, EnemyListener} from "../game-objects/enemy";
-import {GameInfo} from "../../game";
-import {SpeechBubble} from "./speech-bubble";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";

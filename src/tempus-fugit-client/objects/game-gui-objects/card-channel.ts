@@ -175,7 +175,7 @@ export class CardChannel extends Container{
     }
 
     public playCard(enemy:EnemyGUI, card:CardGUI) {
-        this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.gameStateGUI.gameState, this.missionScene.tfgame);
+        this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.tfgame);
     }
 
     public reEmitCard(gameObject):void {

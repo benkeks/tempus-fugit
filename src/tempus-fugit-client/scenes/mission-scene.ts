@@ -11,9 +11,9 @@ import {StackGUI} from "../objects/game-gui-objects/stack-gui";
 import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
 import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
-import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
 import {StandGUI} from "../objects/game-gui-objects/stand-gui";
 import {CardChannel} from "../objects/game-gui-objects/card-channel";
+import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
@@ -93,7 +93,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     this.cardChannel = new CardChannel(this);
   }
 
-  public arrow:DecisionArrow;
   update(time: number, delta: number): void {
     if (this.cardChannel) {
       this.cardChannel.decisionArrow.update(time, delta);
@@ -144,7 +143,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
           // position of enemy hardcoded here
           if (pointer.upY >= 300 && pointer.upX >= 1200) {
             for (let listener of this.playerGUI.listener)
-              listener.applyCard(card, enemy, this.tfgame.gameState, this.tfgame);
+              listener.applyCard(card, enemy, this.tfgame);
               this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
               console.log('player attacked enemy with card');
           } else {

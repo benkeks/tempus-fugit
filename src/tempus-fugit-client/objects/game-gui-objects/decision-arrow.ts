@@ -115,10 +115,6 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         return undefined;
     }
 
-    public playCard(enemy:EnemyGUI, card:CardGUI) {
-        this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.gameStateGUI.gameState, this.missionScene.tfgame);
-    }
-
     update(time, delta): void {
         if (!this.visible) return;
         for (let rect of this.shownRectangles) {
@@ -179,6 +175,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         let newRect:Rectangle = this.scene.add.rectangle(0, y, 20, 100, this.color, 1);
         newRect.setOrigin(0.5,0);
         this.add(newRect);
+        this.sendToBack(newRect);
         newRect.setSize(20, height);
         newRect.setDepth(0);
 

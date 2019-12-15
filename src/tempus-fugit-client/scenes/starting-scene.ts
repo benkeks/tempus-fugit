@@ -1,11 +1,4 @@
 import {GameInfo} from "../game";
-import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
-import {StoryDialog} from "../mechanics/story-dialog";
-import {Mission} from "../mechanics/mission";
-import {Card} from "../objects/game-objects/card";
-import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
-import Rectangle = Phaser.GameObjects.Rectangle;
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 
 export class StartingScene extends Phaser.Scene {
 
