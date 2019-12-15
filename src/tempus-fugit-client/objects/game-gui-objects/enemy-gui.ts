@@ -45,6 +45,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
 
         this.setInteractive();
 
+        //this.addText(enemy.specialAttack.getFormula().generateRepresentation(true), ListGUI.ALIGN_LEFT);
+
         this.toolTip = new ToolTip(scene, 0, 0, this);
         this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
         this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_LEFT);
