@@ -12,6 +12,7 @@ export class ToolTip extends CharacterGui {
     public gameObject;
 
     public faderTimer:Phaser.Time.TimerEvent;
+    public popUpDelay:number = 200;
 
     private _enabled:boolean = true;
 
@@ -28,7 +29,7 @@ export class ToolTip extends CharacterGui {
 
             this.setPosition(pointer.x, pointer.y);
 
-            this.faderTimer = this.scene.time.delayedCall(200, this.fadeIn, [], this);
+            this.faderTimer = this.scene.time.delayedCall(this.popUpDelay, this.fadeIn, [], this);
         }, this);
 
         gameObject.on('pointerout',function(pointer){
