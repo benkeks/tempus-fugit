@@ -2,7 +2,7 @@ import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
 
-export class CharacterGui extends Phaser.GameObjects.Container {
+export class ListGUI extends Phaser.GameObjects.Container {
 
     public static readonly ALIGN_LEFT:string = "left";
     public static readonly ALIGN_CENTRE:string = "centre";
@@ -48,7 +48,7 @@ export class CharacterGui extends Phaser.GameObjects.Container {
             let t:Text = this.texts[i];
             let line:Line = this.separatingLines[i];
             let x:number = 0;
-            if (t.style.align == CharacterGui.ALIGN_LEFT) x = -this.maxTextWidth;
+            if (t.style.align == ListGUI.ALIGN_LEFT) x = -this.maxTextWidth;
 
             if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
 
@@ -78,27 +78,15 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         let strokeWidth:number = this.strokeRectWidth;
 
         this.strokeRect = this.scene.add.rectangle(0, dHeight - strokeWidth,this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight, this.defaultColor,1);
-        this.strokeRect.setZ(-1);
-        this.strokeRect.setDepth(-1);
+
         this.strokeRect.setStrokeStyle(this.strokeRectWidth, this.defaultStrokeColor);
         this.strokeRect.setOrigin(0.5,0);
         this.add(this.strokeRect);
         this.sendToBack(this.strokeRect);
 
-        this.strokeRect.setDepth(-1);
-
-        //this.sort("alpha", this.sorter);
 
         //this.strokeRect.setSize(this.maxTextWidth+strokeWidth, y+strokeWidth)
         //this.strokeRect.setDisplaySize(this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight);
-    }
-
-    private sorter(child1, child2) {
-        console.log(this.strokeRect);
-        if (child1 == this.strokeRect) {
-            return true;
-        }
-        return child1.alpha < child2.alpha;
     }
 
     public addSpriteByTexture(texture:string) {
@@ -107,7 +95,7 @@ export class CharacterGui extends Phaser.GameObjects.Container {
         this.add(this.sprite);
     }
 
-    public addText(text:string, alignment:string=CharacterGui.ALIGN_CENTRE, font:Object={fontSize: '18px',fontStyle: 'bold',fontFamily: 'Arial',color: '#FF0000'}):Text {
+    public addText(text:string, alignment:string=ListGUI.ALIGN_CENTRE, font:Object={fontSize: '18px',fontStyle: 'bold',fontFamily: 'Arial',color: '#FF0000'}):Text {
         let line:Line = this.scene.add.line(0,0,0,0, 100,0,this.defaultStrokeColor, 1);
         let t:Text = this.scene.add.text(0,0, text, font);
         t.style.align = alignment;

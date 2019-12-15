@@ -1,6 +1,6 @@
-import {CharacterGui} from "./character-gui";
+import {ListGUI} from "./list-gui";
 
-export class ToolTip extends CharacterGui {
+export class ToolTip extends ListGUI {
     get enabled(): boolean {
         return this._enabled;
     }

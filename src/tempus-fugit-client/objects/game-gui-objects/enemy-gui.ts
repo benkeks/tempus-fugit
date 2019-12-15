@@ -1,14 +1,14 @@
 import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {GameInfo} from "../../game";
 import {SpeechBubble} from "./speech-bubble";
-import {CharacterGui} from "./character-gui";
+import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
 
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends CharacterGui implements EnemyListener{
+export class EnemyGUI extends ListGUI implements EnemyListener{
 
     public enemy: Enemy; // enemy object associated with this gui
     public attributeText:Text;
@@ -48,8 +48,8 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
         this.setInteractive();
 
         this.toolTip = new ToolTip(scene, 0, 0, this);
-        this.toolTip.addText(enemy.name, CharacterGui.ALIGN_CENTRE,{fontSize:"26px"});
-        this.toolTipText = this.toolTip.addText(enemy.description, CharacterGui.ALIGN_LEFT);
+        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
+        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_LEFT);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();

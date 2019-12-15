@@ -144,6 +144,7 @@ export class CardChannel extends Container{
                 gameObject: Phaser.GameObjects.Sprite
             ) {
                 this.decisionArrow.setVisible(false);
+                this.dotParticles.setVisible(false);
                 this.missionScene.enableToolTips(true);
 
                 if (!(gameObject instanceof CardGUI)) return;
@@ -157,8 +158,10 @@ export class CardChannel extends Container{
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);
+                    // TODO: revalidate card in hand
                     gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
                 }
+
             }, this);
     }
 
@@ -185,8 +188,6 @@ export class CardChannel extends Container{
             yoyo: false
         });
 
-
-        this.dotParticles.setVisible(false);
         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
         this.fadeOutParticles = this.missionScene.add.particles("blue");
 
