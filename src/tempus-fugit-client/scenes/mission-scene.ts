@@ -110,6 +110,12 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     return fd;
   }
 
+  public enableToolTips(value:boolean) {
+    this.enemyGUI.enemies.map(e => {
+      e.toolTip.enabled = value;
+    })
+  }
+
   private configureCardEvents(): void {
     // enable dragging of objects
     this.input.on("drag", function(

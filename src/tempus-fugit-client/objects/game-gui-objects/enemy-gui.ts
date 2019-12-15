@@ -3,6 +3,7 @@ import {GameInfo} from "../../game";
 import {SpeechBubble} from "./speech-bubble";
 import {CharacterGui} from "./character-gui";
 import Text = Phaser.GameObjects.Text;
+import {ToolTip} from "./tool-tip";
 
 /**
  * @author Mustafa
@@ -11,6 +12,7 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
 
     public enemy: Enemy; // enemy object associated with this gui
     public attributeText:Text;
+    public toolTip:ToolTip;
 
     constructor(
         scene: Phaser.Scene,
@@ -28,16 +30,24 @@ export class EnemyGUI extends CharacterGui implements EnemyListener{
         this.defaultStrokeColor = 0xFFFFFF;
 
         this.addSpriteByTexture(texture);
+        this.scene.anims.create({
+            key: "standing",
+            frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.sprite.anims.play("standing");
         this.sprite.setScale(2,2);
 
-        this.attributeText = this.addText("abc", {fontSize: '18px',
-            fontStyle: 'bold',
-            fontFamily: 'Arial',
-            color: '#FF0000'});
+        this.attributeText = this.addText("");
 
         this.updateEnemyAttributes();
 
         this.setInteractive();
+
+        this.toolTip = new ToolTip(scene, 0, 0, this);
+        this.toolTip.addText("Das ist ein tooltip", {});
     }
 
     public updateEnemyAttributes():void {

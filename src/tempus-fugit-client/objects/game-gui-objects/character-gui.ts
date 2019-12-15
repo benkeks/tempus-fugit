@@ -34,7 +34,9 @@ export class CharacterGui extends Phaser.GameObjects.Container {
     }
 
     public revalidate() {
-        let y:number = this.sprite.displayHeight;
+        let dHeight : number = 0;
+        if (this.sprite) dHeight = this.sprite.displayHeight;
+        let y:number = dHeight;
 
         for (let i in this.texts) {
             let t:Text = this.texts[i];
@@ -52,35 +54,26 @@ export class CharacterGui extends Phaser.GameObjects.Container {
 
         this.setSize(this.maxTextWidth + 2*this.xPadding, y);
 
-        //let strokeWidth:number = this.strokeRect.lineWidth;
+        let strokeWidth:number = this.strokeRect.lineWidth;
 
-        //this.strokeRect.setOrigin(0.5,0);
-        //this.strokeRect.setPosition(-strokeWidth, this.sprite.displayHeight - strokeWidth);
-        //this.strokeRect.setSize(this.rectWidth+strokeWidth*2, y+strokeWidth)
-        //this.strokeRect.setDisplaySize(this.rectWidth+strokeWidth*2, y+strokeWidth);
+        this.strokeRect.setOrigin(0.5,0);
+        this.strokeRect.setPosition(0, dHeight - strokeWidth);
+        //this.strokeRect.setSize(this.maxTextWidth+strokeWidth, y+strokeWidth)
+        this.strokeRect.setDisplaySize(this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight);
     }
 
     public addSpriteByTexture(texture:string) {
         this.sprite = this.scene.add.sprite(0,0,texture, 0);
 
-        this.scene.anims.create({
-            key: "standing",
-            frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.sprite.anims.play("standing");
-
         this.add(this.sprite);
     }
 
-    public addText(text:string, font:Object, height:number=50):Text {
-        /*if (!this.strokeRect) {
+    public addText(text:string, font:Object={fontSize: '18px',fontStyle: 'bold',fontFamily: 'Arial',color: '#FF0000'}, height:number=50):Text {
+        if (!this.strokeRect) {
             this.strokeRect = this.scene.add.rectangle(0,0,100,100, 0,0);
             this.strokeRect.setStrokeStyle(this.strokeRectWidth, this.defaultStrokeColor);
             this.add(this.strokeRect);
-        }*/
+        }
 
         let rect:Rectangle = this.scene.add.rectangle(0,0,100,100);
         let t:Text = this.scene.add.text(0,0, text, font);
@@ -103,8 +96,6 @@ export class CharacterGui extends Phaser.GameObjects.Container {
 
     public setText(index:number, text:string):void {
         let t:Text = this.texts[index];
-        console.log(text);
-        console.log(t);
         t.setText(text);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;

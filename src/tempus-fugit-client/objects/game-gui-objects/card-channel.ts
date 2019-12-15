@@ -68,6 +68,7 @@ export class CardChannel extends Container{
                 gameObject: Phaser.GameObjects.Sprite
             ) {
                 if (!(gameObject instanceof CardGUI)) return;
+                this.missionScene.enableToolTips(false);
 
                 if (pointer.y < this.y) {
                     if (!this.channeled) {
@@ -120,7 +121,6 @@ export class CardChannel extends Container{
                     this.decisionArrow.updateDrag(pointer);
                 } else {
                     if (this.channeled) {
-                        console.log(this);
                         this.reEmitCard(gameObject);
                     }
 
@@ -144,6 +144,7 @@ export class CardChannel extends Container{
                 gameObject: Phaser.GameObjects.Sprite
             ) {
                 this.decisionArrow.setVisible(false);
+                this.missionScene.enableToolTips(true);
 
                 if (!(gameObject instanceof CardGUI)) return;
 
