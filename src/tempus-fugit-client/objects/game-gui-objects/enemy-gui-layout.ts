@@ -28,8 +28,12 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public setEnemies(enemies:Enemy[]) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
+            console.log(enemy);
+            enemy.disableListeners();
             this.remove(enemy, true, true);
         }
+
+        if (enemies.length == 0) return;
 
         let positions:number[][] = EnemyGuiLayout.enemyLayout[enemies.length];
 

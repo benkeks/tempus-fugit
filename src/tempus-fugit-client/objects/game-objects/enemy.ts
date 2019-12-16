@@ -8,7 +8,6 @@ export class Enemy {
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
-    public formula: Formula; // A formula attached to the card
     public description:string;
     public image:string;
 
@@ -23,6 +22,18 @@ export class Enemy {
 
     public getName(): string {
         return this.name;
+    }
+
+    public removeListener(listener:EnemyListener):void {
+        this.listener = this.listener.filter(obj => obj !== listener);
+    }
+
+    public copy():Enemy {
+       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks);
+       new_enemy.description = this.description;
+       new_enemy.image = this.image;
+
+       return new_enemy;
     }
 
     /**

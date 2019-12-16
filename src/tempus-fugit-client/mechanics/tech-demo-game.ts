@@ -17,8 +17,8 @@ export class TechDemoGame extends Mission {
         e.description = "A slime that do not like people! Some more Text that is really long!!!";
         e.image = e.name;
         this.enemies = {
-            0:[e, e],
-                1:[e,e,e]
+            0:[e.copy(), e.copy()],
+                1:[e.copy(),e.copy(),e.copy()]
         };
 
         this.gameState = new GameState();

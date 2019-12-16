@@ -9,7 +9,6 @@ import {ToolTip} from "./tool-tip";
 export class EnemyGUI extends ListGUI implements EnemyListener{
 
     public enemy: Enemy; // enemy object associated with this gui
-    public attributeText:Text;
     public toolTip:ToolTip;
     public toolTipText:Text;
 
@@ -42,8 +41,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         this.sprite.anims.play("standing");
         this.sprite.setScale(2,2);
 
-        this.attributeText = this.addText("");
-
+        this.addText("");
         this.updateEnemyAttributes();
 
         this.setInteractive();
@@ -62,8 +60,12 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         this.add(this.damageText);*/
     }
 
+    public disableListeners():void {
+        this.enemy.removeListener(this);
+    }
+
     public updateEnemyAttributes():void {
-        super.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
+        this.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
     }
 
     /*
@@ -94,6 +96,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
      */
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
         //this.popText((changedTo-changedFrom).toString());
-        this.updateEnemyAttributes();
+        if (changedTo <= 0) {
+            this.disableListeners();
+            this.destroy(true);
+        } else this.updateEnemyAttributes();
     }
 }

@@ -50,12 +50,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
             t.setOrigin(0.5,0);
             t.setPosition(0, y+this.yPadding);
-            t.setZ(1);
-            t.setDepth(1);
-            //t.setResolution(1);
 
             line.setOrigin(0,0);
-            line.setDepth(1);
             let w:number = this.maxTextWidth+2*this.xPadding;
             line.setTo(0,0, w, 0);
             line.setPosition(-w/2, y);
@@ -109,7 +105,9 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public setText(index:number, text:string):void {
+        console.log(text);
         let t:Text = this.texts[index];
+        console.log(t);
         t.setText(text);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;

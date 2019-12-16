@@ -58,15 +58,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     this.tfgame = new TechDemoGame();
     this.tfgame.listener.push(this);
 
-    let t1:string[][] = [["1", "we dont like u!"], ["0", "me neither"], ["1", "ok lets fight!"]];
-    let storyDialog:StoryDialog = new StoryDialog(t1);
-    storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
-    let t2:string[][] = [["1", "you are stronger than expected!"]];
-    let s2:StoryDialog = new StoryDialog(t2);
-    s2.triggerFunction = function (game:Mission) {return game.enemies[0][0].currentHP <=2};
-    this.tfgame.dialogue.push(s2);
-    this.tfgame.dialogue.push(storyDialog);
-
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
 
