@@ -40,7 +40,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
      * change HP display of player
      * @param changedTo
      */
-    playerHpChanged(changedTo: number): void {
+    async playerHpChanged(changedTo: number) {
         this.hpText.setText('hp: ' + changedTo);
     }
 }

@@ -116,7 +116,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
    * @param pos: position of card
    * @param card: card to delete / add
    */
-  handChanged(pos: number, card: Card): void {
+  async handChanged(pos: number, card: Card) {
     if (card) {
       this.addCard(card, pos);
     } else {

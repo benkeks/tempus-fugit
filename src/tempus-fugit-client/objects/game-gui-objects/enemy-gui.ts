@@ -94,7 +94,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
      * change HP display of enemy
      * @param changedTo
      */
-    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
+    async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         //this.popText((changedTo-changedFrom).toString());
         if (changedTo <= 0) {
             this.disableListeners();

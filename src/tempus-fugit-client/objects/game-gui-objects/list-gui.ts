@@ -105,9 +105,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public setText(index:number, text:string):void {
-        console.log(text);
         let t:Text = this.texts[index];
-        console.log(t);
         t.setText(text);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;

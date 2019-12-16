@@ -372,7 +372,7 @@ export class TableGUI implements GameStateListener {
         value.listener.push(this);
     }
 
-    roundChanged(gameSate: GameState, lastRound: number, activeRound: number): void {
+    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {
         // change color of coloumn
         const nextRound = activeRound;
         const variables = Object.keys(this._gameState.variables);
@@ -384,7 +384,7 @@ export class TableGUI implements GameStateListener {
         this.createEnergyTable(this.gameState.maxEnergy);
     }
 
-    variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }): void {
+    async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
 
         for (let key in valueChanges) {
             const row = parseInt(key);
@@ -398,7 +398,7 @@ export class TableGUI implements GameStateListener {
         }
     }
 
-    energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number): void {
+    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {
         // only changes one energy
         if (oldEnergy > newEnergy) {
             this.setEnergyIconColor(0x000000, newEnergy);

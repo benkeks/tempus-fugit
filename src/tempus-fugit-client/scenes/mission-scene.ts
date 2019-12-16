@@ -148,55 +148,55 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     );
   }
 
-  drawPhase(game: Mission) {
+  async drawPhase(game: Mission) {
     this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
     console.log("drawPhase");
     game.nextPhase();
   }
 
-  effectPhase(game: Mission): void {
+  async effectPhase(game: Mission) {
     console.log("effect Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Effect Phase");
   }
 
-  enemyPhase(game: Mission): void {
+  async enemyPhase(game: Mission) {
     console.log("enemyPhase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Enemy Phase");
   }
 
-  energyPhase(game: Mission): void {
+  async energyPhase(game: Mission) {
     console.log("energy Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Energy Phase");
   }
 
-  playPhase(game: Mission): void {
+  async playPhase(game: Mission) {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
   }
 
-  standPhase(game: Mission): void {
+  async standPhase(game: Mission) {
     console.log("stand Phase");
     this.handGUI.fadeOut();
     this.phaseText.setText("Stand Phase");
   }
 
-  storyDialog(game: Mission, dialog: StoryDialog): void {
+  async storyDialog(game: Mission, dialog: StoryDialog){
 
 
   }
 
-  gameover(game: Mission): void {
+  async gameover(game: Mission) {
   }
 
-  storyMonolog(game: Mission, monolog: string): void {
+  async storyMonolog(game: Mission, monolog: string) {
   }
 
-  waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
+  async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
     this.enemyGUI.setEnemies(enemies);
   }
 }
