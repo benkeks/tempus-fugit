@@ -27,6 +27,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.hand.listener.push(this);
         this.deck = deck;
         scene.add.existing(this);
+
+
+
     }
 
     /**
@@ -47,6 +50,31 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         }
     }
 
+
+    /**
+     * toggles highlighting a card
+     * don't call hover method of cardGUI objects; user this moethod
+     * @param card 
+     */
+    toggleHovering(card: CardGUI): void {
+        if (!this.cardGUIs.includes(card))
+            return;
+
+        // return all other cards in deck to original position
+        if (!card.hovering) {
+            for (let c of this.cardGUIs) {
+                if (c.hovering && c != card) {
+                    c.unhover();
+                }
+            }
+            card.hover();
+        } else {
+            for (let c of this.cardGUIs)
+                if (c.hovering)
+                    c.unhover();
+        }
+    }
+
     /**
      * rearranges card in hand
      * adds animations for last card ( newly added )
@@ -62,7 +90,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         let even = n % 2 == 0;
         let angleOffset = even ? 5 : 0;
         let xOffset = even ? 65 : 0;
-
         for (let index in this.cardGUIs) {
             let i = parseInt(index)
             let card = this.cardGUIs[i];
@@ -73,6 +100,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             let newY = y[k] + yOffset;
             let newAngle = angles[k] + angleOffset;
 
+            card.cardOriginAngle = newAngle;
+            card.cardOriginX = newX;
+            card.cardOriginY = newY;
+            //card.cardOriginDepth = card.depth;
+
             this.scene.tweens.add({
                 targets: card,
                 x: newX,
@@ -82,10 +114,10 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 duration: 1500,
             });
 
-            // TODO: add animation for newly added card
-
-            //console.log('i', i, 'card.angle', 'k', k, 'card.angle', card.angle, 'card.x', card.x, 'card.y', card.y);
+            // console.log('i', i, 'card.angle', 'k', k, 'card.angle', card.angle, 'card.x', card.x, 'card.y', card.y);
         }
+
+
     }
     /**
      * adds one cardGUI object for given card to hand 

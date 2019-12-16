@@ -77,6 +77,18 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     }
 
     private configureCardEvents(): void {
+
+        this.input.on('pointerdown', function (
+            pointer: Phaser.Input.Pointer,
+            gameObject: Phaser.GameObjects.Sprite,
+        ) {
+            if (gameObject[0] instanceof CardGUI) {
+                console.log('main');
+                this.handGUI.toggleHovering(gameObject[0]);
+            }
+
+        }, this);
+
         // // enable dragging of objects
         // this.input.on("drag", function (
         //     pointer: Phaser.Input.Pointer,
