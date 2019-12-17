@@ -115,6 +115,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         ) {
             if (gameObject[0] instanceof CardGUI) {
                 console.log('hovering')
+                // gameObject[0].setDepth(19);
                 this.handGUI.toggleHovering(gameObject[0]);
             }
 

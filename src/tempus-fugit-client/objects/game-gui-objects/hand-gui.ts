@@ -75,7 +75,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.unhoverAll();
 
         if (!hover)
-            card.hover()
+            card.hover();
     }
 
     /**
@@ -128,7 +128,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 ease: 'power2',
                 duration: 1500,
             });
-
             // console.log('i', i, 'card.angle', 'k', k, 'card.angle', card.angle, 'card.x', card.x, 'card.y', card.y);
         }
 
