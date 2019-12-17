@@ -4,12 +4,14 @@ import { Card } from "../game-objects/card";
  * @author Mustafa
  */
 export class CardGUI extends Phaser.GameObjects.Sprite {
-    private _cardOriginX: number; //initial x-position of cardGUI object, for dragging
-    private _cardOriginY: number; //initial y-position of cardGUI object, for dragging
-    private _cardOriginAngle: number; // initiall angle of cardGUI object, for hovering effect
+    private _cardOriginX: number = 0; //initial x-position of cardGUI object, for dragging
+    private _cardOriginY: number = 0; //initial y-position of cardGUI object, for dragging
+    private _cardOriginAngle: number = 0; // initiall angle of cardGUI object, for hovering effect
     // private _cardOriginDepth: number; // initiall depth of cardGUI object, for hovering effect
     private _hovering: boolean = false;
     private readonly _card: Card; // card object associated with cardGUI object
+    public hoverTween: Phaser.Tweens.Tween;
+    public unhoverTween: Phaser.Tweens.Tween;
 
     constructor(
         scene: Phaser.Scene,
@@ -29,19 +31,17 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        console.log('hover')
-        this.scene.tweens.add({
+        this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
-            duration: 1000,
+            duration: 400,
         });
         this.hovering = true;
         // this.setDepth(20);
-        // this.setDepth(10);
     }
 
     /**
@@ -49,19 +49,17 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
      * don't call unhover method of cardGUI objects; user this moethod implemented in handGUI
      */
     unhover(): void {
-        console.log('unhover')
-        this.scene.tweens.add({
+        this.unhoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY,
             angle: this.cardOriginAngle,
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
-            duration: 500,
+            duration: 200,
         });
         this.hovering = false;
         // this.setDepth(this.cardOriginDepth);
-        // this.setDepth(0);
     }
 
     /**

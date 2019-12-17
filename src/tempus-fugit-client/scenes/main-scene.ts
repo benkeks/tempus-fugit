@@ -83,7 +83,6 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
             gameObject: Phaser.GameObjects.Sprite,
         ) {
             if (gameObject[0] instanceof CardGUI) {
-                console.log('main');
                 this.handGUI.toggleHovering(gameObject[0]);
             }
 

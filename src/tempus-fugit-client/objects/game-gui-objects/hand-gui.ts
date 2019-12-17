@@ -57,22 +57,33 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card 
      */
     toggleHovering(card: CardGUI): void {
+
         if (!this.cardGUIs.includes(card))
             return;
 
-        // return all other cards in deck to original position
-        if (!card.hovering) {
-            for (let c of this.cardGUIs) {
-                if (c.hovering && c != card) {
-                    c.unhover();
-                }
-            }
-            card.hover();
-        } else {
-            for (let c of this.cardGUIs)
-                if (c.hovering)
-                    c.unhover();
-        }
+        const hover = card.hovering;
+
+        let allTweensDone = true;
+        for (let c of this.cardGUIs)
+            if ((typeof c.hoverTween !== 'undefined' && c.hoverTween.isPlaying()) || (typeof c.unhoverTween !== 'undefined' && c.unhoverTween.isPlaying()))
+                allTweensDone = false;
+
+        // terminate if not all previous tweens are  over; else cards can get stuck
+        if (!allTweensDone)
+            return;
+
+        this.unhoverAll();
+
+        if (!hover)
+            card.hover()
+    }
+
+    /**
+     * returns all cards to original position
+     */
+    unhoverAll(): void {
+        for (let card of this.cardGUIs)
+            card.unhover()
     }
 
     /**
@@ -80,6 +91,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds animations for last card ( newly added )
      */
     private arrangeCards(): void {
+
         // used static values since we only have a max of 5 cards
         let angles = [-20, -10, 0, 10, 20];
         let x = [700, 830, 960, 1090, 1220];
@@ -90,6 +102,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         let even = n % 2 == 0;
         let angleOffset = even ? 5 : 0;
         let xOffset = even ? 65 : 0;
+
+        this.unhoverAll();
+
         for (let index in this.cardGUIs) {
             let i = parseInt(index)
             let card = this.cardGUIs[i];
