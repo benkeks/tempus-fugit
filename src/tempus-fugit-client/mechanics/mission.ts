@@ -6,6 +6,7 @@ import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 import {StoryDialog} from "./story-dialog";
 import {Stand} from "../objects/game-objects/stand";
+import Map = Phaser.Structs.Map;
 
 export class Mission implements EnemyListener {
     get enemies(): { [p: number]: Enemy[] } {
@@ -57,12 +58,12 @@ export class Mission implements EnemyListener {
         this.curTurn = 0;
         this.waveCounter = 0;
 
-        this.toPhase = new Map<number,string>();
+        this.toPhase = new Map<number,string>([]);
         this.toPhase.set(0, 'draw-phase');
         this.toPhase.set(1, 'energy-phase');
         this.toPhase.set(2, 'play-phase');
-        this.toPhase.set(3, 'enemy-phase');
-        this.toPhase.set(4, 'stand-phase');
+        this.toPhase.set(3, 'stand-phase');
+        this.toPhase.set(4, 'enemy-phase');
         this.toPhase.set(5, 'effect-phase');
     }
 
@@ -263,7 +264,7 @@ export class Mission implements EnemyListener {
         return this.enemies[this.waveCounter].length;
     }
 
-    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
+    async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         let aliveChange:number = 0;
 
         if (changedFrom <= 0 && changedTo > 0) {
@@ -279,11 +280,11 @@ export class Mission implements EnemyListener {
         }
     }
 
-    public activateStand(stand: Stand) {}
-    public deactiveStand(stand: Stand) {}
-    public updateStandText(){}
-    public turnRed(){}
-    public turnNormal(){}
+    public async activateStand(stand: Stand) {}
+    public async deactiveStand(stand: Stand) {}
+    public async updateStandText(){}
+    public async turnRed(){}
+    public async turnNormal(){}
 }
 
 export interface GameStateListener {

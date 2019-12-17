@@ -7,29 +7,28 @@ import {BoardGUI} from "../objects/game-gui-objects/board-gui";
 import {TableGUI} from "../objects/game-gui-objects/table-gui";
 import {HandGUI} from "../objects/game-gui-objects/hand-gui";
 import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
 import {StackGUI} from "../objects/game-gui-objects/stack-gui";
+import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
 import {Mission, GameStateListener} from "../mechanics/mission";
 import {StoryDialog} from "../mechanics/story-dialog";
-import {SpeechBubble} from "../objects/game-gui-objects/speech-bubble";
-import {Stand} from "../objects/game-objects/stand";
 import {StandGUI} from "../objects/game-gui-objects/stand-gui";
+import {CardChannel} from "../objects/game-gui-objects/card-channel";
+import {DecisionArrow} from "../objects/game-gui-objects/decision-arrow";
 
 
-export class MainScene extends Phaser.Scene implements GameStateListener {
-  private playerGUI: PlayerGUI;
-  private gameStateGUI: TableGUI;
-  private handGUI:HandGUI;
-  private deckGUI:DeckGUI;
-  private enemyGUIs:EnemyGUI[];
-  private stackGUI:StackGUI;
-  private boardGUI:BoardGUI;
-  private standGUI:StandGUI;
-  private phaseText: Phaser.GameObjects.Text;
+export class MissionScene extends Phaser.Scene implements GameStateListener {
+    public playerGUI: PlayerGUI;
+    public gameStateGUI: TableGUI;
+    public handGUI:HandGUI;
+    public deckGUI:DeckGUI;
+    public enemyGUI:EnemyGuiLayout;
+    public stackGUI:StackGUI;
+    public boardGUI:BoardGUI;
+    public standGUI:StandGUI;
+    public phaseText: Phaser.GameObjects.Text;
 
-  private enemys: Enemy[];
-
-  private tfgame:Mission;
+    public tfgame:Mission;
+    public cardChannel:CardChannel;
 
   constructor() {
     super({
@@ -39,28 +38,28 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
   
   preload(): void {
     this.load.pack("preload", "assets/pack.json", "preload");
-    MainScene.loadFile("json/mission.json");
+
+    // TODO: implement multiatlas version
+    this.load.spritesheet('slime1',
+        'assets/sprites/enemies/slime1/slime1-Sheet.png',
+        { frameWidth: 64, frameHeight: 64 });
+
+    /*this.load.atlas('slime1',
+        'assets/sprites/enemies/slime1/slime1-Sheet.png',
+        "assets/sprites/enemies/slime1/slime1-sheet.json");*/
+
+    //MissionScene.loadFile("json/mission.json");
   }
 
   create(): void {
-    this.configureCardEvents();
+    //FontUtils.addSpriteIntoFont(this.game, "Arial", "swordFont", 0x2694);
+    //FontUtils.addSpriteIntoFont(this.game, "Arial", "heartFont", 0x2764);
 
     this.tfgame = new TechDemoGame();
-    this.enemyGUIs = [];
     this.tfgame.listener.push(this);
-
-    let t1:string[][] = [["1", "we dont like u!"], ["0", "me neither"], ["1", "ok lets fight!"]];
-    let storyDialog:StoryDialog = new StoryDialog(t1);
-    storyDialog.triggerFunction = function (game:Mission) {return game.getTurnCount() >= 0};
-    let t2:string[][] = [["1", "you are stronger than expected!"]];
-    let s2:StoryDialog = new StoryDialog(t2);
-    s2.triggerFunction = function (game:Mission) {return game.enemies[0][0].currentHP <=2};
-    this.tfgame.dialogue.push(s2);
-    this.tfgame.dialogue.push(storyDialog);
 
     this.stackGUI = new StackGUI(this, "stack");
     this.boardGUI = new BoardGUI(this, this.stackGUI);
-    this.enemyGUIs.push(new EnemyGUI(this, "enemy", this.tfgame.getEnemies()[0]));
 
     this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
     this.standGUI.hide();
@@ -72,14 +71,24 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
     this.playerGUI.listener.push(this.tfgame.player);
 
+    this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
+
     this.phaseText = this.add.text(100,100,"Draw Phase");
 
     this.tfgame.startCombat();
       this.tfgame.player.takeCard(this.tfgame.deck);
 
       this.handGUI.fadeOut();
+
+    //this.arrow = new DecisionArrow(this);
+    this.cardChannel = new CardChannel(this);
   }
 
+  update(time: number, delta: number): void {
+    if (this.cardChannel) {
+      this.cardChannel.decisionArrow.update(time, delta);
+    }
+  }
   public static loadFile(filePath): string{
     let fd = null;
     let xmlhttp = new XMLHttpRequest();
@@ -89,6 +98,12 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
       fd = xmlhttp.responseText;
     }
     return fd;
+  }
+
+  public enableToolTips(value:boolean) {
+    this.enemyGUI.enemies.map(e => {
+      e.toolTip.enabled = value;
+    })
   }
 
   private configureCardEvents(): void {
@@ -133,84 +148,55 @@ export class MainScene extends Phaser.Scene implements GameStateListener {
     );
   }
 
-  drawPhase(game: Mission) {
+  async drawPhase(game: Mission) {
     this.phaseText.setText("Draw Phase");
       this.handGUI.fadeOut();
     console.log("drawPhase");
     game.nextPhase();
   }
 
-  effectPhase(game: Mission): void {
+  async effectPhase(game: Mission) {
     console.log("effect Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Effect Phase");
   }
 
-  enemyPhase(game: Mission): void {
+  async enemyPhase(game: Mission) {
     console.log("enemyPhase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Enemy Phase");
   }
 
-  energyPhase(game: Mission): void {
+  async energyPhase(game: Mission) {
     console.log("energy Phase");
       this.handGUI.fadeOut();
     this.phaseText.setText("Energy Phase");
   }
 
-  playPhase(game: Mission): void {
+  async playPhase(game: Mission) {
     console.log("play Phase");
     this.handGUI.fadeIn();
     this.phaseText.setText("Play Phase");
   }
 
-  standPhase(game: Mission): void {
+  async standPhase(game: Mission) {
     console.log("stand Phase");
     this.handGUI.fadeOut();
     this.phaseText.setText("Stand Phase");
   }
 
-
-  private activeBubble:SpeechBubble = undefined;
-  storyDialog(game: Mission, dialog: StoryDialog): void {
-    let keyObj = this.input.keyboard.addKey("N");
-    keyObj.on("down", e => {
-      if (this.activeBubble) {
-        this.activeBubble.hide();
-      }
-      this.activeBubble = undefined;
-      let s:string[] = dialog.readLine();
-      if (s !== null) {
-        if (s[0] == "0") {
-          this.playerGUI.speechBubble.show(s[1]);
-          this.activeBubble = this.playerGUI.speechBubble;
-        } else {
-          this.activeBubble = this.enemyGUIs[0].speechBubble;
-          this.enemyGUIs[0].speechBubble.show(s[1]);
-        }
-      } else {
-        keyObj.destroy();
-      }
-    });
-    keyObj.emit("down");
+  async storyDialog(game: Mission, dialog: StoryDialog){
 
 
   }
 
-  gameover(game: Mission): void {
+  async gameover(game: Mission) {
   }
 
-  storyMonolog(game: Mission, monolog: string): void {
+  async storyMonolog(game: Mission, monolog: string) {
   }
 
-  waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void {
-    for (let i=0; i < enemies.length; i++) {
-      let enemy:Enemy = enemies[i];
-
-      if (i >= this.enemyGUIs.length) {
-        this.enemyGUIs.push(new EnemyGUI(this, undefined, undefined));
-      }
-
-    }
+  async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
+    this.enemyGUI.setEnemies(enemies);
   }
 }

@@ -51,10 +51,24 @@
         "key": "card-outline",
         "url": "assets/sprites/card-outline.png"
       },
+	  {
+	  "type":"image",
+	  "key":"swordFont",
+	  "url":"assets/font/fontletter/sword.PNG"
+	  },
+	  {
+	  "type":"image",
+	  "key":"heartFont",
+	  "url":"assets/font/fontletter/heart.PNG"
+	  },
       {
 	"type": "image",
 	"key": "stand",
 	"url": "assets/sprites/stand.png"
+      },
+	  {"type": "image",
+	"key": "blue",
+	"url": "assets/sprites/blue.png"
       }
     ]
   }

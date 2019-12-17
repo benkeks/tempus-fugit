@@ -29,7 +29,7 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener{
    * display number of cards in deck
    * @param numCards: number of cards
    */
-  numCardsChanged(numCards: number): void {
+  async numCardsChanged(numCards: number) {
     this.text.setText(numCards  + ' Karten');
   }
 }

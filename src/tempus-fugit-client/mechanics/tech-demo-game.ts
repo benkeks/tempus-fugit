@@ -1,10 +1,8 @@
 import {Card} from "../objects/game-objects/card";
 import {Player} from "../objects/game-objects/player";
 import {Enemy} from "../objects/game-objects/enemy";
-import {Formula} from "../temporal-logic/formula";
 import {GameState} from "../objects/game-objects/game-state";
 import {Mission} from "./mission";
-import {Stand} from "../objects/game-objects/stand";
 import {Attack} from "../objects/game-objects/attack";
 
 export class TechDemoGame extends Mission {
@@ -14,8 +12,13 @@ export class TechDemoGame extends Mission {
 
         this.player = new Player("player1", 10, 1);
 
+        let e:Enemy = new Enemy("slime1", 5, 2,
+            new Attack("Ga", 5), [new Attack("Gb", 10)]);
+        e.description = "A slime that do not like people! Some more Text that is really long!!!";
+        e.image = e.name;
         this.enemies = {
-            0:[new Enemy("e1", 5, 2,new Attack("a", 2), [new Attack("d", 3)])]
+            0:[e.copy(), e.copy()],
+                1:[e.copy(),e.copy(),e.copy()]
         };
 
         this.gameState = new GameState();

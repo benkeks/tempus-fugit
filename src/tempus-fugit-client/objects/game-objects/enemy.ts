@@ -1,18 +1,19 @@
 import {Player} from "./player"
-import {Card} from "./card"
 import {GameState} from "./game-state"
 import {Formula} from "../../temporal-logic/formula";
 import {Attack} from "./attack"
-
-
 
 export class Enemy {
     public name: string; // The enemy's name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
+    public description:string;
+    public image:string;
+
     public specialAttack: Attack; // The enemy's base attack strength
     public reactAttacks: Attack[]; // List of react effects
+
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
    public getHP(): number {
@@ -21,6 +22,18 @@ export class Enemy {
 
     public getName(): string {
         return this.name;
+    }
+
+    public removeListener(listener:EnemyListener):void {
+        this.listener = this.listener.filter(obj => obj !== listener);
+    }
+
+    public copy():Enemy {
+       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks);
+       new_enemy.description = this.description;
+       new_enemy.image = this.image;
+
+       return new_enemy;
     }
 
     /**
