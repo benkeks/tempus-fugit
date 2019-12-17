@@ -79,6 +79,10 @@ module.exports = {
                 to: 'assets'
             },
             {
+                from: path.resolve(__dirname, 'src/tempus-fugit-client/json'),
+                to: 'json'
+            },
+            {
                 from: path.resolve(__dirname, 'index.html'),
                 to: 'index.html'
             },

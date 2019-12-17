@@ -18,6 +18,8 @@ export class Hand {
             this.cards[i] = null;
         }
         this.listener = [];
+
+
     }
 
     /**

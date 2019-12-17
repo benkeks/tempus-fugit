@@ -32,7 +32,4 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
     numCardsChanged(numCards: number): void {
         this.text.setText(numCards + ' Karten');
     }
-
-
-
 }

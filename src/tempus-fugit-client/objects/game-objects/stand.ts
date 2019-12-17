@@ -53,10 +53,10 @@ export class Stand {
 
     }
 
-    public attackTargets(gameState: GameState): void {
+    public attackTargets(gameState: GameState, player: Player): void {
         for (var target of this.targets) {
             if (gameState.evaluate(this.card) && this.roundsRemaining > 0) {
-                target.takeHit(this.card.getAttackPower())
+                target.takeHit(this.card.getAttackPower(), gameState, player)
             }
         }
         this.roundsRemaining -= 1;

@@ -1,4 +1,5 @@
 import { Card } from "../game-objects/card";
+import Tween = Phaser.Tweens.Tween;
 
 /**
  * @author Mustafa
@@ -31,6 +32,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
+        console.log('y:', this.cardOriginY, 'x:', this.cardOriginX)
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,

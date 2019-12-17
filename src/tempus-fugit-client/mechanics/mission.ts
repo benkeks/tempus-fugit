@@ -6,6 +6,7 @@ import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 import {StoryDialog} from "./story-dialog";
 import {Stand} from "../objects/game-objects/stand";
+import Map = Phaser.Structs.Map;
 
 export class Mission implements EnemyListener {
     get enemies(): { [p: number]: Enemy[] } {
@@ -21,13 +22,15 @@ export class Mission implements EnemyListener {
             eList.map(e => e.listener.push(this))
         }
     }
-
+    
     public pushStand(stand: Stand) {
         this.stands.push(stand);
     }
-
-    public location:string;
-    private readonly numPhases:number = 6;
+    
+    public static Missions: {[name:string]:string} = {};
+    public name: string;
+    public background: string;
+    private readonly numPhases:number = 5;
     private curPhase: number;
     private emitter: EventEmitter;
     private curTurn: number;
@@ -44,7 +47,7 @@ export class Mission implements EnemyListener {
     public cards:Card[] = [];
 
     public monologs:{[wave:number]:string} = {};
-    public dialogs:StoryDialog[] = [];
+    public dialogue:StoryDialog[] = [];
 
     public waveCounter;
     // TODO: effect list
@@ -55,21 +58,21 @@ export class Mission implements EnemyListener {
         this.curTurn = 0;
         this.waveCounter = 0;
 
-        this.toPhase = new Map<number,string>();
+        this.toPhase = new Map<number,string>([]);
         this.toPhase.set(0, 'draw-phase');
         this.toPhase.set(1, 'energy-phase');
         this.toPhase.set(2, 'play-phase');
-        this.toPhase.set(3, 'enemy-phase');
-        this.toPhase.set(4, 'stand-phase');
+        this.toPhase.set(3, 'stand-phase');
+        this.toPhase.set(4, 'enemy-phase');
         this.toPhase.set(5, 'effect-phase');
     }
 
     private checkDialogEvents() {
-        for (let i=0; i < this.dialogs.length; i++) {
-            let d:StoryDialog = this.dialogs[i];
+        for (let i=0; i < this.dialogue.length; i++) {
+            let d:StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
                 this.listener.map(l => l.storyDialog(this, d));
-                this.dialogs.splice(i, 1);
+                this.dialogue.splice(i, 1);
             }
         }
     }
@@ -166,7 +169,7 @@ export class Mission implements EnemyListener {
                 stand.turnRed();
                 console.log(stand.targets.length);
                 for (var target of stand.targets) {
-                    target.takeHit(stand.standAttack);
+                    target.takeHit(stand.standAttack, this.gameState, this.player);
                     console.log("Stand attacked with " + stand.standAttack + "!");
                 }
                 stand.decreaseRoundsRemaining();
@@ -261,7 +264,7 @@ export class Mission implements EnemyListener {
         return this.enemies[this.waveCounter].length;
     }
 
-    enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number): void {
+    async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         let aliveChange:number = 0;
 
         if (changedFrom <= 0 && changedTo > 0) {
@@ -277,11 +280,11 @@ export class Mission implements EnemyListener {
         }
     }
 
-    public activateStand(stand: Stand) {}
-    public deactiveStand(stand: Stand) {}
-    public updateStandText(){}
-    public turnRed(){}
-    public turnNormal(){}
+    public async activateStand(stand: Stand) {}
+    public async deactiveStand(stand: Stand) {}
+    public async updateStandText(){}
+    public async turnRed(){}
+    public async turnNormal(){}
 }
 
 export interface GameStateListener {
