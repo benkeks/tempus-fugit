@@ -3,7 +3,6 @@ import { Enemy } from "../objects/game-objects/enemy";
 import { CardGUI } from "../objects/game-gui-objects/card-gui";
 import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
 import { TechDemoGame } from "../mechanics/tech-demo-game";
-//import { BoardGUI } from "../objects/game-gui-objects/board-gui";
 import { TableGUI } from "../objects/game-gui-objects/table-gui";
 import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
@@ -59,7 +58,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.tfgame.listener.push(this);
 
         this.stackGUI = new StackGUI(this, "stack");
-        //this.boardGUI = new BoardGUI(this, this.stackGUI);
 
         this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
         this.standGUI.hide();
@@ -81,8 +79,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.handGUI.fadeOut();
 
         //this.arrow = new DecisionArrow(this);
-        this.cardChannel = new CardChannel(this);
-        this.configureCardEvents();
+        this.cardChannel = new CardChannel(this, this.handGUI);
     }
 
     update(time: number, delta: number): void {
@@ -105,61 +102,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.enemyGUI.enemies.map(e => {
             e.toolTip.enabled = value;
         })
-    }
-
-    private configureCardEvents(): void {
-
-        this.input.on('pointerdown', function (
-            pointer: Phaser.Input.Pointer,
-            gameObject: Phaser.GameObjects.Sprite,
-        ) {
-            if (gameObject[0] instanceof CardGUI) {
-                console.log('hovering')
-                // gameObject[0].setDepth(19);
-                this.handGUI.toggleHovering(gameObject[0]);
-            }
-
-        }, this);
-
-        // // enable dragging of objects
-        // this.input.on("drag", function (
-        //     pointer: Phaser.Input.Pointer,
-        //     gameObject: Phaser.GameObjects.Sprite,
-        //     dragX: number,
-        //     dragY: number
-        // ) {
-        //     gameObject.setDepth(10);
-        //     gameObject.x = dragX;
-        //     gameObject.y = dragY;
-        // });
-
-        // // return to original position when drag is done
-        // this.input.on(
-        //     "dragend",
-        //     function (
-        //         pointer: Phaser.Input.Pointer,
-        //         gameObject: Phaser.GameObjects.Sprite
-        //     ) {
-        //         if (gameObject instanceof CardGUI) {
-        //             gameObject.setDepth(1);
-        //             const card: Card = gameObject.card;
-        //             const enemy: Enemy = this.enemyGUIs[0].enemy;
-        //             // TODO: set up collision between cards and enemies attack
-        //             // position of enemy hardcoded here
-        //             if (pointer.upY >= 300 && pointer.upX >= 1200) {
-        //                 for (let listener of this.playerGUI.listener)
-        //                     listener.applyCard(card, enemy, this.tfgame);
-        //                 this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
-        //                 console.log('player attacked enemy with card');
-        //             } else {
-        //                 console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
-        //                 gameObject.x = gameObject.cardOriginX;
-        //                 gameObject.y = gameObject.cardOriginY;
-        //             }
-        //         }
-        //     },
-        //     this
-        // );
     }
 
     async drawPhase(game: Mission) {

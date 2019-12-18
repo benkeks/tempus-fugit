@@ -32,13 +32,6 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        //this.setDepth(20);
-        //this.scene.children.bringToTop(this);
-        // this.setDepth(1000)
-        //this.depth = -20
-        // console.log(this.depth)
-        // this.setDepth(20);
-        // console.log(this.depth)
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
@@ -56,9 +49,6 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
      * don't call unhover method of cardGUI objects; user this moethod implemented in handGUI
      */
     unhover(): void {
-        //this.setDepth(0); 
-        // this.setDepth(1)
-
         this.unhoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY,
@@ -69,7 +59,6 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
             duration: 400,
         });
         this.hovering = false;
-        // this.setDepth(this.cardOriginDepth);
     }
 
     /**

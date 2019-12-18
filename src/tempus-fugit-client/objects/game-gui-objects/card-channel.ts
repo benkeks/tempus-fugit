@@ -8,6 +8,8 @@ import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterMana
 import { CardGUI } from "./card-gui";
 import Tween = Phaser.Tweens.Tween;
 import { EnemyGUI } from "./enemy-gui";
+import { HandGUI } from "./hand-gui";
+import { Hand } from "../game-objects/hand";
 
 export class CardChannel extends Container {
 
@@ -24,13 +26,16 @@ export class CardChannel extends Container {
     public channeled: boolean;
 
     public missionScene: MissionScene;
+    public handGUI: HandGUI;
 
     constructor(scene: MissionScene,
+        handGUI: HandGUI,
         x: number = 50,
         y: number = 60) {
         super(scene);
         scene.add.existing(this);
         this.missionScene = scene;
+        this.handGUI = handGUI;
 
         this.dot = scene.add.graphics({ x: 0, y: 0 });
         this.dot.lineStyle(5, this.color, 1);
@@ -61,12 +66,24 @@ export class CardChannel extends Container {
     }
 
     private initEvents() {
+
+        // The distance, in pixels, a pointer has to move while being held down, before it thinks it is being dragged.
+        //  The pointer has to move 100 pixels before it's considered as a drag
+        this.scene.input.dragDistanceThreshold = 100;
+        let canClick = true;
+
+        this.scene.input.on('dragstart', function () {
+            this.handGUI.unhoverAll(true);
+            canClick = false;
+        }, this);
+
         this.scene.input.on(
             "drag",
             function (
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
+
                 if (!(gameObject instanceof CardGUI)) return;
                 this.missionScene.enableToolTips(false);
 
@@ -135,7 +152,6 @@ export class CardChannel extends Container {
 
                     gameObject.setPosition(pointer.x, pointer.y); // dragging cards
                     gameObject.setAngle(0);
-
                 }
             }, this);
 
@@ -156,17 +172,33 @@ export class CardChannel extends Container {
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
                 if (e) {
-                    // TODO: remove card from hand
+                    this.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);
-                    // TODO: revalidate card in hand
                     //gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
-                    gameObject.setPosition(gameObject.cardOriginX, gameObject.cardOriginY);
-                    gameObject.setAngle(gameObject.cardOriginAngle);
+                    this.handGUI.unhoverAll(true);
                 }
-
+                canClick = true;
             }, this);
+
+        // logic for clicking cards has to be here, it depends on canClick variable set when dragging starts 
+        // card hovers when double-clicked
+        let lastTime = 0;
+        this.scene.input.on('pointerdown', function (
+            pointer: Phaser.Input.Pointer,
+            gameObject: Phaser.GameObjects.Sprite
+        ) {
+
+            if (gameObject[0] instanceof CardGUI && canClick) {
+                let clickDelay = this.scene.time.now - lastTime;
+                lastTime = this.scene.time.now;
+                if (clickDelay < 350) {
+                    this.handGUI.toggleHovering(gameObject[0]);
+                }
+            }
+
+        }, this);
     }
 
     public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI {
