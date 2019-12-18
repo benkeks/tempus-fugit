@@ -22,7 +22,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     public deckGUI: DeckGUI;
     public enemyGUI: EnemyGuiLayout;
     public stackGUI: StackGUI;
-    //public boardGUI: BoardGUI;
     public standGUI: StandGUI;
     public phaseText: Phaser.GameObjects.Text;
 
