@@ -15,6 +15,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
 
+    // private back_layer: Phaser.GameObjects.Group;
+    // private front_layer: Phaser.GameObjects.Group;
+
     constructor(
         scene: Phaser.Scene,
         hand: Hand,
@@ -27,12 +30,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.hand.listener.push(this);
         this.deck = deck;
         scene.add.existing(this);
+
+        // this.back_layer = new Phaser.GameObjects.Group(this.scene);
+        // this.front_layer = new Phaser.GameObjects.Group(this.scene);
     }
 
     /**
      * tints all cardGUI objects in hand black and disables dragging
      */
     fadeOut() {
+        this.unhoverAll(true);
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
@@ -43,6 +50,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * removes the tint from all cardGUI objects and enables dragging
      */
     fadeIn() {
+        this.unhoverAll(true);
         for (let c of this.cardGUIs) {
             c.fadeIn();
             c.enableDragging();
@@ -73,8 +81,13 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
         this.unhoverAll();
 
-        if (!hover)
+        if (!hover) {
             card.hover();
+            // this.back_layer.remove(card);
+            // this.back_layer.setDepth(1);
+            // this.front_layer.add(card);
+            // this.front_layer.setDepth(10);
+        }
     }
 
     /**
@@ -166,6 +179,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         cardGUI.enableDragging();
         this.cardGUIs.push(cardGUI);
         this.arrangeCards();
+        // this.back_layer.add(cardGUI);
     }
 
     /**
