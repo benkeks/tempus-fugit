@@ -1,75 +1,84 @@
 {
-  "preload": {
-    "files": [
-      {
-        "type": "image",
-        "key": "card1",
-        "url": "assets/sprites/cards/Card_1_new.png"
-      },
-      {
-        "type": "image",
-        "key": "card2",
-        "url": "assets/sprites/cards/Card_2.png"
-      },
-      {
-        "type": "image",
-        "key": "card3",
-        "url": "assets/sprites/cards/Card_3_new.png"
-      },
-      {
-        "type": "image",
-        "key": "card4",
-        "url": "assets/sprites/cards/Card_4.png"
-      },
-      {
-        "type": "image",
-        "key": "card5",
-        "url": "assets/sprites/cards/Card_5.png"
-      },
-      {
-        "type": "image",
-        "key": "enemy",
-        "url": "assets/sprites/enemy.png"
-      },
-      {
-        "type": "image",
-        "key": "player",
-        "url": "assets/sprites/player.png"
-      },
-      {
-        "type": "image",
-        "key": "stack",
-        "url": "assets/sprites/stack.png"
-      },
-      {
-        "type": "image",
-        "key": "deck",
-        "url": "assets/sprites/deck.png"
-      },
-      {
-        "type": "image",
-        "key": "card-outline",
-        "url": "assets/sprites/card-outline.png"
-      },
-	  {
-	  "type":"image",
-	  "key":"swordFont",
-	  "url":"assets/font/fontletter/sword.PNG"
-	  },
-	  {
-	  "type":"image",
-	  "key":"heartFont",
-	  "url":"assets/font/fontletter/heart.PNG"
-	  },
-      {
-	"type": "image",
-	"key": "stand",
-	"url": "assets/sprites/stand.png"
-      },
-	  {"type": "image",
-	"key": "blue",
-	"url": "assets/sprites/blue.png"
-      }
-    ]
-  }
+    "preload": {
+        "files": [{
+                "type": "image",
+                "key": "card1",
+                "url": "assets/sprites/cards/Card_1_new.png"
+            },
+            {
+                "type": "image",
+                "key": "card2",
+                "url": "assets/sprites/cards/Card_2.png"
+            },
+            {
+                "type": "image",
+                "key": "card3",
+                "url": "assets/sprites/cards/Card_3_new.png"
+            },
+            {
+                "type": "image",
+                "key": "card4",
+                "url": "assets/sprites/cards/Card_4.png"
+            },
+            {
+                "type": "image",
+                "key": "card5",
+                "url": "assets/sprites/cards/Card_5.png"
+            },
+            {
+                "type": "image",
+                "key": "enemy",
+                "url": "assets/sprites/enemy.png"
+            },
+            {
+                "type": "image",
+                "key": "player",
+                "url": "assets/sprites/player.png"
+            },
+            {
+                "type": "image",
+                "key": "stack",
+                "url": "assets/sprites/stack.png"
+            },
+            {
+                "type": "image",
+                "key": "deck",
+                "url": "assets/sprites/deck.png"
+            },
+            {
+                "type": "image",
+                "key": "card-outline",
+                "url": "assets/sprites/card-outline.png"
+            },
+            {
+                "type": "image",
+                "key": "swordFont",
+                "url": "assets/font/fontletter/sword.PNG"
+            },
+            {
+                "type": "image",
+                "key": "heartFont",
+                "url": "assets/font/fontletter/heart.PNG"
+            },
+            {
+                "type": "image",
+                "key": "stand",
+                "url": "assets/sprites/stand.png"
+            },
+            {
+                "type": "image",
+                "key": "blue",
+                "url": "assets/sprites/blue.png"
+            },
+            {
+                "type": "image",
+                "key": "cardIcon",
+                "url": "assets/sprites/text-box/user.png"
+            }, {
+                "type": "image",
+                "key": "nextPage",
+                "url": "assets/sprites/text-box/arrow-down-left.png"
+            }
+        ]
+    }
 }

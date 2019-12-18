@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "module": "commonjs",
-    "target": "es5",
-    "allowJs": true
-  }
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "target": "es5",
+        "allowJs": true
+    }
 }

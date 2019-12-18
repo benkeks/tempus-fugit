@@ -13,6 +13,7 @@ import { StoryDialog } from "../mechanics/story-dialog";
 import { StandGUI } from "../objects/game-gui-objects/stand-gui";
 import { CardChannel } from "../objects/game-gui-objects/card-channel";
 import { DecisionArrow } from "../objects/game-gui-objects/decision-arrow";
+import { Textbox } from "../objects/game-gui-objects/textbox";
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
@@ -24,6 +25,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     public stackGUI: StackGUI;
     public standGUI: StandGUI;
     public phaseText: Phaser.GameObjects.Text;
+    public textBox: Textbox;
 
     public tfgame: Mission;
     public cardChannel: CardChannel;
@@ -52,6 +54,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     create(): void {
         //FontUtils.addSpriteIntoFont(this.game, "Arial", "swordFont", 0x2694);
         //FontUtils.addSpriteIntoFont(this.game, "Arial", "heartFont", 0x2764);
+        this.textBox = new Textbox(this);
 
         this.tfgame = new TechDemoGame();
         this.tfgame.listener.push(this);
@@ -72,13 +75,13 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
         this.phaseText = this.add.text(100, 100, "Draw Phase");
 
-        this.tfgame.startCombat();
         this.tfgame.player.takeCard(this.tfgame.deck);
 
         this.handGUI.fadeOut();
 
         //this.arrow = new DecisionArrow(this);
         this.cardChannel = new CardChannel(this, this.handGUI);
+        this.tfgame.startCombat();
     }
 
     update(time: number, delta: number): void {
@@ -141,8 +144,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     }
 
     async storyDialog(game: Mission, dialog: StoryDialog) {
-
-
+        this.textBox.addStoryDialog(dialog);
     }
 
     async gameover(game: Mission) {
