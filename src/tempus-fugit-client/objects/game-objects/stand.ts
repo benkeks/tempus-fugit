@@ -7,9 +7,9 @@ import {GameState} from "./game-state"
 export class Stand {
     public name: string; // Stand's name
     public cardImage: string; // Image of the card attached to the stand
-    private card: Card; // The card that is associated with the stand
-    private roundsRemaining: number; // The rounds that the stand will still be alive
-    public standAttack: number // Strength of attack
+    public card: Card; // The card that is associated with the stand
+    public roundsRemaining: number; // The rounds that the stand will still be alive
+    public standAttack: number; // Strength of attack
     public targets: Enemy[]; // A list of targets the stand will attack
     public listener:StandListener[]; // List of objects listening to stand events
     public active: boolean;

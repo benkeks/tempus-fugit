@@ -1,0 +1,26 @@
+{
+"cards": [
+		{"name":"test1",
+		"description":"this card does damage!",
+		"image":"card1",
+		"formula":"Gf",
+		"attackPower":"5",
+		"isBaseAttackCard":"true",
+		"standRounds":"5",
+		"standsAttack":"2",
+		"standName":"stand1",
+		"action":"return;",
+		"inDeckAtStart":"5"},
+		
+		{"name":"test2",
+		"description":"this card does damage!",
+		"image":"card1",
+		"formula":"Gf",
+		"attackPower":"5",
+		"isBaseAttackCard":"false",
+		"standRounds":"3",
+		"standsAttack":"2",
+		"standName":"stand1",
+		"action":"return;",
+		"inDeckAtStart":"5"}
+]}

@@ -1,10 +1,6 @@
-import {Player} from "./player"
-import {Card} from "./card"
-import {GameState} from "./game-state"
-import {Formula} from "../../temporal-logic/formula";
-import {Attack} from "./attack"
-
-
+import {Player} from "./player";
+import {GameState} from "./game-state";
+import {Attack} from "./attack";
 
 export class Enemy {
     public static enemies:{[name:string]:Enemy} = {};
@@ -13,8 +9,12 @@ export class Enemy {
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
+    public description:string;
+    public image:string;
+
     public specialAttack: Attack; // The enemy's base attack strength
     public reactAttacks: Attack[]; // List of react effects
+
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
     public sprite:string;
     public size:number[];
@@ -25,6 +25,18 @@ export class Enemy {
 
     public getName(): string {
         return this.name;
+    }
+
+    public removeListener(listener:EnemyListener):void {
+        this.listener = this.listener.filter(obj => obj !== listener);
+    }
+
+    public copy():Enemy {
+       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks, this.sprite, this.size);
+       new_enemy.description = this.description;
+       new_enemy.image = this.image;
+
+       return new_enemy;
     }
 
     /**
@@ -122,13 +134,16 @@ export class Enemy {
         let json = JSON.parse(jString);
 
         for (let e of json.enemies) {
-            scene.load.spritesheet(e.name,
-                e.sprite,
-                {frameWidth:e.size[0], frameHeight:e.size[1]});
+            if (e.sprite != "" && e.size != undefined && e.size.length == 2) {
+                scene.load.spritesheet(e.name,
+                    e.sprite,
+                    {frameWidth: e.size[0], frameHeight: e.size[1]});
+            } else {
+                console.warn( e.name+ " does not have a texture given or its size is not in the right pattern. Nothing will be loaded.");
+            }
 
             let arr = [];
             for (let i of e.reactAttack) {
-                console.log(i.formula + "   " + i.attackStrength);
                 arr.push(new Attack(i.formula, i.attackStrength));
             }
 
@@ -141,6 +156,7 @@ export class Enemy {
                 e.sprite,
                 e.size
             );
+            enemy.image = e.image;
             this.enemies[e.name] = enemy;
         }
     }

@@ -15,7 +15,8 @@
                 }
             ],
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
-            "size": [64, 64]
+            "size": [64, 64],
+			"image":"slime1"
 
         },
         {
@@ -33,7 +34,8 @@
                 }
             ],
             "sprite":"",
-            "size": []
+            "size": [],
+			"image":"slime1"
         },
         {
             "name":"slime3",
@@ -50,7 +52,8 @@
                 }
             ],
             "sprite":"",
-            "size": []
+            "size": [],
+			"image":"slime1"
         },
         {
             "name":"slime_mother",
@@ -67,7 +70,8 @@
                 }
             ],
             "sprite":"",
-            "size": []
+            "size": [],
+			"image":"slime1"
         },
         {
             "name":"goblin",
@@ -84,7 +88,8 @@
                 }
             ],
             "sprite":"",
-            "size": []
+            "size": [],
+			"image":"slime1"
         }
     ]
 }

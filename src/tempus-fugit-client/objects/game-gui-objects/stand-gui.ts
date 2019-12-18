@@ -65,12 +65,12 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.setTint(0xFFFFFF);
     }
 
-    public turnRed() {
+    public async turnRed() {
         this.setTint(0xFF0000);
         this.miniCardGUI.setTint(0xFF0000);
     }
 
-    public turnNormal() {
+    public async turnNormal() {
         this.setTint(0xFFFFFF);
         this.miniCardGUI.setTint(0xFFFFFF);
     }
@@ -79,7 +79,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
      * change HP display of enemy
      * @param changedTo
      */
-    public activateStand(stand): void {
+    public async activateStand(stand) {
         this.stand = stand;
         this.show();
         this.updateText(true);
@@ -87,11 +87,11 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.miniCardGUI.setScale(0.4);
     }
 
-    public updateStandText(): void {
+    public async updateStandText() {
         this.updateText(true);
     }
 
-    public deactiveStand(stand: Stand): void {
+    public async deactiveStand(stand: Stand) {
         this.miniCardGUI.destroy(true);
         this.stand = null;
         this.hide();
