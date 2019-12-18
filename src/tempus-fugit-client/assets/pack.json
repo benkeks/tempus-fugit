@@ -52,15 +52,33 @@
             },
             {
                 "type": "image",
-                "key": "cardIcon",
-                "url": "assets/sprites/text-box/user.png"
+                "key": "swordFont",
+                "url": "assets/font/fontletter/sword.PNG"
             },
             {
+                "type": "image",
+                "key": "heartFont",
+                "url": "assets/font/fontletter/heart.PNG"
+            },
+            {
+                "type": "image",
+                "key": "stand",
+                "url": "assets/sprites/stand.png"
+            },
+            {
+                "type": "image",
+                "key": "blue",
+                "url": "assets/sprites/blue.png"
+            },
+            {
+                "type": "image",
+                "key": "cardIcon",
+                "url": "assets/sprites/text-box/user.png"
+            }, {
                 "type": "image",
                 "key": "nextPage",
                 "url": "assets/sprites/text-box/arrow-down-left.png"
             }
-
         ]
     }
 }

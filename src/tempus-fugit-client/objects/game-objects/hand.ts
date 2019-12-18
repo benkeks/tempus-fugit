@@ -1,10 +1,10 @@
-import {Card} from "./card";
-import {PlayerListener} from "./player";
+import { Card } from "./card";
+import { PlayerListener } from "./player";
 
 export class Hand {
     cards: Card[]; // A list of cards contained in the hand
     size: number; // The number of cards the hand can hold
-    listener:HandListener[] = []; // A list of objects listening to events happening to this hand
+    listener: HandListener[] = []; // A list of objects listening to events happening to this hand
 
     /**
      * Constructor for the Hand class
@@ -14,10 +14,12 @@ export class Hand {
     constructor(size: number) {
         this.cards = [];
         this.size = size;
-        for (var i = 0;i < this.size;i++) {
+        for (var i = 0; i < this.size; i++) {
             this.cards[i] = null;
         }
         this.listener = [];
+
+
     }
 
     /**
@@ -34,7 +36,7 @@ export class Hand {
         if (position != -1) {
             this.cards[position] = card;
         } else {
-            for (let i of [0,1,2,3,4]) {
+            for (let i of [0, 1, 2, 3, 4]) {
                 if (this.cards[i] == null) {
                     this.cards[i] = card;
                     position = i;
@@ -44,7 +46,7 @@ export class Hand {
         }
 
         for (let i in this.listener) {
-            this.listener[i].handChanged(position, card);
+            this.listener[i].addCard(card);
         }
         return 1;
     }
@@ -52,7 +54,7 @@ export class Hand {
     // Checks whether the hand is full
     public isFull(): boolean {
         var full = true;
-        for (let i of [0,1,2,3,4]) {
+        for (let i of [0, 1, 2, 3, 4]) {
             if (this.cards[i] == null) {
                 full = false;
             }
@@ -68,8 +70,10 @@ export class Hand {
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    public removeCard(position: number): void {
-        this.cards[position] = new Card("Empty", "", "","", 0, false, null, "");
+    public removeCard(position: number, mission): void {
+        for (let i in this.listener) {
+            this.listener[i].addCard(this.cards[position]);
+        }
     }
 
     /**
@@ -80,7 +84,7 @@ export class Hand {
      * @author Florian
      */
     public getCard(n: number): Card {
-        if (n < 0  || n >= this.size) {
+        if (n < 0 || n >= this.size) {
             return null;
         }
         return this.cards[n];
@@ -89,7 +93,7 @@ export class Hand {
     /**
      * Returns all cards
      */
-    getCards(): Card[]{
+    getCards(): Card[] {
         return this.cards;
     }
 }
@@ -99,5 +103,6 @@ export class Hand {
  * @author Florian
  */
 export interface HandListener {
-    handChanged(pos: number, card: Card): void;
+    addCard(card: Card): void;
+    removeCard(card: Card): void;
 }

@@ -1,27 +1,27 @@
 {
-  "name": "tempus-fugit",
-  "version": "1.0.0",
-  "description": "My webpack project",
-  "scripts": {
-    "dev": "webpack --mode development && webpack-dev-server --mode development",
-    "dev-production": "webpack --mode production && webpack-dev-server --mode production",
-    "build": "webpack --mode production"
-  },
-  "dependencies": {
-    "@webpack-cli/init": "^0.2.2",
-    "expose-loader": "^0.7.5",
-    "phaser": "^3.20.1",
-    "phaser3-rex-plugins": "^1.1.4"
-  },
-  "devDependencies": {
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "copy-webpack-plugin": "^5.0.5",
-    "html-webpack-plugin": "^3.2.0",
-    "jsdoc-to-markdown": "^5.0.2",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.2",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
-  }
+    "name": "tempus-fugit",
+    "version": "1.0.0",
+    "description": "My webpack project",
+    "scripts": {
+        "dev": "webpack --mode development && webpack-dev-server --mode development",
+        "dev-production": "webpack --mode production && webpack-dev-server --mode production",
+        "build": "webpack --mode production"
+    },
+    "dependencies": {
+        "@webpack-cli/init": "^0.2.2",
+        "expose-loader": "^0.7.5",
+        "phaser": "^3.21.0",
+        "phaser3-rex-plugins": "^1.1.4"
+    },
+    "devDependencies": {
+        "babel-plugin-syntax-dynamic-import": "^6.18.0",
+        "copy-webpack-plugin": "^5.0.5",
+        "html-webpack-plugin": "^3.2.0",
+        "jsdoc-to-markdown": "^5.0.2",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.7.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0"
+    }
 }

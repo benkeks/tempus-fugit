@@ -1,126 +1,200 @@
 import { CardGUI } from "./card-gui";
 import { StackGUI } from "./stack-gui";
-import { BoardGUI } from "./board-gui";
 import { Card } from "../game-objects/card";
 import { Hand, HandListener } from "../game-objects/hand";
+import { DeckGUI } from "./deck-gui";
+import { isForXStatement } from "@babel/types";
 
 /**
  * @author Mustafa
  */
 export class HandGUI extends Phaser.GameObjects.Container implements HandListener {
-  private hand: Hand; // hand object associated with handGUI object
-  private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
-  private readonly stack: StackGUI;
-  private readonly board: BoardGUI;
-  private readonly maxCards: number = 5;
+    private hand: Hand; // hand object associated with handGUI object
+    private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
+    private readonly stack: StackGUI;
+    private readonly deck: DeckGUI;
+    private readonly maxCards: number = 5;
 
-  constructor(
-    scene: Phaser.Scene,
-    hand: Hand,
-    stack: StackGUI,
-    board: BoardGUI
-  ) {
-    super(scene);
-    this.board = board;
-    this.stack = stack;
-    this.setOutlines();
-    this.hand = hand;
+    // private back_layer: Phaser.GameObjects.Group;
+    // private front_layer: Phaser.GameObjects.Group;
 
-    this.hand.listener.push(this);
-    scene.add.existing(this);
-  }
+    constructor(
+        scene: Phaser.Scene,
+        hand: Hand,
+        stack: StackGUI,
+        deck: DeckGUI,
+    ) {
+        super(scene);
+        this.stack = stack;
+        this.hand = hand;
+        this.hand.listener.push(this);
+        this.deck = deck;
+        scene.add.existing(this);
 
-  /**
-   * sets card outline, (white border to show where cards are positioned in hand)
-   */
-  private setOutlines(): void {
-    let i = 0;
-    while (i < this.maxCards) {
-      this.scene.add.image(i++ * 200 + 550, 850, "card-outline").setDepth(-1);
+        // this.back_layer = new Phaser.GameObjects.Group(this.scene);
+        // this.front_layer = new Phaser.GameObjects.Group(this.scene);
     }
-  }
 
-  /**
-   * adds one card to hand if there is enough space for it
-   * @param card to be added
-   */
-  addCard(card: Card, pos: number): void {
-      // add card to hand, enable dragging
-      let cardGUI = new CardGUI(
-        this.scene,
-          pos * 200 + 550,
-        850,
-        card
-      );
-      this.add(cardGUI);
-
-      cardGUI.setInteractive();
-      cardGUI.enableDragging();
-      this.cardGUIs.push(cardGUI);
-  }
-
-  getCardGUIIndex(cardGUI: CardGUI): number {
-    for (let index in this.cardGUIs) {
-      if (this.cardGUIs[parseInt(index)] == cardGUI) return parseInt(index);
+    /**
+     * tints all cardGUI objects in hand black and disables dragging
+     */
+    fadeOut() {
+        this.unhoverAll(true);
+        for (let c of this.cardGUIs) {
+            c.fadeOut();
+            c.disableDragging();
+        }
     }
-    return -1;
-  }
 
-  /**
-   * moves a card to stack
-   * @param pos: position of cardGUI to remove
-   */
-  moveToStack(pos: number): void {
-    let c = this.cardGUIs[pos];
-    this.stack.addCardGUI(c);
-    this.cardGUIs.splice(pos, 1);
-    this.remove(c);
-  }
-
-  /**
-   * tints all cardGUI objects in hand black and disables dragging
-   */
-  fadeOut() {
-    for (let c of this.cardGUIs) {
-      c.fadeOut();
-      c.disableDragging();
+    /**
+     * removes the tint from all cardGUI objects and enables dragging
+     */
+    fadeIn() {
+        this.unhoverAll(true);
+        for (let c of this.cardGUIs) {
+            c.fadeIn();
+            c.enableDragging();
+        }
     }
-  }
 
-  /**
-   * removes the tint from all cardGUI objects and enables dragging
-   */
-  fadeIn() {
-    for (let c of this.cardGUIs) {
-      c.fadeIn();
-      c.enableDragging();
-    }
-  }
 
-  /**
-   * moves a card to board
-   * @param card
-   */
-  moveToBoard(card: Card) {
-    for (let i in this.cardGUIs) {
-      if (this.cardGUIs[i].card == card) {
-        let c = this.cardGUIs[i];
-        this.board.addCardGUI(c);
-        this.cardGUIs.splice(parseInt(i), 1);
-      }
-    }
-  }
+    /**
+     * toggles highlighting a card
+     * don't call hover method of cardGUI objects; user this moethod
+     * @param card 
+     */
+    toggleHovering(card: CardGUI): void {
 
-  /**
-   * deletes card at pos if @card = null, else adds card to position
-   * @param pos: position of card
-   * @param card: card to delete / add
-   */
-  handChanged(pos: number, card: Card): void {
-    if (card) {
-      this.addCard(card, pos);
-    } else {
-      this.moveToStack(pos);
+        if (!this.cardGUIs.includes(card))
+            return;
+
+        const hover = card.hovering;
+
+        let allTweensDone = true;
+        for (let c of this.cardGUIs)
+            if ((typeof c.hoverTween !== 'undefined' && c.hoverTween.isPlaying()) || (typeof c.unhoverTween !== 'undefined' && c.unhoverTween.isPlaying()))
+                allTweensDone = false;
+
+        // terminate if not all previous tweens are  over; else cards can get stuck
+        if (!allTweensDone)
+            return;
+
+        this.unhoverAll();
+
+        if (!hover) {
+            card.hover();
+            // this.back_layer.remove(card);
+            // this.back_layer.setDepth(1);
+            // this.front_layer.add(card);
+            // this.front_layer.setDepth(10);
+        }
     }
-  }
+
+    /**
+     * returns all cards to original position
+     * adds animations for cards if immediate is false ( by dafault )
+     */
+    unhoverAll(immediate: boolean = false): void {
+
+        if (!immediate) {
+            for (let card of this.cardGUIs)
+                card.unhover();
+        } else {
+            for (let card of this.cardGUIs) {
+                card.x = card.cardOriginX;
+                card.y = card.cardOriginY;
+                card.angle = card.cardOriginAngle;
+                card.setScale(1);
+            }
+        }
+    }
+
+    /**
+     * rearranges card in hand
+     * adds animations for cards if immediate is false ( by dafault )
+     */
+    arrangeCards(immediate: boolean = false): void {
+
+        // used static values since we only have a max of 5 cards
+        let angles = [-20, -10, 0, 10, 20];
+        let x = [700, 830, 960, 1090, 1220];
+        let y = [980, 950, 940, 950, 980];
+        let yOff = [0, 0, 10, 25, 0];
+
+        let n = this.cardGUIs.length;
+        let even = n % 2 == 0;
+        let angleOffset = even ? 5 : 0;
+        let xOffset = even ? 65 : 0;
+
+        this.unhoverAll(immediate);
+
+        for (let index in this.cardGUIs) {
+            let i = parseInt(index)
+            let card = this.cardGUIs[i];
+            let k = Math.floor((5 - n) / 2) + i;
+            let yOffset = even ? yOff[k] : 0;
+
+            let newX = x[k] + xOffset;
+            let newY = y[k] + yOffset;
+            let newAngle = angles[k] + angleOffset;
+
+            card.cardOriginAngle = newAngle;
+            card.cardOriginX = newX;
+            card.cardOriginY = newY;
+            //card.cardOriginDepth = card.depth;
+
+            if (!immediate) {
+                this.scene.tweens.add({
+                    targets: card,
+                    x: newX,
+                    y: newY,
+                    angle: newAngle,
+                    ease: 'power2',
+                    duration: 1500,
+                });
+            }
+            else {
+                card.x = card.cardOriginX;
+                card.y = card.cardOriginY;
+                card.angle = card.cardOriginAngle;
+            }
+        }
+    }
+
+    /**
+     * adds one cardGUI object for given card to hand 
+     * @param card: card to be added
+     */
+    addCard(card: Card): void {
+        // add card to hand, enable dragging
+        let cardGUI = new CardGUI(
+            this.scene,
+            this.deck.x,
+            this.deck.y,
+            card
+        );
+
+        this.add(cardGUI);
+        cardGUI.setInteractive();
+        cardGUI.enableDragging();
+        this.cardGUIs.push(cardGUI);
+        this.arrangeCards();
+        // this.back_layer.add(cardGUI);
+    }
+
+    /**
+     * moves a cardGUI object to stack
+     * @param card: card to be removed
+     */
+    removeCard(card: Card): void {
+        for (let pos in this.cardGUIs) {
+            if (this.cardGUIs[pos].card === card) {
+                this.stack.addCardGUI(this.cardGUIs[pos]);
+                this.remove(this.cardGUIs[pos]);
+                this.cardGUIs.splice(parseInt(pos), 1);
+                this.arrangeCards(true);
+                return;
+            }
+        }
+    }
 }

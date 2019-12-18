@@ -76,7 +76,7 @@ export class Card {
      * @param attackPower The attack power of the card
      * @author Florian
      */
-    constructor(name: string, description: string, image: string, formula: string, attackPower: number, isBaseAttackCard: boolean, stand: Stand, actionString: string) {
+    constructor(mission: Mission, name: string, description: string, image: string, formula: string, attackPower: number, isBaseAttackCard: boolean, standRounds: number, standsAttack: number, standName: string, actionString: string) {
         this.name = name;
         this.description = description;
         this.image = image;
@@ -84,9 +84,14 @@ export class Card {
         this.formula.parse(formula);
         this.attackPower = attackPower;
         this.isBaseAttackCard = isBaseAttackCard;
-        this.stand = stand;
+        this.stand = new Stand(this, standRounds, standsAttack, standName,image,null);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
+        if (standName != "") {
+            mission.pushStand(this.stand);
+        }
     }
+
+
 
 
     public performAction(mission: Mission, enemy: Enemy)  {

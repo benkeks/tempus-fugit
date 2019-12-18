@@ -1,49 +1,104 @@
+import { StoryDialog } from "../../mechanics/story-dialog";
 
 /**
  * @author Mustafa
+ */
+
+
+/** 
+ * for now only displays "name: text", without icon
  */
 export class Textbox {
     private COLOR_PRIMARY = 0x4e342e;
     private COLOR_LIGHT = 0x7b5e57;
     private GetValue = Phaser.Utils.Objects.GetValue;
+    private storyDialogQueue: StoryDialog[] = [];
+    private readonly boxWidth: number;
+    private typeSpeed: number;
+    private scene: Phaser.Scene;
 
     /**
      * Create a new textbox that appears on the right side of the screen.
-     *
+     * 
      * The text box has a fixed width, but extends vertically depending on the length of the strings to be displayed,
      * with maximum of three lines being shown at once.Pressing the space space key or clicking the textbox with the
      * mouse displayes the rest of an unfinished string or a new string from the content array.
      * @param scene: scene in which textbox appears
-     * @param content: an array of strings that get displayed in the textbox
-     * @param speakerIcon: icon of speaker, should be ~ 32x32 pixels
      * @param nextPageIcon: left arrow icon, should be ~ 32x32 pixels
      * @param typeSpeed: typing speed in ms
      * @param boxWidth: fixed width of textbox.
      */
-    constructor(scene: Phaser.Scene, content: string[], speakerIcon: string = 'cardIcon', nextPageIcon : string = 'nextPage', typeSpeed: number = 50, boxWidth: number = 500) {
+    constructor(scene: Phaser.Scene, nextPageIcon: string = 'nextPage', typeSpeed: number = 50, boxWidth: number = 500) {
+        this.typeSpeed = typeSpeed;
+        this.boxWidth = boxWidth;
+        this.scene = scene;
+    }
+
+
+    /**
+     * adds a story dialog to textbox queue
+     * @param dialog 
+     */
+    public addStoryDialog(dialog: StoryDialog) {
+        this.storyDialogQueue.push(dialog);
+        this.playNextStoryDialog();
+    }
+
+    /**
+     * plays next dialog in queue
+     */
+    private playNextStoryDialog() {
+        if (this.storyDialogQueue.length == 0)
+            return;
+
         // position is bottom right of screen
-        const width = scene.scene.systems.game.canvas.width - 150;
-        const height = scene.scene.systems.game.canvas.height - 515;
+        const width = this.scene.scene.systems.game.canvas.width - 100;
+        const height = this.scene.scene.systems.game.canvas.height - 415;
 
         // create a text box with fixed width, height depends on content
+        const nextDialog = this.storyDialogQueue.shift().text;
+
+
+        let content = [];
+        // let icons = [];
+        for (let i in nextDialog) {
+            content.push(nextDialog[i][0] + ": " + nextDialog[i][1]);
+            // icons.push(nextDialog[i][1]);
+        }
+
         const firstLine = content.shift();
-        const textBox = this.createTextBox(scene, width, height, {
-            wrapWidth: boxWidth,
-            fixedWidth: boxWidth,
+        // const currentIcon = icons.shift();
+        const textBox = this.createTextBox(this.scene, width, height, {
+            wrapWidth: this.boxWidth,
+            fixedWidth: this.boxWidth,
             //fixedHeight: 65,
-        }, content)
+        }, content);
+        //}, currentIcon, content, icons);
 
         // print first line, rest prints automatically
-        textBox.start(firstLine, typeSpeed);
+        textBox.start(firstLine, this.typeSpeed);
 
+        // Display next part of dialog if SPACE BAR is pressed
         //  Emits only when the SPACE BAR is pressed down, and dispatches from the local Key object.
         //  Stops event reaching the global handler.
-        const spaceKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        const spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         spaceKey.on('down', function (key, event) {
             event.stopImmediatePropagation();
             textBox.emit('pointerdown');
         });
     }
+
+
+
+    /**
+     * writes next line to textBox
+     * @param icon : icon of speaker
+     * @param text : spoken text
+     */
+    private displayNextLine(icon: String, text: String) {
+
+    }
+
 
     /**
      * creates a new textbox object
@@ -62,7 +117,7 @@ export class Textbox {
             // @ts-ignore
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, this.COLOR_PRIMARY)
                 .setStrokeStyle(2, this.COLOR_LIGHT),
-            icon: scene.add.image(0, 0, 'cardIcon'),
+            //icon: scene.add.image(0, 0, firstIcon),
             text: this.getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
             action: scene.add.image(0, 0, 'nextPage').setTint(this.COLOR_LIGHT).setVisible(false),
             space: {
@@ -86,6 +141,7 @@ export class Textbox {
         });
 
         // handle events for clicking; displaying new lines from content array
+        //this.setInteractionEvents(scene, textBox, content, icons);
         this.setInteractionEvents(scene, textBox, content);
 
         return textBox;
@@ -111,23 +167,30 @@ export class Textbox {
                         x: '+=1000',
                         ease: 'Power2',
                         duration: 1200,
-                        onComplete: () => this.destroy()
+                        onComplete: () => { textBox.destroy(); this.playNextStoryDialog(); }
                     });
                     return;
                 }
 
                 // display new line / full line
-                var icon = this.getElement('action').setVisible(false);
-                this.resetChildVisibleState(icon);
+                // let icon = textBox.getElement('action').setVisible(false);
+                // textBox.resetChildVisibleState(icon);
+
+                //let nextIcon = icons.shift();
+                // change speaker icon
+                // const img = scene.add.image(0, 0, nextIcon);
+                // img.setScale(32, 32);
+                // textBox.getElement('icon').set(img);
+
                 if (showNewLine) {
                     const newLine = content.shift();
                     textBox.start(newLine);
                     showNewLine = false;
-                }else {
-                    if (this.isTyping) {
-                        this.stop(true);
+                } else {
+                    if (textBox.isTyping) {
+                        textBox.stop(true);
                     } else {
-                        this.typeNextPage();
+                        textBox.typeNextPage();
                     }
                 }
 
@@ -143,14 +206,14 @@ export class Textbox {
 
                 let icon = this.getElement('action').setVisible(true);
                 this.resetChildVisibleState(icon);
-                icon.y -= 30;
+                //icon.y -= 30;
                 // animation for arrow icon
-                scene.tweens.add({
-                    targets: icon,
-                    y: '+=30',
-                    ease: 'Bounce',
-                    duration: 500,
-                });
+                // scene.tweens.add({
+                //     targets: icon,
+                //     y: '+=30',
+                //     ease: 'Bounce',
+                //     duration: 500,
+                // });
 
             }, textBox);
     }
