@@ -10,7 +10,8 @@ export class Bracket extends Operator {
     associativity = -1;
 
     public getDefaultRepresentation():string {
-        return "()";
+        if (Bracket.isOpenBracket(this)) return "(";
+        else return ")";
     }
 
     evaluateInternal(condition: number): PropositionStatus {

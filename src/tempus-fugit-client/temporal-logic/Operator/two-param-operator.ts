@@ -19,11 +19,14 @@ export abstract class TwoParamOperator extends Operator{
 
     generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true): string {
         let ownRep:string = this.representation;
-        if (defaultRepresentation) ownRep = this.getDefaultRepresentation();
+        if (defaultRepresentation) {
+            ownRep = this.getDefaultRepresentation();
+            if (this.direction < 0) ownRep = this.getReverseRepresentation();
+        }
+
 
         if (!recursive) return ownRep;
         let representation:string = ownRep;
-
 
         if (this.leftOperand instanceof Operator && (<Operator>this.leftOperand).precedence < this.precedence) {
             representation = " (" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation) + ") " + representation;

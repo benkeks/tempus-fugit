@@ -14,6 +14,10 @@
             return "";
         }
 
+        public getReverseRepresentation():string {
+            return this.getDefaultRepresentation();
+        }
+
         /**
          * @author Tobias Loch
          * @param recursive if false it just returns the initiated representation, otherwise it walks through the syntax tree

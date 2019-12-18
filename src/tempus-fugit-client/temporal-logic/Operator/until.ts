@@ -8,6 +8,10 @@ export class Until extends TwoParamOperator {
         return "U";
     }
 
+    public getReverseRepresentation(): string {
+        return "V";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
         let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
