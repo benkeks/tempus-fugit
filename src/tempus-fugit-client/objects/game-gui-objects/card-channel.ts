@@ -1,38 +1,43 @@
 import Container = Phaser.GameObjects.Container;
 import Graphics = Phaser.GameObjects.Graphics;
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
-import {GameInfo} from "../../game";
-import {DecisionArrow} from "./decision-arrow";
-import {MissionScene} from "../../scenes/mission-scene";
+import { GameInfo } from "../../game";
+import { DecisionArrow } from "./decision-arrow";
+import { MissionScene } from "../../scenes/mission-scene";
 import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
-import {CardGUI} from "./card-gui";
+import { CardGUI } from "./card-gui";
 import Tween = Phaser.Tweens.Tween;
-import {EnemyGUI} from "./enemy-gui";
+import { EnemyGUI } from "./enemy-gui";
+import { HandGUI } from "./hand-gui";
+import { Hand } from "../game-objects/hand";
 
-export class CardChannel extends Container{
+export class CardChannel extends Container {
 
-    public decisionArrow:DecisionArrow;
+    public decisionArrow: DecisionArrow;
 
-    public color:number = 0xFFFFFF;
+    public color: number = 0xFFFFFF;
 
-    public dot:Graphics;
-    public dotParticles:ParticleEmitterManager;
+    public dot: Graphics;
+    public dotParticles: ParticleEmitterManager;
 
-    public fadeOutDuration:number = 500;
+    public fadeOutDuration: number = 500;
     public fadeOutParticles = undefined;
     public emitter = undefined;
-    public channeled:boolean;
+    public channeled: boolean;
 
-    public missionScene:MissionScene;
+    public missionScene: MissionScene;
+    public handGUI: HandGUI;
 
-    constructor(scene:MissionScene,
-                x:number = 50,
-                y:number = 60) {
+    constructor(scene: MissionScene,
+        handGUI: HandGUI,
+        x: number = 50,
+        y: number = 60) {
         super(scene);
         scene.add.existing(this);
         this.missionScene = scene;
+        this.handGUI = handGUI;
 
-        this.dot = scene.add.graphics({x:0, y:0});
+        this.dot = scene.add.graphics({ x: 0, y: 0 });
         this.dot.lineStyle(5, this.color, 1);
         this.dot.strokeCircle(0, 0, 50);
 
@@ -43,8 +48,8 @@ export class CardChannel extends Container{
             speed: 100,
             lifespan: { min: 300, max: 400 },
             blendMode: 'ADD',
-            scaleX : 0.3,
-            scaleY : 0.3
+            scaleX: 0.3,
+            scaleY: 0.3
         });
 
         this.dotParticles.setVisible(false);
@@ -61,38 +66,50 @@ export class CardChannel extends Container{
     }
 
     private initEvents() {
+
+        // The distance, in pixels, a pointer has to move while being held down, before it thinks it is being dragged.
+        //  The pointer has to move 100 pixels before it's considered as a drag
+        this.scene.input.dragDistanceThreshold = 100;
+        let canClick = true;
+
+        this.scene.input.on('dragstart', function () {
+            this.handGUI.unhoverAll(true);
+            canClick = false;
+        }, this);
+
         this.scene.input.on(
             "drag",
-            function(
+            function (
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
+
                 if (!(gameObject instanceof CardGUI)) return;
                 this.missionScene.enableToolTips(false);
 
                 if (pointer.y < this.y) {
                     if (!this.channeled) {
-                            this.fadeOut = this.missionScene.add.tween({ // fade out
-                                targets: gameObject,
-                                alpha: {from: 1, to: 0},
-                                ease: "Linear",
-                                duration: this.fadeOutDuration,
-                                repeat: 0,
-                                yoyo: false
-                            });
+                        this.fadeOut = this.missionScene.add.tween({ // fade out
+                            targets: gameObject,
+                            alpha: { from: 1, to: 0 },
+                            ease: "Linear",
+                            duration: this.fadeOutDuration,
+                            repeat: 0,
+                            yoyo: false
+                        });
 
-                            this.dotParticles.setVisible(true);
+                        this.dotParticles.setVisible(true);
                         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
                         this.fadeOutParticles = this.missionScene.add.particles("blue");
 
-                        let x:number = gameObject.x-gameObject.displayWidth*gameObject.originX;
-                        let y:number = gameObject.y-gameObject.displayHeight*gameObject.originY;
+                        let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
+                        let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
                         this.emitter = this.fadeOutParticles.createEmitter({
                             x: {
                                 min: x,
                                 max: x + gameObject.displayWidth
                             },
-                            y:{
+                            y: {
                                 min: y,
                                 max: y + gameObject.displayHeight
                             },
@@ -103,16 +120,16 @@ export class CardChannel extends Container{
                             scaleY: 0.3,
                             moveToX: this.x,
                             moveToY: this.y,
-                            deathCallback: function() {
+                            deathCallback: function () {
                                 if (this.emitter.getParticleCount() == 0) {
                                     this.fadeOutParticles.destroy(true);
                                     this.fadeOutParticles = undefined;
                                 }
                             },
-                            deathCallbackScope:this
+                            deathCallbackScope: this
                         });
 
-                        this.missionScene.time.delayedCall(this.fadeOutDuration, function() {
+                        this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
                             this.emitter.setQuantity(0);
                         }, [], this);
                         this.channeled = true;
@@ -125,21 +142,22 @@ export class CardChannel extends Container{
                     }
 
                     if (this.fadeOutParticles) {
-                        let x:number = gameObject.x-gameObject.displayWidth*gameObject.originX;
-                        let y:number = gameObject.y-gameObject.displayHeight*gameObject.originY;
+                        let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
+                        let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
 
-                        this.emitter.moveToX.propertyValue =  (x + x+gameObject.displayWidth)/2;
+                        this.emitter.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
                         //console.log(this.emitter.moveToX);
-                        this.emitter.moveToY.propertyValue = (y + y+gameObject.displayHeight)/2;
+                        this.emitter.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
                     }
 
                     gameObject.setPosition(pointer.x, pointer.y); // dragging cards
+                    gameObject.setAngle(0);
                 }
             }, this);
 
         this.scene.input.on(
             "dragend",
-            function(
+            function (
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
@@ -154,18 +172,36 @@ export class CardChannel extends Container{
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
                 if (e) {
-                    // TODO: remove card from hand
+                    this.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);
-                    // TODO: revalidate card in hand
-                    gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
+                    //gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
+                    this.handGUI.unhoverAll(true);
                 }
-
+                canClick = true;
             }, this);
+
+        // logic for clicking cards has to be here, it depends on canClick variable set when dragging starts 
+        // card hovers when double-clicked
+        let lastTime = 0;
+        this.scene.input.on('pointerdown', function (
+            pointer: Phaser.Input.Pointer,
+            gameObject: Phaser.GameObjects.Sprite
+        ) {
+
+            if (gameObject[0] instanceof CardGUI && canClick) {
+                let clickDelay = this.scene.time.now - lastTime;
+                lastTime = this.scene.time.now;
+                if (clickDelay < 350) {
+                    this.handGUI.toggleHovering(gameObject[0]);
+                }
+            }
+
+        }, this);
     }
 
-    public cursorHoversEnemy(xCursor:number, yCursor:number):EnemyGUI {
+    public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI {
         for (let e of this.missionScene.enemyGUI.enemies) {
             if (e.isHovered(xCursor, yCursor)) {
                 return e;
@@ -174,14 +210,14 @@ export class CardChannel extends Container{
         return undefined;
     }
 
-    public playCard(enemy:EnemyGUI, card:CardGUI) {
+    public playCard(enemy: EnemyGUI, card: CardGUI) {
         this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.tfgame);
     }
 
-    public reEmitCard(gameObject):void {
+    public reEmitCard(gameObject): void {
         this.missionScene.add.tween({ // fade in
             targets: gameObject,
-            alpha: {from: 0, to: 1},
+            alpha: { from: 0, to: 1 },
             ease: "Linear",
             duration: this.fadeOutDuration,
             repeat: 0,
@@ -191,11 +227,11 @@ export class CardChannel extends Container{
         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
         this.fadeOutParticles = this.missionScene.add.particles("blue");
 
-        let x:number = gameObject.x-gameObject.displayWidth*gameObject.originX;
-        let y:number = gameObject.y-gameObject.displayHeight*gameObject.originY;
+        let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
+        let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
         this.emitter = this.fadeOutParticles.createEmitter({
-            x:this.x,
-            y:this.y,
+            x: this.x,
+            y: this.y,
             speed: 400,
             lifespan: 500,
             blendMode: 'ADD',
@@ -203,16 +239,16 @@ export class CardChannel extends Container{
             scaleY: 0.3,
             moveToX: 0,
             moveToY: 0,
-            deathCallback: function() {
+            deathCallback: function () {
                 if (this.emitter.getParticleCount() == 0) {
                     this.fadeOutParticles.destroy(true);
                     this.fadeOutParticles = undefined;
                 }
             },
-            deathCallbackScope:this,
+            deathCallbackScope: this,
         });
 
-        this.missionScene.time.delayedCall(this.fadeOutDuration, function() {
+        this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
             this.emitter.setQuantity(0);
         }, [], this);
 
