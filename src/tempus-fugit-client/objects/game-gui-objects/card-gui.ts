@@ -21,6 +21,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
         card: Card
     ) {
         super(scene, x, y, card.getImage());
+        scene.add.existing(this);
         this.setInteractive();
         this._cardOriginX = x;
         this._cardOriginY = y;
@@ -32,7 +33,7 @@ export class CardGUI extends Phaser.GameObjects.Sprite {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        // this.setDepth(100);
+        this.setDepth(100);
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
