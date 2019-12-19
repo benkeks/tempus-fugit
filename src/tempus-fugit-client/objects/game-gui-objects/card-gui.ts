@@ -40,11 +40,11 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * make container for a card
      * similar to list-gui.ts
      */
-    private createCard(card: Card, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'Arial', color: '#000000' }): void {
+    private createCard(card: Card, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'Arial', color: '#000000gi' }): void {
         // outline and background
         let width = 160;
         let height = 260;
-        let rectBackgroundColor = 0x666666;
+        let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
         this.setSize(width, height);
 
@@ -57,17 +57,14 @@ export class CardGUI extends Phaser.GameObjects.Container {
         let graphics = this.scene.add.graphics();
         graphics.lineStyle(8, rectOutlineColor, 1);
         let outline = graphics.strokeRoundedRect(-width / 2, -height / 2, width, height, 10);
-        console.log(outline);
         this.add(outline);
         this.sendToBack(outline);
 
         // background
         graphics.fillStyle(rectBackgroundColor, 1);
         let roundRect = graphics.fillRoundedRect(-width / 2, -height / 2, width, height, 10);
-        console.log(roundRect);
         this.add(roundRect);
         this.sendToBack(roundRect);
-
 
         // first horizontal line
         let lineColor = rectOutlineColor;
@@ -89,7 +86,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         // TODO add real formula text   
         let padding = 10;
         let maxTextWidth = width - 4 * padding;
-        let formulaText = this.scene.add.text(0, 0, 'Formula', font);
+        let formulaText = this.scene.add.text(0, 0, 'Formula', font); // card.getFormula().representation;
         this.add(formulaText);
         formulaText.style.setWordWrapWidth(maxTextWidth, true);
         formulaText.setOrigin(0.5, 0);
@@ -97,7 +94,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         // efffect text
         // TODO add real effekt text
-        let effektText = this.scene.add.text(0, 0, 'Effekt', font);
+        let effektText = this.scene.add.text(0, 0, 'Effekt', font); // card.getDescription()
         this.add(effektText);
         effektText.style.setWordWrapWidth(maxTextWidth, true);
         effektText.setOrigin(0.5, 0);
@@ -113,13 +110,12 @@ export class CardGUI extends Phaser.GameObjects.Container {
     }
 
 
-
-
     /**
        * makes card bigger
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
+        this.setDepth(1000);
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
@@ -162,7 +158,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * tints cardGUI black
      */
     fadeOut(): void {
-        this.cardImage.setTint(0x575757);
+        this.cardImage.setTint(0x333333);
     }
 
     /**
