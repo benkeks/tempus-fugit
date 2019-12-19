@@ -6,7 +6,7 @@ const COLOR_PRIMARY = 0x0f3491;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e05;
 const COLOR_RED = 0x9e0b00;
-const COLOR_BUTTON = 0x008888;
+const COLOR_BUTTON = 0x666666;
 const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
 /**
@@ -261,7 +261,7 @@ export class TableGUI implements GameStateListener {
     /**
      *  creates for button for ending selection of boolean values
      */
-    private createButton(offsetX: number = 400, offsetY: number = 40): void {
+    private createButton(offsetX: number = 1800, offsetY: number = 670): void {
         // @ts-ignore
         let buttons = this.scene.rexUI.add
             .buttons({
@@ -271,8 +271,8 @@ export class TableGUI implements GameStateListener {
                 buttons: [
                     // @ts-ignore
                     this.scene.rexUI.add.label({
-                        width: 100,
-                        height: 40,
+                        width: 150,
+                        height: 280,
                         // @ts-ignore
                         background: this.scene.rexUI.add.roundRectangle(
                             0,
@@ -282,8 +282,11 @@ export class TableGUI implements GameStateListener {
                             10,
                             COLOR_BUTTON
                         ),
-                        text: this.scene.add.text(0, 0, "  next", {
-                            fontSize: 18
+                        text: this.scene.add.text(80, 0, "  Next", {
+                            fontSize: 30,
+                            fontStyle: 'bold',
+                            fontFamily: 'appleKid',
+                            color: '#FFFFFF'
                         }),
                         space: {
                             left: 10,
