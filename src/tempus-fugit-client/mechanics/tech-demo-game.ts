@@ -32,15 +32,19 @@ export class TechDemoGame extends Mission {
         this.gameState.setVariable("c", false);
         this.gameState.setVariable("d", false);
 
-        let c1: Card = new Card(this, "test1", "", "card1", "b&(c|(OEb))", "directed", true, 0,   "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
-        let c2: Card = new Card(this, "test2", "", "card2", "!#G(a&!b)", "directed", false, 5,   "this.stand.spawn(enemy);");
-        let c3: Card = new Card(this, "test3", "", "card3", "#Oa&(d|!b)", "directed", true, 0,  "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
+        let c1: Card = new Card(this, "test1", "", "card1", "b&(c|(OEb))", "directed", true, 0, "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
+        let c2: Card = new Card(this, "test2", "", "card2", "!#G(a&!b)", "directed", false, 5, "this.stand.spawn(enemy);");
+        let c3: Card = new Card(this, "test3", "", "card3", "#Oa&(d|!b)", "directed", true, 0, "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
         let c4: Card = new Card(this, "test4", "", "card4", "0Ec", "directed", false, 6, "this.stand.spawn(enemy);");
         //0E
-        let c5: Card = new Card(this, "test5", "", "card5", "OEc&(#Oa|b)", "directed", false, 0,  "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
+        let c5: Card = new Card(this, "test5", "", "card5", "OEc&(#Oa|b)", "directed", false, 0, "enemy.takeHit(this.getAttackPower(), mission.gameState, mission.player);");
 
         //let c1:Card= new Card("test1", "", "card1", "a", 5);
         //let c2: Card = new Card("test2", "","card2", "a", 2);
+
+        this.monologs[0] = "test test test test test";
+        this.monologs[1] = "asdfasdfasf adf";
+
 
         this.deck.addCard(c1);
         this.deck.addCard(c2);
