@@ -23,16 +23,13 @@ export class CardChannel extends Container {
     public channeled: boolean;
 
     public missionScene: MissionScene;
-    public handGUI: HandGUI;
 
     constructor(scene: MissionScene,
-        handGUI: HandGUI,
         x: number = 50,
         y: number = 60) {
         super(scene);
         scene.add.existing(this);
         this.missionScene = scene;
-        this.handGUI = handGUI;
 
         this.dot = scene.add.graphics({ x: 0, y: 0 });
         this.dot.lineStyle(5, this.color, 1);
@@ -70,7 +67,7 @@ export class CardChannel extends Container {
         let canClick = true;
 
         this.scene.input.on('dragstart', function () {
-            this.handGUI.unhoverAll(true);
+            this.missionScene.handGUI.unhoverAll(true);
             canClick = false;
         }, this);
 
@@ -169,12 +166,12 @@ export class CardChannel extends Container {
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
                 if (e) {
-                    this.handGUI.removeCard(gameObject.card);
+                    this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);
                     //gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
-                    this.handGUI.unhoverAll(true);
+                    this.missionScene.handGUI.unhoverAll(true);
                 }
                 canClick = true;
             }, this);
@@ -191,7 +188,7 @@ export class CardChannel extends Container {
                 let clickDelay = this.scene.time.now - lastTime;
                 lastTime = this.scene.time.now;
                 if (clickDelay < 350) {
-                    this.handGUI.toggleHovering(gameObject[0]);
+                    this.missionScene.handGUI.toggleHovering(gameObject[0]);
                 }
             }
 

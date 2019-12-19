@@ -167,8 +167,9 @@ export class Textbox {
                         x: '+=1000',
                         ease: 'Power2',
                         duration: 1200,
-                        onComplete: () => { textBox.destroy(); this.playNextStoryDialog(); }
+                        onComplete: () => { textBox.destroy(); }
                     });
+                    this.playNextStoryDialog();
                     return;
                 }
 
@@ -194,7 +195,7 @@ export class Textbox {
                     }
                 }
 
-            }, textBox)
+            }, this)
             .on('pageend', function () {
                 //event gets triggered when one element of content array is done printing on screen
 

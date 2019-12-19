@@ -89,7 +89,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
       this.handGUI.fadeOut();
 
       //this.arrow = new DecisionArrow(this);
-      this.cardChannel = new CardChannel(this, this.handGUI);
+      this.cardChannel = new CardChannel(this);
       this.tfgame.startCombat();
   }
 
