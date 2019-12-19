@@ -3,6 +3,7 @@ import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
 import Tween = Phaser.Tweens.Tween;
+import {FormulaGUI} from "./formula-gui";
 
 /**
  * @author Mustafa
@@ -17,6 +18,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
     public hoverTween: Phaser.Tweens.Tween;
     public unhoverTween: Phaser.Tweens.Tween;
     public cardImage: Phaser.GameObjects.Image;
+    public formulaGUI: FormulaGUI;
 
     constructor(
         scene: Phaser.Scene,
@@ -31,6 +33,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this._cardOriginY = y;
         this._card = card;
         this.scene = scene;
+        this.formulaGUI = null;
 
         this.createCard(card);
     }
@@ -40,12 +43,14 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * make container for a card
      * similar to list-gui.ts
      */
-    private createCard(card: Card, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'Arial', color: '#000000gi' }): void {
+    private createCard(card: Card): void {
         // outline and background
         let width = 160;
         let height = 260;
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
+        let font1: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#000000' }
+        let font2: Object = { fontSize: '10px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#000000' }
         this.setSize(width, height);
 
         // let rect = this.scene.add.rectangle(0, 0, width, height,
@@ -87,7 +92,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         let padding = 10;
         let maxTextWidth = width - 4 * padding;
 
-        let formulaText = this.scene.add.text(0, 0, 'Formula', font); //card.getFormula().generateRepresentation(true, true);
+        let formulaText = this.scene.add.text(0, 0, card.getName(), font1); //card.getFormula().generateRepresentation(true, true);
         this.add(formulaText);
         formulaText.style.setWordWrapWidth(maxTextWidth, true);
         formulaText.setOrigin(0.5, 0);
@@ -95,7 +100,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         // efffect text
         // TODO add real effekt text
-        let effektText = this.scene.add.text(0, 0, 'Effekt', font); // card.getDescription()
+        let effektText = this.scene.add.text(0, 0, card.getDescription(), font2); // card.getDescription()
         this.add(effektText);
         effektText.style.setWordWrapWidth(maxTextWidth, true);
         effektText.setOrigin(0.5, 0);
@@ -117,6 +122,22 @@ export class CardGUI extends Phaser.GameObjects.Container {
        */
     hover(): void {
         this.setDepth(100);
+        let string = this.card.getFormula().generateRepresentation(true, true);
+        let margin = 4
+        //this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-550, margin, true));
+        this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-200, margin, true)).setAngle(this.cardOriginAngle);
+
+        this.hoverTween = this.scene.tweens.add({
+            targets: this.formulaGUI,
+            y: this.y-550,
+            x: this.x - this.formulaGUI.width-145,
+            angle: 0,
+            ease: 'power2',
+            scaleX: 1.5,
+            scaleY: 1.5,
+            duration: 500,
+        });
+
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
@@ -124,9 +145,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
-            duration: 800,
+            duration: 500,
         });
         this.hovering = true;
+
     }
 
     /**
@@ -145,6 +167,9 @@ export class CardGUI extends Phaser.GameObjects.Container {
             duration: 400,
         });
         this.hovering = false;
+        if (this.formulaGUI != null) {
+            this.formulaGUI.destroy();
+        }
     }
 
     /**
