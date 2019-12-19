@@ -8,6 +8,61 @@
       },
       {
         "type": "image",
+        "key": "fireball",
+        "url": "assets/sprites/cards/Fireball_2.png"
+      },
+      {
+        "type": "image",
+        "key": "lightning_stand",
+        "url": "assets/sprites/cards/lightning_stand.png"
+      },
+      {
+        "type": "image",
+        "key": "tree",
+        "url": "assets/sprites/cards/tree_bs.png"
+      },
+      {
+        "type": "image",
+        "key": "transmutation_stand",
+        "url": "assets/sprites/cards/transmutation_stand.png"
+      },
+      {
+        "type": "image",
+        "key": "slight_heal",
+        "url": "assets/sprites/cards/slight_heal.png"
+      },
+      {
+        "type": "image",
+        "key": "big_heal",
+        "url": "assets/sprites/cards/big_heal.png"
+      },
+      {
+        "type": "image",
+        "key": "heal_stand",
+        "url": "assets/sprites/cards/heal_stand.png"
+      },
+      {
+        "type": "image",
+        "key": "nature_stand",
+        "url": "assets/sprites/cards/nature_stand.png"
+      },
+      {
+        "type": "image",
+        "key": "lightning",
+        "url": "assets/sprites/cards/lightning.png"
+      },
+      {
+        "type": "image",
+        "key": "light_bs",
+        "url": "assets/sprites/cards/light.png"
+      },
+      {
+        "type": "image",
+        "key": "obliterate",
+        "url": "assets/sprites/cards/obliterate.png"
+      },
+      {
+        "type": "image",
         "key": "card2",
         "url": "assets/sprites/cards/Card_2.png"
       },
