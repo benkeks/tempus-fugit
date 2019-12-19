@@ -1,13 +1,14 @@
 import EventEmitter = Phaser.Events.EventEmitter;
 import {Deck} from "../objects/game-objects/deck";
-import {Player} from "../objects/game-objects/player";
+import {Player, PlayerListener} from "../objects/game-objects/player";
 import {GameState} from "../objects/game-objects/game-state";
 import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {StoryDialog} from "./story-dialog";
 import Map = Phaser.Structs.Map;
 import {Card} from "../objects/game-objects/card";
 
-export class Mission implements EnemyListener {
+export class Mission implements EnemyListener, PlayerListener {
+  
     get enemies(): Enemy[][]  {
         return this._enemies;
     }
@@ -20,6 +21,15 @@ export class Mission implements EnemyListener {
 
             eList.map(e => e.listener.push(this))
         }
+    }
+
+    get player(): Player {
+        return this._player;
+    }
+
+    set player(value:Player) {
+        this._player = value;
+        this.player.listener.push(this);
     }
     
     public pushStand(stand: Card) {
@@ -44,7 +54,7 @@ export class Mission implements EnemyListener {
     public listener:GameStateListener[] = [];
 
     public deck:Deck;
-    public player:Player;
+    public _player:Player;
     public gameState:GameState;
 
     private stands:Card[] = [];
@@ -161,7 +171,7 @@ export class Mission implements EnemyListener {
         this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
 
         if (this.waveCounter >= this.getMaxWaveCount()) {
-            this.listener.map(l => l.gameover(this));
+            this.listener.map(l => l.gameover(this, true));
             return;
         }
 
@@ -306,6 +316,12 @@ export class Mission implements EnemyListener {
         }
     }
 
+    playerHpChanged(changedTo: number): void {
+        if (changedTo <= 0) {
+            this.listener.map(l => l.gameover(this, false));
+        }
+    }
+
     public static createFromJSON(jString): void {
         let json = JSON.parse(jString);
         for (let m of json.missions) {
@@ -350,5 +366,5 @@ export interface GameStateListener {
     storyDialog(game:Mission, dialog:StoryDialog):void;
     storyMonolog(game:Mission, monolog:string):void;
     waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
-    gameover(game:Mission):void;
+    gameover(game:Mission, gameWon:boolean):void;
 }

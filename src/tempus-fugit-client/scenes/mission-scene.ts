@@ -2,6 +2,7 @@ import { Card } from "../objects/game-objects/card";
 import { Enemy } from "../objects/game-objects/enemy";
 import { CardGUI } from "../objects/game-gui-objects/card-gui";
 import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
+import {Player} from "../objects/game-objects/player";
 import { TechDemoGame } from "../mechanics/tech-demo-game";
 import { TableGUI } from "../objects/game-gui-objects/table-gui";
 import { HandGUI } from "../objects/game-gui-objects/hand-gui";
@@ -28,6 +29,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     public textBox: Textbox;
 
     public tfgame:Mission;
+    public missionIndex:number;
     public cardChannel:CardChannel;
 
     public background:Image;
@@ -57,6 +59,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     this.tfgame = Mission.Missions[data[0]].copy();
     this.tfgame.player = data[1];
     this.tfgame.deck = data[2];
+    this.missionIndex = data[3];
     this.tfgame.listener.push(this);
 
     this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
@@ -142,7 +145,15 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
       this.textBox.addStoryDialog(dialog);
   }
 
-  async gameover(game: Mission) {
+  async gameover(game: Mission, gameWon:boolean) {
+    console.log(gameWon);
+    if (gameWon) {
+      this.tfgame.player.missionStates[this.missionIndex] = true;
+      this.scene.start("NavigationScene", {game:this.tfgame});
+      this.scene.stop();
+    } else {
+      // TODO: implement gameover screen
+    }
   }
 
   async storyMonolog(game: Mission, monolog: string) {

@@ -6,6 +6,11 @@ import {Mission} from "../../mechanics/mission";
 
 
 export class Player {
+
+    public static readonly MISSION_DONE = 2;
+    public static readonly MISSION_AVAILABLE = 1;
+    public static readonly MISSION_UNDONE = 0;
+
     get currentHP(): number {
         return this._currentHP;
     }
@@ -29,6 +34,7 @@ export class Player {
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
 
+    public missionStates:boolean[];
 
     /**
      * Setter for the player's hit points

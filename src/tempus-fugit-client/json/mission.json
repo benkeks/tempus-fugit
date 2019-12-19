@@ -3,10 +3,9 @@
         {   
             "name": "tutorial",
             "background":"forest",
-            "waves": 2,
+            "waves": 1,
             "enemies": [
-                ["slime1", "slime2"],
-                ["slime3", "slime3", "goblin"]
+                ["slime1", "slime2"]
             ],
             "monologue":{"0":"As you're advancing, more monsters start to appear. Watch out!"}
             ,
@@ -30,7 +29,7 @@
                 ["goblin", "slime_mother", "goblin"]
             ],
             "monologue":{
-			"0": "You're walking deeper into the woods... What is it with these slimes?",
+				"0": "You're walking deeper into the woods... What is it with these slimes?",
                 "1": "Onwards you hear a misterious sound. It seems like someone is following you.",
                 "2": "More goblins seem to come your way, the ground is somewhat... shaking?",
                 "3": "The shaking becomes stronger and stronger, something nasty is coming your way. Be careful!"
