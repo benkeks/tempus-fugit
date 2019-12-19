@@ -33,7 +33,7 @@ export abstract class OneParamOperator extends Operator{
         let representation:string = "";
 
         if (this._operand instanceof TwoParamOperator) {
-            representation = " (" + this._operand.generateRepresentation(recursive) + ") ";
+            representation = "(" + this._operand.generateRepresentation(recursive) + ")";
         } else {
             representation = this._operand.generateRepresentation(recursive, defaultRepresentation);
         }

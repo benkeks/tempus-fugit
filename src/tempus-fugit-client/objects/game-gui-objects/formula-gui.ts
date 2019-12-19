@@ -1,6 +1,5 @@
 
 
-import {Mission} from "../../mechanics/mission";
 import GameObject = Phaser.GameObjects.GameObject;
 
 
@@ -15,7 +14,6 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
 
     constructor(
         scene: Phaser.Scene,
-        mission: Mission,
         formulaString: string,
         x: number,
         y: number,
@@ -46,14 +44,15 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         let pos = 0;
         this.elementList = [];
         for (let char of formulaString) {
+            console.log(char);
             this.elementList.push(this.scene.add.sprite(pos, 0, this.reps[char].type, this.reps[char].frame));
             pos += (16 + margin);
         }
         if (withRectangle) {
             let graphics = this.scene.add.graphics();
-            graphics.lineStyle(4, 0xFFFFFF, 0.8);
+            graphics.lineStyle(4, 0xFFFFFF, 0.6);
             let outline = graphics.strokeRoundedRect(-20, -22, (16+margin)*(formulaString.length+1), 44,10);
-            graphics.fillStyle(0xFFFFFF, 0.6);
+            graphics.fillStyle(0xFFFFFF, 1);
             let roundRect = graphics.fillRoundedRect(-20, -22, (16+margin)*(formulaString.length+1), 44,10);
             this.add(outline);
         }
