@@ -2,6 +2,8 @@ import {Player} from "./player"
 import {GameState} from "./game-state"
 import {Formula} from "../../temporal-logic/formula";
 import {Attack} from "./attack"
+import {Card} from "./card";
+import {Mission} from "../../mechanics/mission";
 
 export class Enemy {
     public name: string; // The enemy's name
@@ -11,8 +13,8 @@ export class Enemy {
     public description:string;
     public image:string;
 
-    public specialAttack: Attack; // The enemy's base attack strength
-    public reactAttacks: Attack[]; // List of react effects
+    public specialAttack: Card; // The enemy's base attack strength
+    public reactAttacks: Card[]; // List of react effects
 
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
 
@@ -45,7 +47,7 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: Attack, reactAttacks: Attack[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
@@ -76,14 +78,19 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public attack(player: Player, gameState: GameState): void {
-        var attackPoints = 0;
-        if (gameState.evaluate(this.specialAttack.getFormula())) {
-            attackPoints = this.specialAttack.getAttackStrength();
-        } else {
-            attackPoints = this.baseAttack;
+    public applyCard(card: Card, mission: Mission): void {
+        let val:boolean = mission.gameState.evaluate(card.getFormula());
+        if (val) {
+            switch (card.getKind()) {
+                case "other":
+                    card.action(mission, null);
+                    break;
+                case "directed":
+                    card.action(mission, mission.player);
+                    break;
+            }
         }
-        player.takeHit(attackPoints);
+
     }
 
     /**
@@ -93,7 +100,7 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number, gameState: GameState, player: Player): void {
+    public takeHit(hitPower: number, mission: Mission, player: Player): void {
         let before:number = this.currentHP;
         this.currentHP -= hitPower;
 
@@ -103,10 +110,8 @@ export class Enemy {
 
         // Flip-Effect: Attacks player when attacked and if formula is fulfilled
         for (var reactAttack of this.reactAttacks) {
-            if (gameState.evaluate(reactAttack.getFormula())) {
-                console.log(player);
-                player.takeHit(reactAttack.getAttackStrength());
-                console.log("React attacked!");
+            if (mission.gameState.evaluate(reactAttack.getFormula())) {
+                reactAttack.action(mission, player);
             }
         }
 

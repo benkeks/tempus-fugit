@@ -5,7 +5,6 @@ import {GameState} from "../objects/game-objects/game-state";
 import {Enemy, EnemyListener} from "../objects/game-objects/enemy";
 import {Card} from "../objects/game-objects/card";
 import {StoryDialog} from "./story-dialog";
-import {Stand} from "../objects/game-objects/stand";
 import Map = Phaser.Structs.Map;
 
 export class Mission implements EnemyListener {
@@ -23,7 +22,7 @@ export class Mission implements EnemyListener {
         }
     }
     
-    public pushStand(stand: Stand) {
+    public pushStand(stand: Card) {
         this.stands.push(stand);
     }
     
@@ -42,7 +41,7 @@ export class Mission implements EnemyListener {
     public player:Player;
     public gameState:GameState;
     private _enemies:{[wave:number]:Enemy[]} = {};
-    private stands:Stand[] = [];
+    private stands:Card[] = [];
     private aliveEnemiesCount:number = -1;
     public cards:Card[] = [];
 
@@ -151,7 +150,6 @@ export class Mission implements EnemyListener {
     private drawPhase():void {
         if (!this.player.hand.isFull()) {
             var card = this.player.takeCard(this.deck);
-            card.getStand().listener.push(this);
         }
     }
 
@@ -165,31 +163,26 @@ export class Mission implements EnemyListener {
 
     private standPhase(): void {
         for (var stand of this.getStands()) {
-            if (stand.active) {
-                stand.turnRed();
-                console.log(stand.targets.length);
-                for (var target of stand.targets) {
-                    target.takeHit(stand.standAttack, this.gameState, this.player);
-                    console.log("Stand attacked with " + stand.standAttack + "!");
+            stand.turnRed();
+            stand.act(this, this.player);
+            if (stand.getRoundsRemaining() <= 0) {
+                for (var l of stand.listener) {
+                    l.deactiveStand(stand);
                 }
-                stand.decreaseRoundsRemaining();
-                if (stand.getRoundsRemaining() <= 0) {
-                    stand.active = false;
-                    for (var l of stand.listener) {
-                        l.deactiveStand(stand);
+                for(var i = 0; i < this.stands.length; i++){
+                    if ( this.stands[i] === stand) {
+                        this.stands.splice(i, 1);
                     }
-                }
+                };
             }
         }
     }
 
     private enemyPhase():void {
-        for (var stand of this.getStands()) {
-            if (stand.active) {
+        for (var stand of this.stands) {
                 stand.turnNormal();
-            }
         }
-        this.enemies[this.waveCounter].map(e => e.attack(this.player, this.gameState));
+        this.enemies[this.waveCounter].map(e => e.applyCard(e.specialAttack, this));
 
     }
 
@@ -256,7 +249,7 @@ export class Mission implements EnemyListener {
         return this.enemies[this.waveCounter];
     }
 
-    public getStands():Stand[] {
+    public getStands():Card[] {
         return this.stands;
     }
 
@@ -280,8 +273,8 @@ export class Mission implements EnemyListener {
         }
     }
 
-    public async activateStand(stand: Stand) {}
-    public async deactiveStand(stand: Stand) {}
+    public async activateStand(stand: Card) {}
+    public async deactiveStand(stand: Card) {}
     public async updateStandText(){}
     public async turnRed(){}
     public async turnNormal(){}

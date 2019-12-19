@@ -1,30 +1,32 @@
 import {Formula} from "../../temporal-logic/formula";
-import {Stand} from "../../objects/game-objects/stand";
 import {Mission} from "../../mechanics/mission";
 import {Enemy} from "./enemy";
+import {GameState} from "./game-state";
+import {Player} from "./player";
 
 export class Card {
     private name: string; // Name of the card
     private description: string; // Description of the card
     private image: string; // A string describing the image on the card
     private formula: Formula; // A formula attached to the card
-    private attackPower: number; // The stregth of an attack based on this card
-    public isBaseAttackCard: boolean; // Determines whether the card deals base attack when formula is not fulfilled or not
-    private stand: Stand; // The stand that is associeted with the card
+    private cardKind: string; // can be "global", "random", "directed" or "other"
+    private isStandCard: boolean;
+    private standRounds: number;
+    private targets: Enemy[];
     public action:Function;
+    public listener:StandListener[]; // List of objects listening to stand events
 
-
-
-
-
-    /**
-     * Getter method for the stand attribute
-     * @author Florian
-     */
-    public getStand(): Stand {
-        return this.stand;
+    public stand(): boolean {
+        return this.isStandCard;
     }
 
+    public getKind(): string {
+        return this.cardKind;
+    }
+
+    public getRoundsRemaining(): number {
+        return this.standRounds;
+    }
 
     /**
      * Getter method for the name attribute
@@ -63,9 +65,6 @@ export class Card {
      * Getter method for the attack power attribute
      * @author Florian
      */
-    public getAttackPower(): number {
-        return this.attackPower;
-    }
 
     /**
      * Constructor for the Card class
@@ -76,42 +75,74 @@ export class Card {
      * @param attackPower The attack power of the card
      * @author Florian
      */
-    constructor(mission: Mission, name: string, description: string, image: string, formula: string, attackPower: number, isBaseAttackCard: boolean, standRounds: number, standsAttack: number, standName: string, actionString: string) {
+    constructor(mission: Mission, name: string, description: string, image: string, formula: string, cardKind: string, isStandCard: boolean, standRounds: number, actionString: string) {
         this.name = name;
         this.description = description;
         this.image = image;
         this.formula = new Formula();
         this.formula.parse(formula);
-        this.attackPower = attackPower;
-        this.isBaseAttackCard = isBaseAttackCard;
-        this.stand = new Stand(this, standRounds, standsAttack, standName,image,null);
-        this.action = eval("(function(mission, enemy){"+actionString+"})");
-        if (standName != "") {
-            mission.pushStand(this.stand);
+        this.cardKind = cardKind;
+        this.isStandCard = isStandCard;
+        this.standRounds = standRounds;
+        this.action = eval("(function(mission, target){"+actionString+"})");
+    }
+
+    public spawnStand(enemy: Enemy, mission: Mission) {
+        if (enemy != null) {
+            this.targets =  [enemy];
+        } else {
+            this.targets = mission.getEnemies();
+        }
+        for (let i in this.listener) {
+            console.log(i);
+            this.listener[i].activateStand(this);
+        }
+
+    }
+
+    public act(mission: Mission, player: Player): void {
+        if (this.standRounds > 0) {
+            if (this.cardKind == "random") {
+                this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
+            } else if (this.cardKind == "global" || this.cardKind == "directed") {
+                for (var target of this.targets) {
+                    this.action(mission, target);
+                }
+            } else {
+                this.action(mission, null);
+            }
+            this.decreaseRoundsRemaining();
+        }
+
+    }
+
+    public decreaseRoundsRemaining() {
+        this.standRounds -= 1;
+        for (var l of this.listener) {
+            l.updateStandText();
         }
     }
 
 
-
-
-    public performAction(mission: Mission, enemy: Enemy)  {
-        return this.action(mission, enemy);
+    public turnRed() {
+        for (let i in this.listener) {
+            this.listener[i].turnRed();
+        }
     }
 
 
-
-
-    /**
-     * This function checks whether an attack is in accordance with the game state. If it is, it returns the card's damage, otherwise 0.
-     * @param gameState A simple representation  of a game state. NOT the way it will eventually be implemented.
-     * @author Florian
-     */
-    public evaluateAttack(gameState: boolean[]): number {
-        this.formula.variables['a'].values = gameState;
-        if (this.formula.evaluate(0) == false) {
-            return 0;
-        } else return this.attackPower;
+    public turnNormal() {
+        for (let i in this.listener) {
+            this.listener[i].turnNormal();
+        }
     }
 
+}
 
+export interface StandListener {
+    activateStand(stand: Card): void;
+    deactiveStand(stand: Card):void;
+    updateStandText(): void;
+    turnRed(): void;
+    turnNormal(): void;
 }
