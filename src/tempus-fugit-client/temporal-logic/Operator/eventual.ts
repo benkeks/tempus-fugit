@@ -8,6 +8,10 @@ export class Eventual extends OneParamOperator {
         return "E";
     }
 
+    public getReverseRepresentation(): string {
+        return "F";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition);
 

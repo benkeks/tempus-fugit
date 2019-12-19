@@ -1,0 +1,22 @@
+{
+"cards": [
+		{"name":"test1",
+		"description":"this card does damage!",
+		"image":"card1",
+		"formula":"Gf",
+		"cardKind":"directed",
+		"isStandCard":"false",
+		"standRounds":"5",
+		"action":"return;",
+		"inDeckAtStart":"5"},
+		
+		{"name":"test2",
+		"description":"this card does damage!",
+		"image":"card1",
+		"formula":"Gf",
+		"cardKind":"directed",
+		"isStandCard":"true",
+		"standRounds":"3",
+		"action":"return;",
+		"inDeckAtStart":"5"}
+]}
