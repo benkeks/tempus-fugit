@@ -115,11 +115,11 @@ export class CardGUI extends Phaser.GameObjects.Container {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        this.setDepth(1000);
+        this.z = 100;
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
-            //z: 100,
+            z: 100,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
@@ -134,10 +134,11 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * don't call unhover method of cardGUI objects; user this moethod implemented in handGUI
      */
     unhover(): void {
+        this.z = 0;
         this.unhoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY,
-            //z: 0,
+            z: 0,
             angle: this.cardOriginAngle,
             ease: 'power2',
             scaleX: 1,
@@ -172,7 +173,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * makes cardGUI dragabble
      */
     enableDragging(): void {
-        // TODO change
         this.scene.input.setDraggable(this);
     }
 
@@ -180,7 +180,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * makes cardGUI not dragabble
      */
     disableDragging(): void {
-        // TODO change
         this.scene.input.setDraggable(this, false);
     }
 
@@ -203,10 +202,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
         return this._cardOriginAngle;
     }
 
-    // get cardOriginDepth(): number {
-    //     return this._cardOriginDepth;
-    // }
-
     get hovering(): boolean {
         return this._hovering;
     }
@@ -215,9 +210,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this._hovering = value;
     }
 
-    // set cardOriginDepth(value: number) {
-    //     this._cardOriginDepth = value;
-    // }
     set cardOriginAngle(value: number) {
         this._cardOriginAngle = value;
     }

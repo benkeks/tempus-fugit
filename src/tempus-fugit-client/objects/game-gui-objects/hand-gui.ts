@@ -26,7 +26,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.hand = hand;
         this.hand.listener.push(this);
         this.deck = deck;
-        scene.add.existing(this);
+        //scene.add.existing(this);
 
     }
 
@@ -133,7 +133,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginAngle = newAngle;
             card.cardOriginX = newX;
             card.cardOriginY = newY;
-            //card.cardOriginDepth = card.depth;
 
             if (!immediate) {
                 this.scene.tweens.add({
@@ -166,12 +165,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card
         );
 
-        this.add(cardGUI);
+        //this.add(cardGUI);
         cardGUI.setInteractive();
         cardGUI.enableDragging();
         this.cardGUIs.push(cardGUI);
         this.arrangeCards();
-        // this.back_layer.add(cardGUI);
     }
 
     /**
@@ -182,7 +180,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
                 this.stack.addCardGUI(this.cardGUIs[pos]);
-                this.remove(this.cardGUIs[pos]);
+                //this.remove(this.cardGUIs[pos]);
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);
                 return;
