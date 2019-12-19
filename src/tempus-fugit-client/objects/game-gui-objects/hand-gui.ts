@@ -96,6 +96,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.x = card.cardOriginX;
                 card.y = card.cardOriginY;
                 card.angle = card.cardOriginAngle;
+                card.setDepth(card.cardOriginZ);
                 card.setScale(1);
             }
         }
@@ -133,12 +134,15 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginAngle = newAngle;
             card.cardOriginX = newX;
             card.cardOriginY = newY;
+            card.cardOriginZ = i;
+            card.setDepth(i);
 
             if (!immediate) {
                 this.scene.tweens.add({
                     targets: card,
                     x: newX,
                     y: newY,
+                    z: i,
                     angle: newAngle,
                     ease: 'power2',
                     duration: 1500,

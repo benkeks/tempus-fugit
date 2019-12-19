@@ -11,7 +11,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
     private _cardOriginX: number = 0; //initial x-position of cardGUI object, for dragging
     private _cardOriginY: number = 0; //initial y-position of cardGUI object, for dragging
     private _cardOriginAngle: number = 0; // initiall angle of cardGUI object, for hovering effect
-    // private _cardOriginDepth: number; // initiall depth of cardGUI object, for hovering effect
+    private _cardOriginZ: number; // initiall depth of cardGUI object, for hovering effect
     private _hovering: boolean = false;
     private readonly _card: Card; // card object associated with cardGUI object
     public hoverTween: Phaser.Tweens.Tween;
@@ -86,7 +86,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
         // TODO add real formula text   
         let padding = 10;
         let maxTextWidth = width - 4 * padding;
-        let formulaText = this.scene.add.text(0, 0, 'Formula', font); // card.getFormula().representation;
+
+        let formulaText = this.scene.add.text(0, 0, 'Formula', font); //card.getFormula().generateRepresentation(true, true);
         this.add(formulaText);
         formulaText.style.setWordWrapWidth(maxTextWidth, true);
         formulaText.setOrigin(0.5, 0);
@@ -115,11 +116,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        this.z = 100;
+        this.setDepth(100);
         this.hoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY - 300,
-            z: 100,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
@@ -134,11 +134,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * don't call unhover method of cardGUI objects; user this moethod implemented in handGUI
      */
     unhover(): void {
-        this.z = 0;
+        this.setDepth(this.cardOriginZ);
         this.unhoverTween = this.scene.tweens.add({
             targets: this,
             y: this.cardOriginY,
-            z: 0,
             angle: this.cardOriginAngle,
             ease: 'power2',
             scaleX: 1,
@@ -206,8 +205,16 @@ export class CardGUI extends Phaser.GameObjects.Container {
         return this._hovering;
     }
 
+    get cardOriginZ() {
+        return this._cardOriginZ;
+    }
+
     set hovering(value: boolean) {
         this._hovering = value;
+    }
+
+    set cardOriginZ(value: number) {
+        this._cardOriginZ = value;
     }
 
     set cardOriginAngle(value: number) {
