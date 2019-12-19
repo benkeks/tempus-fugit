@@ -1,7 +1,8 @@
 
-import {Stand, StandListener} from "../game-objects/stand";
+
 import {Mission} from "../../mechanics/mission";
 import {CardGUI} from "./card-gui";
+import {Card, StandListener} from "../game-objects/card";
 
 
 /**
@@ -9,7 +10,7 @@ import {CardGUI} from "./card-gui";
  */
 export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener{
 
-    public stand: Stand; // stand object associated with this gui
+    public stand: Card; // stand object associated with this gui
     public name: string;
     public attack: number;
     public rounds: number;
@@ -27,7 +28,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
 
     public updateText(active: boolean) {
         if (active) {
-            this.upperText.setText(this.stand.name + " with " + this.stand.standAttack + " attack");
+            this.upperText.setText(this.stand.getName());
             this.lowerText.setText(this.stand.getRoundsRemaining() + " rounds left");
         } else {
             this.upperText.setText("no stand here... :)");
@@ -40,7 +41,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         scene: Phaser.Scene,
         mission: Mission,
         texture: string,
-        stand: Stand,
+        stand: Card,
         x: number = 800,
         y: number = 500,
     ) {
@@ -83,7 +84,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.stand = stand;
         this.show();
         this.updateText(true);
-        this.miniCardGUI = this.scene.add.sprite(this.x+100, this.y, this.stand.getCard().getImage());
+        this.miniCardGUI = this.scene.add.sprite(this.x+100, this.y, this.stand.getImage());
         this.miniCardGUI.setScale(0.4);
     }
 
@@ -91,7 +92,7 @@ export class StandGUI extends Phaser.GameObjects.Sprite implements StandListener
         this.updateText(true);
     }
 
-    public async deactiveStand(stand: Stand) {
+    public async deactiveStand(stand: Card) {
         this.miniCardGUI.destroy(true);
         this.stand = null;
         this.hide();

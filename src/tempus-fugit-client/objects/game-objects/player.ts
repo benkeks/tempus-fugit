@@ -92,11 +92,30 @@ export class Player {
      */
     public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
-        if (card.isBaseAttackCard && !val) {
-            enemy.takeHit((this.baseAttack), mission.gameState, this);
-        } else if (val) {
-            card.action(mission,enemy);
-            console.log("Valid");
+        if (val) {
+            if (card.stand()) {
+                mission.pushStand(card);
+                card.spawnStand(enemy, mission);
+            } else {
+                switch (card.getKind()) {
+                    case "other":
+                        card.action(mission, null);
+                        break;
+                    case "global":
+                        for (var e of mission.getEnemies()) {
+                            card.action(mission, e);
+                        }
+                        break;
+                    case "random":
+                        var enemies = mission.getEnemies();
+                        var target = enemies[Math.floor(Math.random() * enemies.length)];
+                        card.action(mission, target);
+                        break;
+                    case "directed":
+                        card.action(mission, enemy);
+                        break;
+                }
+            }
         }
     }
 
