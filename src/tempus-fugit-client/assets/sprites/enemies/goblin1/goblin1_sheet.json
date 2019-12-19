@@ -1,0 +1,18 @@
+{
+	"frames": [
+		{
+			"filename": "goblin1-Sheet.png",
+			"frame": {"x":0,"y":0,"w":32,"h":32},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":64,"h":32}
+		},
+		{
+			"filename": "goblin1-Sheet.png",
+			"frame": {"x":32,"y":0,"w":32,"h":32},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":64,"h":32}
+		}
+	]
+}

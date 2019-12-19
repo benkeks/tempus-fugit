@@ -1,0 +1,11 @@
+{
+	"frames": [
+		{
+			"filename": "player-Sheet.png",
+			"frame": {"x":0,"y":0,"w":32,"h":64},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64}
+		}
+	]
+}
