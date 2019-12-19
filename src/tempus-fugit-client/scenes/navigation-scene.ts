@@ -22,6 +22,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
 
 
+
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
         console.log(Enemy.enemies);
