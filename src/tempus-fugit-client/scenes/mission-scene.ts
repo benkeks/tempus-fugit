@@ -54,7 +54,9 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
   }
 
   create(data): void {
-    this.tfgame = Mission.Missions[data].copy();
+    this.tfgame = Mission.Missions[data[0]].copy();
+    this.tfgame.player = data[1];
+    this.tfgame.deck = data[2];
     this.tfgame.listener.push(this);
 
     this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
@@ -65,30 +67,23 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
       this.textBox = new Textbox(this);
 
-      this.tfgame = new TechDemoGame();
-      this.tfgame.listener.push(this);
-
       this.stackGUI = new StackGUI(this, "stack");
 
-      this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
-      this.standGUI.hide();
-
-      this.deckGUI = new DeckGUI(this, "deck", Mission.deck);
-      this.handGUI = new HandGUI(this, Mission.player.hand, this.stackGUI, this.deckGUI);
+      this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
+      this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI);
       this.gameStateGUI = new TableGUI(this, this.tfgame)
 
-      this.playerGUI = new PlayerGUI(this, "player", Mission.player);
-      this.playerGUI.listener.push(Mission.player);
+      this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
+      this.playerGUI.listener.push(this.tfgame.player);
 
       this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
 
       this.phaseText = this.add.text(100, 100, "Draw Phase");
 
-      Mission.player.takeCard(Mission.deck);
+      this.tfgame.player.takeCard(this.tfgame.deck);
 
       this.handGUI.fadeOut();
 
-      //this.arrow = new DecisionArrow(this);
       this.cardChannel = new CardChannel(this);
       this.tfgame.startCombat();
   }
@@ -103,48 +98,6 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     this.enemyGUI.enemies.map(e => {
       e.toolTip.enabled = value;
     })
-  }
-
-  private configureCardEvents(): void {
-    // enable dragging of objects
-    this.input.on("drag", function(
-      pointer: Phaser.Input.Pointer,
-      gameObject: Phaser.GameObjects.Sprite,
-      dragX: number,
-      dragY: number
-    ) {
-      gameObject.setDepth(10);
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    });
-
-    // return to original position when drag is done
-    this.input.on(
-      "dragend",
-      function(
-        pointer: Phaser.Input.Pointer,
-        gameObject: Phaser.GameObjects.Sprite
-      ) {
-        if (gameObject instanceof CardGUI) {
-          gameObject.setDepth(1);
-          const card: Card = gameObject.card;
-          const enemy: Enemy = this.enemyGUIs[0].enemy;
-          // TODO: set up collision between cards and enemies attack
-          // position of enemy hardcoded here
-          if (pointer.upY >= 300 && pointer.upX >= 1200) {
-            for (let listener of this.playerGUI.listener)
-              listener.applyCard(card, enemy, this.tfgame);
-              this.handGUI.moveToStack(this.handGUI.getCardGUIIndex(gameObject));
-              console.log('player attacked enemy with card');
-          } else {
-            console.log('nothing happend. dropped at' + pointer.upX + " -- " + pointer.upY);
-            gameObject.x = gameObject.cardOriginX;
-            gameObject.y = gameObject.cardOriginY;
-          }
-        }
-      },
-      this
-    );
   }
 
   async drawPhase(game: Mission) {

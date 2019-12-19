@@ -68,21 +68,32 @@ export class GameState {
      * @return the truth value of the formula
      *
      * */
-    public evaluate(object:any):boolean {
-        //if (object.constructor.name === Formula.constructor.name) {
+    public evaluate(object):boolean {
+        if (object instanceof Formula) {
             let f: Formula = object as Formula;
+            
 
             f.applyAssignment(this._variables);
             return f.evaluate(this.activeState);
-        /*} else if (object.constructor.name === Card.constructor.name) {
+        } else if (object instanceof Card) {
             let c:Card = object as Card;
             return this.evaluate(c.getFormula());
         } else {
             console.log(object.constructor.name)
             console.log(Formula.constructor.name)
             throw new TypeError("Evaluate expects object of type Formula or Card!");
-        }*/
+        }
     }
+
+    public setAllVariableValues(variable:string, value:boolean):void {
+        let l:number = this.variables[variable].values.length;
+
+        for (let i = 0; i < l; i++) {
+            this.setVariable(variable, value, i);
+        }
+    }
+
+    public resetFutureValues
 
     /***
      *  changes the roundIndex and triggers an event.

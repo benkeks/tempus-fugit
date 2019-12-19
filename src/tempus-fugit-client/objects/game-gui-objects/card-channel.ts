@@ -5,6 +5,7 @@ import { DecisionArrow } from "./decision-arrow";
 import { MissionScene } from "../../scenes/mission-scene";
 import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
 import { CardGUI } from "./card-gui";
+import {Card} from "../game-objects/card";
 import {EnemyGUI} from "./enemy-gui";
 import {Mission} from "../../mechanics/mission";
 import {HandGUI} from "./hand-gui";
@@ -79,6 +80,7 @@ export class CardChannel extends Container {
             ) {
 
                 if (!(gameObject instanceof CardGUI)) return;
+                let card:Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
 
                 if (pointer.y < this.y) {
@@ -129,7 +131,7 @@ export class CardChannel extends Container {
                         this.channeled = true;
                     }
 
-                    this.decisionArrow.updateDrag(pointer);
+                    if (card.getKind() == Card.DIRECTED) this.decisionArrow.updateDrag(pointer);
                 } else {
                     if (this.channeled) {
                         this.reEmitCard(gameObject);
@@ -160,12 +162,13 @@ export class CardChannel extends Container {
                 this.missionScene.enableToolTips(true);
 
                 if (!(gameObject instanceof CardGUI)) return;
+                let card:Card = (gameObject as CardGUI).card;
 
                 this.scene.input.activePointer.smoothFactor = 0;
                 this.scene.sys.canvas.style.cursor = "default";
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
-                if (e) {
+                if (e || card.getKind() != Card.DIRECTED) {
                     this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
@@ -205,7 +208,10 @@ export class CardChannel extends Container {
     }
 
     public playCard(enemy:EnemyGUI, card:CardGUI) {
-        Mission.player.applyCard(card.card, enemy.enemy, this.missionScene.tfgame);
+        let e = undefined;
+        if (enemy != undefined) e = enemy.enemy;
+
+        this.missionScene.tfgame.player.applyCard(card.card, e, this.missionScene.tfgame);
     }
 
     public reEmitCard(gameObject): void {

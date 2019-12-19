@@ -6,6 +6,14 @@ import {Mission} from "../../mechanics/mission";
 
 
 export class Player {
+    get currentHP(): number {
+        return this._currentHP;
+    }
+
+    set currentHP(value: number) {
+        this._currentHP = value;
+        this.listener.map(obj => obj.playerHpChanged(value));
+    }
     get baseAttack(): number {
         return this._baseAttack;
     }
@@ -15,7 +23,7 @@ export class Player {
     }
     public name: string; // Player's name
     public maxHP: number; // Player's maximum hit points
-    public currentHP: number; // Player's currentHP
+    private _currentHP: number; // Player's currentHP
     private _baseAttack: number; // Player's attack strength without using a card
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
@@ -38,7 +46,7 @@ export class Player {
      * @author Florian
      */
     public getHP(): number {
-        return this.currentHP;
+        return this._currentHP;
     }
 
     /**
@@ -72,7 +80,7 @@ export class Player {
     constructor(name: string, hp: number, baseAttack: number) {
         this.name = name;
         this.maxHP = hp;
-        this.currentHP = this.maxHP;
+        this._currentHP = this.maxHP;
         this._baseAttack = baseAttack;
         this.hand = new Hand(5);
         this.states = [];
@@ -97,20 +105,21 @@ export class Player {
                 card.spawnStand(enemy, mission);
             } else {
                 switch (card.getKind()) {
-                    case "other":
+                    case Card.OTHER:
                         card.action(mission, null);
                         break;
-                    case "global":
-                        for (var e of mission.getEnemies()) {
+                    case Card.GLOBAL:
+                        for (let e of mission.getEnemies()) {
+                            console.log(e);
                             card.action(mission, e);
                         }
                         break;
-                    case "random":
+                    case Card.RANDOM:
                         var enemies = mission.getEnemies();
                         var target = enemies[Math.floor(Math.random() * enemies.length)];
                         card.action(mission, target);
                         break;
-                    case "directed":
+                    case Card.DIRECTED:
                         card.action(mission, enemy);
                         break;
                 }
@@ -128,10 +137,10 @@ export class Player {
      */
     public takeHit(hitPower: number): void {
         this.currentHP -= hitPower;
+    }
 
-        for (let i in this.listener) {
-            this.listener[i].playerHpChanged(this.currentHP);
-        }
+    public heal(life:number):void  {
+        this.currentHP += life;
     }
 
     /**

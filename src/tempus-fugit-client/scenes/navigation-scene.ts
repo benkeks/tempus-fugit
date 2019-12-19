@@ -3,8 +3,16 @@ import {Card} from "../objects/game-objects/card";
 import {Enemy} from "../objects/game-objects/enemy";
 import {Player} from "../objects/game-objects/player";
 import {Deck} from "../objects/game-objects/deck";
+import Image = Phaser.GameObjects.Image;
+import TileSprite = Phaser.GameObjects.TileSprite;
+import {GameInfo} from "../game";
 
 export class NavigationScene extends Phaser.Scene {
+
+    public backgroundTexture:TileSprite;
+
+    public player:Player;
+    public deck:Deck;
 
     constructor() {
         super({
@@ -13,10 +21,16 @@ export class NavigationScene extends Phaser.Scene {
     }
 
     preload() {
-        Mission.player = new Player("Willy", 50, 5);
-        Mission.deck = new Deck();
+        this.player = new Player("Willy", 50, 5);
+        this.deck = new Deck();
 
         this.load.pack("preload", "assets/pack.json", "preload");
+
+        // loading player sprite
+        this.load.spritesheet("player", "assets/sprites/player/player_sheet.png",
+            { frameWidth: 32, frameHeight: 64 });
+
+        this.load.image("water_background", "assets/navigation_scene/texture/water.png");
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
@@ -34,11 +48,12 @@ export class NavigationScene extends Phaser.Scene {
             let c:Card = Card.cards[c_key];
 
             for (let i=0; i < c.inDeckAtStart; i++) {
-                Mission.deck.addCard(c.copy());
+                this.deck.addCard(c.copy());
             }
         }
 
-        console.log(Mission.deck);
+        this.deck.shuffle();
+        console.log(this.deck);
     }
 
     public static loadFile(filePath): string{
@@ -52,7 +67,13 @@ export class NavigationScene extends Phaser.Scene {
         return fd;
     }
 
+    public getData(key:string) {
+        return [key, this.player, this.deck];
+    }
+
     create() {
-        this.scene.start("MissionScene", new String("mission1"));
+        //this.backgroundTexture = this.add.tileSprite(GameInfo.width/2,GameInfo.height/2, GameInfo.width, GameInfo.height, "water_background");
+
+        this.scene.start("MissionScene", this.getData("mission1"));
     }
 }

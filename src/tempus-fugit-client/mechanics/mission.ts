@@ -43,8 +43,8 @@ export class Mission implements EnemyListener {
 
     public listener:GameStateListener[] = [];
 
-    public static deck:Deck;
-    public static player:Player;
+    public deck:Deck;
+    public player:Player;
     public gameState:GameState;
 
     private stands:Card[] = [];
@@ -155,24 +155,24 @@ export class Mission implements EnemyListener {
         this.checkDialogEvents();
     }
 
-    public nextWave(next:number = this.waveCounter+1 % this.getMaxWaveCount()):void {
+    public nextWave(next:number = this.waveCounter+1):void {
         this.waveCounter = next;
+
+        this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
 
         if (this.waveCounter >= this.getMaxWaveCount()) {
             this.listener.map(l => l.gameover(this));
             return;
         }
 
-        this.aliveEnemiesCount = this.enemies[this.waveCounter].length;
+        this.aliveEnemiesCount = this.getEnemies().length;
         this.nextPhase(0);
-        this.listener.map(l => l.waveChanged(this, next, this.enemies[this.waveCounter]));
-
-        this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
     }
 
     private drawPhase():void {
-        if (!Mission.player.hand.isFull()) {
-            var card = Mission.player.takeCard(Mission.deck);
+        if (!this.player.hand.isFull()) {
+            var card = this.player.takeCard(this.deck);
         }
     }
 
@@ -187,7 +187,7 @@ export class Mission implements EnemyListener {
     private standPhase(): void {
         for (var stand of this.getStands()) {
             stand.turnRed();
-            stand.act(this, Mission.player);
+            stand.act(this, this.player);
             if (stand.getRoundsRemaining() <= 0) {
                 for (var l of stand.listener) {
                     l.deactiveStand(stand);
@@ -205,7 +205,7 @@ export class Mission implements EnemyListener {
         for (var stand of this.stands) {
                 stand.turnNormal();
         }
-        this.enemies[this.waveCounter].map(e => e.applyCard(e.specialAttack, this));
+        this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
 
     }
 
@@ -273,7 +273,8 @@ export class Mission implements EnemyListener {
     }
 
     public getEnemies():Enemy[] {
-        let i = this.waveCounter-1;
+        let i = this.waveCounter;
+        console.log(this.waveCounter);
         if (i < 0 || i > this.enemies.length) {
             return [];
         }
