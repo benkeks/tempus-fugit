@@ -1,16 +1,13 @@
 import Container = Phaser.GameObjects.Container;
 import Graphics = Phaser.GameObjects.Graphics;
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import { GameInfo } from "../../game";
 import { DecisionArrow } from "./decision-arrow";
 import { MissionScene } from "../../scenes/mission-scene";
 import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
 import { CardGUI } from "./card-gui";
-import Tween = Phaser.Tweens.Tween;
-import { EnemyGUI } from "./enemy-gui";
-import { HandGUI } from "./hand-gui";
-import { Hand } from "../game-objects/hand";
-
+import {EnemyGUI} from "./enemy-gui";
+import {Mission} from "../../mechanics/mission";
+import {HandGUI} from "./hand-gui";
 export class CardChannel extends Container {
 
     public decisionArrow: DecisionArrow;
@@ -207,8 +204,8 @@ export class CardChannel extends Container {
         return undefined;
     }
 
-    public playCard(enemy: EnemyGUI, card: CardGUI) {
-        this.missionScene.tfgame.player.applyCard(card.card, enemy.enemy, this.missionScene.tfgame);
+    public playCard(enemy:EnemyGUI, card:CardGUI) {
+        Mission.player.applyCard(card.card, enemy.enemy, this.missionScene.tfgame);
     }
 
     public reEmitCard(gameObject): void {

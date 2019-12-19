@@ -8,6 +8,10 @@ export class Next extends OneParamOperator {
         return "X";
     }
 
+    public getReverseRepresentation(): string {
+        return "Y";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         let status:PropositionStatus = this.operand.evaluateInternal(condition+this.direction);
 

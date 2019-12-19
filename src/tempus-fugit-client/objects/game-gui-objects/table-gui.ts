@@ -406,5 +406,9 @@ export class TableGUI implements GameStateListener {
             this.setEnergyIconColor(COLOR_RED, newEnergy - 1);
         }
     }
+
+    async activated(gameState:GameState) {
+        // TODO: ausgrauen wenn nicht aktiv
+    }
 }
 

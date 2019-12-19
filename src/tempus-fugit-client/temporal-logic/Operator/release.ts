@@ -8,6 +8,10 @@ export class Release extends TwoParamOperator {
         return "R";
     }
 
+    public getReverseRepresentation(): string {
+        return "S";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
         let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);

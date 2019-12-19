@@ -27,8 +27,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         this.enemy.listener.push(this);
 
         if (!texture) texture = enemy.image;
-        this.defaultColor = 0x404040;
-        this.defaultStrokeColor = 0xFFFFFF;
 
         this.addSpriteByTexture(texture);
         this.scene.anims.create({

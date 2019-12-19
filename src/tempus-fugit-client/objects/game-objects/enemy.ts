@@ -1,3 +1,4 @@
+
 import {Player} from "./player"
 import {GameState} from "./game-state"
 import {Formula} from "../../temporal-logic/formula";
@@ -6,6 +7,8 @@ import {Card} from "./card";
 import {Mission} from "../../mechanics/mission";
 
 export class Enemy {
+    public static enemies:{[name:string]:Enemy} = {};
+    
     public name: string; // The enemy's name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
@@ -17,6 +20,8 @@ export class Enemy {
     public reactAttacks: Card[]; // List of react effects
 
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
+    public sprite:string;
+    public size:number[];
 
    public getHP(): number {
         return this.currentHP;
@@ -31,7 +36,7 @@ export class Enemy {
     }
 
     public copy():Enemy {
-       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks);
+       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks, this.sprite, this.size);
        new_enemy.description = this.description;
        new_enemy.image = this.image;
 
@@ -47,13 +52,15 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
         this.specialAttack = specialAttack;
         this.reactAttacks = reactAttacks;
+        this.sprite = sprite;
+        this.size = size;
         this.listener = [];
 
     }
@@ -82,11 +89,11 @@ export class Enemy {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
         if (val) {
             switch (card.getKind()) {
-                case "other":
+                case Card.OTHER:
                     card.action(mission, null);
                     break;
-                case "directed":
-                    card.action(mission, mission.player);
+                case Card.DIRECTED:
+                    card.action(mission, Mission.player);
                     break;
             }
         }
@@ -126,6 +133,44 @@ export class Enemy {
     public isAlive(): boolean {
         return this.currentHP > 0;
     }
+
+    /**
+     * 
+     */
+    public static createFromJSON(jString:string, scene:Phaser.Scene): void {
+        let json = JSON.parse(jString);
+
+        for (let e of json.enemies) {
+            if (e.sprite != "" && e.size != undefined && e.size.length == 2) {
+                scene.load.spritesheet(e.name,
+                    e.sprite,
+                    {frameWidth: e.size[0], frameHeight: e.size[1]});
+            } else {
+                console.warn( e.name+ " does not have a texture given or its size is not in the right pattern. Nothing will be loaded.");
+            }
+
+            let arr = [];
+            for (let i in e.reactAttack) {
+                let att = e.reactAttack[i];
+                arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
+                    Card.DIRECTED, false, 0,  att.action));
+            }
+
+            let enemy = new Enemy(
+                e.name,
+                e.maxHP,
+                e.baseAttack,
+                new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
+                    Card.DIRECTED, false, 0,  e.specialAttack.action),
+                arr,
+                e.sprite,
+                e.size
+            );
+            enemy.image = e.image;
+            this.enemies[e.name] = enemy;
+        }
+    }
+
 }
 
 

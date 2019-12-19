@@ -1,3 +1,5 @@
+import { Mission } from "../mechanics/mission";
+import { Card } from "../objects/game-objects/card";
 import { GameInfo } from "../game";
 
 export class StartingScene extends Phaser.Scene {
@@ -6,6 +8,16 @@ export class StartingScene extends Phaser.Scene {
         super({
             key: "StartingScene"
         });
+    }
+
+    preload() {
+        // @ts-ignore
+        this.load.rexWebFont({
+            google: {
+                families: ["Comfortaa"]
+            }
+        });
+
     }
 
     create() {
@@ -35,15 +47,12 @@ export class StartingScene extends Phaser.Scene {
             "Play",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "appleKid" }
         );
-        playText.setOrigin(0.5)
+        playText.setOrigin(0.5);
         playText.setInteractive();
         playText.setColor("#fff");
 
         playText.on("pointerdown", () => {
-            this.scene.start("MainScene");
-            console.log("started ps");
-            console.log("Stopped intro", this.scene.isActive("MainScene"));
-            this.scene.stop("StartingScene");
+            this.scene.start("NavigationScene");
         });
     }
 }

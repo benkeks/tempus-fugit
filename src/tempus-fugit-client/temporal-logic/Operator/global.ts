@@ -8,6 +8,10 @@ export class Global extends OneParamOperator {
         return "G";
     }
 
+    public getReverseRepresentation():string {
+        return "H";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition);
 

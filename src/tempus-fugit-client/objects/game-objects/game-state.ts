@@ -3,11 +3,24 @@ import {Formula} from "../../temporal-logic/formula";
 import {Card} from "./card";
 
 export class GameState {
+    get active(): boolean {
+        return this._active;
+    }
+
+    set active(value: boolean) {
+        if (value == this._active) return;
+
+        this._active = value;
+
+        this.listener.map(obj => obj.activated(this));
+    }
     get energy(): number {
         return this._energy;
     }
 
     set energy(value: number) {
+        if (value == this._energy) return;
+
         let old:number = this._energy;
         this._energy = value;
 
@@ -41,6 +54,8 @@ export class GameState {
 
     public activeState:number = 0;
     public listener:GameStateListener[] = [];
+
+    private _active:boolean = true;
 
     constructor() {
         this.energy = this.maxEnergy;
@@ -89,7 +104,17 @@ export class GameState {
         return 0;
     }
 
+    /**
+     *
+     * this function changes the value of a variable at a given state. Afterwards it calls its listener only if it succeded.
+     * @param name the representation of the variable
+     * @param value the value that should be set
+     * @param state the state where the value should be set. Default: the active state
+     * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available, 3:not active state, 4:not active
+     * */
     public setVariableUser(name:string, value:boolean, state:number=this.activeState):number {
+        if (!this._active) return 4;
+
         let vs:VariableStatus = this.getVariableStatus(name);
 
         if (state !== this.activeState) return 3;
@@ -207,4 +232,10 @@ export interface GameStateListener {
      * @param newMaxEnergy the maximum Energy after the change
      */
     energyChanged(gameState:GameState, oldEnergy:number, newEnergy:number, oldMaxEnergy:number, newMaxEnergy:number):void;
+
+    /**
+     *
+     *
+     * */
+    activated(gameState:GameState);
 }
