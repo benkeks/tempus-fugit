@@ -117,6 +117,7 @@ export class Mission implements EnemyListener {
             this.endOfRound();
         }
         this.curPhase = next;
+        this.gameState.active = false;
 
         switch (this.curPhase) {
             case 0:
@@ -176,7 +177,7 @@ export class Mission implements EnemyListener {
     }
 
     private energyPhase():void {
-
+        this.gameState.active = true;
     }
 
     private playPhase():void {
