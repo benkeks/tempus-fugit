@@ -4,11 +4,9 @@
 		"description":"this card does damage!",
 		"image":"card1",
 		"formula":"Gf",
-		"attackPower":"5",
-		"isBaseAttackCard":"true",
+		"cardKind":"directed",
+		"isStandCard":"false",
 		"standRounds":"5",
-		"standsAttack":"2",
-		"standName":"stand1",
 		"action":"return;",
 		"inDeckAtStart":"5"},
 		
@@ -16,11 +14,9 @@
 		"description":"this card does damage!",
 		"image":"card1",
 		"formula":"Gf",
-		"attackPower":"5",
-		"isBaseAttackCard":"false",
+		"cardKind":"directed",
+		"isStandCard":"true",
 		"standRounds":"3",
-		"standsAttack":"2",
-		"standName":"stand1",
 		"action":"return;",
 		"inDeckAtStart":"5"}
 ]}

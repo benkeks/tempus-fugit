@@ -1,6 +1,10 @@
-import {Player} from "./player";
-import {GameState} from "./game-state";
-import {Attack} from "./attack";
+
+import {Player} from "./player"
+import {GameState} from "./game-state"
+import {Formula} from "../../temporal-logic/formula";
+import {Attack} from "./attack"
+import {Card} from "./card";
+import {Mission} from "../../mechanics/mission";
 
 export class Enemy {
     public static enemies:{[name:string]:Enemy} = {};
@@ -12,8 +16,8 @@ export class Enemy {
     public description:string;
     public image:string;
 
-    public specialAttack: Attack; // The enemy's base attack strength
-    public reactAttacks: Attack[]; // List of react effects
+    public specialAttack: Card; // The enemy's base attack strength
+    public reactAttacks: Card[]; // List of react effects
 
     public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
     public sprite:string;
@@ -48,7 +52,7 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: Attack, reactAttacks: Attack[], sprite:string, size:number[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
         this.name = name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
@@ -81,14 +85,19 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public attack(player: Player, gameState: GameState): void {
-        var attackPoints = 0;
-        if (gameState.evaluate(this.specialAttack.getFormula())) {
-            attackPoints = this.specialAttack.getAttackStrength();
-        } else {
-            attackPoints = this.baseAttack;
+    public applyCard(card: Card, mission: Mission): void {
+        let val:boolean = mission.gameState.evaluate(card.getFormula());
+        if (val) {
+            switch (card.getKind()) {
+                case Card.OTHER:
+                    card.action(mission, null);
+                    break;
+                case Card.DIRECTED:
+                    card.action(mission, Mission.player);
+                    break;
+            }
         }
-        player.takeHit(attackPoints);
+
     }
 
     /**
@@ -98,7 +107,7 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number, gameState: GameState, player: Player): void {
+    public takeHit(hitPower: number, mission: Mission, player: Player): void {
         let before:number = this.currentHP;
         this.currentHP -= hitPower;
 
@@ -108,10 +117,8 @@ export class Enemy {
 
         // Flip-Effect: Attacks player when attacked and if formula is fulfilled
         for (var reactAttack of this.reactAttacks) {
-            if (gameState.evaluate(reactAttack.getFormula())) {
-                console.log(player);
-                player.takeHit(reactAttack.getAttackStrength());
-                console.log("React attacked!");
+            if (mission.gameState.evaluate(reactAttack.getFormula())) {
+                reactAttack.action(mission, player);
             }
         }
 
@@ -143,15 +150,18 @@ export class Enemy {
             }
 
             let arr = [];
-            for (let i of e.reactAttack) {
-                arr.push(new Attack(i.formula, i.attackStrength));
+            for (let i in e.reactAttack) {
+                let att = e.reactAttack[i];
+                arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
+                    Card.DIRECTED, false, 0,  att.action));
             }
 
             let enemy = new Enemy(
                 e.name,
                 e.maxHP,
                 e.baseAttack,
-                e.specialAttack = new Attack(e.specialAttack.formula, e.specialAttack.attackStrength),
+                new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
+                    Card.DIRECTED, false, 0,  e.specialAttack.action),
                 arr,
                 e.sprite,
                 e.size

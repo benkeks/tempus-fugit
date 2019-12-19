@@ -6,12 +6,12 @@
             "baseAttack":2,
             "specialAttack":{
                 "formula":"Ga",
-                "attackStrength": 1
+                "action": "return;"
             },
             "reactAttack":[
                 {
                     "formula":"d->a",
-                    "attackStrength": 1
+                    "action": "return;"
                 }
             ],
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
