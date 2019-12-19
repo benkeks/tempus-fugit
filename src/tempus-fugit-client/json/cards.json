@@ -4,6 +4,7 @@
 		"description":"fires a fire ball on the enemy and deals 10 damage!",
 		"image":"card1",
 		"formula":"l&s",
+		"formula2":"Gl&(l&t&s)",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"5",
@@ -13,6 +14,7 @@
 		{"name":"natural healing",
 		"description":"heals you by 10!",
 		"image":"card1",
+
 		"formula":"#On&n",
 		"cardKind":"other",
 		"isStandCard":"false",

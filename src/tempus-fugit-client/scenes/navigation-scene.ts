@@ -50,6 +50,8 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("bullet_point", "assets/navigation_scene/overworld/bulletpoint/bulletpoint-Sheet.png", 
         {frameWidth: 10, frameHeight:5});
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
+        this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);

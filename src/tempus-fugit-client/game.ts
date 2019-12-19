@@ -36,6 +36,7 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: "#000",
+    pixelArt: true,
     plugins: {
         scene: [{
             key: 'rexUI',

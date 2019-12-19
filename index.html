@@ -1,25 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Tempus Fugit</title>
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             overflow: hidden
         }
     </style>
+    <style media='screen' type='text/css'>
+        @font-face {
+            font-family: appleKid;
+            src: url('assets/font/appleKid/appleKid.TTF');
+            font-weight: 400;
+            font-weight: normal;
+        }
+    </style>
 </head>
+
 <body>
-<script>
-    // removes error:  ReferenceError: WEBGL_RENDERER is not defined at eval
-    let WEBGL_RENDERER = true;
-    let CANVAS_RENDERER = true;
-</script>
-<script src="bundle.js"></script>
+    <div style="font-family:appleKid; position:absolute; left:-1000px; visibility:hidden;">.</div>
+    <script>
+        // removes error:  ReferenceError: WEBGL_RENDERER is not defined at eval
+        let WEBGL_RENDERER = true;
+        let CANVAS_RENDERER = true;
+    </script>
+    <script src="bundle.js"></script>
     <script src="bundle.js"></script>
     <div id="content"></div>
 
 </body>
+
 </html>

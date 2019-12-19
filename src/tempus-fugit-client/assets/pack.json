@@ -33,6 +33,11 @@
       },
       {
         "type": "image",
+        "key": "player",
+        "url": "assets/sprites/player/player_Sheet.png"
+      },
+      {
+        "type": "image",
         "key": "stack",
         "url": "assets/sprites/stack.png"
       },
@@ -49,12 +54,12 @@
 	  {
 	  "type":"image",
 	  "key":"swordFont",
-	  "url":"assets/font/fontletter/sword.PNG"
+	  "url":"assets/font/fontletter/overlay/sword.png"
 	  },
 	  {
 	  "type":"image",
 	  "key":"heartFont",
-	  "url":"assets/font/fontletter/heart.PNG"
+	  "url":"assets/font/fontletter/overlay/heart.png"
 	  },
       {
 	"type": "image",

@@ -34,7 +34,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * tints all cardGUI objects in hand black and disables dragging
      */
     fadeOut() {
-        setTimeout(() => this.unhoverAll(true), 2000);
+        //setTimeout(() => this.unhoverAll(true), 0);
 
         for (let c of this.cardGUIs) {
             c.fadeOut();
@@ -46,7 +46,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * removes the tint from all cardGUI objects and enables dragging
      */
     fadeIn() {
-        setTimeout(() => this.unhoverAll(true), 2000);
+        //setTimeout(() => this.unhoverAll(true), 0);
 
         for (let c of this.cardGUIs) {
             c.fadeIn();
@@ -98,6 +98,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.angle = card.cardOriginAngle;
                 card.setDepth(card.cardOriginZ);
                 card.setScale(1);
+                if (card.formulaGUI != null) {
+                    card.formulaGUI.destroy();
+                }
             }
         }
     }
@@ -145,7 +148,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                     z: i,
                     angle: newAngle,
                     ease: 'power2',
-                    duration: 1500,
+                    duration: 400,
                 });
             }
             else {
