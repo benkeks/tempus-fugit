@@ -8,6 +8,7 @@ import TileSprite = Phaser.GameObjects.TileSprite;
 import Container = Phaser.GameObjects.Container;
 import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
+import { MissionScene } from "./mission-scene";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -41,10 +42,6 @@ export class NavigationScene extends Phaser.Scene {
         if (this.created) return;
 
         this.load.pack("preload", "assets/pack.json", "preload");
-
-        // loading player sprite
-        this.load.spritesheet("player", "assets/sprites/player/player_sheet.png",
-            { frameWidth: 32, frameHeight: 64 });
 
         this.load.image("water_background", "assets/navigation_scene/texture/water.png");
         this.load.spritesheet("bullet_point", "assets/navigation_scene/overworld/bulletpoint/bulletpoint-Sheet.png", 
@@ -177,8 +174,9 @@ export class NavigationScene extends Phaser.Scene {
                     }
                 }
 
-                this.scene.start("MissionScene", this.getData(i));
-                this.scene.stop();
+
+                this.scene.run("MissionScene", this.getData(i));
+                this.scene.sleep();
             });
 
             b.play("blinking");

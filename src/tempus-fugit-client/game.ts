@@ -22,7 +22,6 @@ export abstract class GameInfo {
         } else {
             throw new TypeError("Axis has to be 0 or 1!");
         }
-
     }
 }
 
@@ -30,7 +29,6 @@ const config = {
     type: Phaser.AUTO,
     width: GameInfo.width,
     height: GameInfo.height,
-    pixelArt:true,
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -49,7 +47,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene ,MissionScene]
+    scene: [StartingScene, NavigationScene]
 };
 
 export class Game extends Phaser.Game {

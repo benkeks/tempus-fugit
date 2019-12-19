@@ -15,7 +15,7 @@
                 }
             ],
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
-            "size": [64, 64],
+            "size": [32, 32],
 			"image":"slime1"
 
         },
