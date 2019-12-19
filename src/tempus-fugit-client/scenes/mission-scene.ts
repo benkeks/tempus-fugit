@@ -14,6 +14,7 @@ import { StandGUI } from "../objects/game-gui-objects/stand-gui";
 import { CardChannel } from "../objects/game-gui-objects/card-channel";
 import { Textbox } from "../objects/game-gui-objects/textbox";
 import Image = Phaser.GameObjects.Image;
+import {FormulaGUI} from "../objects/game-gui-objects/formula-gui";
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
@@ -83,6 +84,10 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
       this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
 
       this.phaseText = this.add.text(100, 100, "Draw Phase");
+
+      //var formula = new FormulaGUI(this, this.tfgame, "GnX((l&t&n&s))", 100, 350, 4, true);
+
+
 
       Mission.player.takeCard(Mission.deck);
 

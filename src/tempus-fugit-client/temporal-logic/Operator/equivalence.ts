@@ -5,7 +5,7 @@ export class Equivalence extends TwoParamOperator {
 
 
     public getDefaultRepresentation():string {
-        return "<->";
+        return "=";
     }
 
     precedence = 2;

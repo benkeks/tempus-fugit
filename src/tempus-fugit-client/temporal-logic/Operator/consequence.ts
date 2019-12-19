@@ -21,7 +21,7 @@ export class Consequence extends TwoParamOperator {
     precedence = 2;
 
     public getDefaultRepresentation():string {
-        return "->";
+        return "-";
     }
 
     public static leftDirectionAlphabet:string = "<-|<=";
