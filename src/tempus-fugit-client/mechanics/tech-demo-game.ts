@@ -1,9 +1,10 @@
-import {Card} from "../objects/game-objects/card";
-import {Player} from "../objects/game-objects/player";
-import {Enemy} from "../objects/game-objects/enemy";
-import {GameState} from "../objects/game-objects/game-state";
-import {Mission} from "./mission";
-import {Attack} from "../objects/game-objects/attack";
+import { Card } from "../objects/game-objects/card";
+import { Player } from "../objects/game-objects/player";
+import { Enemy } from "../objects/game-objects/enemy";
+import { GameState } from "../objects/game-objects/game-state";
+import { Mission } from "./mission";
+import { Attack } from "../objects/game-objects/attack";
+import { StoryDialog } from "./story-dialog";
 
 export class TechDemoGame extends Mission {
 
@@ -13,13 +14,15 @@ export class TechDemoGame extends Mission {
         Mission.player = new Player("player1", 10, 1);
 
         let e:Enemy = new Enemy("slime1", 5, 2,
-            new Attack("Ga", 5), [new Attack("Gb", 10)], "slime1", [64,64]);
+        new Attack("Ga", 5), [new Attack("Gb", 10)], "slime1", [64,64]);
         e.description = "A slime that do not like people! Some more Text that is really long!!!";
         e.image = e.name;
         this.enemies = [
             [e.copy(), e.copy()],
-                [e.copy(),e.copy(),e.copy()]
-        ];
+            [e.copy(), e.copy(), e.copy()]];
+        let sd = new StoryDialog([["slime1", "Hi"], ["slime2", "Hello good sir!"]]);
+        sd.parsetriggerFunctionString("return true;");
+        this.dialogue.push(sd);
 
         this.gameState = new GameState();
         this.gameState.maxEnergy = 4;

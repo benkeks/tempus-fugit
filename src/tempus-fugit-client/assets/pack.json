@@ -73,6 +73,15 @@
 	  {"type": "image",
 	"key": "forest",
 	"url": "assets/sprites/forest.png"
+      },
+	  {
+        "type": "image",
+        "key": "cardIcon",
+        "url": "assets/sprites/text-box/user.png"
+       }, {
+        "type": "image",
+        "key": "nextPage",
+        "url": "assets/sprites/text-box/arrow-down-left.png"
       }
     ]
   }

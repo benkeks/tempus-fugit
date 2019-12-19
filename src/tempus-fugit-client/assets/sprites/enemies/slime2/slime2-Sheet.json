@@ -1,35 +1,35 @@
 {
 	"frames": [
 		{
-			"filename": "slime1-Sheet.png",
+			"filename": "slime2-Sheet.png",
 			"frame": {"x":0,"y":0,"w":32,"h":32},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32}
 		},
 		{
-			"filename": "slime1-Sheet.png",
+			"filename": "slime2-Sheet.png",
 			"frame": {"x":32,"y":0,"w":32,"h":32},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32}
 		},
 		{
-			"filename": "slime1-Sheet.png",
+			"filename": "slime2-Sheet.png",
 			"frame": {"x":64,"y":0,"w":32,"h":32},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32}
 		},
 		{
-			"filename": "slime1-Sheet.png",
+			"filename": "slime2-Sheet.png",
 			"frame": {"x":96,"y":0,"w":32,"h":32},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32}
 		},
 		{
-			"filename": "slime1-Sheet.png",
+			"filename": "slime2-Sheet.png",
 			"frame": {"x":128,"y":0,"w":32,"h":32},
 			"rotated": false,
 			"trimmed": false,

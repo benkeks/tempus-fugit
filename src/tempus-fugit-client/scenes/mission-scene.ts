@@ -1,32 +1,31 @@
 import { Card } from "../objects/game-objects/card";
-import {Enemy} from "../objects/game-objects/enemy";
-import {CardGUI} from "../objects/game-gui-objects/card-gui";
-import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
-import {BoardGUI} from "../objects/game-gui-objects/board-gui";
-import {TableGUI} from "../objects/game-gui-objects/table-gui";
-import {HandGUI} from "../objects/game-gui-objects/hand-gui";
-import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
-import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
-import {Mission, GameStateListener} from "../mechanics/mission";
-import {StoryDialog} from "../mechanics/story-dialog";
-import {StandGUI} from "../objects/game-gui-objects/stand-gui";
-import {CardChannel} from "../objects/game-gui-objects/card-channel";
-import Sprite = Phaser.GameObjects.Sprite;
-import {GameInfo} from "../game";
+import { Enemy } from "../objects/game-objects/enemy";
+import { CardGUI } from "../objects/game-gui-objects/card-gui";
+import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
+import { TechDemoGame } from "../mechanics/tech-demo-game";
+import { TableGUI } from "../objects/game-gui-objects/table-gui";
+import { HandGUI } from "../objects/game-gui-objects/hand-gui";
+import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
+import { StackGUI } from "../objects/game-gui-objects/stack-gui";
+import { EnemyGuiLayout } from "../objects/game-gui-objects/enemy-gui-layout";
+import { Mission, GameStateListener } from "../mechanics/mission";
+import { StoryDialog } from "../mechanics/story-dialog";
+import { StandGUI } from "../objects/game-gui-objects/stand-gui";
+import { CardChannel } from "../objects/game-gui-objects/card-channel";
+import { Textbox } from "../objects/game-gui-objects/textbox";
 import Image = Phaser.GameObjects.Image;
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
     public playerGUI: PlayerGUI;
     public gameStateGUI: TableGUI;
-    public handGUI:HandGUI;
-    public deckGUI:DeckGUI;
-    public enemyGUI:EnemyGuiLayout;
-    public stackGUI:StackGUI;
-    public boardGUI:BoardGUI;
-    public standGUI:StandGUI;
+    public handGUI: HandGUI;
+    public deckGUI: DeckGUI;
+    public enemyGUI: EnemyGuiLayout;
+    public stackGUI: StackGUI;
+    public standGUI: StandGUI;
     public phaseText: Phaser.GameObjects.Text;
+    public textBox: Textbox;
 
     public tfgame:Mission;
     public cardChannel:CardChannel;
@@ -64,29 +63,34 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     let scale = Math.max(scaleX, scaleY)
     this.background.setScale(scale).setScrollFactor(0)
 
-    this.stackGUI = new StackGUI(this, "stack");
-    this.boardGUI = new BoardGUI(this, this.stackGUI);
+      this.textBox = new Textbox(this);
 
-    this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
-    this.standGUI.hide();
+      this.tfgame = new TechDemoGame();
+      this.tfgame.listener.push(this);
 
-    this.deckGUI = new DeckGUI(this, "deck", Mission.deck);
-    this.handGUI = new HandGUI(this, Mission.player.hand, this.stackGUI, this.boardGUI);
-    this.gameStateGUI = new TableGUI(this, this.tfgame)
+      this.stackGUI = new StackGUI(this, "stack");
 
-    this.playerGUI = new PlayerGUI(this, "player", Mission.player);
-    this.playerGUI.listener.push(Mission.player);
+      this.standGUI = new StandGUI(this, this.tfgame, "stand", null);
+      this.standGUI.hide();
 
-    this.enemyGUI = new EnemyGuiLayout(this, []);
+      this.deckGUI = new DeckGUI(this, "deck", Mission.deck);
+      this.handGUI = new HandGUI(this, Mission.player.hand, this.stackGUI, this.deckGUI);
+      this.gameStateGUI = new TableGUI(this, this.tfgame)
 
-    this.phaseText = this.add.text(100,100,"Draw Phase");
+      this.playerGUI = new PlayerGUI(this, "player", Mission.player);
+      this.playerGUI.listener.push(Mission.player);
 
-    this.tfgame.startCombat();
+      this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
+
+      this.phaseText = this.add.text(100, 100, "Draw Phase");
+
       Mission.player.takeCard(Mission.deck);
 
       this.handGUI.fadeOut();
 
-    this.cardChannel = new CardChannel(this);
+      //this.arrow = new DecisionArrow(this);
+      this.cardChannel = new CardChannel(this, this.handGUI);
+      this.tfgame.startCombat();
   }
 
   update(time: number, delta: number): void {
@@ -182,7 +186,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
 
   async storyDialog(game: Mission, dialog: StoryDialog){
-
+      this.textBox.addStoryDialog(dialog);
   }
 
   async gameover(game: Mission) {
