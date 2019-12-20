@@ -156,15 +156,17 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
   async gameover(game: Mission, gameWon:boolean) {
     console.log(gameWon);
+    this.gameOverText.setVisible(true);
     if (gameWon) {
       //this.tfgame.player.missionStates[this.missionIndex] = true;
       //this.scene.wake("NavigationScene");
       //this.scene.stop();
       //this.scene.remove();
 
-      this.gameOverText.setVisible(true);
+      this.gameOverText.setText("GAME OVER: You won!");
     } else {
       // TODO: implement gameover screen
+      this.gameOverText.setText("GAME OVER: You lost!");
     }
   }
 
