@@ -37,7 +37,7 @@ export class Card {
 
     public copy():Card {
         let c:Card = new Card(this.name, this.description,
-            this.image, this.formula.generateRepresentation(true, true),
+            this.image, this.formula.generateRepresentation(true, false),
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
 
