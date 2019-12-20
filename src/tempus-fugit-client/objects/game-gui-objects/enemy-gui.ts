@@ -35,6 +35,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
             frameRate: 10,
             repeat: -1
         });
+        console.log(this.sprite);
+        console.log(enemy);
 
         this.sprite.anims.play("standing");
         this.sprite.setScale(2,2);

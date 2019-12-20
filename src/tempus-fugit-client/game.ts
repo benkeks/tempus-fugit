@@ -22,7 +22,6 @@ export abstract class GameInfo {
         } else {
             throw new TypeError("Axis has to be 0 or 1!");
         }
-
     }
 }
 
@@ -48,7 +47,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene ,MissionScene]
+    scene: [StartingScene, NavigationScene]
 };
 
 export class Game extends Phaser.Game {

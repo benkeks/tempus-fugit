@@ -93,7 +93,7 @@ export class Enemy {
                     card.action(mission, null);
                     break;
                 case Card.DIRECTED:
-                    card.action(mission, Mission.player);
+                    card.action(mission, mission.player);
                     break;
             }
         }
@@ -107,18 +107,16 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public takeHit(hitPower: number, mission: Mission, player: Player): void {
+    public takeHit(hitPower: number, mission: Mission): void {
         let before:number = this.currentHP;
         this.currentHP -= hitPower;
 
-        for (let i in this.listener) {
-            this.listener[i].enemyHpChanged(this, before, this.currentHP);
-        }
+        this.listener.map(l => l.enemyHpChanged(this, before, this.currentHP));
 
         // Flip-Effect: Attacks player when attacked and if formula is fulfilled
         for (var reactAttack of this.reactAttacks) {
             if (mission.gameState.evaluate(reactAttack.getFormula())) {
-                reactAttack.action(mission, player);
+                reactAttack.action(mission, mission.player);
             }
         }
 

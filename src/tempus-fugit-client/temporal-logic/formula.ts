@@ -31,6 +31,12 @@ export class Formula extends Proposition {
     public variables:{[represenstation:string]:Variable} = {};
 
     evaluateInternal(condition: number): PropositionStatus {
+        if (this.hjunctor === undefined) {
+            let pstat = new PropositionStatus();
+            pstat.successful = false;
+            return pstat;
+        }
+
         return this.hjunctor.evaluateInternal(condition);
     }
 

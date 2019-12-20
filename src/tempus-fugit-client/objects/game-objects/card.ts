@@ -11,16 +11,16 @@ export class Card {
     public static readonly RANDOM = "random";
     public static readonly OTHER = "other";
 
-    private name: string; // Name of the card
-    private description: string; // Description of the card
-    private image: string; // A string describing the image on the card
-    private formula: Formula; // A formula attached to the card
-    private cardKind: string; // can be "global", "random", "directed" or "other"
-    private isStandCard: boolean;
-    private standRounds: number;
-    private targets: Enemy[];
+    public name: string; // Name of the card
+    public description: string; // Description of the card
+    public image: string; // A string describing the image on the card
+    public formula: Formula; // A formula attached to the card
+    public cardKind: string; // can be "global", "random", "directed" or "other"
+    public isStandCard: boolean;
+    public standRounds: number;
+    public targets: Enemy[];
     public action:Function;
-    public listener:StandListener[]; // List of objects listening to stand event
+    public listener:StandListener[] = []; // List of objects listening to stand event
     public inDeckAtStart:number;
 
     public stand(): boolean {

@@ -23,7 +23,8 @@
 		{"name":"Obliterate",
 		"description":"this card obliterates.",
 		"image":"obliterate",
-		"formula":"l&s&n&t",
+		"formula2":"l&s&n&t",
+		"formula":"n",
 		"cardKind":"global",
 		"isStandCard":"true",
 		"standRounds":"3",
@@ -109,13 +110,5 @@
 		"standRounds":"3",
 		"action":"return; // lowers the base attack of a random enemy by 1",
 		"inDeckAtStart":"2"}
-
-
-
-
-
-
-
-
 
 ]}

@@ -10,7 +10,7 @@ export class TechDemoGame extends Mission {
 
     constructor() {
         super();
-
+/*
         Mission.player = new Player("player1", 10, 1);
 
         let e: Enemy = new Enemy("slime1", 5, 2,
@@ -59,5 +59,6 @@ export class TechDemoGame extends Mission {
         Mission.deck.addCard(c4);
         Mission.deck.addCard(c5);
         Mission.deck.addCard(c2);
+        */
     }
 }
