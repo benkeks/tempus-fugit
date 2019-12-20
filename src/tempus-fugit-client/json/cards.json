@@ -7,9 +7,10 @@
 		"isStandCard":"true",
 		"standRounds":"3",
 		"action":"target.takeHit(1000, mission);",
+		"comment":"",
 		"inDeckAtStart":"100"}
 		],
-		
+
 
 	"cards2":	[{"name":"Feuerball",
 		"description":"this card deals 10 damage to one chosen enemy!",
@@ -18,9 +19,11 @@
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"5",
-		"action":"return; //Deals 10 damage to one enemy",
-		"inDeckAtStart":"5"}
-		,{"name":"Lightning Strike",
+		"action":"return;",
+		"comment":"Deals 10 damage to one enemy",
+		"inDeckAtStart":"5"},
+
+		{"name":"Lightning Strike",
 		"description":"this card deals 10 damage to all enemies",
 		"image":"lightning",
 		"formula":"l&n&s&#O!l",
@@ -39,7 +42,8 @@
 		"cardKind":"global",
 		"isStandCard":"true",
 		"standRounds":"3",
-		"action":"return; // deals 100 dmg to everything. Resets board -> everything to false, but not locked",
+		"action":"return;",
+		"comment":"deals 100 dmg to everything. Resets board -> everything to false, but not locked",
 		"inDeckAtStart":"1"},
 
 		{"name":"Natural heal",
@@ -49,7 +53,8 @@
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"return; // heals player by 15 HP, also -> OOn&On",
+		"action":"return;",
+		"comment":"eals player by 15 HP, also -> OOn&On",
 		"inDeckAtStart":"4"},
 
 		{"name":"Unnatural heal",
@@ -59,7 +64,8 @@
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"return; // heals player by 50 and: -> !Gn",
+		"action":"return;",
+		"comment":"heals player by 50 and: -> !Gn",
 		"inDeckAtStart":"2"},
 
 		{"name":"Guiding Light",
@@ -69,7 +75,8 @@
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"return; // Base attack up by 1 and: -> Gl",
+		"action":"return;",
+		"comment":"Base attack up by 1 and: -> Gl",
 		"inDeckAtStart":"2"},
 
 		{"name":"Lower woodland spirit",
@@ -79,7 +86,8 @@
 		"cardKind":"global",
 		"isStandCard":"true",
 		"standRounds":"4",
-		"action":"return; // deals 2 damage to all enemies",
+		"action":"return;",
+		"comment":"deals 2 damage to all enemies",
 		"inDeckAtStart":"2"},
 
 		{"name":"Regeneration spirit",
@@ -89,7 +97,8 @@
 		"cardKind":"global",
 		"isStandCard":"true",
 		"standRounds":"10",
-		"action":"return; // heals player by 5",
+		"action":"return;",
+		"comment":"heals player by 5",
 		"inDeckAtStart":"2"},
 
 		{"name":"Lower lightning spirit",
@@ -99,7 +108,8 @@
 		"cardKind":"random",
 		"isStandCard":"true",
 		"standRounds":"3",
-		"action":"return; // deals 10 damage to a random foe",
+		"action":"return;",
+		"comment":"deals 10 damage to a random foe",
 		"inDeckAtStart":"2"},
 
 		{"name":"Root pierce",
@@ -109,7 +119,8 @@
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"4",
-		"action":"return; // deals 7 damage to a random foe",
+		"action":"return;",
+		"comment":"deals 7 damage to a random foe",
 		"inDeckAtStart":"2"},
 
 		{"name":"Weaken",
@@ -119,7 +130,8 @@
 		"cardKind":"random",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"return; // lowers the base attack of a random enemy by 1",
+		"action":"return;",
+		"comment":"lowers the base attack of a random enemy by 1",
 		"inDeckAtStart":"2"}
 
 ]}
