@@ -168,7 +168,7 @@ export class CardChannel extends Container {
                 this.scene.sys.canvas.style.cursor = "default";
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
-                if (e || card.getKind() != Card.DIRECTED) {
+                if (e || (card.getKind() != Card.DIRECTED && pointer.y > this.y)) {
                     this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
@@ -177,8 +177,8 @@ export class CardChannel extends Container {
                     this.missionScene.handGUI.unhoverAll(true);
                 }
                 canClick = true;
+                
             }, this);
-
         // logic for clicking cards has to be here, it depends on canClick variable set when dragging starts 
         // card hovers when double-clicked
         let lastTime = 0;

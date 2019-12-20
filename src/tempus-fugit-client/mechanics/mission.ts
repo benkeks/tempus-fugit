@@ -330,6 +330,7 @@ export class Mission implements EnemyListener, PlayerListener {
             for (let wave of m.enemies) {
                 let wave_enemies:Enemy[] = [];
                 for (let e of wave) {
+                    console.log(e);
                     wave_enemies.push(Enemy.enemies[e].copy());
                 }
                 mission.enemies.push(wave_enemies);

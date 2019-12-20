@@ -85,15 +85,25 @@ export class GameState {
         }
     }
 
+
+
     public setAllVariableValues(variable:string, value:boolean):void {
         let l:number = this.variables[variable].values.length;
+        this.variables[variable].defaultValue = value;
 
         for (let i = 0; i < l; i++) {
             this.setVariable(variable, value, i);
         }
     }
 
-    public resetFutureValues
+    public setAllFutureVariableValues(variable:string, value:boolean):void {
+        let l:number = this.variables[variable].values.length;
+        this.variables[variable].defaultValue = value;
+
+        for (let i = this.activeState+1; i < l; i++) {
+            this.setVariable(variable, value, i);
+        }
+    }
 
     /***
      *  changes the roundIndex and triggers an event.

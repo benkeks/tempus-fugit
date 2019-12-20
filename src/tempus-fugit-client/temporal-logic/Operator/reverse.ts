@@ -36,6 +36,10 @@ export class Reverse extends OneParamOperator {
         return "#";
     }
 
+    public getReverseRepresentation():string {
+        return "";
+    }
+
     evaluateInternal(condition: number): PropositionStatus {
         if (this.operand instanceof Operator) {
             this.operand.direction *= -1;

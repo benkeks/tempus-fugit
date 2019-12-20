@@ -5,7 +5,7 @@ import {PropositionStatus} from "../proposition";
 export class Or extends TwoParamOperator {
 
     public getDefaultRepresentation():string {
-        return "\\|";
+        return "|";
     }
 
     evaluateInternal(condition: number): PropositionStatus {

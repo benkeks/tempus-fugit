@@ -22,6 +22,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
     ) {
         super(scene, x, y);
         this.scene = scene;
+
         this.reps["n"] = {type: "runes", frame: 0};
         this.reps["s"] = {type: "runes", frame: 1};
         this.reps["l"] = {type: "runes", frame: 2};
@@ -44,7 +45,6 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         let pos = 0;
         this.elementList = [];
         for (let char of formulaString) {
-            console.log(char);
             this.elementList.push(this.scene.add.sprite(pos, 0, this.reps[char].type, this.reps[char].frame));
             pos += (16 + margin);
         }

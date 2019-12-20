@@ -105,6 +105,7 @@ export class Player {
      */
     public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
+        console.log("valid: " + val);
         if (val) {
             if (card.stand()) {
                 mission.pushStand(card);

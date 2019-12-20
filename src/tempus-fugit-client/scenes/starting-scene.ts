@@ -1,6 +1,7 @@
 import { Mission } from "../mechanics/mission";
 import { Card } from "../objects/game-objects/card";
 import { GameInfo } from "../game";
+import { Formula } from "../temporal-logic/formula";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -18,32 +19,52 @@ export class StartingScene extends Phaser.Scene {
             }
         });
 
+        this.load.spritesheet("gamelogo", "assets/title_screen/TempusFugit-Sheet.png", {frameWidth: 105, frameHeight: 78});
     }
 
     create() {
         console.log("booting");
 
-        const title = this.add.text(
+        this.cameras.main.setBackgroundColor('#89CFF0')
+
+
+        /*const title = this.add.text(
             GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
             GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 20),
             "Tempus Fugit",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "appleKid" }
         );
         title.setOrigin(0.5)
-            .setColor("#fff");
+            .setColor("#fff");*/
 
-        const tutText = this.add.text(
+        /*const tutText = this.add.text(
             GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
             GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50),
             "Tutorial",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "appleKid" }
         );
         tutText.setOrigin(0.5);
-        tutText.setColor("#fff");
+        tutText.setColor("#fff");*/
+        
+
+        let f:Formula = new Formula("#On");
+        f.variables["n"].values = [false, true,true];
+        console.log(f.evaluate(1));
+        console.log(f.evaluate(2));
+
+        let bla = this.add.sprite(950,450,"gamelogo",0);
+        bla.setScale(8,8);
+        this.anims.create({
+            key: "gamelogo2",
+            frames: this.anims.generateFrameNumbers("gamelogo", {start:0}),
+            frameRate: 10,
+            repeat: -1
+        });
+        bla.anims.play("gamelogo2");
 
         const playText = this.add.text(
             GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
-            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 70),
+            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 85),
             "Play",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), fontFamily: "appleKid" }
         );

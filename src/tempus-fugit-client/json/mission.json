@@ -5,7 +5,8 @@
             "background":"forest",
             "waves": 1,
             "enemies": [
-                ["slime1", "slime2"]
+                ["slime1", "slime2"],
+				["slime3", "slime2"]
             ],
             "monologue":{"0":"As you're advancing, more monsters start to appear. Watch out!"}
             ,
@@ -13,7 +14,11 @@
                 {
                     "triggerFunctionString":"return true;",
                     "text": [["slime1","Please put me out of my misery"], ["player", "What the hell?!"]]
-                }
+                },
+				{
+					"triggerFunctionString":"return mission.getEnemies().length <2;",
+					"text": [["slime1", "Finally I can die in peace"],["player", "What is it with these weird slimes?"]]
+				}
             ]
     
         },
@@ -24,9 +29,9 @@
             "enemies": [
                 ["slime1", "slime2"],
                 ["slime2", "slime3", "slime2"],
-                ["slime3", "slime3", "goblin"],
-                ["goblin", "slime3", "goblin"],
-                ["goblin", "slime_mother", "goblin"]
+                ["slime3", "slime3", "goblin1"],
+                ["goblin1", "slime3", "goblin1"],
+                ["goblin1", "slime_mother", "goblin1"]
             ],
             "monologue":{
 				"0": "You're walking deeper into the woods... What is it with these slimes?",

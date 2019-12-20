@@ -83,6 +83,7 @@ export class Card {
      */
 
     public setActionFunction(actionString:string) {
+        console.log(actionString);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
     }
 
