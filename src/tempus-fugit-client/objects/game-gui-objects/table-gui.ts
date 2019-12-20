@@ -2,7 +2,7 @@ import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
 
-const COLOR_PRIMARY = 0x0f3491;
+const COLOR_PRIMARY = 0x2a4f16;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e05;
 const COLOR_RED = 0x9e0b00;
@@ -23,8 +23,9 @@ export class TableGUI implements GameStateListener {
     private readonly tableOffsetY: number; // y-position of table
     private readonly variableTableCellWidth = 90;
     private readonly variableTableCellHeight = 60;
-    private readonly tableColumnCount = 15;
+    private readonly tableColumnCount = 20;
     private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
+    //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
 
     constructor(
         scene: Phaser.Scene,
@@ -46,6 +47,11 @@ export class TableGUI implements GameStateListener {
         this.createVariableTable(Object.keys(this.variables));
         this.createButton();
         this.roundChanged(this.gameState, -1, this.gameState.activeState);
+
+        // this.mapping["n"] = { frame: 0 };
+        // this.mapping["s"] = { frame: 1 };
+        // this.mapping["l"] = { frame: 2 };
+        // this.mapping["t"] = { frame: 3 };
     }
 
     /**
@@ -77,7 +83,8 @@ export class TableGUI implements GameStateListener {
                     20,
                     10,
                     10,
-                    COLOR_PRIMARY
+                    COLOR_PRIMARY,
+                    0.3
                 ),
                 scroller: false,
                 // table config
@@ -103,7 +110,7 @@ export class TableGUI implements GameStateListener {
                             .roundRectangle(0, 0, 20, 20, 0)
                             .setStrokeStyle(2, COLOR_DARK),
                         icon: scene.rexUI.add
-                            .roundRectangle(0, 0, 30, 30, 15, COLOR_PRIMARY)
+                            .roundRectangle(0, 0, 30, 30, 15, COLOR_PRIMARY, 0)
                             .setDepth(3),
                         space: {
                             left: 30
@@ -146,7 +153,7 @@ export class TableGUI implements GameStateListener {
         // @ts-ignore
         let variableNameTable = this.scene.rexUI.add
             .gridTable({
-                x: 280,
+                x: 55,
                 y: this.tableOffsetY,
                 // @ts-ignore
                 background: this.scene.rexUI.add.roundRectangle(
@@ -179,14 +186,42 @@ export class TableGUI implements GameStateListener {
                         background: scene.rexUI.add
                             .roundRectangle(0, 0, 20, 20, 0)
                             .setStrokeStyle(2, COLOR_DARK),
-                        text: scene.add.text(0, 0, "  " + variables[cell.index], {
-                            fontSize: 24
-                        })
+                        // text: scene.add.text(0, 0, "  " + variables[cell.index], {
+                        //     fontSize: 24
+                        // })
                     });
                 }
             })
             .layout();
 
+        // n -> frame 0
+        // s -> frame 1
+        // l -> frame 2
+        // t -> frame3
+        // show rune picture depending on variable names
+        let x = 50;
+        let y = 50;
+        let frame = 0;
+        for (let v of variables) {
+            switch (v) {
+                case "n":
+                    frame = 0;
+                    break;
+                case "s":
+                    frame = 1;
+                    break;
+                case "l":
+                    frame = 2;
+                    break;
+                case "t":
+                    frame = 3;
+                    break;
+            }
+            console.log('SDf sdf sdf ', v, frame);
+            this.scene.add.sprite(x, y, "runes", frame);
+            y += 60;
+
+        }
         // add items to table
         items = [];
         for (let i = 0; i < variables.length; i++) {
@@ -205,7 +240,7 @@ export class TableGUI implements GameStateListener {
      */
     createEnergyTable(
         energyCount: number,
-        offsetX: number = 490,
+        offsetX: number = 230,
         offsetY: number = 40
     ): void {
         // destroy old table if available
@@ -410,7 +445,7 @@ export class TableGUI implements GameStateListener {
         }
     }
 
-    async activated(gameState:GameState) {
+    async activated(gameState: GameState) {
         // TODO: ausgrauen wenn nicht aktiv
     }
 }
