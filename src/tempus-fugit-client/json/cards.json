@@ -1,6 +1,17 @@
 {
-"cards": [
-		{"name":"Feuerball",
+"cards": [{"name":"Obliterate",
+		"description":"this card obliterates.",
+		"image":"obliterate",
+		"formula":"n",
+		"cardKind":"global",
+		"isStandCard":"true",
+		"standRounds":"3",
+		"action":"target.takeHit(1000, mission);",
+		"inDeckAtStart":"100"}
+		],
+		
+
+	"cards2":	[{"name":"Feuerball",
 		"description":"this card deals 10 damage to one chosen enemy!",
 		"image":"fireball",
 		"formula":"(l|n)&s",
@@ -8,16 +19,16 @@
 		"isStandCard":"false",
 		"standRounds":"5",
 		"action":"return; //Deals 10 damage to one enemy",
-		"inDeckAtStart":"5"},
-
-		{"name":"Lightning Strike",
+		"inDeckAtStart":"5"}
+		,{"name":"Lightning Strike",
 		"description":"this card deals 10 damage to all enemies",
 		"image":"lightning",
 		"formula":"l&n&s&#O!l",
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"return; //Deals 10 dmg to all enemies, also: ->!Ol&!OOl",
+		"action":"return;",
+		"comment":"//Deals 10 dmg to all enemies, also: ->!Ol&!OOl",
 		"inDeckAtStart":"3"},
 
 		{"name":"Obliterate",
