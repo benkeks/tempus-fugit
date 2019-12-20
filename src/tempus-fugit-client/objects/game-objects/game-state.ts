@@ -49,7 +49,7 @@ export class GameState {
     private _variables:{[represenstation:string]:Variable} = {};
     public variableStatus:{[representation:string]:VariableStatus} = {};
 
-    private _maxEnergy:number = 2;
+    private _maxEnergy:number = 4;
     private _energy:number = 0;
 
     public activeState:number = 0;

@@ -49,7 +49,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
      * @param changedTo
      */
     async playerHpChanged(changedTo: number) {
-        this.hpText.setText('hp: ' + changedTo);
+        this.hpText.setText('' + changedTo);
     }
 }
 

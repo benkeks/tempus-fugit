@@ -91,7 +91,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
 
         this.gameState = new GameState();
-        this.gameState.maxEnergy = 2;
+        this.gameState.maxEnergy = 4;
         this.gameState.setVariable("l", false);
         this.gameState.setVariable("t", false);
         this.gameState.setVariable("n", false);

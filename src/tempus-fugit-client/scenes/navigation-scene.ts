@@ -24,12 +24,12 @@ export class NavigationScene extends Phaser.Scene {
     public created:boolean = false;
 
     public missionDependency:{[index:number]:number[]} = {
-        0:[],
-        1:[0]
+        0:[]
+        // commented because not used for now 1:[0]
     };
     public missionKeys:{[index:number]:string} = {
-        0:"tutorial",
-        1:"mission1"
+        0:"tutorial"
+        // commented because not used for now 1:"mission1"
     };
 
     constructor() {
