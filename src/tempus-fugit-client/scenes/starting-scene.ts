@@ -1,6 +1,7 @@
 import { Mission } from "../mechanics/mission";
 import { Card } from "../objects/game-objects/card";
 import { GameInfo } from "../game";
+import { Formula } from "../temporal-logic/formula";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -44,7 +45,12 @@ export class StartingScene extends Phaser.Scene {
         );
         tutText.setOrigin(0.5);
         tutText.setColor("#fff");*/
+        
 
+        let f:Formula = new Formula("#On");
+        f.variables["n"].values = [false, true,true];
+        console.log(f.evaluate(1));
+        console.log(f.evaluate(2));
 
         let bla = this.add.sprite(950,450,"gamelogo",0);
         bla.setScale(8,8);

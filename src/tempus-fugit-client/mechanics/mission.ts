@@ -284,8 +284,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public getEnemies():Enemy[] {
         let i = this.waveCounter;
-        console.log(this.waveCounter);
-        if (i < 0 || i > this.enemies.length) {
+        if (i < 0 || i >= this.enemies.length) {
             return [];
         }
 
@@ -331,6 +330,7 @@ export class Mission implements EnemyListener, PlayerListener {
             for (let wave of m.enemies) {
                 let wave_enemies:Enemy[] = [];
                 for (let e of wave) {
+                    console.log(e);
                     wave_enemies.push(Enemy.enemies[e].copy());
                 }
                 mission.enemies.push(wave_enemies);

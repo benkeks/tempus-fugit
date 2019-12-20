@@ -33,6 +33,10 @@ export class Reverse extends OneParamOperator {
     }
 
     public getDefaultRepresentation():string {
+        return "#";
+    }
+
+    public getReverseRepresentation():string {
         return "";
     }
 

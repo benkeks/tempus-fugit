@@ -189,6 +189,7 @@ export class Formula extends Proposition {
         } else {
             throw new TypeError("Formula has to be of type String or Proposition[]");
         }
+        //console.log(formula);
 
         let operatorStack:Operator[] = [];
         let outputQueue:Proposition[] = [];
