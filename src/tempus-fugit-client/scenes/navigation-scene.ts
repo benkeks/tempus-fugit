@@ -173,9 +173,10 @@ export class NavigationScene extends Phaser.Scene {
                         return;
                     }
                 }
+                
+                this.game.scene.add("MissionScene", new MissionScene(), true, this.getData(i));
 
-
-                this.scene.run("MissionScene", this.getData(i));
+                //this.scene.run("MissionScene", this.getData(i));
                 this.scene.sleep();
             });
 
