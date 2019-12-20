@@ -22,6 +22,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
     ) {
         super(scene, x, y);
         this.scene = scene;
+
         this.reps["n"] = {type: "runes", frame: 0};
         this.reps["s"] = {type: "runes", frame: 1};
         this.reps["l"] = {type: "runes", frame: 2};

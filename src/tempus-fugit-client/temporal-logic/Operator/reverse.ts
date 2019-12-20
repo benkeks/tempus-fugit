@@ -33,7 +33,7 @@ export class Reverse extends OneParamOperator {
     }
 
     public getDefaultRepresentation():string {
-        return "#";
+        return "";
     }
 
     evaluateInternal(condition: number): PropositionStatus {
