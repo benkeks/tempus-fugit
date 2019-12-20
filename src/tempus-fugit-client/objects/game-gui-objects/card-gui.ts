@@ -3,7 +3,7 @@ import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
 import Tween = Phaser.Tweens.Tween;
-import {FormulaGUI} from "./formula-gui";
+import { FormulaGUI } from "./formula-gui";
 
 /**
  * @author Mustafa
@@ -125,12 +125,12 @@ export class CardGUI extends Phaser.GameObjects.Container {
         let string = this.card.getFormula().generateRepresentation(true, true);
         let margin = 4
         //this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-550, margin, true));
-        this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-200, margin, true)).setAngle(this.cardOriginAngle);
+        this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16 + margin) * string.length / 2), this.y - 200, margin, true)).setAngle(this.cardOriginAngle);
 
         this.hoverTween = this.scene.tweens.add({
             targets: this.formulaGUI,
-            y: this.y-550,
-            x: this.x - this.formulaGUI.width-145,
+            y: this.y - 550,
+            //x: this.x - this.formulaGUI.width * 3,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
