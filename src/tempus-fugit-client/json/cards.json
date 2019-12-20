@@ -4,9 +4,9 @@
 		"image":"obliterate",
 		"formula":"n",
 		"cardKind":"global",
-		"isStandCard":"true",
+		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"target.takeHit(1000, mission);",
+		"action":"target.takeHit(1000, mission);console.log(target);",
 		"inDeckAtStart":"100"}
 		],
 		

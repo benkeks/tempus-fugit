@@ -70,9 +70,17 @@ export class Hand {
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    public removeCard(position: number, mission): void {
-        for (let i in this.listener) {
-            this.listener[i].addCard(this.cards[position]);
+    public removeCard(card: Card, mission): void {
+        for (let i in this.cards) {
+            let c = this.cards[i];
+            if (c == card) {
+                this.cards[i] = null;
+
+                for (let i in this.listener) {
+                    this.listener[i].removeCard(this.cards[i]);
+                }
+            }
+            
         }
     }
 

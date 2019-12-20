@@ -284,8 +284,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public getEnemies():Enemy[] {
         let i = this.waveCounter;
-        console.log(this.waveCounter);
-        if (i < 0 || i > this.enemies.length) {
+        if (i < 0 || i >= this.enemies.length) {
             return [];
         }
 

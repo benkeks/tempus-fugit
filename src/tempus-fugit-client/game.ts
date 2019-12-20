@@ -47,7 +47,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene]
+    scene: [StartingScene, NavigationScene ,MissionScene]
 };
 
 export class Game extends Phaser.Game {

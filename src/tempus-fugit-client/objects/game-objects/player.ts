@@ -111,12 +111,12 @@ export class Player {
                 card.spawnStand(enemy, mission);
             } else {
                 switch (card.getKind()) {
+                    
                     case Card.OTHER:
                         card.action(mission, null);
                         break;
                     case Card.GLOBAL:
                         for (let e of mission.getEnemies()) {
-                            console.log(e);
                             card.action(mission, e);
                         }
                         break;
@@ -131,6 +131,7 @@ export class Player {
                 }
             }
         }
+        this.hand.removeCard(card, mission);
     }
 
 

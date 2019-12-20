@@ -37,6 +37,8 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
     public background:Image;
 
+    public gameOverText;
+
   constructor() {
     super({
       key: "MissionScene"
@@ -92,6 +94,10 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
       this.cardChannel = new CardChannel(this);
       this.tfgame.startCombat();
+
+      this.gameOverText = this.add.text(GameInfo.width/2, GameInfo.height/2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
+      this.gameOverText.setOrigin(0.5,0.5);
+      this.gameOverText.setVisible(false);
   }
 
   update(time: number, delta: number): void {
@@ -151,18 +157,20 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
   async gameover(game: Mission, gameWon:boolean) {
     console.log(gameWon);
     if (gameWon) {
-      this.tfgame.player.missionStates[this.missionIndex] = true;
-      this.scene.wake("NavigationScene");
-      this.scene.stop();
-      this.scene.remove();
+      //this.tfgame.player.missionStates[this.missionIndex] = true;
+      //this.scene.wake("NavigationScene");
+      //this.scene.stop();
+      //this.scene.remove();
+
+      this.gameOverText.setVisible(true);
     } else {
       // TODO: implement gameover screen
     }
   }
 
   async storyMonolog(game: Mission, monolog: string) {
-    //   this.handGUI.unhoverAll();
-    //   this.displayMonologue(monolog);
+       //this.handGUI.unhoverAll();
+      // this.displayMonologue(monolog);
   }
 
   async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
