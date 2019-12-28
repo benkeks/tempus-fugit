@@ -1,5 +1,5 @@
 ///<reference path="two-param-operator.ts"/>
-import {PropositionStatus} from "../proposition";
+import {Proposition, PropositionStatus} from "../proposition";
 import {TwoParamOperator} from "./two-param-operator";
 
 export class And extends TwoParamOperator {
@@ -8,9 +8,9 @@ export class And extends TwoParamOperator {
         return "&";
     }
 
-    evaluateInternal(condition: number): PropositionStatus {
-        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
-        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
+        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, direction);
+        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, direction);
 
         let status:PropositionStatus = new PropositionStatus();
         status.successful = leftStatus.successful || rightStatus.successful;

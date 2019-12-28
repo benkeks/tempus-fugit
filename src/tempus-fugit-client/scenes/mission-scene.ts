@@ -61,11 +61,13 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     }
 
     create(data): void {
-        this.tfgame = Mission.Missions[data[0]].copy();
-        this.tfgame.player = data[1];
-        this.tfgame.deck = data[2];
-        this.missionIndex = data[3];
+        this.tfgame = Mission.Missions[data.key].copy();
+        this.missionIndex = data.index;
+        this.tfgame.player = data.player;
+        this.tfgame.deck = data.deck;
         this.tfgame.listener.push(this);
+
+        this.tfgame.deck.shuffle();
 
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
         let scaleX = this.cameras.main.width / this.background.width
@@ -95,9 +97,15 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.cardChannel = new CardChannel(this);
         this.tfgame.startCombat();
 
-        this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
-        this.gameOverText.setOrigin(0.5, 0.5);
-        this.gameOverText.setVisible(false);
+        //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
+        //this.gameOverText.setOrigin(0.5, 0.5);
+        //this.gameOverText.setVisible(false);
+
+        this.input.keyboard.addKey("B").on("down", e => {
+            this.tfgame.gameWon = true;
+            this.tfgame.waveCounter = 100;
+            this.gameover(this.tfgame, true);
+        })
     }
 
     update(time: number, delta: number): void {
@@ -155,19 +163,8 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     }
 
     async gameover(game: Mission, gameWon: boolean) {
-        console.log(gameWon);
-        this.gameOverText.setVisible(true);
-        if (gameWon) {
-            //this.tfgame.player.missionStates[this.missionIndex] = true;
-            //this.scene.wake("NavigationScene");
-            //this.scene.stop();
-            //this.scene.remove();
-
-            this.gameOverText.setText("GAME OVER: You won!");
-        } else {
-            // TODO: implement gameover screen
-            this.gameOverText.setText("GAME OVER: You lost!");
-        }
+        this.tfgame.destroy();
+        this.scene.start("NavigationScene", {mission:this.tfgame, index:this.missionIndex});
     }
 
     async storyMonolog(game: Mission, monolog: string) {

@@ -71,7 +71,6 @@ export class GameState {
     public evaluate(object):boolean {
         if (object instanceof Formula) {
             let f: Formula = object as Formula;
-            
 
             f.applyAssignment(this._variables);
             return f.evaluate(this.activeState);
@@ -89,7 +88,7 @@ export class GameState {
 
     public setAllVariableValues(variable:string, value:boolean):void {
         let l:number = this.variables[variable].values.length;
-        this.variables[variable].defaultValue = value;
+        this.variables[variable].setDefaultValue(value);
 
         for (let i = 0; i < l; i++) {
             this.setVariable(variable, value, i);
@@ -98,7 +97,7 @@ export class GameState {
 
     public setAllFutureVariableValues(variable:string, value:boolean):void {
         let l:number = this.variables[variable].values.length;
-        this.variables[variable].defaultValue = value;
+        this.variables[variable].setDefaultValue(value);
 
         for (let i = this.activeState+1; i < l; i++) {
             this.setVariable(variable, value, i);
@@ -165,9 +164,13 @@ export class GameState {
      * */
     public setVariable(name:string, value:boolean, state:number=this.activeState):number {
         let v:Variable;
-        if (!(name in this.variables)) {
+        if (!(name in this.variables)) { // creating variables
             v = new Variable(name);
             this.variables[name] = v;
+            v.finiteStatesFuture = false;
+            v.finiteStatesPast = true;
+            v.defaultValueFuture = false;
+            v.defaultValuePast = false;
 
             this.variableStatus[name] = new VariableStatus();
         } else v = this.getVariable(name);

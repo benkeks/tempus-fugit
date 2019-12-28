@@ -83,7 +83,6 @@ export class Card {
      */
 
     public setActionFunction(actionString:string) {
-        console.log(actionString);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
     }
 
@@ -117,7 +116,6 @@ export class Card {
             this.targets = mission.getEnemies();
         }
         for (let i in this.listener) {
-            console.log(i);
             this.listener[i].activateStand(this);
         }
 

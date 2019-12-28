@@ -1,5 +1,5 @@
 import {TwoParamOperator} from "./two-param-operator";
-import {PropositionStatus} from "../proposition";
+import {Proposition, PropositionStatus} from "../proposition";
 import {Operator} from "./operator";
 
 export class Consequence extends TwoParamOperator {
@@ -27,9 +27,9 @@ export class Consequence extends TwoParamOperator {
     public static leftDirectionAlphabet:string = "<-|<=";
     public static rightDirectionAlphabet:string = "->|=>|-";
 
-    evaluateInternal(condition: number): PropositionStatus {
-        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
-        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
+        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, direction);
+        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, direction);
 
         let status:PropositionStatus = new PropositionStatus();
         status.successful = leftStatus.successful || rightStatus.successful;

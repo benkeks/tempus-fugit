@@ -30,22 +30,22 @@ export class Formula extends Proposition {
      * */
     public variables:{[represenstation:string]:Variable} = {};
 
-    evaluateInternal(condition: number): PropositionStatus {
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
         if (this.hjunctor === undefined) {
             let pstat = new PropositionStatus();
             pstat.successful = false;
             return pstat;
         }
 
-        return this.hjunctor.evaluateInternal(condition);
+        return this.hjunctor.evaluateInternal(condition, direction);
     }
 
-    generateRepresentation(recursive:boolean = true, defaultRepresentation:boolean=true): string {
+    generateRepresentation(recursive:boolean = true, defaultRepresentation:boolean=true, direction:number=Proposition.DEFAULT_DIRECTION): string {
         if (!recursive) {
             return this.representation;
         }
         else {
-            return this.hjunctor.generateRepresentation(recursive, defaultRepresentation);
+            return this.hjunctor.generateRepresentation(recursive, defaultRepresentation, direction);
         }
     }
 
@@ -189,7 +189,6 @@ export class Formula extends Proposition {
         } else {
             throw new TypeError("Formula has to be of type String or Proposition[]");
         }
-        //console.log(formula);
 
         let operatorStack:Operator[] = [];
         let outputQueue:Proposition[] = [];

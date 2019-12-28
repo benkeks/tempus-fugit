@@ -33,24 +33,19 @@ export class Reverse extends OneParamOperator {
     }
 
     public getDefaultRepresentation():string {
-        return "#";
+        return ""; //default:#
     }
 
     public getReverseRepresentation():string {
         return "";
     }
 
-    evaluateInternal(condition: number): PropositionStatus {
-        if (this.operand instanceof Operator) {
-            this.operand.direction *= -1;
-        }
-        return this.operand.evaluateInternal(condition);
+    generateRepresentation(recursive: boolean, defaultRepresentation: boolean = true, direction: number=Proposition.DEFAULT_DIRECTION): string {
+        return super.generateRepresentation(recursive, defaultRepresentation, direction*-1);
     }
 
-    constructor(representation:string=undefined, operator:Operator=undefined) {
-        super(representation, operator);
-
-        this.direction = -1;
+    evaluateInternal(condition: number, direction:number): PropositionStatus {
+        return this.operand.evaluateInternal(condition, direction*(-1));
     }
 
     public static getAlphabet():string {
