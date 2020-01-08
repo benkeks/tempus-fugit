@@ -22,6 +22,10 @@ export class NavigationScene extends Phaser.Scene {
 
     public alreadyInitted:boolean = false;
 
+    public cheats = [
+        [["up","up","down","down", "left","right","left", "right", "b", "a"], 0, this.enableAllLevels, undefined]
+    ];
+
     public missionDependency:{[index:number]:number[]} = {
         0:[],
         1:[0]
@@ -30,6 +34,10 @@ export class NavigationScene extends Phaser.Scene {
         0:"tutorial",
         1:"mission1"
     };
+
+    public enableAllLevels():void {
+        console.log("konami code!");
+    }
 
     constructor() {
         super({
@@ -126,6 +134,37 @@ export class NavigationScene extends Phaser.Scene {
 
     create(data?) {
         let scale:number = 4;
+
+        // TODO: implement cheat code
+        /*this.input.keyboard.on("keydown", e => {
+            for (let c of this.cheats) {
+                let index: number = c[1] as number;
+                let cheatCodes: string[] = c[0] as string[];
+                let callback: (() => void) = c[2] as (() => void);
+
+                if (cheatCodes[index] == e.keyCode) {
+                    index++;
+
+                    this.time.delayedCall(500, (index,c) => {
+                        console.log(index);
+                        if (index == c[1]) {
+                            c[1] = 0;
+                        }
+                    }, [index,c], this)
+                } else {
+                    if (cheatCodes[0] == e.keyCode) {
+                        c[1] = 1;
+                    } else {
+                        c[1] = 0;
+                    }
+                }
+
+                if (index >= cheatCodes.length) {
+                    callback();
+                    c[1] = 0;
+                }
+            }
+        });*/
 
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameOver() && data.mission.gameWon) {

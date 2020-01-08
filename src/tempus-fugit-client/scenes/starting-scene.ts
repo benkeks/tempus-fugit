@@ -46,7 +46,7 @@ export class StartingScene extends Phaser.Scene {
         tutText.setColor("#fff");*/
         
 
-        let f:Formula = new Formula("#En|#G!n");
+        let f:Formula = new Formula("#En");
         let v:Variable = f.variables["n"];
         v.values = [false, true,true];
         v.finiteStatesFuture = false;
