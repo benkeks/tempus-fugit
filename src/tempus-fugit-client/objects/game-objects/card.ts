@@ -37,7 +37,7 @@ export class Card {
 
     public copy():Card {
         let c:Card = new Card(this.name, this.description,
-            this.image, this.formula.generateRepresentation(true, true),
+            this.image, this.formula.generateRepresentation(true, false),
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
 
@@ -83,7 +83,6 @@ export class Card {
      */
 
     public setActionFunction(actionString:string) {
-        console.log(actionString);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
     }
 
@@ -117,7 +116,6 @@ export class Card {
             this.targets = mission.getEnemies();
         }
         for (let i in this.listener) {
-            console.log(i);
             this.listener[i].activateStand(this);
         }
 

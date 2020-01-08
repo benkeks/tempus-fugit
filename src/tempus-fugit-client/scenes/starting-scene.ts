@@ -1,7 +1,6 @@
-import { Mission } from "../mechanics/mission";
-import { Card } from "../objects/game-objects/card";
 import { GameInfo } from "../game";
 import { Formula } from "../temporal-logic/formula";
+import {Variable} from "../temporal-logic/variable";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -22,7 +21,7 @@ export class StartingScene extends Phaser.Scene {
         this.load.spritesheet("gamelogo", "assets/title_screen/TempusFugit-Sheet.png", {frameWidth: 105, frameHeight: 78});
     }
 
-    create() {
+    create(data) {
         console.log("booting");
 
         this.cameras.main.setBackgroundColor('#89CFF0')
@@ -47,8 +46,16 @@ export class StartingScene extends Phaser.Scene {
         tutText.setColor("#fff");*/
         
 
-        let f:Formula = new Formula("#On");
-        f.variables["n"].values = [false, true,true];
+        let f:Formula = new Formula("#En");
+        let v:Variable = f.variables["n"];
+        v.values = [false, true,true];
+        v.finiteStatesFuture = false;
+        v.finiteStatesPast = true;
+        v.defaultValueFuture = false;
+        v.defaultValuePast = false;
+
+        console.log(f.generateRepresentation(true, true));
+        console.log(f.evaluate(0));
         console.log(f.evaluate(1));
         console.log(f.evaluate(2));
 
@@ -73,6 +80,7 @@ export class StartingScene extends Phaser.Scene {
         playText.setColor("#fff");
 
         playText.on("pointerdown", () => {
+            let s:String = "abc";
             this.scene.start("NavigationScene");
         });
     }

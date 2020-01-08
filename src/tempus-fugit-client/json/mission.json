@@ -16,7 +16,7 @@
                     "text": [["slime1","Please put me out of my misery"], ["player", "What the hell?!"]]
                 },
 				{
-					"triggerFunctionString":"return mission.getEnemies().length <2;",
+					"triggerFunctionString":"return mission.aliveEnemiesCount<2;",
 					"text": [["slime1", "Finally I can die in peace"],["player", "What is it with these weird slimes?"]]
 				}
             ]

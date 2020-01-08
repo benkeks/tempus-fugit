@@ -57,6 +57,8 @@ export class Mission implements EnemyListener, PlayerListener {
     public _player:Player;
     public gameState:GameState;
 
+    public gameWon:boolean = false;
+
     private stands:Card[] = [];
     // TODO: effect list
 
@@ -102,6 +104,7 @@ export class Mission implements EnemyListener, PlayerListener {
         for (let i=0; i < this.dialogue.length; i++) {
             let d:StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
+                console.log("trigger " + this.dialogue[i]);
                 this.listener.map(l => l.storyDialog(this, d));
                 this.dialogue.splice(i, 1);
             }
@@ -172,6 +175,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
         if (this.waveCounter >= this.getMaxWaveCount()) {
             this.listener.map(l => l.gameover(this, true));
+            this.gameWon = true;
             return;
         }
 
@@ -299,6 +303,18 @@ export class Mission implements EnemyListener, PlayerListener {
         return this.enemies.length;
     }
 
+    public destroy():void {
+        this.player.listener = [];
+        this.player.hand.listener = [];
+        this.deck.listener = [];
+        this.gameState.listener = [];
+        this.listener = [];
+    }
+
+    public isGameOver():boolean {
+        return this.waveCounter>= this.getMaxWaveCount() || this.player.getHP() <= 0;
+    }
+
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         let aliveChange:number = 0;
 
@@ -315,7 +331,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    playerHpChanged(changedTo: number): void {
+    async playerHpChanged(changedTo: number) {
         if (changedTo <= 0) {
             this.listener.map(l => l.gameover(this, false));
         }
@@ -330,7 +346,6 @@ export class Mission implements EnemyListener, PlayerListener {
             for (let wave of m.enemies) {
                 let wave_enemies:Enemy[] = [];
                 for (let e of wave) {
-                    console.log(e);
                     wave_enemies.push(Enemy.enemies[e].copy());
                 }
                 mission.enemies.push(wave_enemies);

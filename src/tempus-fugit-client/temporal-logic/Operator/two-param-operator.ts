@@ -17,11 +17,11 @@ export abstract class TwoParamOperator extends Operator{
         this.rightOperand = rightOperand;
     }
 
-    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true): string {
+    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true, direction:number=Proposition.DEFAULT_DIRECTION): string {
         let ownRep:string = this.representation;
         if (defaultRepresentation) {
             ownRep = this.getDefaultRepresentation();
-            if (this.direction < 0) ownRep = this.getReverseRepresentation();
+            if (direction < 0) ownRep = this.getReverseRepresentation();
         }
 
 
@@ -29,16 +29,16 @@ export abstract class TwoParamOperator extends Operator{
         let representation:string = ownRep;
 
         if (this.leftOperand instanceof Operator && (<Operator>this.leftOperand).precedence < this.precedence) {
-            representation = "(" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation) + ")" + representation;
+            representation = "(" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation, direction) + ")" + representation;
         } else {
-            representation = this.leftOperand.generateRepresentation(recursive, defaultRepresentation) +  representation;
+            representation = this.leftOperand.generateRepresentation(recursive, defaultRepresentation, direction) +  representation;
         }
 
 
         if (this.rightOperand instanceof Operator && (<Operator>this.rightOperand).precedence <= this.precedence) {
-            representation = representation + "(" + this.rightOperand.generateRepresentation(recursive, defaultRepresentation) + ")";
+            representation = representation + "(" + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, direction) + ")";
         } else {
-            representation = representation + this.rightOperand.generateRepresentation(recursive, defaultRepresentation);
+            representation = representation + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, direction);
         }
 
         return representation;

@@ -46,6 +46,13 @@ export class Player {
         this.maxHP = value;
     }
 
+    public copy():Player {
+        let p:Player = new Player(this.name, this.maxHP, this.baseAttack);
+        p.missionStates = [...this.missionStates];
+
+        return p;
+    }
+
     /**
      * Getter for the player's hit points
      * @return Return the current hit points

@@ -14,6 +14,15 @@ export class Deck {
         this.listener = []
     }
 
+    public copy():Deck {
+        let d:Deck = new Deck();
+
+        for (let c of this.cards) {
+            d.cards.push(c.copy());
+        }
+        return d;
+    }
+
     /**
      * Puts the card on top of the deck and informs deck listeners
      * @param card The card that is to be added to the deck

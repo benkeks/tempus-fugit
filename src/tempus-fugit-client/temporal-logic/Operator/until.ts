@@ -1,6 +1,6 @@
 ///<reference path="one-param-operator.ts"/>
 import {TwoParamOperator} from "./two-param-operator";
-import {PropositionStatus} from "../proposition";
+import {Proposition, PropositionStatus} from "../proposition";
 
 export class Until extends TwoParamOperator {
 
@@ -12,9 +12,9 @@ export class Until extends TwoParamOperator {
         return "V";
     }
 
-    evaluateInternal(condition: number): PropositionStatus {
-        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition);
-        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
+        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, direction);
+        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, direction);
 
         let status:PropositionStatus = new PropositionStatus();
         let i:number = condition;
@@ -35,9 +35,9 @@ export class Until extends TwoParamOperator {
                 break;
             }
 
-            i+=this.direction;
-            leftStatus = this.leftOperand.evaluateInternal(i);
-            rightStatus = this.rightOperand.evaluateInternal(i);
+            i+=direction;
+            leftStatus = this.leftOperand.evaluateInternal(i, direction);
+            rightStatus = this.rightOperand.evaluateInternal(i, direction);
         }
         return status;
     }
