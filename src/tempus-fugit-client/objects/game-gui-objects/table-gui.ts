@@ -23,7 +23,7 @@ export class TableGUI implements GameStateListener {
     private readonly tableOffsetY: number; // y-position of table
     private readonly variableTableCellWidth = 90;
     private readonly variableTableCellHeight = 60;
-    private readonly tableColumnCount = 20;
+    private readonly tableColumnCount = 30;
     private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
     //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
 
@@ -87,13 +87,24 @@ export class TableGUI implements GameStateListener {
                     0.3
                 ),
                 scroller: false,
+                scrollMode: 1,
+                slider: {
+                    //@ts-ignore
+                    track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
+                    //@ts-ignore
+                    thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
+                },
+                space: {
+                    table: 10
+                },
                 // table config
                 table: {
-                    width: this.variableTableCellWidth * this.tableColumnCount,
+                    width: this.variableTableCellWidth * 20,//this.tableColumnCount,
                     height: this.variableTableCellHeight * variables.length,
                     cellWidth: this.variableTableCellWidth,
                     cellHeight: this.variableTableCellHeight,
-                    columns: this.tableColumnCount,
+                    //columns: this.tableColumnCount,
+                    columns: 4,
                     mask: {
                         padding: 2
                     }
