@@ -27,6 +27,7 @@ export class TableGUI implements GameStateListener {
     private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
     //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
     private tableItems;
+    private overlay: Phaser.GameObjects.Rectangle;
 
     constructor(
         scene: Phaser.Scene,
@@ -148,7 +149,6 @@ export class TableGUI implements GameStateListener {
                     const row = cellIndex % 4;
                     const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
                     this._gameState.invertVariableUser(variableName, column);
-                    console.log({ row, column });
                 },
                 this
             )
@@ -453,7 +453,12 @@ export class TableGUI implements GameStateListener {
     }
 
     async activated(gameState: GameState) {
-        // TODO: ausgrauen wenn nicht aktiv
+        if (gameState.active) {
+            if (this.overlay)
+                this.overlay.destroy();
+        } else {
+            this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
+        }
     }
 }
 
