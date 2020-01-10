@@ -6,7 +6,7 @@ import {ToolTip} from "./tool-tip";
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends ListGUI implements EnemyListener{
+export class EnemyGUI extends ListGUI {
 
     public enemy: Enemy; // enemy object associated with this gui
     public toolTip:ToolTip;
@@ -96,9 +96,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
      */
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         //this.popText((changedTo-changedFrom).toString());
-        if (changedTo <= 0) {
-            this.disableListeners();
-            this.destroy(true);
-        } else this.updateEnemyAttributes();
+
     }
 }

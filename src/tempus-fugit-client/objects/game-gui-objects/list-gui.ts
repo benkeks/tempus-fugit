@@ -23,6 +23,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
     public defaultColor: number = 0xAAAA;
     public defaultStrokeColor: number = 0xFFFF;
 
+    protected isDestroyed = false;
+
     constructor(
         scene: Phaser.Scene,
         x: number = 1500,
@@ -114,6 +116,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public isHovered(xCursor: number, yCursor: number): boolean {
+        if (this.isDestroyed) return false;
+
         let xOffset = -this.displayWidth / 2;
 
         let x1: number = this.x + xOffset;
