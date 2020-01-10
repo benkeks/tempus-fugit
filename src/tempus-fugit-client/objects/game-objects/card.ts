@@ -20,7 +20,6 @@ export class Card {
     public standRounds: number;
     public targets: Enemy[];
     public action:Function;
-    public listener:StandListener[] = []; // List of objects listening to stand event
     public inDeckAtStart:number;
 
     public stand(): boolean {
@@ -115,9 +114,9 @@ export class Card {
         } else {
             this.targets = mission.getEnemies();
         }
-        for (let i in this.listener) {
+        /*for (let i in this.listener) {
             this.listener[i].activateStand(this);
-        }
+        }*/
 
     }
 
@@ -145,23 +144,23 @@ export class Card {
 
     public decreaseRoundsRemaining() {
         this.standRounds -= 1;
-        for (var l of this.listener) {
+        /*for (var l of this.listener) {
             l.updateStandText();
-        }
+        }*/
     }
 
 
     public turnRed() {
-        for (let i in this.listener) {
+        /*for (let i in this.listener) {
             this.listener[i].turnRed();
-        }
+        }*/
     }
 
 
     public turnNormal() {
-        for (let i in this.listener) {
+        /*for (let i in this.listener) {
             this.listener[i].turnNormal();
-        }
+        }*/
     }
 
     public static createFromJSON(jString:string) {
@@ -199,12 +198,4 @@ export class Card {
     }
 
 
-}
-
-export interface StandListener {
-    activateStand(stand: Card): void;
-    deactiveStand(stand: Card):void;
-    updateStandText(): void;
-    turnRed(): void;
-    turnNormal(): void;
 }

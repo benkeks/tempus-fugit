@@ -31,9 +31,25 @@ export class Mission implements EnemyListener, PlayerListener {
         this._player = value;
         this.player.listener.push(this);
     }
-    
+
     public pushStand(stand: Card) {
-        this.stands.push(stand);
+        if (this.stands[0] != null && this.stands[1] != null) {
+            if (this.stands[0].getRoundsRemaining() <= this.stands[1].getRoundsRemaining()) {
+                this.stands[0] = stand;
+            } else {
+                this.stands[1] = stand;
+            }
+        } else {
+            if (this.stands[0] == null) {
+                this.stands[0] = stand;
+            } else {
+                this.stands[1] = stand;
+            }
+        }
+        for (let l of this.standListener) {
+            l.updateStandGUI(this.stands);
+        }
+
     }
 
     public static Missions: {[name:string]:Mission} = {};
@@ -52,6 +68,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public aliveEnemiesCount:number = -1;
 
     public listener:GameStateListener[] = [];
+    public standListener:StandListener[] = [];
 
     public deck:Deck;
     public _player:Player;
@@ -59,7 +76,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public gameWon:boolean = false;
 
-    private stands:Card[] = [];
+    private stands:[Card, Card] = [null, null];
     // TODO: effect list
 
     public copy():Mission {
@@ -199,22 +216,20 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private standPhase(): void {
-        for (var stand of this.getStands()) {
-            stand.turnRed();
-            stand.act(this, this.player);
-            if (stand.getRoundsRemaining() <= 0) {
-                for (var l of stand.listener) {
-                    l.deactiveStand(stand);
+        for (let i of [0,1]) {
+            let stand = this.getStands()[i];
+            if (stand != null) {
+                stand.act(this, this.player);
+                if (stand.getRoundsRemaining() <= 0) {
+                    this.stands[i] = null;
                 }
-                for(var i = 0; i < this.stands.length; i++){
-                    if ( this.stands[i] === stand) {
-                        this.stands.splice(i, 1);
-                    }
-                };
+                for (var l of this.standListener) {
+                    l.updateStandGUI(this.stands);
+                }
             }
         }
     }
-
+    
     private enemyPhase():void {
         for (var stand of this.stands) {
                 stand.turnNormal();
@@ -382,4 +397,13 @@ export interface GameStateListener {
     storyMonolog(game:Mission, monolog:string):void;
     waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
     gameover(game:Mission, gameWon:boolean):void;
+}
+
+
+export interface StandListener {
+    updateStandGUI(stands: [Card, Card]): void;
+    /*removeStand(stand: Card):void;
+    updateStandText(): void;
+    turnRed(): void;
+    turnNormal(): void;*/
 }
