@@ -453,12 +453,12 @@ export class TableGUI implements GameStateListener {
     }
 
     async activated(gameState: GameState) {
-        if (gameState.active) {
-            if (this.overlay)
-                this.overlay.destroy();
-        } else {
-            this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
-        }
+        // if (gameState.active) {
+        //     if (this.overlay)
+        //         this.overlay.destroy();
+        // } else {
+        //     this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
+        // }
     }
 }
 

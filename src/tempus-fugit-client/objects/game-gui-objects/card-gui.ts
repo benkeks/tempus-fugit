@@ -123,24 +123,24 @@ export class CardGUI extends Phaser.GameObjects.Container {
     hover(): void {
         this.setDepth(100);
         let string = this.card.getFormula().generateRepresentation(true, true);
-        let margin = 4
+        let margin = 4;
         //this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-550, margin, true));
         this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16 + margin) * string.length / 2), this.y - 200, margin, true)).setAngle(this.cardOriginAngle);
 
         this.hoverTween = this.scene.tweens.add({
             targets: this.formulaGUI,
-            y: this.y - 550,
+            y: this.y - 350,
             //x: this.x - this.formulaGUI.width * 3,
             angle: 0,
             ease: 'power2',
-            scaleX: 1.5,
-            scaleY: 1.5,
+            scaleX: 1,
+            scaleY: 1,
             duration: 500,
         });
 
         this.hoverTween = this.scene.tweens.add({
             targets: this,
-            y: this.cardOriginY - 300,
+            y: this.cardOriginY - 100,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
