@@ -88,7 +88,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
         this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
 
-        this.phaseText = this.add.text(50, 290, "Draw Phase", { fontSize: '20px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#ffffff' });
+        this.phaseText = this.add.text(50, 305, "Draw Phase", { fontSize: '20px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#ffffff' });
 
         this.tfgame.player.takeCard(this.tfgame.deck);
 
@@ -164,7 +164,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
-        this.scene.start("NavigationScene", {mission:this.tfgame, index:this.missionIndex});
+        this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     async storyMonolog(game: Mission, monolog: string) {
