@@ -229,7 +229,7 @@ export class Mission implements EnemyListener, PlayerListener {
             }
         }
     }
-    
+
     private enemyPhase():void {
         for (var stand of this.stands) {
                 stand.turnNormal();
