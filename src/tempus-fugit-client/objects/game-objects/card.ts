@@ -122,20 +122,22 @@ export class Card {
 
     public act(mission: Mission, player: Player): void {
         if (this.standRounds > 0) {
-            if (this.cardKind == Card.RANDOM) {
-                this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
-            } else if (this.cardKind == Card.DIRECTED) {
-                for (var target of this.targets) {
-                    this.action(mission, target);
+            if (mission.gameState.evaluate(this.getFormula())) {
+                if (this.cardKind == Card.RANDOM) {
+                    this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
+                } else if (this.cardKind == Card.DIRECTED) {
+                    for (var target of this.targets) {
+                        this.action(mission, target);
+                    }
+                } else if (this.cardKind == Card.GLOBAL) {
+                    for (let target of mission.getEnemies()) {
+                        this.action(mission, target);
+                    }
+                } else if (this.cardKind == Card.OTHER) {
+                    this.action(mission, null);
+                } else {
+                    throw new TypeError("Card Type of card " + this.name + " is wrong!");
                 }
-            } else if (this.cardKind == Card.GLOBAL) {
-                for (let target of mission.getEnemies()) {
-                    this.action(mission, target);
-                }
-            } else if (this.cardKind == Card.OTHER) {
-                this.action(mission, null);
-            } else {
-                throw new TypeError("Card Type of card " + this.name + " is wrong!");
             }
             this.decreaseRoundsRemaining();
         }

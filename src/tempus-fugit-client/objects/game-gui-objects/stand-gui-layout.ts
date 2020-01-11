@@ -54,12 +54,15 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
                 standImage.on("pointerover", function(pointer){
                     desc = new StandDescriptionGUI(this.scene, this.x+200*i, this.y, stand);
                     desc.depth = 1000;
-                    desc.setScale(3,3);
+                    desc.setScale(2,2);
                     this.scene.add.existing(desc);
                     }, this);
                 standImage.on("pointerout", function(pointer){
                     desc.destroy();
                 }, this);
+                let tw = this.scene.tweens.add({targets: standImage,duration: 400, y: standImage.y-5, ease: "Linear", yoyo: true, repeat: -1, delay: 0, loopDelay: 0});
+
+
                 this.elementList.push(standImage);
                 this.roundList.push(this.scene.add.text(200*i, 70, stand.getRoundsRemaining().toString(), font1));
             }
