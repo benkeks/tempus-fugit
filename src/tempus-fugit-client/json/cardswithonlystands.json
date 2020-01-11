@@ -1,0 +1,24 @@
+{
+	"cards":	[{"name":"Lower woodland spirit",
+		"description":"this stand deals 2 damage to all enemies!",
+		"image":"nature_stand",
+		"formula":"En&t",
+		"cardKind":"global",
+		"isStandCard":"true",
+		"standRounds":"4",
+		"action":"target.takeHit(2, mission);",
+		"comment":"deals 2 damage to all enemies",
+		"inDeckAtStart":"2"}, 
+		{"name":"Lower woodland spirit2",
+		"description":"this stand deals 2 damage to all enemies!",
+		"image":"nature_stand",
+		"formula":"En&t",
+		"cardKind":"global",
+		"isStandCard":"true",
+		"standRounds":"4",
+		"action":"target.takeHit(2, mission);",
+		"comment":"deals 2 damage to all enemies",
+		"inDeckAtStart":"2"}
+
+
+]}

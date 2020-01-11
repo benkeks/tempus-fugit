@@ -11,13 +11,14 @@ import { StackGUI } from "../objects/game-gui-objects/stack-gui";
 import { EnemyGuiLayout } from "../objects/game-gui-objects/enemy-gui-layout";
 import { Mission, GameStateListener } from "../mechanics/mission";
 import { StoryDialog } from "../mechanics/story-dialog";
-import { StandGUI } from "../objects/game-gui-objects/stand-gui";
+
 import { CardChannel } from "../objects/game-gui-objects/card-channel";
 import { Textbox } from "../objects/game-gui-objects/textbox";
 import { GameInfo } from "../game";
 
 import Image = Phaser.GameObjects.Image;
 import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
+import {StandGUILayout} from "../objects/game-gui-objects/stand-gui-layout";
 
 
 export class MissionScene extends Phaser.Scene implements GameStateListener {
@@ -27,7 +28,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     public deckGUI: DeckGUI;
     public enemyGUI: EnemyGuiLayout;
     public stackGUI: StackGUI;
-    public standGUI: StandGUI;
+    public standGUI: StandGUILayout;
     public phaseText: Phaser.GameObjects.Text;
     public textBox: Textbox;
 
@@ -87,6 +88,9 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.playerGUI.listener.push(this.tfgame.player);
 
         this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
+
+        this.standGUI = new StandGUILayout(this);
+        this.tfgame.standListener.push(this.standGUI);
 
         this.phaseText = this.add.text(50, 290, "Draw Phase", { fontSize: '20px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#ffffff' });
 
