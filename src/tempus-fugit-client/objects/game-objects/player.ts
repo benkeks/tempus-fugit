@@ -17,7 +17,7 @@ export class Player {
 
     set currentHP(value: number) {
         this._currentHP = value;
-        this.listener.map(obj => obj.playerHpChanged(value));
+        //this.listener.map(obj => obj.playerHpChanged(value));
     }
     get baseAttack(): number {
         return this._baseAttack;
@@ -152,10 +152,16 @@ export class Player {
      */
     public takeHit(hitPower: number): void {
         this.currentHP -= hitPower;
+        for (let l of this.listener) {
+            l.playerHpChanged(this.currentHP, -hitPower);
+        }
     }
 
     public heal(life:number):void  {
         this.currentHP += life;
+        for (let l of this.listener) {
+            l.playerHpChanged(this.currentHP, life);
+        }
     }
 
     /**
@@ -191,5 +197,5 @@ export class Player {
  * @author Florian
  */
 export interface PlayerListener {
-    playerHpChanged(changedTo: number): void;
+    playerHpChanged(changedTo: number, changedBy: number): void;
 }

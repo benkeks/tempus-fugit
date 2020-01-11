@@ -102,6 +102,11 @@
         "url": "assets/sprites/deck.png"
       },
       {
+	"type": "image",
+	"key": "blood",
+	"url": "assets/sprites/blood.png"
+      },
+      {
         "type": "image",
         "key": "card-outline",
         "url": "assets/sprites/card-outline.png"
