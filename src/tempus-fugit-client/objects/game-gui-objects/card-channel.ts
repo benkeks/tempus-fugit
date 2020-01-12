@@ -5,10 +5,10 @@ import { DecisionArrow } from "./decision-arrow";
 import { MissionScene } from "../../scenes/mission-scene";
 import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
 import { CardGUI } from "./card-gui";
-import {Card} from "../game-objects/card";
-import {EnemyGUI} from "./enemy-gui";
-import {Mission} from "../../mechanics/mission";
-import {HandGUI} from "./hand-gui";
+import { Card } from "../game-objects/card";
+import { EnemyGUI } from "./enemy-gui";
+import { Mission } from "../../mechanics/mission";
+import { HandGUI } from "./hand-gui";
 export class CardChannel extends Container {
 
     public decisionArrow: DecisionArrow;
@@ -80,7 +80,7 @@ export class CardChannel extends Container {
             ) {
 
                 if (!(gameObject instanceof CardGUI)) return;
-                let card:Card = (gameObject as CardGUI).card;
+                let card: Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
 
                 if (pointer.y < this.y) {
@@ -162,7 +162,7 @@ export class CardChannel extends Container {
                 this.missionScene.enableToolTips(true);
 
                 if (!(gameObject instanceof CardGUI)) return;
-                let card:Card = (gameObject as CardGUI).card;
+                let card: Card = (gameObject as CardGUI).card;
 
                 this.scene.input.activePointer.smoothFactor = 0;
                 this.scene.sys.canvas.style.cursor = "default";
@@ -177,7 +177,7 @@ export class CardChannel extends Container {
                     this.missionScene.handGUI.unhoverAll(true);
                 }
                 canClick = true;
-                
+
             }, this);
         // logic for clicking cards has to be here, it depends on canClick variable set when dragging starts 
         // card hovers when double-clicked
@@ -207,7 +207,7 @@ export class CardChannel extends Container {
         return undefined;
     }
 
-    public playCard(enemy:EnemyGUI, card:CardGUI) {
+    public playCard(enemy: EnemyGUI, card: CardGUI) {
         let e = undefined;
         if (enemy != undefined) e = enemy.enemy;
 

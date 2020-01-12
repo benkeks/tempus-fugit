@@ -98,9 +98,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.angle = card.cardOriginAngle;
                 card.setDepth(card.cardOriginZ);
                 card.setScale(1);
-                if (card.formulaGUI != null) {
-                    card.formulaGUI.destroy();
-                }
             }
         }
     }
