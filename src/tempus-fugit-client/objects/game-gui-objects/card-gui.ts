@@ -37,16 +37,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
     }
 
     /**
-     * TODO:
-     * Card should be bigger on hover; not double click
-     * when hovered: bigger and move to bottom
-     * card should hover faster
-     * change font ?
-     * 
-     * Put Formula on card; reduce size/padding of formual text- done
-     */
-
-    /**
      * make container for a card
      * similar to list-gui.ts
      */
@@ -134,12 +124,12 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         this.hoverTween = this.scene.tweens.add({
             targets: this,
-            y: this.cardOriginY - 300,
+            y: this.cardOriginY - 100,
             angle: 0,
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
-            duration: 300,
+            duration: 100,
         });
         this.hovering = true;
     }
@@ -157,7 +147,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
-            duration: 200,
+            duration: 100,
         });
         this.hovering = false;
     }

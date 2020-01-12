@@ -65,12 +65,6 @@ export class CardChannel extends Container {
         // The distance, in pixels, a pointer has to move while being held down, before it thinks it is being dragged.
         //  The pointer has to move 100 pixels before it's considered as a drag
         this.scene.input.dragDistanceThreshold = 100;
-        let canClick = true;
-
-        this.scene.input.on('dragstart', function () {
-            this.missionScene.handGUI.unhoverAll(true);
-            canClick = false;
-        }, this);
 
         this.scene.input.on(
             "drag",
@@ -78,7 +72,7 @@ export class CardChannel extends Container {
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
-
+                console.log('card drag');
                 if (!(gameObject instanceof CardGUI)) return;
                 let card: Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
@@ -176,24 +170,26 @@ export class CardChannel extends Container {
                     //gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
                     this.missionScene.handGUI.unhoverAll(true);
                 }
-                canClick = true;
 
             }, this);
-        // logic for clicking cards has to be here, it depends on canClick variable set when dragging starts 
-        // card hovers when double-clicked
-        let lastTime = 0;
-        this.scene.input.on('pointerdown', function (
+
+        // card is displayed bigger when hovered
+        this.scene.input.on('pointerover', function (
+            pointer: Phaser.Input.Pointer,
+            gameObject: Phaser.GameObjects.Sprite
+        ) {
+            if (gameObject[0] instanceof CardGUI)
+                this.missionScene.handGUI.toggleHovering(gameObject[0], false);
+
+        }, this);
+
+        this.scene.input.on('pointerout', function (
             pointer: Phaser.Input.Pointer,
             gameObject: Phaser.GameObjects.Sprite
         ) {
 
-            if (gameObject[0] instanceof CardGUI && canClick) {
-                let clickDelay = this.scene.time.now - lastTime;
-                lastTime = this.scene.time.now;
-                if (clickDelay < 350) {
-                    this.missionScene.handGUI.toggleHovering(gameObject[0]);
-                }
-            }
+            if (gameObject[0] instanceof CardGUI)
+                this.missionScene.handGUI.toggleHovering(gameObject[0], true);
 
         }, this);
     }
