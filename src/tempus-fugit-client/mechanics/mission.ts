@@ -277,6 +277,13 @@ export class Mission implements EnemyListener, PlayerListener {
         this.nextWave(0);
     }
 
+    // commands
+    public performbaseAttack(enemy:Enemy):void { // TODO: needs to work and called by player
+        if (this.curPhase == 2) {
+            
+        }
+    }
+
     /**
      * Switches phases
      * --- Player's turn ---
@@ -373,6 +380,8 @@ export class Mission implements EnemyListener, PlayerListener {
             this.listener.map(l => l.gameover(this, false));
         }
     }
+
+    async stateValuesChanged(player: Player) {}
 
     public static createFromJSON(jString): void {
         let json = JSON.parse(jString);

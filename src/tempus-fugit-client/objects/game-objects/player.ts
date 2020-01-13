@@ -25,6 +25,7 @@ export class Player {
 
     set baseAttack(value: number) {
         this._baseAttack = value;
+        this.listener.map(obj => obj.stateValuesChanged(this));
     }
     public name: string; // Player's name
     public maxHP: number; // Player's maximum hit points
@@ -200,4 +201,5 @@ export class Player {
  */
 export interface PlayerListener {
     playerHpChanged(changedTo: number, changedBy: number): void;
+    stateValuesChanged(player:Player):void;
 }
