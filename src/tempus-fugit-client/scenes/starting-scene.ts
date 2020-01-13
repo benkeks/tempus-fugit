@@ -44,20 +44,6 @@ export class StartingScene extends Phaser.Scene {
         );
         tutText.setOrigin(0.5);
         tutText.setColor("#fff");*/
-        
-
-        let f:Formula = new Formula("#En");
-        let v:Variable = f.variables["n"];
-        v.values = [false, true,true];
-        v.finiteStatesFuture = false;
-        v.finiteStatesPast = true;
-        v.defaultValueFuture = false;
-        v.defaultValuePast = false;
-
-        console.log(f.generateRepresentation(true, true));
-        console.log(f.evaluate(0));
-        console.log(f.evaluate(1));
-        console.log(f.evaluate(2));
 
         let bla = this.add.sprite(950,450,"gamelogo",0);
         bla.setScale(8,8);

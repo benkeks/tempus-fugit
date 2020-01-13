@@ -67,7 +67,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public toPhase: Map<number, string>;
     public aliveEnemiesCount:number = -1;
 
-    public listener:GameStateListener[] = [];
+    public listener:MissionListener[] = [];
     public standListener:StandListener[] = [];
 
     public deck:Deck;
@@ -75,19 +75,34 @@ export class Mission implements EnemyListener, PlayerListener {
     public gameState:GameState;
 
     public gameWon:boolean = false;
+    public active:boolean = true;
 
     private stands:[Card, Card] = [null, null];
     // TODO: effect list
 
     public copy():Mission {
         let mission:Mission = new Mission();
-        mission.enemies = this.enemies;
+        mission.enemies = [];
+        for (let wave of this.enemies) {
+            let new_wave = [];
+            for (let e of wave) {
+                new_wave.push(e.copy());
+            }
+            mission.enemies.push(new_wave);
+        }
+
         mission.name = this.name;
         mission.background = this.background;
-        mission.monologue = this.monologue;
-        mission.dialogue = this.dialogue;
-        mission.gameState = this.gameState;
-        mission.stands = this.stands;
+        mission.monologue = {...this.monologue};
+        mission.dialogue = [];
+        for (let d of this.dialogue) {
+            mission.dialogue.push(d.copy());
+        }
+
+        mission.stands = [null, null];
+        for (let s of this.stands) {
+            if (s != null) mission.stands.push(s.copy());
+        }
 
         return mission;
     }
@@ -121,7 +136,6 @@ export class Mission implements EnemyListener, PlayerListener {
         for (let i=0; i < this.dialogue.length; i++) {
             let d:StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
-                console.log("trigger " + this.dialogue[i]);
                 this.listener.map(l => l.storyDialog(this, d));
                 this.dialogue.splice(i, 1);
             }
@@ -143,7 +157,7 @@ export class Mission implements EnemyListener, PlayerListener {
      * increments turn counter every time player turn is reached
      */
     public nextPhase(next:number = (this.curPhase + 1) % this.numPhases):void {
-        if (this.curPhase === this.numPhases-1) {
+        if (next < this.curPhase) {
             this.endOfRound();
         }
         this.curPhase = next;
@@ -186,6 +200,9 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public nextWave(next:number = this.waveCounter+1):void {
+        // removing this from last wave
+        this.getEnemies().map(e => e.listener.splice( e.listener.indexOf(this), 1 ));
+
         this.waveCounter = next;
 
         this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
@@ -197,6 +214,10 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.aliveEnemiesCount = this.getEnemies().length;
+        for(let e of this.getEnemies()) {
+            e.listener.push(this);
+        }
+
         this.nextPhase(0);
         this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
     }
@@ -232,7 +253,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     private enemyPhase():void {
         for (var stand of this.stands) {
-                stand.turnNormal();
+                if (stand != null) stand.turnNormal();
         }
         this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
 
@@ -254,6 +275,13 @@ export class Mission implements EnemyListener, PlayerListener {
         this.curPhase = 0;
         this.curTurn = 0;
         this.nextWave(0);
+    }
+
+    // commands
+    public performbaseAttack(enemy:Enemy):void { // TODO: needs to work and called by player
+        if (this.curPhase == 2) {
+            
+        }
     }
 
     /**
@@ -340,6 +368,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.aliveEnemiesCount += aliveChange;
+        this.checkDialogEvents();
 
         if (this.aliveEnemiesCount <= 0) {
             this.nextWave();
@@ -351,6 +380,8 @@ export class Mission implements EnemyListener, PlayerListener {
             this.listener.map(l => l.gameover(this, false));
         }
     }
+
+    async stateValuesChanged(player: Player) {}
 
     public static createFromJSON(jString): void {
         let json = JSON.parse(jString);
@@ -386,7 +417,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public async turnNormal(){}
 }
 
-export interface GameStateListener {
+export interface MissionListener {
     drawPhase(game:Mission):void;
     energyPhase(game:Mission):void;
     playPhase(game:Mission):void;

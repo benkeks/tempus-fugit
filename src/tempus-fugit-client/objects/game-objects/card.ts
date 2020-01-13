@@ -39,6 +39,7 @@ export class Card {
             this.image, this.formula.generateRepresentation(true, false),
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
+        c.inDeckAtStart = this.inDeckAtStart;
 
         return c;
     }
