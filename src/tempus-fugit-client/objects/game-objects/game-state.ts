@@ -84,8 +84,6 @@ export class GameState {
         }
     }
 
-
-
     public setAllVariableValues(variable:string, value:boolean):void {
         let l:number = this.variables[variable].values.length;
         this.variables[variable].setDefaultValue(value);

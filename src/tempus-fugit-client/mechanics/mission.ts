@@ -69,7 +69,6 @@ export class Mission implements EnemyListener, PlayerListener {
         mission.background = this.background;
         mission.monologue = this.monologue;
         mission.dialogue = this.dialogue;
-        mission.gameState = this.gameState;
         mission.stands = this.stands;
 
         return mission;
