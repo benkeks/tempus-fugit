@@ -9,7 +9,7 @@ import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
 import { StackGUI } from "../objects/game-gui-objects/stack-gui";
 import { EnemyGuiLayout } from "../objects/game-gui-objects/enemy-gui-layout";
-import { Mission, GameStateListener } from "../mechanics/mission";
+import { Mission, MissionListener } from "../mechanics/mission";
 import { StoryDialog } from "../mechanics/story-dialog";
 
 import { CardChannel } from "../objects/game-gui-objects/card-channel";
@@ -19,9 +19,10 @@ import { GameInfo } from "../game";
 import Image = Phaser.GameObjects.Image;
 import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import {StandGUILayout} from "../objects/game-gui-objects/stand-gui-layout";
+import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 
 
-export class MissionScene extends Phaser.Scene implements GameStateListener {
+export class MissionScene extends Phaser.Scene implements MissionListener {
     public playerGUI: PlayerGUI;
     public gameStateGUI: TableGUI;
     public handGUI: HandGUI;
@@ -87,7 +88,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
         this.playerGUI.listener.push(this.tfgame.player);
 
-        this.enemyGUI = new EnemyGuiLayout(this, this.tfgame.getEnemies());
+        this.enemyGUI = new EnemyGuiLayout(this, this.tfgame);
 
         this.standGUI = new StandGUILayout(this);
         this.tfgame.standListener.push(this.standGUI);
@@ -178,7 +179,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
-        this.enemyGUI.setEnemies(enemies);
+        this.enemyGUI.setEnemies(enemies, true);
     }
 
     /**

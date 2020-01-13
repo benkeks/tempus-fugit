@@ -29,14 +29,15 @@ export class EnemyGUI extends ListGUI {
         if (!texture) texture = enemy.image;
 
         this.addSpriteByTexture(texture);
-        this.scene.anims.create({
-            key: "standing",
-            frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
-            frameRate: 10,
-            repeat: -1
-        });
 
-        this.sprite.anims.play("standing");
+        scene.anims.create({
+            key: texture,
+            frames: scene.anims.generateFrameNumbers(texture, {start:0}),
+             frameRate: 10,
+             repeat: -1
+       });
+
+        this.sprite.anims.play(texture);
         this.sprite.setScale(2,2);
 
         this.addText("");
@@ -64,8 +65,20 @@ export class EnemyGUI extends ListGUI {
 
     public die():void {
         this.disableListeners();
-        this.isDestroyed = true;
-        this.destroy(true);
+
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: { from: 1, to: 0 },
+            ease: "Linear",
+            duration: 200,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.isDestroyed = true;
+                this.destroy(true);
+            },
+            onCompleteScope: this
+        });
     }
 
     public updateEnemyAttributes():void {

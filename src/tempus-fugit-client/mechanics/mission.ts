@@ -67,7 +67,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public toPhase: Map<number, string>;
     public aliveEnemiesCount:number = -1;
 
-    public listener:GameStateListener[] = [];
+    public listener:MissionListener[] = [];
     public standListener:StandListener[] = [];
 
     public deck:Deck;
@@ -75,6 +75,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public gameState:GameState;
 
     public gameWon:boolean = false;
+    public active:boolean = true;
 
     private stands:[Card, Card] = [null, null];
     // TODO: effect list
@@ -407,7 +408,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public async turnNormal(){}
 }
 
-export interface GameStateListener {
+export interface MissionListener {
     drawPhase(game:Mission):void;
     energyPhase(game:Mission):void;
     playPhase(game:Mission):void;

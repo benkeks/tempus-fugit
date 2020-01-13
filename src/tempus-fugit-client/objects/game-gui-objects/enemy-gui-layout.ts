@@ -1,14 +1,19 @@
 import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {GameInfo} from "../../game";
 import {EnemyGUI} from "./enemy-gui";
+import { Mission, MissionListener } from "../../mechanics/mission";
+import { StoryDialog } from "../../mechanics/story-dialog";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
-
     public enemies:EnemyGUI[] = [];
 
     public static enemyLayout:{[count:number]:number[][]};
 
-    constructor(scene:Phaser.Scene, enemies:Enemy[] = []) {
+    public mission:Mission;
+
+    public fadeInOffset = 500;
+
+    constructor(scene:Phaser.Scene, mission:Mission) {
         super(scene);
 
         EnemyGuiLayout.enemyLayout = {
@@ -22,14 +27,28 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
                 [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 80), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
         };
 
-        this.setEnemies(enemies);
+        this.mission = mission;
     }
 
-    public setEnemies(enemies:Enemy[]) {
+    public fadeIn(gameObject, from, to) {
+        this.scene.add.tween({
+            targets: gameObject,
+            x: {from:from, to:to},
+            ease: "Linear",
+            duration: 500,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+            },
+            onCompleteScope: this
+        });
+    }
+
+    public setEnemies(enemies:Enemy[], fadeIn:boolean=false) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
-            enemy.disableListeners();
-            this.remove(enemy, true, true);
+            enemy.die();
+            this.remove(enemy);
         }
 
         if (enemies.length == 0) return;
@@ -41,11 +60,15 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
         }
 
         for (let i in enemies) {
-            let enemyGUI:EnemyGUI = new EnemyGUI(this.scene, enemies[i], positions[i][0], positions[i][1]);
+            let x = positions[i][0];
+            let y = positions[i][1];
+
+            let enemyGUI:EnemyGUI = new EnemyGUI(this.scene, enemies[i], x, y, enemies[i].image);
 
             this.add(enemyGUI);
             this.enemies.push(enemyGUI);
+
+            if (fadeIn) this.fadeIn(enemyGUI, x+this.fadeInOffset, x);
         }
     }
-
 }

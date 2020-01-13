@@ -140,7 +140,7 @@ export class Enemy {
 
         for (let e of json.enemies) {
             if (e.sprite != "" && e.size != undefined && e.size.length == 2) {
-                scene.load.spritesheet(e.name,
+                scene.load.spritesheet(e.image,
                     e.sprite,
                     {frameWidth: e.size[0], frameHeight: e.size[1]});
             } else {
