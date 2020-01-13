@@ -58,28 +58,36 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * toggles highlighting a card
      * don't call hover method of cardGUI objects; user this moethod
-     * @param card 
+     * @param card
+     * @param unhover: true if card need to return to normal position on hand 
      */
-    toggleHovering(card: CardGUI): void {
+    toggleHovering(card: CardGUI, unhover: Boolean): void {
 
         if (!this.cardGUIs.includes(card))
             return;
-
-        const hover = card.hovering;
 
         let allTweensDone = true;
         for (let c of this.cardGUIs)
             if ((typeof c.hoverTween !== 'undefined' && c.hoverTween.isPlaying()) || (typeof c.unhoverTween !== 'undefined' && c.unhoverTween.isPlaying()))
                 allTweensDone = false;
 
-        // terminate if not all previous tweens are  over; else cards can get stuck
-        if (!allTweensDone)
-            return;
+        // if tween animations are not done wait 100 msec(duration of tweens)
+        // and try again
+        let self = this;
+        if (!allTweensDone) {
+            new Promise(resolve => setTimeout(resolve, 100))
+                .then(() => {
+                    self.unhoverAll();
+                    if (!unhover)
+                        card.hover()
+                })
+        } else {
 
-        this.unhoverAll();
+            this.unhoverAll();
 
-        if (!hover)
-            card.hover();
+            if (!unhover)
+                card.hover();
+        }
     }
 
     /**
@@ -98,9 +106,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.angle = card.cardOriginAngle;
                 card.setDepth(card.cardOriginZ);
                 card.setScale(1);
-                if (card.formulaGUI != null) {
-                    card.formulaGUI.destroy();
-                }
             }
         }
     }
