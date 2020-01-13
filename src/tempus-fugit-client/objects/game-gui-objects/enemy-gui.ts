@@ -64,6 +64,12 @@ export class EnemyGUI extends ListGUI {
         this.enemy.removeListener(this);
     }
 
+    public die():void {
+        this.disableListeners();
+        this.isDestroyed = true;
+        this.destroy(true);
+    }
+
     public updateEnemyAttributes():void {
         this.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
     }
@@ -96,6 +102,6 @@ export class EnemyGUI extends ListGUI {
      */
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
         //this.popText((changedTo-changedFrom).toString());
-
+        this.updateEnemyAttributes();
     }
 }

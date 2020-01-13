@@ -49,10 +49,12 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group implements EnemyLis
     }
 
     async enemyHpChanged(enemy: Enemy, changedFrom: number, changedTo: number) {
-        for (let eg of this.enemies) {
-            if (eg.enemy != enemy) continue;
+        if (changedFrom > 0 && changedTo <= 0) {
+            for (let eg of this.enemies) {
+                if (eg.enemy != enemy) continue;
 
-            eg.enemyHpChanged(enemy, changedFrom, changedTo);
+                eg.die();
+            }
         }
     }
 

@@ -64,7 +64,15 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public copy():Mission {
         let mission:Mission = new Mission();
-        mission.enemies = this.enemies;
+        mission.enemies = [];
+        for (let wave of this.enemies) {
+            let new_wave = [];
+            for (let e of wave) {
+                new_wave.push(e.copy());
+            }
+            mission.enemies.push(new_wave);
+        }
+
         mission.name = this.name;
         mission.background = this.background;
         mission.monologue = this.monologue;

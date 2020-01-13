@@ -61,7 +61,7 @@ export class MissionScene extends Phaser.Scene implements GameStateListener {
     }
 
     create(data): void {
-        this.tfgame = Mission.Missions[data.key].copy();
+        this.tfgame = Object.assign(new Mission(), Mission.Missions[data.key]);
         this.missionIndex = data.index;
         this.tfgame.player = data.player;
         this.tfgame.deck = data.deck;
