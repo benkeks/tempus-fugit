@@ -138,6 +138,8 @@ export class Player {
                         break;
                 }
             }
+        } else {
+            console.log(card.getFormula());
         }
         this.hand.removeCard(card, mission);
     }

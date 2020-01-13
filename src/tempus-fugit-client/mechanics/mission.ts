@@ -156,7 +156,7 @@ export class Mission implements EnemyListener, PlayerListener {
      * increments turn counter every time player turn is reached
      */
     public nextPhase(next:number = (this.curPhase + 1) % this.numPhases):void {
-        if (this.curPhase === this.numPhases-1) {
+        if (next < this.curPhase) {
             this.endOfRound();
         }
         this.curPhase = next;
@@ -360,8 +360,8 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.aliveEnemiesCount += aliveChange;
+        this.checkDialogEvents();
 
-        console.log("alive Enenmies: " + this.aliveEnemiesCount);
         if (this.aliveEnemiesCount <= 0) {
             this.nextWave();
         }

@@ -73,7 +73,6 @@ export class CardChannel extends Container {
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) {
-                console.log('card drag');
                 if (!(gameObject instanceof CardGUI)) return;
                 let card: Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
@@ -96,7 +95,6 @@ export class CardChannel extends Container {
                         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
 
                         this.emitter.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
-                        //console.log(this.emitter.moveToX);
                         this.emitter.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
                     }
 
@@ -122,7 +120,7 @@ export class CardChannel extends Container {
                 this.scene.sys.canvas.style.cursor = "default";
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
-                if (e || (card.getKind() != Card.DIRECTED && pointer.y > this.y)) {
+                if (e || (card.getKind() != Card.DIRECTED && pointer.y < this.y)) {
                     this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {

@@ -430,7 +430,6 @@ export class TableGUI implements GameStateListener {
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
-
         for (let key in valueChanges) {
             const row = parseInt(key);
             const column = this.variables[variable.representation];

@@ -49,7 +49,7 @@ export class GameState {
     private _variables:{[represenstation:string]:Variable} = {};
     public variableStatus:{[representation:string]:VariableStatus} = {};
 
-    private _maxEnergy:number = 4;
+    private _maxEnergy:number = 2;
     private _energy:number = 0;
 
     public activeState:number = 0;
@@ -84,21 +84,72 @@ export class GameState {
         }
     }
 
-    public setAllVariableValues(variable:string, value:boolean):void {
-        let l:number = this.variables[variable].values.length;
-        this.variables[variable].setDefaultValue(value);
+    /***
+     * 
+     * data consists of following format
+     * {
+     * "var1": {state:value}
+     * }
+     * 
+    */
+    public setVariableValues(variableValues, local:boolean=true):void {  
+        let offset = 0
+        if (local) offset = this.activeState;
 
-        for (let i = 0; i < l; i++) {
-            this.setVariable(variable, value, i);
+        for (let v in variableValues) {
+            let values = variableValues[v];
+            
+            let changes = {};
+            let oldVariable = this.getVariable(v).copy();
+            for (let index in values) {
+                let val = values[index];
+
+                this.setVariable(v, val, parseInt(index)+offset, false, false);
+                changes[parseInt(index)+offset] = val;
+            }
+
+            this.listener.map(obj => obj.variableChanged(this, oldVariable, this.getVariable(v), changes));
         }
     }
 
-    public setAllFutureVariableValues(variable:string, value:boolean):void {
-        let l:number = this.variables[variable].values.length;
-        this.variables[variable].setDefaultValue(value);
+    public setAllVariableValues(variableIntervals):void {
+        for (let interval of variableIntervals) {
+            let start = interval.start;
+            let v = interval.variable;
+            let end = interval.end;
+            let direction = 1;
+            let value = interval.value;
+            let local = interval.local;
 
-        for (let i = this.activeState+1; i < l; i++) {
-            this.setVariable(variable, value, i);
+            let offset = 0;
+            if (local) offset = this.activeState
+
+            if (v===undefined || start===undefined || end === undefined) {
+                console.log(v + "  " + start + "  " + end + "  " + value)
+                console.log(interval);
+                console.warn("Properties are not set correctly for setAllVariableValues() !!!");
+                continue;
+            }
+
+            if (end < 0) end = this.variables[v].values.length;
+
+            let changes = {};
+            let oldVariable = this.getVariable(v).copy();
+            for (let i = start; i < end; i+=direction) {
+                this.setVariable(v, value, offset+i, false, false);
+                changes[offset+i] = value;
+            }
+
+            this.listener.map(obj => obj.variableChanged(this, oldVariable, this.getVariable(v), changes));
+        }
+    }
+
+    public setDefaultVariableValue(variableSettings) { // TODO: table gui needs to support that
+        for (let setting of variableSettings) {
+            let v = setting.variable;
+            let start = setting.start;
+
+            
         }
     }
 
@@ -137,19 +188,23 @@ export class GameState {
 
         if (state !== this.activeState) return 3;
 
-        if (this.energy > 0 && value) {
-            this.energy--;
-        } else if (this.energy < this.maxEnergy && !value) {
-            this.energy++;
-        } else {
-            return 2;
-        }
+        if (!(state in vs.userChanged)) vs.userChanged[state] = false;
 
         if (vs.isBlocked(state)) {
             return 1;
         }
 
-        return this.setVariable(name, value, state);
+        if (this.energy > 0 && !vs.userChanged[state]) { // TODO: changing should cost 1 energy not making it true
+            this.energy--;
+            vs.userChanged[state] = true;
+        } else if (this.energy < this.maxEnergy && vs.userChanged[state]) {
+            this.energy++;
+            vs.userChanged[state] = false;
+        } else {
+            return 2;
+        }
+
+        return this.setVariable(name, value, state, true);
     }
 
     /**
@@ -160,7 +215,7 @@ export class GameState {
      * @param state the state where the value should be set. Default: the active state
      * @return 0: if the change succeded, 1: if the value is blocked, 2: if no energy available
      * */
-    public setVariable(name:string, value:boolean, state:number=this.activeState):number {
+    public setVariable(name:string, value:boolean, state:number=this.activeState, user:boolean=false, triggerEvent:boolean=true):number {
         let v:Variable;
         if (!(name in this.variables)) { // creating variables
             v = new Variable(name);
@@ -179,7 +234,9 @@ export class GameState {
         changes[state] = value;
         v.setValue(value, state);
 
-        this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
+        if (!user) this.getVariableStatus(name).userChanged[state] = false;
+
+        if (triggerEvent) this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
 
         return 0;
     }
@@ -208,6 +265,7 @@ export class GameState {
 
 class VariableStatus {
     blocked:{[id:number] : boolean} = {};
+    userChanged:{[id:number]:boolean} = {};
 
     constructor() {
     }
