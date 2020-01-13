@@ -31,9 +31,25 @@ export class Mission implements EnemyListener, PlayerListener {
         this._player = value;
         this.player.listener.push(this);
     }
-    
+
     public pushStand(stand: Card) {
-        this.stands.push(stand);
+        if (this.stands[0] != null && this.stands[1] != null) {
+            if (this.stands[0].getRoundsRemaining() <= this.stands[1].getRoundsRemaining()) {
+                this.stands[0] = stand;
+            } else {
+                this.stands[1] = stand;
+            }
+        } else {
+            if (this.stands[0] == null) {
+                this.stands[0] = stand;
+            } else {
+                this.stands[1] = stand;
+            }
+        }
+        for (let l of this.standListener) {
+            l.updateStandGUI(this.stands);
+        }
+
     }
 
     public static Missions: {[name:string]:Mission} = {};
@@ -52,6 +68,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public aliveEnemiesCount:number = -1;
 
     public listener:GameStateListener[] = [];
+    public standListener:StandListener[] = [];
 
     public deck:Deck;
     public _player:Player;
@@ -59,7 +76,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public gameWon:boolean = false;
 
-    private stands:Card[] = [];
+    private stands:[Card, Card] = [null, null];
     // TODO: effect list
 
     public copy():Mission {
@@ -75,9 +92,16 @@ export class Mission implements EnemyListener, PlayerListener {
 
         mission.name = this.name;
         mission.background = this.background;
-        mission.monologue = this.monologue;
-        mission.dialogue = this.dialogue;
-        mission.stands = this.stands;
+        mission.monologue = {...this.monologue};
+        mission.dialogue = [];
+        for (let d of this.dialogue) {
+            mission.dialogue.push(d.copy());
+        }
+
+        mission.stands = [null, null];
+        for (let s of this.stands) {
+            if (s != null) mission.stands.push(s.copy());
+        }
 
         return mission;
     }
@@ -111,7 +135,6 @@ export class Mission implements EnemyListener, PlayerListener {
         for (let i=0; i < this.dialogue.length; i++) {
             let d:StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
-                console.log("trigger " + this.dialogue[i]);
                 this.listener.map(l => l.storyDialog(this, d));
                 this.dialogue.splice(i, 1);
             }
@@ -176,6 +199,9 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public nextWave(next:number = this.waveCounter+1):void {
+        // removing this from last wave
+        this.getEnemies().map(e => e.listener.splice( e.listener.indexOf(this), 1 ));
+
         this.waveCounter = next;
 
         this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
@@ -187,6 +213,10 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.aliveEnemiesCount = this.getEnemies().length;
+        for(let e of this.getEnemies()) {
+            e.listener.push(this);
+        }
+
         this.nextPhase(0);
         this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
     }
@@ -206,25 +236,23 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private standPhase(): void {
-        for (var stand of this.getStands()) {
-            stand.turnRed();
-            stand.act(this, this.player);
-            if (stand.getRoundsRemaining() <= 0) {
-                for (var l of stand.listener) {
-                    l.deactiveStand(stand);
+        for (let i of [0,1]) {
+            let stand = this.getStands()[i];
+            if (stand != null) {
+                stand.act(this, this.player);
+                if (stand.getRoundsRemaining() <= 0) {
+                    this.stands[i] = null;
                 }
-                for(var i = 0; i < this.stands.length; i++){
-                    if ( this.stands[i] === stand) {
-                        this.stands.splice(i, 1);
-                    }
-                };
+                for (var l of this.standListener) {
+                    l.updateStandGUI(this.stands);
+                }
             }
         }
     }
 
     private enemyPhase():void {
         for (var stand of this.stands) {
-                stand.turnNormal();
+                if (stand != null) stand.turnNormal();
         }
         this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
 
@@ -333,6 +361,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
         this.aliveEnemiesCount += aliveChange;
 
+        console.log("alive Enenmies: " + this.aliveEnemiesCount);
         if (this.aliveEnemiesCount <= 0) {
             this.nextWave();
         }
@@ -389,4 +418,13 @@ export interface GameStateListener {
     storyMonolog(game:Mission, monolog:string):void;
     waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
     gameover(game:Mission, gameWon:boolean):void;
+}
+
+
+export interface StandListener {
+    updateStandGUI(stands: [Card, Card]): void;
+    /*removeStand(stand: Card):void;
+    updateStandText(): void;
+    turnRed(): void;
+    turnNormal(): void;*/
 }

@@ -48,8 +48,31 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
      * change HP display of player
      * @param changedTo
      */
-    async playerHpChanged(changedTo: number) {
+    async playerHpChanged(changedTo: number, changedBy: number) {
         this.hpText.setText('' + changedTo);
+        let font1: Object = { fontSize: '50px', fontFamily: 'appleKid', color: '#FF0000' };
+        console.log(changedBy);
+        if (changedBy > 0) {
+            font1 = { fontSize: '50px', fontFamily: 'appleKid', color: '#00DD00' }
+            let damageText = this.scene.add.text(this.x-20, this.y-100, Math.abs(changedBy).toString(), font1);
+            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear",
+                onComplete: function () {
+                    damageText.destroy()
+                }});
+        } else if (changedBy < 0) {
+            let damageText = this.scene.add.text(this.x-20, this.y-100, Math.abs(changedBy).toString(), font1);
+            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
+                onComplete: function () {
+                    damageText.destroy()
+                }});
+            let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
+            blood.setScale(0.3,0.4);
+            blood.alpha = 0;
+            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+                onComplete: function () {
+                    blood.destroy()
+                }});
+        }
     }
 }
 

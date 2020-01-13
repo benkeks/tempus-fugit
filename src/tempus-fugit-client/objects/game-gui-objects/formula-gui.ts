@@ -58,6 +58,8 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         }
 
         for (let el of this.elementList) {
+            el.setScale(0.75);
+            el.setOrigin(0, 0);
             this.add(el);
         }
         scene.add.existing(this);

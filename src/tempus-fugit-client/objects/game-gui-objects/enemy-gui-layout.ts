@@ -2,7 +2,7 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {GameInfo} from "../../game";
 import {EnemyGUI} from "./enemy-gui";
 
-export class EnemyGuiLayout extends Phaser.GameObjects.Group implements EnemyListener {
+export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
     public enemies:EnemyGUI[] = [];
 
@@ -45,16 +45,6 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group implements EnemyLis
 
             this.add(enemyGUI);
             this.enemies.push(enemyGUI);
-        }
-    }
-
-    async enemyHpChanged(enemy: Enemy, changedFrom: number, changedTo: number) {
-        if (changedFrom > 0 && changedTo <= 0) {
-            for (let eg of this.enemies) {
-                if (eg.enemy != enemy) continue;
-
-                eg.die();
-            }
         }
     }
 

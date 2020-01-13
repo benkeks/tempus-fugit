@@ -18,7 +18,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
     public hoverTween: Phaser.Tweens.Tween;
     public unhoverTween: Phaser.Tweens.Tween;
     public cardImage: Phaser.GameObjects.Image;
-    public formulaGUI: FormulaGUI;
 
     constructor(
         scene: Phaser.Scene,
@@ -33,11 +32,9 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this._cardOriginY = y;
         this._card = card;
         this.scene = scene;
-        this.formulaGUI = null;
 
         this.createCard(card);
     }
-
 
     /**
      * make container for a card
@@ -52,11 +49,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
         let font1: Object = { fontSize: '18px', fontFamily: 'appleKid', color: '#000000' }
         let font2: Object = { fontSize: '12px', fontFamily: 'appleKid', color: '#000000' }
         this.setSize(width, height);
-
-        // let rect = this.scene.add.rectangle(0, 0, width, height,
-        //     rectBackgroundColor, 1);
-        //rect.setOrigin(0.5, 0.5);
-        //rect.setStrokeStyle(2, rectOutlineColor);
 
         // outline
         let graphics = this.scene.add.graphics();
@@ -73,7 +65,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         // first horizontal line
         let lineColor = rectOutlineColor;
-        let formulaLine1 = this.scene.add.line(0, 0, 0, 60 - height / 2, width, 60 - height / 2, lineColor, 1);
+        let formulaLine1 = this.scene.add.line(0, 0, 0, 80 - height / 2, width, 80 - height / 2, lineColor, 1);
         formulaLine1.setLineWidth(2);
         this.add(formulaLine1);
         formulaLine1.setOrigin(0, 0);
@@ -87,20 +79,27 @@ export class CardGUI extends Phaser.GameObjects.Container {
         formulaLine2.setPosition(-(width / 2), 0);
 
 
-        // formula text
-        // TODO add real formula text   
+        // texts
         let padding = 10;
         let maxTextWidth = width - 4 * padding;
 
-        let formulaText = this.scene.add.text(0, 0, card.getName(), font1); //card.getFormula().generateRepresentation(true, true);
-        this.add(formulaText);
-        formulaText.style.setWordWrapWidth(maxTextWidth, true);
-        formulaText.setOrigin(0.5, 0);
-        formulaText.setPosition(0, padding - height / 2);
+        // card title
+        let title = this.scene.add.text(0, 0, card.getName(), font1);
+        this.add(title);
+        title.style.setWordWrapWidth(maxTextWidth, true);
+        title.setOrigin(0.5, 0);
+        title.setPosition(0, padding - height / 2);
 
-        // efffect text
-        // TODO add real effekt text
-        let effektText = this.scene.add.text(0, 0, card.getDescription(), font2); // card.getDescription()
+
+        // formula text
+        let string = this.card.getFormula().generateRepresentation(true, true);
+        let margin = 2;
+        let formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
+        this.add(formulaGUI);
+        formulaGUI.setPosition(-8 * string.length, padding + 40 - height / 2);
+
+        // effect text
+        let effektText = this.scene.add.text(0, 0, card.getDescription(), font2);
         this.add(effektText);
         effektText.style.setWordWrapWidth(maxTextWidth, true);
         effektText.setOrigin(0.5, 0);
@@ -111,7 +110,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         image.setDisplaySize(140, 120)
         this.add(image);
         image.setOrigin(0.5, 0);
-        image.setPosition(0, padding + 60 - height / 2);
+        image.setPosition(0, 80 - height / 2);
         this.cardImage = image;
     }
 
@@ -122,21 +121,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
        */
     hover(): void {
         this.setDepth(100);
-        let string = this.card.getFormula().generateRepresentation(true, true);
-        let margin = 4;
-        //this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16+margin)*string.length/2), this.y-550, margin, true));
-        this.formulaGUI = (new FormulaGUI(this.scene, string, this.x - ((16 + margin) * string.length / 2), this.y - 200, margin, true)).setAngle(this.cardOriginAngle);
-
-        this.hoverTween = this.scene.tweens.add({
-            targets: this.formulaGUI,
-            y: this.y - 350,
-            //x: this.x - this.formulaGUI.width * 3,
-            angle: 0,
-            ease: 'power2',
-            scaleX: 1,
-            scaleY: 1,
-            duration: 500,
-        });
 
         this.hoverTween = this.scene.tweens.add({
             targets: this,
@@ -145,10 +129,9 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
-            duration: 500,
+            duration: 100,
         });
         this.hovering = true;
-
     }
 
     /**
@@ -164,12 +147,9 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
-            duration: 400,
+            duration: 100,
         });
         this.hovering = false;
-        if (this.formulaGUI != null) {
-            this.formulaGUI.destroy();
-        }
     }
 
     /**

@@ -24,6 +24,13 @@ export class StoryDialog {
         return this.triggerFunction(mission);
     }
 
+    public copy():StoryDialog {
+        let sd = new StoryDialog([...this.text]);
+        sd.triggerFunctionString = this.triggerFunctionString;
+        sd.triggerFunction = this.triggerFunction;
+        return sd;
+    }
+
     constructor(text:string[][]) {
         this.text = text;
     }
