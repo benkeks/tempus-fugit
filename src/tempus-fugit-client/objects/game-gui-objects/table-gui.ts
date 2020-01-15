@@ -1,6 +1,7 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
+import { thisExpression } from "@babel/types";
 
 const COLOR_PRIMARY = 0x2a4f16;
 const COLOR_LIGHT = 0x7b5e57;
@@ -23,11 +24,13 @@ export class TableGUI implements GameStateListener {
     private readonly tableOffsetY: number; // y-position of table
     private readonly variableTableCellWidth = 90;
     private readonly variableTableCellHeight = 60;
-    private readonly tableColumnCount = 30;
+    private tableColumnCount = 30;
     private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
     //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
     private tableItems;
     private overlay: Phaser.GameObjects.Rectangle;
+    private outlines: Phaser.GameObjects.Image[];
+    private scrollCount = 0;
 
     constructor(
         scene: Phaser.Scene,
@@ -54,6 +57,8 @@ export class TableGUI implements GameStateListener {
         // this.mapping["s"] = { frame: 1 };
         // this.mapping["l"] = { frame: 2 };
         // this.mapping["t"] = { frame: 3 };
+
+        this.setUpScrollingArrows();
     }
 
     /**
@@ -81,7 +86,7 @@ export class TableGUI implements GameStateListener {
         this.variableTable = this.scene.rexUI.add
             .gridTable({
                 x: this.tableOffsetX,
-                y: this.tableOffsetY + 15,
+                y: this.tableOffsetY,
                 // @ts-ignore
                 background: this.scene.rexUI.add.roundRectangle(
                     0,
@@ -94,15 +99,6 @@ export class TableGUI implements GameStateListener {
                 ),
                 scroller: false,
                 scrollMode: 1,
-                slider: {
-                    //@ts-ignore
-                    track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
-                    //@ts-ignore
-                    thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
-                },
-                space: {
-                    table: 10
-                },
                 // table config
                 table: {
                     width: this.variableTableCellWidth * 20,//this.tableColumnCount,
@@ -427,6 +423,26 @@ export class TableGUI implements GameStateListener {
         }
 
         this.createEnergyTable(this.gameState.maxEnergy);
+
+        // move table to the right if last visible column is reached
+        if (activeRound >= 20)
+            this.scrollTable(true);
+
+        // add 30 more columns if end of table is reached
+        if (activeRound == this.tableColumnCount - 1) {
+            let itemCount = 30 * variables.length;
+            for (let i = 0; i < itemCount; i++) {
+                this.tableItems.push({
+                    id: this.tableColumnCount * variables.length + i,
+                    iconColor: COLOR_PRIMARY,
+                    iconAlpha: 0,
+                    backgroundColor: COLOR_PRIMARY,
+                    backgroundAlpha: 0
+                });
+            }
+            this.tableColumnCount += 30;
+            this.variableTable.setItems(this.tableItems);
+        }
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
@@ -452,12 +468,211 @@ export class TableGUI implements GameStateListener {
     }
 
     async activated(gameState: GameState) {
-        // if (gameState.active) {
-        //     if (this.overlay)
-        //         this.overlay.destroy();
-        // } else {
-        //     this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
-        // }
+        if (gameState.active) {
+            if (this.overlay)
+                this.overlay.destroy();
+            this.toggleGlowEffect(true);
+        } else {
+            this.toggleGlowEffect(false);
+            this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
+        }
     }
+
+    /**
+     * toggles glow effect of game state table
+     * @param visible: true if outline should be shown 
+     */
+    toggleGlowEffect(visible: boolean) {
+
+        if (!this.outlines) {
+            this.outlines = [];
+            let left = this.variableTable.left - this.variableTableCellWidth;
+            let right = this.variableTable.right;
+            let top = this.variableTable.top;
+            let bottom = this.variableTable.bottom;
+            let lineWidth = 13;
+
+            this.outlines.push(this.scene.add.image(left - 10, top - 7, 'yellow').setOrigin(0, 0).setDisplaySize(lineWidth, bottom - top + 7)
+                .setDepth(10)); // top-left to bottom-left line
+            this.outlines.push(this.scene.add.image(right, top - 7, 'yellow').setOrigin(0, 0).setDisplaySize(lineWidth, bottom - top + 7)
+                .setDepth(10)); // top-right to bottom-right line
+            this.outlines.push(this.scene.add.image(left - 7, top + 2, 'yellow').setOrigin(1, 1).setAngle(90).setDisplaySize(lineWidth, right - left + 17)
+                .setDepth(10)); // top-left to top-right line
+            this.outlines.push(this.scene.add.image(left - 7, bottom + 7, 'yellow').setOrigin(1, 1).setAngle(90).setDisplaySize(lineWidth, right - left + 17)
+                .setDepth(10)); // bottom-left to bottom-right line
+        }
+
+        for (let line of this.outlines)
+            line.setVisible(visible);
+
+    }
+
+    /**
+     * moves tables columns one to the right if toRight is true, else to left (only if space is available)
+     * @param toRight
+     * @returns true if scoll was successfull
+     */
+    scrollTable(toRight: boolean): boolean {
+        let scrollFactor = this.variableTableCellWidth;
+        if (toRight) {
+            if (this.scrollCount + 20 < this.tableColumnCount) {
+                this.variableTable.getElement('table').addTableOY(-scrollFactor).updateTable();
+                this.scrollCount++;
+                return true;
+            }
+        } else {
+            if (this.scrollCount > 0) {
+                this.variableTable.getElement('table').addTableOY(scrollFactor).updateTable();
+                this.scrollCount--;
+                return true;
+            }
+        }
+    }
+
+
+    setUpScrollingArrows() {
+        // arrows for scrolling, 
+        // TODO: replace with real assetes
+
+        let rightTweenSucc;
+        let rightTweenFail;
+        let rightArrow = this.scene.add.image(1600, 290, 'arrow-right');
+        rightArrow.setInteractive()
+            .on('pointerdown', function () {
+
+                if (
+                    (typeof rightTweenSucc === 'undefined' || !rightTweenSucc.isPlaying()) &&
+                    (typeof rightTweenFail === 'undefined' || !rightTweenFail.isPlaying())
+                ) {
+
+                    // color arrow red
+                    rightArrow.setTint(0xff0000);
+
+                    if (this.scrollTable(true)) {
+
+                        // successful click
+                        rightTweenSucc = this.scene.tweens.add({
+                            targets: rightArrow,
+                            x: '+=20',
+                            ease: 'power2',
+                            duration: 150,
+                            yoyo: true,
+                            onComplete: () => rightArrow.clearTint()
+                        });
+
+                    } else {
+
+                        // unsuccessful click
+                        rightTweenFail = this.scene.tweens.add({
+                            targets: rightArrow,
+                            angle: '+=20',
+                            ease: 'power1',
+                            duration: 30,
+                            yoyo: true,
+                            onComplete: () => {
+                                rightTweenFail = this.scene.tweens.add({
+                                    targets: rightArrow,
+                                    angle: '-=20',
+                                    ease: 'power1',
+                                    duration: 30,
+                                    yoyo: true,
+                                    onComplete: () => {
+                                        rightTweenFail = this.scene.tweens.add({
+                                            targets: rightArrow,
+                                            angle: '+=10',
+                                            ease: 'power1',
+                                            duration: 30,
+                                            yoyo: true,
+                                            onComplete: () => {
+                                                rightTweenFail = this.scene.tweens.add({
+                                                    targets: rightArrow,
+                                                    angle: '-=10',
+                                                    ease: 'power1',
+                                                    duration: 30,
+                                                    yoyo: true,
+                                                    onComplete: () => rightArrow.clearTint()
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }, this);
+
+
+        let leftTweenSucc;
+        let leftTweenFail;
+        let leftArrow = this.scene.add.image(1500, 290, 'arrow-left');
+        leftArrow.setInteractive()
+            .on('pointerdown', function () {
+                if (
+                    (typeof leftTweenSucc === 'undefined' || !leftTweenSucc.isPlaying()) &&
+                    (typeof leftTweenFail === 'undefined' || !leftTweenFail.isPlaying())
+                ) {
+
+                    // color arrow red
+                    leftArrow.setTint(0xff0000);
+
+                    if (this.scrollTable(false)) {
+
+                        // successful click
+                        leftTweenSucc = this.scene.tweens.add({
+                            targets: leftArrow,
+                            x: '-=20',
+                            ease: 'power2',
+                            duration: 150,
+                            yoyo: true,
+                            onComplete: () => leftArrow.clearTint()
+                        });
+
+                    } else {
+
+                        // unsuccessful click
+                        leftTweenFail = this.scene.tweens.add({
+                            targets: leftArrow,
+                            angle: '+=20',
+                            ease: 'power1',
+                            duration: 30,
+                            yoyo: true,
+                            onComplete: () => {
+                                leftTweenFail = this.scene.tweens.add({
+                                    targets: leftArrow,
+                                    angle: '-=20',
+                                    ease: 'power1',
+                                    duration: 30,
+                                    yoyo: true,
+                                    onComplete: () => {
+                                        leftTweenFail = this.scene.tweens.add({
+                                            targets: leftArrow,
+                                            angle: '+=10',
+                                            ease: 'power1',
+                                            duration: 30,
+                                            yoyo: true,
+                                            onComplete: () => {
+                                                leftTweenFail = this.scene.tweens.add({
+                                                    targets: leftArrow,
+                                                    angle: '-=10',
+                                                    ease: 'power1',
+                                                    duration: 30,
+                                                    yoyo: true,
+                                                    onComplete: () => leftArrow.clearTint()
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+
+
+            }, this);
+    }
+
 }
+
 
