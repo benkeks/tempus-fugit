@@ -29,7 +29,7 @@ export class TableGUI implements GameStateListener {
     //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
     private tableItems;
     private overlay: Phaser.GameObjects.Rectangle;
-    private outlines: Phaser.GameObjects.Image[];
+    private outline: Phaser.GameObjects.Graphics;
     private scrollCount = 0;
 
     constructor(
@@ -471,40 +471,28 @@ export class TableGUI implements GameStateListener {
         if (gameState.active) {
             if (this.overlay)
                 this.overlay.destroy();
-            this.toggleGlowEffect(true);
+            this.toggleOutline(true);
         } else {
-            this.toggleGlowEffect(false);
+            this.toggleOutline(false);
             this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
         }
     }
 
     /**
-     * toggles glow effect of game state table
+     * toggles golden outline of game state table
      * @param visible: true if outline should be shown 
      */
-    toggleGlowEffect(visible: boolean) {
-
-        if (!this.outlines) {
-            this.outlines = [];
+    toggleOutline(visible: boolean) {
+        if (!this.outline) {
             let left = this.variableTable.left - this.variableTableCellWidth;
             let right = this.variableTable.right;
             let top = this.variableTable.top;
             let bottom = this.variableTable.bottom;
-            let lineWidth = 13;
-
-            this.outlines.push(this.scene.add.image(left - 10, top - 7, 'yellow').setOrigin(0, 0).setDisplaySize(lineWidth, bottom - top + 7)
-                .setDepth(10)); // top-left to bottom-left line
-            this.outlines.push(this.scene.add.image(right, top - 7, 'yellow').setOrigin(0, 0).setDisplaySize(lineWidth, bottom - top + 7)
-                .setDepth(10)); // top-right to bottom-right line
-            this.outlines.push(this.scene.add.image(left - 7, top + 2, 'yellow').setOrigin(1, 1).setAngle(90).setDisplaySize(lineWidth, right - left + 17)
-                .setDepth(10)); // top-left to top-right line
-            this.outlines.push(this.scene.add.image(left - 7, bottom + 7, 'yellow').setOrigin(1, 1).setAngle(90).setDisplaySize(lineWidth, right - left + 17)
-                .setDepth(10)); // bottom-left to bottom-right line
+            let graphics = this.scene.add.graphics();
+            graphics.lineGradientStyle(5, 0xffff00, 0xffea00, 0xffff1a, 0xffff00, 1);
+            this.outline = graphics.strokeRoundedRect(left, top, right - left, bottom - top, 5).setDepth(10);
         }
-
-        for (let line of this.outlines)
-            line.setVisible(visible);
-
+        this.outline.setVisible(visible);
     }
 
     /**
@@ -532,8 +520,6 @@ export class TableGUI implements GameStateListener {
 
     setUpScrollingArrows() {
         // arrows for scrolling, 
-        // TODO: replace with real assetes
-
         let rightTweenSucc;
         let rightTweenFail;
         let rightArrow = this.scene.add.image(1600, 290, 'arrow-right');
