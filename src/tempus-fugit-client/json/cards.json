@@ -21,7 +21,7 @@
 		"standRounds":"5",
 		"action":"target.takeHit(10, mission);",
 		"comment":"Deals 10 damage to one enemy",
-		"inDeckAtStart":"2"},
+		"inDeckAtStart":"4"},
 
 		{"name":"Lightning Strike",
 		"description":"this card deals 10 damage to all enemies",
@@ -32,7 +32,7 @@
 		"standRounds":"3",
 		"action":"target.takeHit(10, mission);mission.gameState.setVariableValues({'l':{1:false, 2:false}});",
 		"comment":"Deals 10 dmg to all enemies, also: ->!Ol&!OOl",
-		"inDeckAtStart":"2"},
+		"inDeckAtStart":"4"},
 
 		{"name":"Natural heal",
 		"description":"this card heals you by 15 HP!",
@@ -54,7 +54,7 @@
 		"standRounds":"3",
 		"action":"mission.player.heal(50);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:10, local:true, value:false}]);",
 		"comment":"heals player by 50 and: -> !Gn",
-		"inDeckAtStart":"4"},
+		"inDeckAtStart":"2"},
 
 		{"name":"Guiding Light",
 		"description":"Augments Base attack by 1 and globally light",
@@ -65,7 +65,7 @@
 		"standRounds":"3",
 		"action":"mission.player.baseAttack += 1;mission.gameState.setAllVariableValues([{variable:'l', start:0, end:10, local:true, value:false}]);",
 		"comment":"Base attack up by 1 and: -> Gl",
-		"inDeckAtStart":"4"},
+		"inDeckAtStart":"2"},
 
 		{"name":"Lower woodland spirit",
 		"description":"this stand deals 2 damage to all enemies!",
