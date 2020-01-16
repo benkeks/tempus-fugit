@@ -6,7 +6,6 @@ import { thisExpression } from "@babel/types";
 const COLOR_PRIMARY = 0x2a4f16;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e05;
-const COLOR_RED = 0x9e0b00;
 const COLOR_BUTTON = 0x666666;
 const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
@@ -20,61 +19,65 @@ export class TableGUI implements GameStateListener {
     private game: Mission;
 
     private variableTable; // table object
-    private readonly tableOffsetX: number; // x-position of table
-    private readonly tableOffsetY: number; // y-position of table
     private readonly variableTableCellWidth = 90;
     private readonly variableTableCellHeight = 60;
-    private tableColumnCount = 30;
+    private readonly initialColumnCount = 20; // number of visible columns
+    private tableColumnCount = 20; // total number of columns
     private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
-    //private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
+    private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
     private tableItems;
     private overlay: Phaser.GameObjects.Rectangle;
     private outline: Phaser.GameObjects.Graphics;
     private scrollCount = 0;
+    private energyTexture: string;
 
     constructor(
         scene: Phaser.Scene,
         game: Mission,
-        tableOffsetX: number = 1000,
-        tableOffsetY: number = 140
+        energyTexture: string = "energyFont"
     ) {
         this.scene = scene;
-        this.tableOffsetX = tableOffsetX;
-        this.tableOffsetY = tableOffsetY;
         this.gameState = game.gameState;
         this.game = game;
+        this.energyTexture = energyTexture;
 
+        // let i = 0;
+        // for (let key in this.gameState.variables)
+        //     this.variables[key] = i++;
+
+        this.variables = {
+            n: 0,
+            t: 1,
+        }
+
+        // mapping of rune names fo frame in sprite
+        this.mapping.n = { frame: 0 };
+        this.mapping.s = { frame: 1 };
+        this.mapping.l = { frame: 2 };
+        this.mapping.t = { frame: 3 };
+
+        this.createVariableTable();
         this.createEnergyTable(this.gameState.energy);
-        let i = 0;
-        for (let key in this.gameState.variables)
-            this.variables[key] = i++;
-
-        this.createVariableTable(Object.keys(this.variables));
         this.createButton();
         this.roundChanged(this.gameState, -1, this.gameState.activeState);
-
-        // this.mapping["n"] = { frame: 0 };
-        // this.mapping["s"] = { frame: 1 };
-        // this.mapping["l"] = { frame: 2 };
-        // this.mapping["t"] = { frame: 3 };
-
         this.setUpScrollingArrows();
     }
 
     /**
-     * creates a new table at position (x,y)
-     * @param variables: list of variables in table
+     * creates a new game state table 
+     * @param paddingLeft : distance from left side of table to left edge of screen 
+     * @param paddingTop : distance from top side of table to top edge of screen 
      */
-    private createVariableTable(
-        variables: string[]
-    ): void {
+
+    private createVariableTable(paddingLeft: number = 10, paddingTop: number = 10, ): void {
+        const numVar = Object.keys(this.variables).length;
+        const itemCount = this.initialColumnCount * numVar;
+        const energyTexture = this.energyTexture;
         // items in table
-        const itemCount = this.tableColumnCount * variables.length;
         this.tableItems = [];
         for (let i = 0; i < itemCount; i++) {
             this.tableItems.push({
                 id: i,
-                iconColor: COLOR_PRIMARY,
                 iconAlpha: 0,
                 backgroundColor: COLOR_PRIMARY,
                 backgroundAlpha: 0
@@ -85,8 +88,8 @@ export class TableGUI implements GameStateListener {
         // @ts-ignore
         this.variableTable = this.scene.rexUI.add
             .gridTable({
-                x: this.tableOffsetX,
-                y: this.tableOffsetY,
+                x: paddingLeft + this.variableTableCellWidth + this.initialColumnCount * this.variableTableCellWidth * 0.5,
+                y: paddingTop + numVar * this.variableTableCellHeight * 0.5,
                 // @ts-ignore
                 background: this.scene.rexUI.add.roundRectangle(
                     0,
@@ -99,14 +102,12 @@ export class TableGUI implements GameStateListener {
                 ),
                 scroller: false,
                 scrollMode: 1,
-                // table config
                 table: {
-                    width: this.variableTableCellWidth * 20,//this.tableColumnCount,
-                    height: this.variableTableCellHeight * variables.length,
+                    width: this.variableTableCellWidth * 20,
+                    height: this.variableTableCellHeight * numVar,
                     cellWidth: this.variableTableCellWidth,
                     cellHeight: this.variableTableCellHeight,
-                    //columns: this.tableColumnCount,
-                    columns: 4,
+                    columns: numVar,
                     mask: {
                         padding: 2
                     }
@@ -122,9 +123,7 @@ export class TableGUI implements GameStateListener {
                         background: scene.rexUI.add
                             .roundRectangle(0, 0, 20, 20, 0, item.backgroundColor, item.backgroundAlpha)
                             .setStrokeStyle(2, COLOR_DARK),
-                        icon: scene.rexUI.add
-                            .roundRectangle(0, 0, 30, 30, 15, item.iconColor, item.iconAlpha)
-                            .setDepth(3),
+                        icon: scene.add.image(0, 0, energyTexture).setAlpha(item.iconAlpha).setDepth(5),
                         space: {
                             left: 30
                         }
@@ -141,8 +140,8 @@ export class TableGUI implements GameStateListener {
             .on(
                 "cell.click",
                 function (cellContainer, cellIndex) {
-                    const column = Math.floor(cellIndex / 4);
-                    const row = cellIndex % 4;
+                    const column = Math.floor(cellIndex / numVar);
+                    const row = cellIndex % numVar;
                     const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
                     this._gameState.invertVariableUser(variableName, column);
                 },
@@ -162,12 +161,14 @@ export class TableGUI implements GameStateListener {
                     .setDepth(0);
             });
 
-        // table for variable names;
+
+        // table for variable names
+        const self = this;
         // @ts-ignore
         let variableNameTable = this.scene.rexUI.add
             .gridTable({
-                x: 55,
-                y: this.tableOffsetY,
+                x: paddingLeft + this.variableTableCellWidth * 0.5,
+                y: paddingTop + numVar * this.variableTableCellHeight * 0.5,
                 // @ts-ignore
                 background: this.scene.rexUI.add.roundRectangle(
                     0,
@@ -178,10 +179,9 @@ export class TableGUI implements GameStateListener {
                     COLOR_PRIMARY
                 ),
                 scroller: false,
-                // table config
                 table: {
                     width: this.variableTableCellWidth,
-                    height: this.variableTableCellHeight * variables.length,
+                    height: this.variableTableCellHeight * numVar,
                     cellWidth: this.variableTableCellWidth,
                     cellHeight: this.variableTableCellHeight,
                     columns: 1,
@@ -192,53 +192,29 @@ export class TableGUI implements GameStateListener {
                 createCellContainerCallback: function (cell) {
                     const scene = cell.scene,
                         width = cell.width,
-                        height = cell.height;
+                        height = cell.height,
+                        variable = cell.item.variable;
                     return scene.rexUI.add.label({
                         width: width,
                         height: height,
                         background: scene.rexUI.add
                             .roundRectangle(0, 0, 20, 20, 0)
                             .setStrokeStyle(2, COLOR_DARK),
-                        // text: scene.add.text(0, 0, "  " + variables[cell.index], {
-                        //     fontSize: 24
-                        // })
+                        icon: scene.add.sprite(0, 0, "runes", self.mapping[variable].frame),
+                        space: {
+                            left: 30
+                        }
                     });
                 }
             })
             .layout();
 
-        // n -> frame 0
-        // s -> frame 1
-        // l -> frame 2
-        // t -> frame3
-        // show rune picture depending on variable names
-        let x = 50;
-        let y = 50;
-        let frame = 0;
-        for (let v of variables) {
-            switch (v) {
-                case "n":
-                    frame = 0;
-                    break;
-                case "s":
-                    frame = 1;
-                    break;
-                case "l":
-                    frame = 2;
-                    break;
-                case "t":
-                    frame = 3;
-                    break;
-            }
-            this.scene.add.sprite(x, y, "runes", frame);
-            y += 60;
-
-        }
         // add items to table
         let items = [];
-        for (let i = 0; i < variables.length; i++) {
+        for (let i = 0; i < numVar; i++) {
             items.push({
-                id: i
+                id: i,
+                variable: Object.keys(this.variables).find(key => this.variables[key] === i)
             });
         }
         variableNameTable.setItems(items);
@@ -247,13 +223,11 @@ export class TableGUI implements GameStateListener {
     /**
      * creates a new energy table
      * @param energyCount: number of energy dots
-     * @param offsetX : (optional with a default value) x position of table
-     * @param offsetY: (optional with a default value) y position of table
+     * @param paddingLeft :  distance from left side of energy table to left edge of screen
      */
     createEnergyTable(
         energyCount: number,
-        offsetX: number = 230,
-        offsetY: number = 55
+        paddingLeft: number = 230,
     ): void {
         // destroy old table if available
         if (this.energyTable) {
@@ -262,7 +236,8 @@ export class TableGUI implements GameStateListener {
 
         const cellWidth = 40;
         const cellHeight = 30;
-
+        const bottom = this.variableTable.bottom + 30;
+        const energyTexture = this.energyTexture;
         // items in table
         let items = [];
         for (let i = 0; i < energyCount; i++) {
@@ -274,8 +249,8 @@ export class TableGUI implements GameStateListener {
         // @ts-ignore
         this.energyTable = this.scene.rexUI.add
             .gridTable({
-                x: offsetX + energyCount * cellWidth * 0.5,
-                y: offsetY + Object.keys(this._gameState.variables).length * this.variableTableCellHeight * 0.5 + this.tableOffsetY,
+                x: paddingLeft + energyCount * cellWidth * 0.5,
+                y: bottom,
                 // table config
                 table: {
                     width: cellWidth * energyCount,
@@ -295,7 +270,7 @@ export class TableGUI implements GameStateListener {
                     return scene.rexUI.add.label({
                         width: width,
                         height: height,
-                        icon: scene.rexUI.add.roundRectangle(0, 0, 30, 30, 15, COLOR_RED)
+                        icon: scene.add.image(0, 0, energyTexture)
                     });
                 }
             })
@@ -308,12 +283,13 @@ export class TableGUI implements GameStateListener {
     /**
      *  creates for button for ending selection of boolean values
      */
-    private createButton(offsetX: number = 1800, offsetY: number = 670): void {
+
+    private createButton(x: number = 1800, y: number = 670): void {
         // @ts-ignore
         let buttons = this.scene.rexUI.add
             .buttons({
-                x: offsetX,
-                y: offsetY + Object.keys(this._gameState.variables).length * this.variableTableCellHeight * 0.5 + this.tableOffsetY,
+                x: x,
+                y: y,
                 orientation: "y",
                 buttons: [
                     // @ts-ignore
@@ -363,7 +339,7 @@ export class TableGUI implements GameStateListener {
      * @param row: position of cell
      */
     private setCellColor(color: number, column: number, row: number): void {
-        let cell = this.tableItems[column * 4 + row];
+        let cell = this.tableItems[column * Object.keys(this.variables).length + row];
         cell.backgroundColor = color;
         cell.backgroundAlpha = 0.25;
         if (cell.iconColor == COLOR_PRIMARY) {
@@ -374,19 +350,14 @@ export class TableGUI implements GameStateListener {
     }
 
     /**
-     * change icon color of table cell
-     * @param color: color to change icon to
+     * adds rune to cell with given column and row if visible is true, else clears cell
+     * @param visible: true if rune in cell should be set
      * @param column: position of cell
      * @param row: position of cell
      */
-    private setCellIconColor(color: number, column: number, row: number): void {
-        let cell = this.tableItems[column * 4 + row];
-        cell.iconColor = color;
-        if (color == COLOR_PRIMARY) {
-            cell.iconAlpha = 0;
-        } else {
-            cell.iconAlpha = 1;
-        }
+    private toggleRune(visible: boolean, column: number, row: number): void {
+        const index = column * Object.keys(this.variables).length + row;
+        this.tableItems[index].iconAlpha = Number(visible);
         this.variableTable.getElement('table').updateTable(true);
     }
 
@@ -394,14 +365,15 @@ export class TableGUI implements GameStateListener {
      * change color of energy table at index
      * @param color: color to change energy cell to
      * @param index: position of cell
+     * @param visible: energy icon shows if visible is true
      */
-    private setEnergyIconColor(color: number, index: number) {
+    private setEnergyIconColor(visible: boolean, index: number) {
         this.energyTable
             .getElement("table")
             .getCell(index)
             .getContainer()
             .getElement("icon")
-            .setFillStyle(color, 1);
+            .setVisible(visible);
     }
 
     get gameState(): GameState {
@@ -414,9 +386,15 @@ export class TableGUI implements GameStateListener {
     }
 
     async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {
+        // add 30 more columns if end of table is reached
+        if (activeRound >= this.tableColumnCount - 1) {
+            this.addColumns(30);
+        }
+
         // change color of coloumn
         const nextRound = activeRound;
-        const variables = Object.keys(this._gameState.variables);
+        //const variables = Object.keys(this._gameState.variables);
+        const variables = Object.keys(this.variables);
         for (let index in variables) {
             this.setCellColor(COLOR_PRIMARY_LIGHT, nextRound, parseInt(index));
             if (lastRound >= 0) this.setCellColor(COLOR_PRIMARY, lastRound, parseInt(index));
@@ -427,43 +405,38 @@ export class TableGUI implements GameStateListener {
         // move table to the right if last visible column is reached
         if (activeRound >= 20)
             this.scrollTable(true);
+    }
 
-        // add 30 more columns if end of table is reached
-        if (activeRound == this.tableColumnCount - 1) {
-            let itemCount = 30 * variables.length;
-            for (let i = 0; i < itemCount; i++) {
-                this.tableItems.push({
-                    id: this.tableColumnCount * variables.length + i,
-                    iconColor: COLOR_PRIMARY,
-                    iconAlpha: 0,
-                    backgroundColor: COLOR_PRIMARY,
-                    backgroundAlpha: 0
-                });
-            }
-            this.tableColumnCount += 30;
-            this.variableTable.setItems(this.tableItems);
+    addColumns(n: number) {
+        const numVar = Object.keys(this.variables).length;
+        const itemCount = n * numVar;
+        for (let i = 0; i < itemCount; i++) {
+            this.tableItems.push({
+                id: this.tableColumnCount * numVar + i,
+                iconAlpha: 0,
+                backgroundColor: COLOR_PRIMARY,
+                backgroundAlpha: 0
+            });
         }
+        this.tableColumnCount += n;
+        this.variableTable.setItems(this.tableItems);
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
         for (let key in valueChanges) {
             const row = parseInt(key);
             const column = this.variables[variable.representation];
-            const newValue = valueChanges[key]
-            if (newValue) {
-                this.setCellIconColor(COLOR_RED, row, column);
-            } else {
-                this.setCellIconColor(COLOR_PRIMARY, row, column);
-            }
+            const newValue = valueChanges[key];
+            this.toggleRune(newValue, row, column);
         }
     }
 
     async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {
         // only changes one energy
         if (oldEnergy > newEnergy) {
-            this.setEnergyIconColor(0x000000, newEnergy);
+            this.setEnergyIconColor(false, newEnergy);
         } else {
-            this.setEnergyIconColor(COLOR_RED, newEnergy - 1);
+            this.setEnergyIconColor(true, newEnergy - 1);
         }
     }
 
@@ -474,7 +447,12 @@ export class TableGUI implements GameStateListener {
             this.toggleOutline(true);
         } else {
             this.toggleOutline(false);
-            this.overlay = this.scene.add.rectangle(this.tableOffsetX - 45, this.tableOffsetY, this.variableTableCellWidth * 21, this.variableTableCellHeight * 4, 0x000000, 0.5).setDepth(100);
+            const left = this.variableTable.left - this.variableTableCellWidth;
+            const top = this.variableTable.top;
+            const width = this.variableTable.width + this.variableTableCellWidth;
+            const height = this.variableTable.height;
+            this.overlay = this.scene.add.rectangle(left, top, width, height, 0x000000, 0.5)
+                .setDepth(100).setOrigin(0, 0);
         }
     }
 
@@ -519,10 +497,15 @@ export class TableGUI implements GameStateListener {
 
 
     setUpScrollingArrows() {
+        let bottom = this.variableTable.bottom + 30;
+
         // arrows for scrolling, 
         let rightTweenSucc;
         let rightTweenFail;
-        let rightArrow = this.scene.add.image(1600, 290, 'arrow-right');
+        let rightArrow = this.scene.add.image(150, bottom, 'arrow').setAngle(180);
+        rightArrow.setTint(0x00008b);
+        // TODO ARROW COLORS
+
         rightArrow.setInteractive()
             .on('pointerdown', function () {
 
@@ -541,7 +524,7 @@ export class TableGUI implements GameStateListener {
                             targets: rightArrow,
                             x: '+=20',
                             ease: 'power2',
-                            duration: 150,
+                            duration: 100,
                             yoyo: true,
                             onComplete: () => rightArrow.clearTint()
                         });
@@ -591,7 +574,7 @@ export class TableGUI implements GameStateListener {
 
         let leftTweenSucc;
         let leftTweenFail;
-        let leftArrow = this.scene.add.image(1500, 290, 'arrow-left');
+        let leftArrow = this.scene.add.image(70, bottom, 'arrow');
         leftArrow.setInteractive()
             .on('pointerdown', function () {
                 if (
@@ -609,7 +592,7 @@ export class TableGUI implements GameStateListener {
                             targets: leftArrow,
                             x: '-=20',
                             ease: 'power2',
-                            duration: 150,
+                            duration: 100,
                             yoyo: true,
                             onComplete: () => leftArrow.clearTint()
                         });

@@ -122,6 +122,11 @@
             },
             {
                 "type": "image",
+                "key": "energyFont",
+                "url": "assets/font/fontletter/overlay/energy.png"
+            },
+            {
+                "type": "image",
                 "key": "stand",
                 "url": "assets/sprites/stand.png"
             },
@@ -132,18 +137,8 @@
             },
             {
                 "type": "image",
-                "key": "yellow",
-                "url": "assets/sprites/yellow.png"
-            },
-            {
-                "type": "image",
-                "key": "arrow-right",
-                "url": "assets/sprites/arrow-right.jpg"
-            },
-            {
-                "type": "image",
-                "key": "arrow-left",
-                "url": "assets/sprites/arrow-left.jpg"
+                "key": "arrow",
+                "url": "assets/sprites/board/arrow.png"
             },
             {
                 "type": "image",
