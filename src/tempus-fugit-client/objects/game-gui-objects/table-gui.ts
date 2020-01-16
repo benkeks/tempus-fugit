@@ -3,52 +3,70 @@ import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
 import { thisExpression } from "@babel/types";
 
-const COLOR_PRIMARY = 0x2a4f16;
-const COLOR_LIGHT = 0x7b5e57;
-const COLOR_DARK = 0x260e05;
-const COLOR_BUTTON = 0x666666;
-const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
 /**
  * @author Mustafa
  */
 export class TableGUI implements GameStateListener {
-    private readonly scene: Phaser.Scene;
-    private energyTable; // table for red dots representing energy
+    private scene: Phaser.Scene;
+    private energyTable;
     private _gameState: GameState;
     private game: Mission;
 
-    private variableTable; // table object
-    private readonly variableTableCellWidth = 90;
-    private readonly variableTableCellHeight = 60;
-    private readonly initialColumnCount = 20; // number of visible columns
-    private tableColumnCount = 20; // total number of columns
-    private variables: { [name: string]: number } = {}; // dic for mapping variable names an their index
+    private variableTable; // game state table
+    private variableTableCellWidth = 90; // width of a cell
+    private variableTableCellHeight = 60; // height of a cell
+    private initialColumnCount = 20; // number of visible columns
+    private tableColumnCount = 20; // number of total columns
+    private variables: { [name: string]: number } = {}; // mapping from variable name to index
     private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
-    private tableItems;
-    private overlay: Phaser.GameObjects.Rectangle;
-    private outline: Phaser.GameObjects.Graphics;
-    private scrollCount = 0;
-    private energyTexture: string;
+    private tableItems: {
+        id: number,
+        iconAlpha: number,
+        backgroundColor: number,
+        backgroundAlpha: number
+
+    }[]; // Array of cell data
+    private overlay: Phaser.GameObjects.Rectangle; // dark rectangle to fade table out
+    private outline: Phaser.GameObjects.Graphics; // light outline surrounding table
+    private scrollCount = 0; // offset for number of columsn scrolled 
+    private energyTexture: string; // texture for energy icons
+
+    private colorPrimary: number; // default background color of cells
+    private colorHighlight: number; // background color of cells when highlighted
+    private colorCellOver: number; // color of cell edge when hovered
+    private colorCellEdge: number; // default color of cell edge
+    private colorArrow: number; // color of scrolling arrows
+    private colorButton = 0x666666;
 
     constructor(
         scene: Phaser.Scene,
         game: Mission,
+        colorPrimary: number = 0x2a4f16,
+        colorHighlight: number = 0x00ff77,
+        colorArrow: number = 0x376A8E,
+        colorCellOver: number = 0x7b5e57,
+        colorCellEdge: number = 0x260e05,
         energyTexture: string = "energyFont"
     ) {
         this.scene = scene;
         this.gameState = game.gameState;
         this.game = game;
         this.energyTexture = energyTexture;
+        this.colorPrimary = colorPrimary;
+        this.colorCellOver = colorCellOver;
+        this.colorCellEdge = colorCellEdge;
+        this.colorHighlight = colorHighlight;
+        this.colorArrow = colorArrow;
 
-        // let i = 0;
-        // for (let key in this.gameState.variables)
-        //     this.variables[key] = i++;
+        let i = 0;
+        for (let key in this.gameState.variables)
+            this.variables[key] = i++;
 
-        this.variables = {
-            n: 0,
-            t: 1,
-        }
+        // this.variables = {
+        //     n: 0,
+        //     t: 1,
+        // }
 
         // mapping of rune names fo frame in sprite
         this.mapping.n = { frame: 0 };
@@ -69,17 +87,17 @@ export class TableGUI implements GameStateListener {
      * @param paddingTop : distance from top side of table to top edge of screen 
      */
 
-    private createVariableTable(paddingLeft: number = 10, paddingTop: number = 10, ): void {
-        const numVar = Object.keys(this.variables).length;
-        const itemCount = this.initialColumnCount * numVar;
-        const energyTexture = this.energyTexture;
+    private createVariableTable(paddingLeft: number = 15, paddingTop: number = 10): void {
+        let numVar = Object.keys(this.variables).length;
+        let itemCount = this.initialColumnCount * numVar;
+        let self = this;
         // items in table
         this.tableItems = [];
         for (let i = 0; i < itemCount; i++) {
             this.tableItems.push({
                 id: i,
                 iconAlpha: 0,
-                backgroundColor: COLOR_PRIMARY,
+                backgroundColor: this.colorPrimary,
                 backgroundAlpha: 0
             });
         }
@@ -97,7 +115,7 @@ export class TableGUI implements GameStateListener {
                     20,
                     10,
                     10,
-                    COLOR_PRIMARY,
+                    this.colorPrimary,
                     0.3
                 ),
                 scroller: false,
@@ -122,8 +140,8 @@ export class TableGUI implements GameStateListener {
                         height: height,
                         background: scene.rexUI.add
                             .roundRectangle(0, 0, 20, 20, 0, item.backgroundColor, item.backgroundAlpha)
-                            .setStrokeStyle(2, COLOR_DARK),
-                        icon: scene.add.image(0, 0, energyTexture).setAlpha(item.iconAlpha).setDepth(5),
+                            .setStrokeStyle(2, self.colorCellEdge),
+                        icon: scene.add.image(0, 0, self.energyTexture).setAlpha(item.iconAlpha).setDepth(5),
                         space: {
                             left: 30
                         }
@@ -144,26 +162,23 @@ export class TableGUI implements GameStateListener {
                     const row = cellIndex % numVar;
                     const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
                     this._gameState.invertVariableUser(variableName, column);
-                },
-                this
-            )
+                }, this)
             .on("cell.over", function (cellContainer, cellIndex) {
                 // focus current cell when hovering over it
                 cellContainer
                     .getElement("background")
-                    .setStrokeStyle(2, COLOR_LIGHT)
+                    .setStrokeStyle(2, this.colorCellOver)
                     .setDepth(1);
-            })
+            }, this)
             .on("cell.out", function (cellContainer, cellIndex) {
                 cellContainer
                     .getElement("background")
-                    .setStrokeStyle(2, COLOR_DARK)
+                    .setStrokeStyle(2, this.colorCellEdge)
                     .setDepth(0);
-            });
+            }, this);
 
 
         // table for variable names
-        const self = this;
         // @ts-ignore
         let variableNameTable = this.scene.rexUI.add
             .gridTable({
@@ -176,7 +191,7 @@ export class TableGUI implements GameStateListener {
                     20,
                     10,
                     10,
-                    COLOR_PRIMARY
+                    this.colorPrimary
                 ),
                 scroller: false,
                 table: {
@@ -199,7 +214,7 @@ export class TableGUI implements GameStateListener {
                         height: height,
                         background: scene.rexUI.add
                             .roundRectangle(0, 0, 20, 20, 0)
-                            .setStrokeStyle(2, COLOR_DARK),
+                            .setStrokeStyle(2, self.colorCellEdge),
                         icon: scene.add.sprite(0, 0, "runes", self.mapping[variable].frame),
                         space: {
                             left: 30
@@ -234,10 +249,10 @@ export class TableGUI implements GameStateListener {
             this.energyTable.destroy();
         }
 
-        const cellWidth = 40;
-        const cellHeight = 30;
-        const bottom = this.variableTable.bottom + 30;
-        const energyTexture = this.energyTexture;
+        let cellWidth = 40;
+        let cellHeight = 30;
+        let bottom = this.variableTable.bottom + 30;
+        let self = this;
         // items in table
         let items = [];
         for (let i = 0; i < energyCount; i++) {
@@ -270,7 +285,7 @@ export class TableGUI implements GameStateListener {
                     return scene.rexUI.add.label({
                         width: width,
                         height: height,
-                        icon: scene.add.image(0, 0, energyTexture)
+                        icon: scene.add.image(0, 0, self.energyTexture)
                     });
                 }
             })
@@ -281,10 +296,9 @@ export class TableGUI implements GameStateListener {
     }
 
     /**
-     *  creates for button for ending selection of boolean values
+     *  this needs to be removed when wheel is implemented
      */
-
-    private createButton(x: number = 1800, y: number = 670): void {
+    private createButton(x: number = 1800, y: number = 930): void {
         // @ts-ignore
         let buttons = this.scene.rexUI.add
             .buttons({
@@ -303,7 +317,7 @@ export class TableGUI implements GameStateListener {
                             120,
                             60,
                             10,
-                            COLOR_BUTTON
+                            this.colorButton
                         ),
                         text: this.scene.add.text(80, 0, "  Next", {
                             fontSize: 30,
@@ -323,8 +337,6 @@ export class TableGUI implements GameStateListener {
         buttons.on(
             "button.click",
             function (button, index, pointer, event) {
-                // TODO: alert game State that button was clicked
-                //this._gameState.changeRound();
                 console.log('changes round after click');
                 this.game.nextPhase();
             },
@@ -342,10 +354,6 @@ export class TableGUI implements GameStateListener {
         let cell = this.tableItems[column * Object.keys(this.variables).length + row];
         cell.backgroundColor = color;
         cell.backgroundAlpha = 0.25;
-        if (cell.iconColor == COLOR_PRIMARY) {
-            cell.iconColor = color;
-            cell.iconAlpha = 0;
-        }
         this.variableTable.getElement('table').updateTable(true);
     }
 
@@ -356,7 +364,7 @@ export class TableGUI implements GameStateListener {
      * @param row: position of cell
      */
     private toggleRune(visible: boolean, column: number, row: number): void {
-        const index = column * Object.keys(this.variables).length + row;
+        let index = column * Object.keys(this.variables).length + row;
         this.tableItems[index].iconAlpha = Number(visible);
         this.variableTable.getElement('table').updateTable(true);
     }
@@ -392,12 +400,12 @@ export class TableGUI implements GameStateListener {
         }
 
         // change color of coloumn
-        const nextRound = activeRound;
+        let nextRound = activeRound;
         //const variables = Object.keys(this._gameState.variables);
-        const variables = Object.keys(this.variables);
+        let variables = Object.keys(this.variables);
         for (let index in variables) {
-            this.setCellColor(COLOR_PRIMARY_LIGHT, nextRound, parseInt(index));
-            if (lastRound >= 0) this.setCellColor(COLOR_PRIMARY, lastRound, parseInt(index));
+            this.setCellColor(this.colorHighlight, nextRound, parseInt(index));
+            if (lastRound >= 0) this.setCellColor(this.colorPrimary, lastRound, parseInt(index));
         }
 
         this.createEnergyTable(this.gameState.maxEnergy);
@@ -408,13 +416,13 @@ export class TableGUI implements GameStateListener {
     }
 
     addColumns(n: number) {
-        const numVar = Object.keys(this.variables).length;
-        const itemCount = n * numVar;
+        let numVar = Object.keys(this.variables).length;
+        let itemCount = n * numVar;
         for (let i = 0; i < itemCount; i++) {
             this.tableItems.push({
                 id: this.tableColumnCount * numVar + i,
                 iconAlpha: 0,
-                backgroundColor: COLOR_PRIMARY,
+                backgroundColor: this.colorPrimary,
                 backgroundAlpha: 0
             });
         }
@@ -424,9 +432,9 @@ export class TableGUI implements GameStateListener {
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
         for (let key in valueChanges) {
-            const row = parseInt(key);
-            const column = this.variables[variable.representation];
-            const newValue = valueChanges[key];
+            let row = parseInt(key);
+            let column = this.variables[variable.representation];
+            let newValue = valueChanges[key];
             this.toggleRune(newValue, row, column);
         }
     }
@@ -447,10 +455,10 @@ export class TableGUI implements GameStateListener {
             this.toggleOutline(true);
         } else {
             this.toggleOutline(false);
-            const left = this.variableTable.left - this.variableTableCellWidth;
-            const top = this.variableTable.top;
-            const width = this.variableTable.width + this.variableTableCellWidth;
-            const height = this.variableTable.height;
+            let left = this.variableTable.left - this.variableTableCellWidth;
+            let top = this.variableTable.top;
+            let width = this.variableTable.width + this.variableTableCellWidth;
+            let height = this.variableTable.height;
             this.overlay = this.scene.add.rectangle(left, top, width, height, 0x000000, 0.5)
                 .setDepth(100).setOrigin(0, 0);
         }
@@ -496,15 +504,18 @@ export class TableGUI implements GameStateListener {
     }
 
 
+    /**
+     * creates two arrows for scrolling columns to the left / right
+     */
     setUpScrollingArrows() {
         let bottom = this.variableTable.bottom + 30;
 
         // arrows for scrolling, 
         let rightTweenSucc;
         let rightTweenFail;
-        let rightArrow = this.scene.add.image(150, bottom, 'arrow').setAngle(180);
-        rightArrow.setTint(0x00008b);
-        // TODO ARROW COLORS
+        let rightArrow = this.scene.add.image(150, bottom, 'arrow')
+            .setAngle(180)
+            .setTint(this.colorArrow);
 
         rightArrow.setInteractive()
             .on('pointerdown', function () {
@@ -526,7 +537,7 @@ export class TableGUI implements GameStateListener {
                             ease: 'power2',
                             duration: 100,
                             yoyo: true,
-                            onComplete: () => rightArrow.clearTint()
+                            onComplete: () => rightArrow.setTint(this.colorArrow)
                         });
 
                     } else {
@@ -559,7 +570,7 @@ export class TableGUI implements GameStateListener {
                                                     ease: 'power1',
                                                     duration: 30,
                                                     yoyo: true,
-                                                    onComplete: () => rightArrow.clearTint()
+                                                    onComplete: () => rightArrow.setTint(this.colorArrow)
                                                 });
                                             }
                                         });
@@ -574,74 +585,75 @@ export class TableGUI implements GameStateListener {
 
         let leftTweenSucc;
         let leftTweenFail;
-        let leftArrow = this.scene.add.image(70, bottom, 'arrow');
-        leftArrow.setInteractive()
-            .on('pointerdown', function () {
-                if (
-                    (typeof leftTweenSucc === 'undefined' || !leftTweenSucc.isPlaying()) &&
-                    (typeof leftTweenFail === 'undefined' || !leftTweenFail.isPlaying())
-                ) {
+        let leftArrow = this.scene.add.image(70, bottom, 'arrow')
+            .setInteractive()
+            .setTint(this.colorArrow);
 
-                    // color arrow red
-                    leftArrow.setTint(0xff0000);
+        leftArrow.on('pointerdown', function () {
+            if (
+                (typeof leftTweenSucc === 'undefined' || !leftTweenSucc.isPlaying()) &&
+                (typeof leftTweenFail === 'undefined' || !leftTweenFail.isPlaying())
+            ) {
 
-                    if (this.scrollTable(false)) {
+                // color arrow red
+                leftArrow.setTint(0xff0000);
 
-                        // successful click
-                        leftTweenSucc = this.scene.tweens.add({
-                            targets: leftArrow,
-                            x: '-=20',
-                            ease: 'power2',
-                            duration: 100,
-                            yoyo: true,
-                            onComplete: () => leftArrow.clearTint()
-                        });
+                if (this.scrollTable(false)) {
 
-                    } else {
+                    // successful click
+                    leftTweenSucc = this.scene.tweens.add({
+                        targets: leftArrow,
+                        x: '-=20',
+                        ease: 'power2',
+                        duration: 100,
+                        yoyo: true,
+                        onComplete: () => leftArrow.setTint(this.colorArrow)
+                    });
 
-                        // unsuccessful click
-                        leftTweenFail = this.scene.tweens.add({
-                            targets: leftArrow,
-                            angle: '+=20',
-                            ease: 'power1',
-                            duration: 30,
-                            yoyo: true,
-                            onComplete: () => {
-                                leftTweenFail = this.scene.tweens.add({
-                                    targets: leftArrow,
-                                    angle: '-=20',
-                                    ease: 'power1',
-                                    duration: 30,
-                                    yoyo: true,
-                                    onComplete: () => {
-                                        leftTweenFail = this.scene.tweens.add({
-                                            targets: leftArrow,
-                                            angle: '+=10',
-                                            ease: 'power1',
-                                            duration: 30,
-                                            yoyo: true,
-                                            onComplete: () => {
-                                                leftTweenFail = this.scene.tweens.add({
-                                                    targets: leftArrow,
-                                                    angle: '-=10',
-                                                    ease: 'power1',
-                                                    duration: 30,
-                                                    yoyo: true,
-                                                    onComplete: () => leftArrow.clearTint()
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
+                } else {
+
+                    // unsuccessful click
+                    leftTweenFail = this.scene.tweens.add({
+                        targets: leftArrow,
+                        angle: '+=20',
+                        ease: 'power1',
+                        duration: 30,
+                        yoyo: true,
+                        onComplete: () => {
+                            leftTweenFail = this.scene.tweens.add({
+                                targets: leftArrow,
+                                angle: '-=20',
+                                ease: 'power1',
+                                duration: 30,
+                                yoyo: true,
+                                onComplete: () => {
+                                    leftTweenFail = this.scene.tweens.add({
+                                        targets: leftArrow,
+                                        angle: '+=10',
+                                        ease: 'power1',
+                                        duration: 30,
+                                        yoyo: true,
+                                        onComplete: () => {
+                                            leftTweenFail = this.scene.tweens.add({
+                                                targets: leftArrow,
+                                                angle: '-=10',
+                                                ease: 'power1',
+                                                duration: 30,
+                                                yoyo: true,
+                                                onComplete: () => leftArrow.setTint(this.colorArrow)
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
                 }
+            }
 
 
-            }, this);
+        }, this);
     }
-
 }
 
 
