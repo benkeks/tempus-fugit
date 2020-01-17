@@ -85,7 +85,7 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public applyCard(card: Card, mission: Mission): void {
+    public applyCard(card: Card, mission: Mission): boolean {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
         if (val) {
             switch (card.getKind()) {
@@ -98,6 +98,13 @@ export class Enemy {
             }
         }
 
+        return val;
+    }
+
+    public performTurn(mission:Mission):void {
+        if (!this.applyCard(this.specialAttack, mission)){
+            mission.player.takeHit(this.baseAttack);
+        }
     }
 
     /**

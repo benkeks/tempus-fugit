@@ -255,7 +255,7 @@ export class Mission implements EnemyListener, PlayerListener {
         for (var stand of this.stands) {
                 if (stand != null) stand.turnNormal();
         }
-        this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
+        this.getEnemies().map(e => e.performTurn(this));
 
     }
 
