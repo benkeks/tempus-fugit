@@ -6,7 +6,6 @@ const COLOR_PRIMARY = 0x2a4f16;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e05;
 const COLOR_RED = 0x9e0b00;
-const COLOR_BUTTON = 0x666666;
 const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
 /**
@@ -47,7 +46,6 @@ export class TableGUI implements GameStateListener {
             this.variables[key] = i++;
 
         this.createVariableTable(Object.keys(this.variables));
-        this.createButton();
         this.roundChanged(this.gameState, -1, this.gameState.activeState);
 
         // this.mapping["n"] = { frame: 0 };
@@ -307,57 +305,6 @@ export class TableGUI implements GameStateListener {
 
         // add items to table
         this.energyTable.setItems(items);
-    }
-
-    /**
-     *  creates for button for ending selection of boolean values
-     */
-    private createButton(offsetX: number = 1800, offsetY: number = 670): void {
-        // @ts-ignore
-        let buttons = this.scene.rexUI.add
-            .buttons({
-                x: offsetX,
-                y: offsetY + Object.keys(this._gameState.variables).length * this.variableTableCellHeight * 0.5 + this.tableOffsetY,
-                orientation: "y",
-                buttons: [
-                    // @ts-ignore
-                    this.scene.rexUI.add.label({
-                        width: 150,
-                        height: 280,
-                        // @ts-ignore
-                        background: this.scene.rexUI.add.roundRectangle(
-                            0,
-                            0,
-                            120,
-                            60,
-                            10,
-                            COLOR_BUTTON
-                        ),
-                        text: this.scene.add.text(80, 0, "  Next", {
-                            fontSize: 30,
-                            fontStyle: 'bold',
-                            fontFamily: 'appleKid',
-                            color: '#FFFFFF'
-                        }),
-                        space: {
-                            left: 10,
-                            right: 10
-                        }
-                    })
-                ]
-            })
-            .layout();
-
-        buttons.on(
-            "button.click",
-            function (button, index, pointer, event) {
-                // TODO: alert game State that button was clicked
-                //this._gameState.changeRound();
-                console.log('changes round after click');
-                this.game.nextPhase();
-            },
-            this
-        );
     }
 
     /**
