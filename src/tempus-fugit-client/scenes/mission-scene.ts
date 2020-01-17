@@ -146,7 +146,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async playPhase(game: Mission) {
         console.log("play Phase");
-        this.handGUI.fadeIn();
+        this.handGUI.fadeIn(game);
     }
 
     async standPhase(game: Mission) {
