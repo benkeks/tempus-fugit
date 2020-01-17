@@ -20,6 +20,7 @@ import Image = Phaser.GameObjects.Image;
 import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
+import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -40,6 +41,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public gameOverText;
 
+    public phaseWheel:WheelGUI;
+
     constructor() {
         super({
             key: "MissionScene"
@@ -48,17 +51,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     preload(): void {
 
-
-        // TODO: implement multiatlas version
-        //this.load.spritesheet('slime1',
-        //    'assets/sprites/enemies/slime1/slime1-Sheet.png',
-        //    { frameWidth: 64, frameHeight: 64 });
-
-        /*this.load.atlas('slime1',
-            'assets/sprites/enemies/slime1/slime1-Sheet.png',
-            "assets/sprites/enemies/slime1/slime1-sheet.json");*/
-
-        //MissionScene.loadFile("json/mission.json");
     }
 
     create(data): void {
@@ -91,6 +83,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.standGUI = new StandGUILayout(this);
         this.tfgame.standListener.push(this.standGUI);
+
+        this.phaseWheel = new WheelGUI(this, this.tfgame);
 
         this.tfgame.player.takeCard(this.tfgame.deck);
 

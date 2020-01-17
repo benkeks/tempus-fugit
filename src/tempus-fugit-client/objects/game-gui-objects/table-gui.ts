@@ -1,8 +1,12 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
-import { thisExpression } from "@babel/types";
 
+const COLOR_PRIMARY = 0x2a4f16;
+const COLOR_LIGHT = 0x7b5e57;
+const COLOR_DARK = 0x260e05;
+const COLOR_RED = 0x9e0b00;
+const COLOR_PRIMARY_LIGHT = 0x00ff77;
 
 /**
  * @author Mustafa
@@ -37,7 +41,6 @@ export class TableGUI implements GameStateListener {
     private colorCellOver: number; // color of cell edge when hovered
     private colorCellEdge: number; // default color of cell edge
     private colorArrow: number; // color of scrolling arrows
-    private colorButton = 0x666666;
 
     constructor(
         scene: Phaser.Scene,
@@ -76,7 +79,7 @@ export class TableGUI implements GameStateListener {
 
         this.createVariableTable();
         this.createEnergyTable(this.gameState.energy);
-        this.createButton();
+
         this.roundChanged(this.gameState, -1, this.gameState.activeState);
         this.setUpScrollingArrows();
     }
@@ -296,55 +299,7 @@ export class TableGUI implements GameStateListener {
     }
 
     /**
-     *  this needs to be removed when wheel is implemented
-     */
-    private createButton(x: number = 1800, y: number = 930): void {
-        // @ts-ignore
-        let buttons = this.scene.rexUI.add
-            .buttons({
-                x: x,
-                y: y,
-                orientation: "y",
-                buttons: [
-                    // @ts-ignore
-                    this.scene.rexUI.add.label({
-                        width: 150,
-                        height: 280,
-                        // @ts-ignore
-                        background: this.scene.rexUI.add.roundRectangle(
-                            0,
-                            0,
-                            120,
-                            60,
-                            10,
-                            this.colorButton
-                        ),
-                        text: this.scene.add.text(80, 0, "  Next", {
-                            fontSize: 30,
-                            fontStyle: 'bold',
-                            fontFamily: 'appleKid',
-                            color: '#FFFFFF'
-                        }),
-                        space: {
-                            left: 10,
-                            right: 10
-                        }
-                    })
-                ]
-            })
-            .layout();
-
-        buttons.on(
-            "button.click",
-            function (button, index, pointer, event) {
-                console.log('changes round after click');
-                this.game.nextPhase();
-            },
-            this
-        );
-    }
-
-    /**
+>>>>>>> 7d66dfc4ec3ca1c52111d8f21a5d3edc369c04ca
      * change background color of table cell
      * @param color: color to change background to
      * @param column: position of cell
