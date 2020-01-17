@@ -5,6 +5,7 @@ import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
 import { isForXStatement } from "@babel/types";
 import {Mission} from "../../mechanics/mission";
+import { GameState } from "../game-objects/game-state";
 
 /**
  * @author Mustafa
@@ -15,18 +16,21 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     private readonly stack: StackGUI;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
+    public gamestate:GameState;
 
     constructor(
         scene: Phaser.Scene,
         hand: Hand,
         stack: StackGUI,
         deck: DeckGUI,
+        gamestate:GameState,
     ) {
         super(scene);
         this.stack = stack;
         this.hand = hand;
         this.hand.listener.push(this);
         this.deck = deck;
+        this.gamestate = gamestate;
         //scene.add.existing(this);
 
     }
@@ -51,12 +55,12 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * removes the tint from all cardGUI objects and enables dragging
      */
-    fadeIn(mission: Mission) {
+    fadeIn(gamestate: GameState) {
         //setTimeout(() => this.unhoverAll(true), 0);
 
         for (let c of this.cardGUIs) {
             c.fadeIn();
-            if (mission.gameState.evaluate(c.card.getFormula())) {
+            if (gamestate.evaluate(c.card.getFormula())) {
                 c.enableDragging();
             } else {
                 c.fadeOut();
@@ -204,7 +208,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds one cardGUI object for given card to hand 
      * @param card: card to be added
      */
-    addCard(card: Card): void {
+    async addCard(card: Card) {
         // add card to hand, enable dragging
         let cardGUI = new CardGUI(
             this.scene,
@@ -218,13 +222,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         cardGUI.enableDragging();
         this.cardGUIs.push(cardGUI);
         this.arrangeCards();
+
+        if (this.hand.active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
     }
 
     /**
      * moves a cardGUI object to stack
      * @param card: card to be removed
      */
-    removeCard(card: Card): void {
+    async removeCard(card: Card) {
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
                 this.stack.addCardGUI(this.cardGUIs[pos]);
@@ -234,5 +241,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 return;
             }
         }
+    }
+
+    async Activated(hand: Hand, active: boolean) {
+        if (active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
+        console.log("active=" + active);
     }
 }

@@ -4,19 +4,16 @@ import { Mission, MissionListener } from "../../mechanics/mission";
 import {Enemy} from "../game-objects/enemy";
 import { StoryDialog } from "../../mechanics/story-dialog";
 
-const COLOR_BUTTON = 0x666666;
-
 export class WheelGUI extends Phaser.GameObjects.Container implements MissionListener {
 
     public scene:Phaser.Scene;
     public wheel:Phaser.GameObjects.Sprite;
-    public nextButton;
+    public box:Phaser.GameObjects.Rectangle;
+    public text:Phaser.GameObjects.Text;
 
     public size:number;
 
     public game:Mission;
-
-    public wheelState
 
     constructor(scene:Scene,
         game:Mission, 
@@ -72,10 +69,6 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
        this.add(this.wheel);
 
-       this.scene.input.keyboard.addKey("N").on("down", e => {
-           this.game.nextPhase();
-    })
-
         this.createButton(-buttonWidth/2,-buttonHeight/2, buttonWidth, buttonHeight);
     }
 
@@ -129,27 +122,27 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
         this.add(buttons);*/
 
-        let box = this.scene.add.rectangle(x,y,width,height, 0x666666);
-        box.setOrigin(0.5,0.5);
+        this.box = this.scene.add.rectangle(x,y,width,height, 0x666666);
+        this.box.setOrigin(0.5,0.5);
 
-        let text = this.scene.add.text(x,y, "Done",{
+        this.text = this.scene.add.text(x,y, "Done",{
             fontSize: 20,
             fontStyle: 'bold',
             fontFamily: 'appleKid',
             color: '#FFFFFF'
         });
-        text.setOrigin(0.5,0.5);
+        this.text.setOrigin(0.5,0.5);
 
-        this.sendToBack(box);
+        this.sendToBack(this.box);
         
-        box
+        this.box
     .setInteractive({ useHandCursor: true })
-    .on( 'pointerdown', function(pointer, localX, localY, event){ 
+    .on( 'pointerdown', function(pointer, localX, localY, event){
         this.game.nextPhase()
      }, this);
 
-        this.add(box);
-        this.add(text);
+        this.add(this.box);
+        this.add(this.text);
     }
 
     async drawPhase(game: Mission) {
@@ -174,6 +167,9 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     async waveChanged(game: Mission, activeWave: number, enemies:Enemy[]) {
     }
     async gameover(game: Mission, gameWon: boolean) {
+    }
+    async Activated(game: Mission, active: boolean) {
+        this.box.setInteractive(active);
     }
 
 }

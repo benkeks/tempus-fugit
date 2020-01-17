@@ -78,6 +78,8 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     async stateValuesChanged(player: Player) {
         this.baseAttackText.setText(player.baseAttack.toString());
     }
+
+    async Activated(player: Player, active: boolean) {}
 }
 
 /**

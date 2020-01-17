@@ -22,6 +22,18 @@ export class Mission implements EnemyListener, PlayerListener {
             eList.map(e => e.listener.push(this))
         }
     }
+  
+    get active(): boolean  {
+        return this._active;
+    }
+
+    set active(value:boolean) {
+        this._active = value;
+        this.player.active = value;
+        this.gameState.active = value;
+
+        this.listener.map(l => l.Activated(this, this.active));
+    }
 
     get player(): Player {
         return this._player;
@@ -75,7 +87,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public gameState:GameState;
 
     public gameWon:boolean = false;
-    public active:boolean = true;
+    public _active:boolean = true;
 
     private stands:[Card, Card] = [null, null];
     // TODO: effect list
@@ -121,7 +133,6 @@ export class Mission implements EnemyListener, PlayerListener {
         this.toPhase.set(2, 'play-phase');
         this.toPhase.set(3, 'stand-phase');
         this.toPhase.set(4, 'enemy-phase');
-        this.toPhase.set(5, 'effect-phase');
 
 
         this.gameState = new GameState();
@@ -184,10 +195,6 @@ export class Mission implements EnemyListener, PlayerListener {
                 this.enemyPhase();
                 this.listener.map(l => l.enemyPhase(this));
                 break;
-            case 5:
-                this.effectPhase();
-                this.listener.map(l => l.effectPhase(this));
-                break;
         }
 
         /*this.emitter.emit(this.getPhaseString());
@@ -226,14 +233,16 @@ export class Mission implements EnemyListener, PlayerListener {
         if (!this.player.hand.isFull()) {
             var card = this.player.takeCard(this.deck);
         }
+        this.active = true;
     }
 
     private energyPhase():void {
-        this.gameState.active = true;
+        this.active = true;
     }
 
     private playPhase():void {
-
+        this.player.active = true;
+        this.gameState.active = false;
     }
 
     private standPhase(): void {
@@ -249,6 +258,7 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
             }
         }
+        this.active = false;
     }
 
     private enemyPhase():void {
@@ -257,9 +267,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
         this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
 
-    }
-
-    private effectPhase():void {
+        this.active = false;
     }
 
     private endOfRound():void {
@@ -381,6 +389,8 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
+    async Activated(player: Player, active: boolean) {}
+
     async stateValuesChanged(player: Player) {}
 
     public static createFromJSON(jString): void {
@@ -428,6 +438,7 @@ export interface MissionListener {
     storyMonolog(game:Mission, monolog:string):void;
     waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
     gameover(game:Mission, gameWon:boolean):void;
+    Activated(game:Mission, active:boolean);
 }
 
 

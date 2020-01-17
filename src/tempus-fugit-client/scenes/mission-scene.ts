@@ -73,7 +73,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.stackGUI = new StackGUI(this, "stack");
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI);
+        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -118,34 +118,28 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async drawPhase(game: Mission) {
 
-        this.handGUI.fadeOut();
         console.log("drawPhase");
         game.nextPhase();
     }
 
     async effectPhase(game: Mission) {
         console.log("effect Phase");
-        this.handGUI.fadeOut();
     }
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
-        this.handGUI.fadeOut();
     }
 
     async energyPhase(game: Mission) {
         console.log("energy Phase");
-        this.handGUI.fadeOut();
     }
 
     async playPhase(game: Mission) {
         console.log("play Phase");
-        this.handGUI.fadeIn(game);
     }
 
     async standPhase(game: Mission) {
         console.log("stand Phase");
-        this.handGUI.fadeOut();
     }
 
 
@@ -215,4 +209,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         showText(t, '', displayString.split(''), 0, interval, 10, interval * 4);
     }
+
+    Activated(game: Mission, active: boolean) {}
 }
