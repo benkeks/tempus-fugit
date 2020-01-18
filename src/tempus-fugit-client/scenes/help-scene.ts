@@ -1,10 +1,7 @@
 import {HelpWindow} from "../objects/help-gui-objects/help-window";
 
-const COLOR_PRIMARY = 0x2a4f16;
-
 export class HelpScene extends Phaser.Scene {
     private helpWindow: HelpWindow;
-    // TODO : keep track of help page
 
     constructor() {
         super({
@@ -12,7 +9,8 @@ export class HelpScene extends Phaser.Scene {
         });
     }
 
-    init(data) { // TODO pass data in the when fairy click?
+    init(data) { // TODO pass data in the when fairy click? to maintain state of help window
+        // TODO determine whether it's always open or or gets generated every time
 
     }
 
