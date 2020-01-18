@@ -18,8 +18,9 @@ import { GameInfo } from "../game";
 
 import Image = Phaser.GameObjects.Image;
 import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
-import {StandGUILayout} from "../objects/game-gui-objects/stand-gui-layout";
+import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
+import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -30,7 +31,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public enemyGUI: EnemyGuiLayout;
     public stackGUI: StackGUI;
     public standGUI: StandGUILayout;
-    public phaseText: Phaser.GameObjects.Text;
     public textBox: Textbox;
 
     public tfgame: Mission;
@@ -41,6 +41,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public gameOverText;
 
+    public phaseWheel:WheelGUI;
+
     constructor() {
         super({
             key: "MissionScene"
@@ -49,17 +51,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     preload(): void {
 
-
-        // TODO: implement multiatlas version
-        //this.load.spritesheet('slime1',
-        //    'assets/sprites/enemies/slime1/slime1-Sheet.png',
-        //    { frameWidth: 64, frameHeight: 64 });
-
-        /*this.load.atlas('slime1',
-            'assets/sprites/enemies/slime1/slime1-Sheet.png',
-            "assets/sprites/enemies/slime1/slime1-sheet.json");*/
-
-        //MissionScene.loadFile("json/mission.json");
     }
 
     create(data): void {
@@ -93,8 +84,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.standGUI = new StandGUILayout(this);
         this.tfgame.standListener.push(this.standGUI);
 
-        this.phaseText = this.add.text(50, 290, "Draw Phase", { fontSize: '20px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#ffffff' });
-
+        this.phaseWheel = new WheelGUI(this, this.tfgame);
 
         this.tfgame.player.takeCard(this.tfgame.deck);
 
@@ -127,7 +117,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async drawPhase(game: Mission) {
-        this.phaseText.setText("Draw Phase");
+
         this.handGUI.fadeOut();
         console.log("drawPhase");
         game.nextPhase();
@@ -136,31 +126,26 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async effectPhase(game: Mission) {
         console.log("effect Phase");
         this.handGUI.fadeOut();
-        this.phaseText.setText("Effect Phase");
     }
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
         this.handGUI.fadeOut();
-        this.phaseText.setText("Enemy Phase");
     }
 
     async energyPhase(game: Mission) {
         console.log("energy Phase");
         this.handGUI.fadeOut();
-        this.phaseText.setText("Energy Phase");
     }
 
     async playPhase(game: Mission) {
         console.log("play Phase");
-        this.handGUI.fadeIn();
-        this.phaseText.setText("Play Phase");
+        this.handGUI.fadeIn(game);
     }
 
     async standPhase(game: Mission) {
         console.log("stand Phase");
         this.handGUI.fadeOut();
-        this.phaseText.setText("Stand Phase");
     }
 
 

@@ -16,8 +16,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
     private _hovering: boolean = false;
     private readonly _card: Card; // card object associated with cardGUI object
     public hoverTween: Phaser.Tweens.Tween;
+    public hoverTweenCr: Phaser.Tweens.Tween;
     public unhoverTween: Phaser.Tweens.Tween;
     public cardImage: Phaser.GameObjects.Image;
+    public cross: Phaser.GameObjects.Sprite;
 
     constructor(
         scene: Phaser.Scene,
@@ -112,6 +114,11 @@ export class CardGUI extends Phaser.GameObjects.Container {
         image.setOrigin(0.5, 0);
         image.setPosition(0, 80 - height / 2);
         this.cardImage = image;
+
+        //cross
+        this.cross = this.scene.add.sprite(this.originX, this.originY, "cross").setScale(3,3).setAlpha(0.4).setDepth(this.cardOriginZ+1);
+        this.cross.setAlpha(0);
+
     }
 
 
@@ -120,7 +127,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     hover(): void {
-        this.setDepth(100);
+        this.setDepth(999);
 
         this.hoverTween = this.scene.tweens.add({
             targets: this,
@@ -129,6 +136,16 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
+            duration: 100,
+        });
+        this.cross.setDepth(1000);
+        this.hoverTweenCr = this.scene.tweens.add({
+            targets: this.cross,
+            y: this.cardOriginY - 100,
+            angle: 0,
+            ease: 'power2',
+            scaleX: 3,
+            scaleY: 3,
             duration: 100,
         });
         this.hovering = true;
@@ -147,6 +164,16 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
+            duration: 100,
+        });
+        this.cross.setDepth(this.cardOriginZ+1);
+        this.unhoverTween = this.scene.tweens.add({
+            targets: this.cross,
+            y: this.cardOriginY,
+            angle: this.cardOriginAngle,
+            ease: 'power2',
+            scaleX: 2,
+            scaleY: 2,
             duration: 100,
         });
         this.hovering = false;
