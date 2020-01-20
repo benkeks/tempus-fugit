@@ -128,6 +128,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
+        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
     }
 
     async energyPhase(game: Mission) {
@@ -140,6 +141,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async standPhase(game: Mission) {
         console.log("stand Phase");
+        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
     }
 
 

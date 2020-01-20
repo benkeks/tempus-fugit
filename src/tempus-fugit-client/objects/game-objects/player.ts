@@ -150,6 +150,8 @@ export class Player {
                         break;
                 }
             }
+
+            this.listener.map(l => l.Attacking(this, enemy));
         }
         this.hand.removeCard(card, mission);
     }
@@ -212,4 +214,5 @@ export interface PlayerListener {
     playerHpChanged(changedTo: number, changedBy: number): void;
     stateValuesChanged(player:Player):void;
     Activated(player:Player, active:boolean);
+    Attacking(player:Player, target:Enemy);
 }

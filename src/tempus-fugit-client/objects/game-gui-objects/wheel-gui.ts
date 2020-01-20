@@ -138,7 +138,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.box
     .setInteractive({ useHandCursor: true })
     .on( 'pointerdown', function(pointer, localX, localY, event){
-        this.game.nextPhase()
+        this.game.nextPhase(Mission.STAND_PHASE);
      }, this);
 
         this.add(this.box);
@@ -169,7 +169,8 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     async gameover(game: Mission, gameWon: boolean) {
     }
     async Activated(game: Mission, active: boolean) {
-        this.box.setInteractive(active);
+        if (!active) this.box.disableInteractive();
+        else this.box.setInteractive();
     }
 
 }

@@ -5,12 +5,14 @@ import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
 import { isForXStatement } from "@babel/types";
 import {Mission} from "../../mechanics/mission";
-import { GameState } from "../game-objects/game-state";
+import { GameState, GameStateListener } from "../game-objects/game-state";
+import { Variable } from "../../temporal-logic/variable";
 
 /**
  * @author Mustafa
  */
-export class HandGUI extends Phaser.GameObjects.Container implements HandListener {
+export class HandGUI extends Phaser.GameObjects.Container implements HandListener, GameStateListener {
+
     private hand: Hand; // hand object associated with handGUI object
     private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
     private readonly stack: StackGUI;
@@ -31,6 +33,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.hand.listener.push(this);
         this.deck = deck;
         this.gamestate = gamestate;
+        this.gamestate.listener.push(this);
         //scene.add.existing(this);
 
     }
@@ -40,7 +43,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      */
     fadeOut() {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
@@ -55,13 +57,17 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * removes the tint from all cardGUI objects and enables dragging
      */
-    fadeIn(gamestate: GameState) {
+    fadeIn(gamestate: GameState=this.gamestate) {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeIn();
             if (gamestate.evaluate(c.card.getFormula())) {
                 c.enableDragging();
+                this.scene.tweens.add({
+                    targets: c.cross,
+                    alpha: 0,
+                    duration: 200
+                });
             } else {
                 c.fadeOut();
                 this.scene.tweens.add({
@@ -246,6 +252,12 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     async Activated(hand: Hand, active: boolean) {
         if (active) this.fadeIn(this.gamestate);
         else this.fadeOut();
-        console.log("active=" + active);
     }
+
+    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {}
+    async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [state: number]: boolean; }) {
+        if (this.hand.active) this.fadeIn();
+    }
+    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {}
+    async activated(gameState: GameState) {}
 }

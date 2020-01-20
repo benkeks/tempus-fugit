@@ -8,7 +8,7 @@ import Map = Phaser.Structs.Map;
 import {Card} from "../objects/game-objects/card";
 
 export class Mission implements EnemyListener, PlayerListener {
-  
+    
     get enemies(): Enemy[][]  {
         return this._enemies;
     }
@@ -63,6 +63,12 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
     }
+
+    public static readonly DRAW_PHASE:number=0;
+    public static readonly ENERGY_PHASE:number=1;
+    public static readonly PLAY_PHASE:number=2;
+    public static readonly STAND_PHASE:number=3;
+    public static readonly ENEMY_PHASE:number=4;
 
     public static Missions: {[name:string]:Mission} = {};
     public name: string;
@@ -391,6 +397,11 @@ export class Mission implements EnemyListener, PlayerListener {
 
     async Activated(player: Player, active: boolean) {}
 
+    async Attacking(player: Player, target: Enemy) {
+        if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
+    }
+  
+
     async stateValuesChanged(player: Player) {}
 
     public static createFromJSON(jString): void {
@@ -433,7 +444,6 @@ export interface MissionListener {
     playPhase(game:Mission):void;
     standPhase(game:Mission):void;
     enemyPhase(game:Mission):void;
-    effectPhase(game:Mission):void;
     storyDialog(game:Mission, dialog:StoryDialog):void;
     storyMonolog(game:Mission, monolog:string):void;
     waveChanged(game:Mission, activeWave:number, enemies:Enemy[]):void;
