@@ -5,28 +5,35 @@ import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
 import { isForXStatement } from "@babel/types";
 import {Mission} from "../../mechanics/mission";
+import { GameState, GameStateListener } from "../game-objects/game-state";
+import { Variable } from "../../temporal-logic/variable";
 
 /**
  * @author Mustafa
  */
-export class HandGUI extends Phaser.GameObjects.Container implements HandListener {
+export class HandGUI extends Phaser.GameObjects.Container implements HandListener, GameStateListener {
+
     private hand: Hand; // hand object associated with handGUI object
     private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
     private readonly stack: StackGUI;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
+    public gamestate:GameState;
 
     constructor(
         scene: Phaser.Scene,
         hand: Hand,
         stack: StackGUI,
         deck: DeckGUI,
+        gamestate:GameState,
     ) {
         super(scene);
         this.stack = stack;
         this.hand = hand;
         this.hand.listener.push(this);
         this.deck = deck;
+        this.gamestate = gamestate;
+        this.gamestate.listener.push(this);
         //scene.add.existing(this);
 
     }
@@ -36,7 +43,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      */
     fadeOut() {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
@@ -51,13 +57,17 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * removes the tint from all cardGUI objects and enables dragging
      */
-    fadeIn(mission: Mission) {
+    fadeIn(gamestate: GameState=this.gamestate) {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeIn();
-            if (mission.gameState.evaluate(c.card.getFormula())) {
+            if (gamestate.evaluate(c.card.getFormula())) {
                 c.enableDragging();
+                this.scene.tweens.add({
+                    targets: c.cross,
+                    alpha: 0,
+                    duration: 200
+                });
             } else {
                 c.fadeOut();
                 this.scene.tweens.add({
@@ -204,7 +214,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds one cardGUI object for given card to hand 
      * @param card: card to be added
      */
-    addCard(card: Card): void {
+    async addCard(card: Card) {
         // add card to hand, enable dragging
         let cardGUI = new CardGUI(
             this.scene,
@@ -218,13 +228,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         cardGUI.enableDragging();
         this.cardGUIs.push(cardGUI);
         this.arrangeCards();
+
+        if (this.hand.active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
     }
 
     /**
      * moves a cardGUI object to stack
      * @param card: card to be removed
      */
-    removeCard(card: Card): void {
+    async removeCard(card: Card) {
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
                 this.stack.addCardGUI(this.cardGUIs[pos]);
@@ -235,4 +248,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             }
         }
     }
+
+    async Activated(hand: Hand, active: boolean) {
+        if (active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
+    }
+
+    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {}
+    async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [state: number]: boolean; }) {
+        if (this.hand.active) this.fadeIn();
+    }
+    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {}
+    async activated(gameState: GameState) {}
 }
