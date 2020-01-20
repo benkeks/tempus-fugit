@@ -8,6 +8,7 @@ import TileSprite = Phaser.GameObjects.TileSprite;
 import Container = Phaser.GameObjects.Container;
 import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
+import { NewCardsViewer } from "../objects/navigation-scene-objects/new-cards-viewer";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -21,6 +22,8 @@ export class NavigationScene extends Phaser.Scene {
     public deck:Deck;
 
     public alreadyInitted:boolean = false;
+
+    public cardViewer:NewCardsViewer = undefined;
 
     public cheats = [
         [["up","up","down","down", "left","right","left", "right", "b", "a"], 0, this.enableAllLevels, undefined]
@@ -81,7 +84,7 @@ export class NavigationScene extends Phaser.Scene {
         for (let c_key in Card.cards) {
             let c:Card = Card.cards[c_key];
             for (let i=0; i < c.inDeckAtStart; i++) {
-                this.deck.addCard(c.copy());
+                this.deck.addCard(c.copy(), true);
             }
         }
 
@@ -168,9 +171,13 @@ export class NavigationScene extends Phaser.Scene {
             }
         });*/
 
+        // create new cards viewer
+
+
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameOver() && data.mission.gameWon) {
                 this.player.missionStates[data.index] = true;
+                
             }
         }
 
@@ -202,7 +209,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
-
-
+        this.cardViewer = new NewCardsViewer(this);
+        this.cardViewer.flush([Card.cards["Unnatural heal"], Card.cards["Natural heal"], Card.cards["Obliterate"]]);
     }
 }

@@ -16,6 +16,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
 
+    public assistance:boolean = true;
+
     constructor(
         scene: Phaser.Scene,
         hand: Hand,

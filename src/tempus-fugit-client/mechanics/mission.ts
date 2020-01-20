@@ -78,6 +78,8 @@ export class Mission implements EnemyListener, PlayerListener {
     public active:boolean = true;
 
     private stands:[Card, Card] = [null, null];
+
+    public loot:string[] = []; // card name and maximal number of occurances
     // TODO: effect list
 
     public copy():Mission {
@@ -404,6 +406,10 @@ export class Mission implements EnemyListener, PlayerListener {
                 sd.triggerFunctionString = dial.triggerFunctionString;
                 sd.parsetriggerFunctionString();
                 mission.dialogue.push(sd);
+            }
+
+            if (m.loot) {
+                mission.loot = m.loot;
             }
 
             this.Missions[m.name] = mission;
