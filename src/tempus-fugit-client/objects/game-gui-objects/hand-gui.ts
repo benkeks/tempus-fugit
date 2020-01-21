@@ -7,6 +7,9 @@ import { isForXStatement } from "@babel/types";
 import { Mission } from "../../mechanics/mission";
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
+import { MissionScene } from "../../scenes/mission-scene";
+import { GameInfo } from "../../game";
+
 
 /**
  * @author Mustafa
@@ -19,9 +22,10 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
     public gamestate: GameState;
+    public missionScene: MissionScene;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         hand: Hand,
         stack: StackGUI,
         deck: DeckGUI,
@@ -34,8 +38,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         this.deck = deck;
         this.gamestate = gamestate;
         this.gamestate.listener.push(this);
-        //scene.add.existing(this);
-
+        this.missionScene = scene;
     }
 
     /**
@@ -238,17 +241,23 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: 6th card
      */
     async disgardCard(card: Card) {
-        // TODO: let user choose card to remove
-        // let removedCard;
+        console.log('disgardCard');
+        //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
+        let removedCard;
+        let top = this.missionScene.gameStateGUI.energyTable.bottom;
+        let bottom = GameInfo.height;
 
-        // if (removedCard.card !== card) {
-        //     // user disgards card previously on hand
-        //     this.hand.removeCard(removedCard.card);
-        //     this.hand.addCard(card);
-        // } else {
-        //     // user disgards 6th card
-        //     this.stack.addCardGUI(removedCard);
-        // }
+        let backgroundRect = this.scene.add.rectangle(GameInfo.width / 2, bottom + (bottom - top) / 2, GameInfo.width, (bottom - top), 0x000000, 0.5);
+        backgroundRect.setDepth(1000);
+
+        if (removedCard.card !== card) {
+            // user disgards card previously on hand
+            this.hand.removeCard(removedCard.card);
+            this.hand.addCard(card);
+        } else {
+            // user disgards 6th card
+            this.stack.addCardGUI(removedCard);
+        }
     }
 
     /**

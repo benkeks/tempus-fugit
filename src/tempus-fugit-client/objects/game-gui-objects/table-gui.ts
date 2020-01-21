@@ -13,11 +13,11 @@ const COLOR_PRIMARY_LIGHT = 0x00ff77;
  */
 export class TableGUI implements GameStateListener {
     private scene: Phaser.Scene;
-    private energyTable;
+    public energyTable;
     private _gameState: GameState;
     private game: Mission;
 
-    private variableTable; // game state table
+    public variableTable; // game state table
     private variableTableCellWidth = 90; // width of a cell
     private variableTableCellHeight = 60; // height of a cell
     private initialColumnCount = 20; // number of visible columns
