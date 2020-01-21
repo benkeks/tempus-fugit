@@ -38,12 +38,16 @@ export class Hand {
      * Puts a card at 'position' into the hand and informs hand listeners
      * @param card Card that should be added
      * @param position Position in the hand at which the card will be placed
-     * @return Returns 1 if it worked, otherwise 0
      * @example dummyPlayer.hand.addCard(dummyCard, 3);
      * @author Florian
      */
     public addCard(card: Card, position: number = -1): number {
-        if (this.isFull()) return 0;
+        if (this.isFull()) {
+            for (let i in this.listener) {
+                this.listener[i].disgardCard(card);
+            }
+            return;
+        }
 
         if (position != -1) {
             this.cards[position] = card;
@@ -60,7 +64,6 @@ export class Hand {
         for (let i in this.listener) {
             this.listener[i].addCard(card);
         }
-        return 1;
     }
 
     // Checks whether the hand is full
@@ -82,7 +85,7 @@ export class Hand {
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    public removeCard(card: Card, mission): void {
+    public removeCard(card: Card): void {
         for (let i in this.cards) {
             let c = this.cards[i];
             if (c == card) {
@@ -127,4 +130,5 @@ export interface HandListener {
     addCard(card: Card): void;
     removeCard(card: Card): void;
     Activated(hand: Hand, active: boolean);
+    disgardCard(card: Card): void;
 }

@@ -1,8 +1,8 @@
-import {Enemy} from "./enemy"
-import {Card} from "./card"
-import {Deck} from "./deck"
-import {Hand} from "./hand";
-import {Mission} from "../../mechanics/mission";
+import { Enemy } from "./enemy"
+import { Card } from "./card"
+import { Deck } from "./deck"
+import { Hand } from "./hand";
+import { Mission } from "../../mechanics/mission";
 
 
 export class Player {
@@ -43,10 +43,10 @@ export class Player {
     private _baseAttack: number; // Player's attack strength without using a card
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
-    listener:PlayerListener[]; // List of objects listening to player events
-    public _active:boolean;
+    listener: PlayerListener[]; // List of objects listening to player events
+    public _active: boolean;
 
-    public missionStates:boolean[];
+    public missionStates: boolean[];
 
     /**
      * Setter for the player's hit points
@@ -58,8 +58,8 @@ export class Player {
         this.maxHP = value;
     }
 
-    public copy():Player {
-        let p:Player = new Player(this.name, this.maxHP, this.baseAttack);
+    public copy(): Player {
+        let p: Player = new Player(this.name, this.maxHP, this.baseAttack);
         p.missionStates = [...this.missionStates];
 
         return p;
@@ -123,7 +123,7 @@ export class Player {
      * @author Florian
      */
     public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
-        let val:boolean = mission.gameState.evaluate(card.getFormula());
+        let val: boolean = mission.gameState.evaluate(card.getFormula());
         console.log("valid: " + val);
         if (val) {
             if (card.stand()) {
@@ -131,7 +131,7 @@ export class Player {
                 card.spawnStand(enemy, mission);
             } else {
                 switch (card.getKind()) {
-                    
+
                     case Card.OTHER:
                         card.action(mission, null);
                         break;
@@ -153,7 +153,7 @@ export class Player {
 
             this.listener.map(l => l.Attacking(this, enemy));
         }
-        this.hand.removeCard(card, mission);
+        this.hand.removeCard(card);
     }
 
 
@@ -171,7 +171,7 @@ export class Player {
         }
     }
 
-    public heal(life:number):void  {
+    public heal(life: number): void {
         this.currentHP += life;
         for (let l of this.listener) {
             l.playerHpChanged(this.currentHP, life);
@@ -212,7 +212,7 @@ export class Player {
  */
 export interface PlayerListener {
     playerHpChanged(changedTo: number, changedBy: number): void;
-    stateValuesChanged(player:Player):void;
-    Activated(player:Player, active:boolean);
-    Attacking(player:Player, target:Enemy);
+    stateValuesChanged(player: Player): void;
+    Activated(player: Player, active: boolean);
+    Attacking(player: Player, target: Enemy);
 }

@@ -4,7 +4,7 @@ import { Card } from "../game-objects/card";
 import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
 import { isForXStatement } from "@babel/types";
-import {Mission} from "../../mechanics/mission";
+import { Mission } from "../../mechanics/mission";
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 
@@ -18,14 +18,14 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     private readonly stack: StackGUI;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
-    public gamestate:GameState;
+    public gamestate: GameState;
 
     constructor(
         scene: Phaser.Scene,
         hand: Hand,
         stack: StackGUI,
         deck: DeckGUI,
-        gamestate:GameState,
+        gamestate: GameState,
     ) {
         super(scene);
         this.stack = stack;
@@ -57,7 +57,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * removes the tint from all cardGUI objects and enables dragging
      */
-    fadeIn(gamestate: GameState=this.gamestate) {
+    fadeIn(gamestate: GameState = this.gamestate) {
         //setTimeout(() => this.unhoverAll(true), 0);
         for (let c of this.cardGUIs) {
             c.fadeIn();
@@ -169,18 +169,18 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginAngle = newAngle;
             card.cardOriginX = newX;
             card.cardOriginY = newY;
-            card.cardOriginZ = 2*i;
-            card.setDepth(2*i);
+            card.cardOriginZ = 2 * i;
+            card.setDepth(2 * i);
             card.cross.x = newX;
             card.cross.y = newY;
-            card.cross.setDepth(2*i+1);
+            card.cross.setDepth(2 * i + 1);
 
             if (!immediate) {
                 this.scene.tweens.add({
                     targets: card,
                     x: newX,
                     y: newY,
-                    z: 2*i,
+                    z: 2 * i,
                     angle: newAngle,
                     ease: 'power2',
                     duration: 400,
@@ -193,7 +193,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                     targets: card.cross,
                     x: newX,
                     y: newY,
-                    z: 2*i+1,
+                    z: 2 * i + 1,
                     angle: newAngle,
                     ease: 'power2',
                     duration: 400,
@@ -234,6 +234,24 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     }
 
     /**
+     * lets user choose a card to be disgarded when hand is full (5 card in hand)
+     * @param card: 6th card
+     */
+    async disgardCard(card: Card) {
+        // TODO: let user choose card to remove
+        // let removedCard;
+
+        // if (removedCard.card !== card) {
+        //     // user disgards card previously on hand
+        //     this.hand.removeCard(removedCard.card);
+        //     this.hand.addCard(card);
+        // } else {
+        //     // user disgards 6th card
+        //     this.stack.addCardGUI(removedCard);
+        // }
+    }
+
+    /**
      * moves a cardGUI object to stack
      * @param card: card to be removed
      */
@@ -254,10 +272,10 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         else this.fadeOut();
     }
 
-    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {}
+    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) { }
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [state: number]: boolean; }) {
         if (this.hand.active) this.fadeIn();
     }
-    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {}
-    async activated(gameState: GameState) {}
+    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) { }
+    async activated(gameState: GameState) { }
 }
