@@ -240,7 +240,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * lets user choose a card to be disgarded when hand is full (5 card in hand)
      * @param card: 6th card
      */
-    async disgardCard(card: Card) {
+    async discardCard(card: Card) {
         console.log('disgardCard');
         //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
         let removedCard;

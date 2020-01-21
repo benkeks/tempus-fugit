@@ -44,7 +44,7 @@ export class Hand {
     public addCard(card: Card, position: number = -1): number {
         if (this.isFull()) {
             for (let i in this.listener) {
-                this.listener[i].disgardCard(card);
+                this.listener[i].discardCard(card);
             }
             return;
         }
@@ -130,5 +130,5 @@ export interface HandListener {
     addCard(card: Card): void;
     removeCard(card: Card): void;
     Activated(hand: Hand, active: boolean);
-    disgardCard(card: Card): void;
+    discardCard(card: Card): void;
 }
