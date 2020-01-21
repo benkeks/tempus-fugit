@@ -41,7 +41,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public gameOverText;
 
-    public phaseWheel:WheelGUI;
+    public phaseWheel: WheelGUI;
 
     constructor() {
         super({
@@ -155,8 +155,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async storyMonolog(game: Mission, monolog: string) {
-        //this.handGUI.unhoverAll();
-        // this.displayMonologue(monolog);
+        this.handGUI.unhoverAll();
+        this.displayMonologue(monolog);
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
@@ -164,14 +164,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     /**
-           * shows the monolog letter by letter
-           * adds animation for cursor so it seems like someone is typing
-           * @param displayString 
-           */
+    * shows the monolog letter by letter
+    * adds animation for cursor so it seems like someone is typing
+    * @param displayString 
+    */
     displayMonologue(displayString: string): void {
         //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
         let backgroundRect = this.add.rectangle(GameInfo.width / 2, GameInfo.height / 2, GameInfo.width, GameInfo.height, 0x000000);
-        backgroundRect.setDepth(10);
+        backgroundRect.setDepth(1000);
 
         let wrapWidth = 1000;
         let height = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) - wrapWidth / 2;
@@ -183,7 +183,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         });
         t.setWordWrapWidth(wrapWidth);
         t.setAlign('center');
-        t.setDepth(11);
+        t.setDepth(1001);
 
         let showText = function (target: Phaser.GameObjects.Text, displayedText: string, message: string[], index: number, interval: number, blink: number, blinkIntervall: number) {
             // print letter
@@ -212,5 +212,5 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         showText(t, '', displayString.split(''), 0, interval, 10, interval * 4);
     }
 
-    Activated(game: Mission, active: boolean) {}
+    Activated(game: Mission, active: boolean) { }
 }
