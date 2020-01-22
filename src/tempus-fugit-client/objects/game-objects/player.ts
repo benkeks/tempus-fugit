@@ -135,6 +135,9 @@ export class Player {
                     case Card.OTHER:
                         card.action(mission, null);
                         break;
+                    case Card.PLAYER:
+                        card.action(mission, mission.player);
+                        break;
                     case Card.GLOBAL:
                         for (let e of mission.getEnemies()) {
                             card.action(mission, e);

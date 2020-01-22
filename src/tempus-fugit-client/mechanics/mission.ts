@@ -218,7 +218,9 @@ export class Mission implements EnemyListener, PlayerListener {
 
         this.waveCounter = next;
 
-        this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        if (this.waveCounter in this.monologue) {
+            this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        }
 
         if (this.waveCounter >= this.getMaxWaveCount()) {
             this.listener.map(l => l.gameover(this, true));
@@ -271,7 +273,7 @@ export class Mission implements EnemyListener, PlayerListener {
         for (var stand of this.stands) {
                 if (stand != null) stand.turnNormal();
         }
-        this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
+        this.getEnemies().map(e => e.performTurn(this));
 
         this.active = false;
     }
