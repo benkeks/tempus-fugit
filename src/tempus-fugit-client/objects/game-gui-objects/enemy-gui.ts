@@ -2,6 +2,7 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
+import { Scene } from "phaser";
 
 /**
  * @author Mustafa
@@ -11,6 +12,8 @@ export class EnemyGUI extends ListGUI {
     public enemy: Enemy; // enemy object associated with this gui
     public toolTip:ToolTip;
     public toolTipText:Text;
+
+    public scene:Scene;
 
     //public damageText:Phaser.GameObjects.Text;
     //public posY:number;
@@ -23,6 +26,7 @@ export class EnemyGUI extends ListGUI {
         texture:string=undefined
     ) {
         super(scene, x, y);
+        this.scene = scene;
         this.enemy = enemy;
         this.enemy.listener.push(this);
 
