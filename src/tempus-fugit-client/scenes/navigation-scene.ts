@@ -8,6 +8,7 @@ import TileSprite = Phaser.GameObjects.TileSprite;
 import Container = Phaser.GameObjects.Container;
 import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
+import {HelpButton} from "../objects/help-gui-objects/help-button";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -21,6 +22,8 @@ export class NavigationScene extends Phaser.Scene {
     public deck:Deck;
 
     public alreadyInitted:boolean = false;
+
+    public helpButton: HelpButton;
 
     public cheats = [
         [["up","up","down","down", "left","right","left", "right", "b", "a"], 0, this.enableAllLevels, undefined]
@@ -59,6 +62,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
 
         this.load.spritesheet("wheel", "assets/sprites/board/Wheel-Sheet.png", {frameWidth: 64, frameHeight: 64});
+
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
@@ -202,7 +206,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
-
+        this.helpButton = new HelpButton(this);
 
     }
 }

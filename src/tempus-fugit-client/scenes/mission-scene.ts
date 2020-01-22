@@ -21,6 +21,7 @@ import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
+import {HelpButton} from "../objects/help-gui-objects/help-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -32,6 +33,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public stackGUI: StackGUI;
     public standGUI: StandGUILayout;
     public textBox: Textbox;
+    public helpButton: HelpButton;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -92,6 +94,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.cardChannel = new CardChannel(this);
         this.tfgame.startCombat();
+
+        this.helpButton = new HelpButton(this);
 
         //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
         //this.gameOverText.setOrigin(0.5, 0.5);

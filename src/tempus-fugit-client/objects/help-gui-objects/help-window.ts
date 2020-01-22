@@ -1,6 +1,8 @@
 // @ts-nocheck
 
 // GUI Colors
+import {HelpButton} from "./help-button";
+
 const GUI_BORDER = 0x0;
 const GUI_BORDER_HIGHLIGHT = 0xdddddd;
 const GUI_TAB = 0xeeeeee;
@@ -25,16 +27,22 @@ const TABLE_DOT = 0x9e0b00;
 // Format constants
 const HELP_WIDTH = 1500;
 const HELP_HEIGHT = 800;
-
 const CELL_WIDTH = 150;
 const CELL_HEIGHT = 40;
+const BORDER_WIDTH = 2;
+const BORDER_WIDTH_LABEL = 3;
+const BORDER_WIDTH_TAB = 3;
+const BORDER_WIDTH_PANEL = 4;
+const BORDER_WIDTH_TEXT_AREA = 2;
+const TITLE_SPACE = '                                   ';
 
 
 export class HelpWindow {
     private scene: Phaser.Scene;
 
     public helpGUI;
-    public _prevTab;
+    public prevTab;
+    public prevIndex = 0;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -42,10 +50,9 @@ export class HelpWindow {
 
     public createWindow(): void {
         let scene = this.scene;
-        let {game: {config: {width, height}}, rexUI} = this.scene;
 
         // Create Title and Toolbar
-        let title = this.createLabel(scene, 10, 'Help', GUI_FILL_LIGHT).setDraggable();
+        let title = this.createLabel(scene, 10, TITLE_SPACE + 'Help'+ TITLE_SPACE, GUI_FILL_LIGHT).setDraggable();
         let toolbar = [this.createLabel(scene, 23, 'X', GUI_CLOSE)];
 
         // Create Tabs with structure
@@ -53,12 +60,12 @@ export class HelpWindow {
         let scrollPanel = this.createScrollablePanel(scene, panel);
         let tabsPanel = this.createTabs(scene, HelpWindow.help_data, scrollPanel);
 
-        let dialog = rexUI.add.dialog({
+        let dialog = scene.rexUI.add.dialog({
             x: 1920 / 2,
             y: 1080 / 2,
             width: HELP_WIDTH,
             height: HELP_HEIGHT,
-            background: rexUI.add.roundRectangle(0, 0, 100, 100, 5, GUI_FILL).setStrokeStyle(2, GUI_BORDER),
+            background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, GUI_FILL).setStrokeStyle(BORDER_WIDTH, GUI_BORDER),
             title: scene.add.existing(title),
             toolbar: scene.add.existing(toolbar),
             content: scene.add.existing(tabsPanel),
@@ -67,14 +74,16 @@ export class HelpWindow {
                 toolbar: 'right'
             },
             space: {
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 20,
-                title: 20,
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+                title: 10,
                 titleLeft: 100,
                 titleRight: 100,
-                toolbarLeft: 10
+            },
+            expand: {
+                title: false
             }
         })
         // .setDraggable()
@@ -83,32 +92,41 @@ export class HelpWindow {
 
         // Close button events
         dialog.on('button.click', function () {
-            scene.scene.sleep('HelpScene');
-        }).on('button.over', function (button) {
-            button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);
+            this.helpGUI.scaleDownDestroy(300);
+            setTimeout(() => {
+                scene.scene.run(HelpButton.currHelpParent);
+                scene.scene.sleep('HelpScene');
+            }, 300);
+        }, this).on('button.over', function (button) {
+            button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER_HIGHLIGHT);
         }).on('button.out', function (button) {
-            button.getElement('background').setStrokeStyle(3, GUI_BORDER);
+            button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER);
         });
 
         this.helpGUI = dialog;
     }
 
-    public createLabel(scene, round, text, bgColor) {
-        return scene.rexUI.add.label({
+    public createLabel(scene, round, text, bgColor, formula?) {
+        let label = scene.rexUI.add.label({
             width: 0,
             height: 0,
-            background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, round, bgColor).setStrokeStyle(3, GUI_BORDER).setDepth(50),
+            background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, round, bgColor).setStrokeStyle(BORDER_WIDTH_LABEL, GUI_BORDER).setDepth(50),
             text: scene.add.text(0, 0, text, {
                 fontSize: '24px',
                 color: GUI_TEXT
             }).setDepth(51),
+            icon: formula? this.createFormula(scene, formula): undefined,
             space: {
                 left: 10,
                 right: 10,
                 top: 10,
-                bottom: 10
+                bottom: 10,
+                text: 100,
+                icon: 100
             }
         });
+        // label.dontExpand = true;
+        return label;
     }
 
     public createTabs(scene, data, panel) {
@@ -127,9 +145,10 @@ export class HelpWindow {
             let deselectTab = (button) => button.getElement('background').setFillStyle(GUI_TAB);
 
             // Color selected tab and deselected tab
+            if (this.prevTab) deselectTab(this.prevTab);
             selectTab(button);
-            this._prevTab ? deselectTab(this._prevTab) : undefined;
-            this._prevTab = button;
+            this.prevTab = button;
+            this.prevIndex = index;
 
             let tab_data = data[index].panel;
             let elements = [];
@@ -139,7 +158,7 @@ export class HelpWindow {
                         elements.push(this.createTextArea(scene, data.text));
                         break;
                     case 'label':
-                        elements.push(this.createLabel(scene, 10, data.text, data.color));
+                        elements.push(this.createLabel(scene, 10, data.text, data.color, data.formula));
                         break;
                     case 'table':
                         elements.push(this.createTable(scene, data.table));
@@ -169,27 +188,26 @@ export class HelpWindow {
         }, this);
 
         tabs.on('button.over', function highlightBorder(button) {
-            button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT)
+            button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER_HIGHLIGHT)
         });
         tabs.on('button.out', function restoreBorder(button) {
-            button.getElement('background').setStrokeStyle(3, GUI_BORDER)
+            button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
         });
 
-        // Preselect first tab
-        tabs.emitButtonClick('top', 0);
+        tabs.emitButtonClick('top', this.prevIndex);
 
         return tabs;
     }
 
     public createTab(scene, frame) {
-        let round = 15;
+        let round = 5;
         return scene.rexUI.add.label({
-            width: 50,
+            width: (HELP_WIDTH - 135) / 14,
             height: 50,
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, {tl: round, tr: round}, GUI_TAB)
-                .setStrokeStyle(3, GUI_BORDER)
+                .setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
                 .setDepth(19),
-            icon: scene.add.sprite(0, 0, 'operators', frame).setDepth(111),
+            icon: scene.add.sprite(0, 0, 'operators', frame).setDepth(111).setScale(1.25),
             space: {
                 left: 10,
                 right: 10,
@@ -213,21 +231,22 @@ export class HelpWindow {
             },
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, {
                 tl: 0,
-                tr: round,
+                tr: 0,
                 bl: round,
                 br: round
             }, GUI_FILL_DARK)
-                .setStrokeStyle(3, GUI_BORDER)
+                .setStrokeStyle(BORDER_WIDTH_PANEL, GUI_BORDER)
                 .setDepth(20),
             slider: {
                 track: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, GUI_SLIDER).setDepth(21),
                 thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL).setDepth(22)
             },
             space: {
-                left: 10,
+                left: 5,
                 right: 10,
                 top: 10,
-                bottom: 10
+                bottom: 10,
+                panel: 5
             }
         });
     }
@@ -257,7 +276,7 @@ export class HelpWindow {
         let textArea = scene.rexUI.add.textArea({
             height: 80,
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-                .setStrokeStyle(2, GUI_TEXT_AREA_BORDER)
+                .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER)
                 .setDepth(90),
             text: scene.add.text(0, 0, text, {
                 fontSize: '20px',
@@ -276,11 +295,9 @@ export class HelpWindow {
         let sizer = scene.rexUI.add.sizer({
             orientation: 'x'
         });
-        console.log(`creating formula ${formulaString}`);
 
         formulaString.split('').reduce(function (sizer, character) {
             let icon_info = HelpWindow.toFormulaSprite[character];
-            console.log(icon_info);
             let icon = scene.add.sprite(0, 0, icon_info.type, icon_info.frame);
             return sizer.add(icon, 1, 'center', 2, false);
         }, sizer);
@@ -341,6 +358,10 @@ export class HelpWindow {
         return sizer;
     }
 
+    public popUp(duration = 300) {
+        this.helpGUI.popUp(duration);
+    }
+
     static toFormulaSprite = {
         ["n"]: {type: "runes", frame: 0},
         ["s"]: {type: "runes", frame: 1},
@@ -364,35 +385,59 @@ export class HelpWindow {
     };
 
 // TODO make content for help
-    static help_data = [{
-        frame: 0,
-        panel: [
-            {
-                type: 'label',
-                text: 'Example',
-                color: GUI_LABEL_BG
-            },
-            {
-                type: 'formula',
-                string: 'l&n'
-            },
-            {
-                type: 'text-area',
-                text: 'testing this out with two tabs'
-            },
-            {
-                type: 'table',
-                table: [
-                    [0, 1, 0, 0, 0, 0],
-                    [0, 1, 0, 0, 0, 0],
-                    [0, 0, 1, 1, 0, 0],
-                    [0, 1, 0, 0, 0, 0],
-                ]
-            }]
+    static help_data = [
+        {
+            frame: 0,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'formula',
+                    string: 'l&n'
+                },
+                {
+                    type: 'text-area',
+                    text: 'testing this out with two tabs'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 1, 0, 0, 0, 0],
+                        [0, 1, 0, 0, 0, 0],
+                        [0, 0, 1, 1, 0, 0],
+                        [0, 1, 0, 0, 0, 0],
+                    ]
+                }]
 
-    },
+        },
         {
             frame: 1,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG,
+                    formula: '(l&n)|(l&s)'
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 2,
             panel: [
                 {
                     type: 'label',
@@ -412,5 +457,271 @@ export class HelpWindow {
                         [0, 1, 1, 1, 1, 0],
                     ]
                 }]
-        }]
-}
+        },
+        {
+            frame: 3,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 4,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 5,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 6,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 7,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+
+        {
+            frame: 8,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 9,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 10,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 11,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 12,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 13,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+        {
+            frame: 14,
+            panel: [
+                {
+                    type: 'label',
+                    text: 'Example',
+                    color: GUI_LABEL_BG
+                },
+                {
+                    type: 'text-area',
+                    text: 'content should have switched to this on click'
+                },
+                {
+                    type: 'table',
+                    table: [
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0],
+                        [0, 1, 1, 1, 1, 0],
+                    ]
+                }]
+        },
+    ]
+};
