@@ -65,7 +65,7 @@ export class StartingScene extends Phaser.Scene {
         playText.setInteractive();
         playText.setColor("#fff");
 
-        playText.on("pointerdown", () => {
+        playText.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
             let s:String = "abc";
             this.scene.start("NavigationScene");
         });

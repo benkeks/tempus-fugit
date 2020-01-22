@@ -201,5 +201,8 @@ export class NavigationScene extends Phaser.Scene {
         this.worldContainer.add(b2);
 
         this.worldContainer.setScale(scale);
+
+
+
     }
 }
