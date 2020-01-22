@@ -6,7 +6,7 @@ import {ToolTip} from "./tool-tip";
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends ListGUI implements EnemyListener{
+export class EnemyGUI extends ListGUI {
 
     public enemy: Enemy; // enemy object associated with this gui
     public toolTip:ToolTip;
@@ -29,16 +29,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         if (!texture) texture = enemy.image;
 
         this.addSpriteByTexture(texture);
-        this.scene.anims.create({
-            key: "standing",
-            frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
-            frameRate: 10,
-            repeat: -1
-        });
-        console.log(this.sprite);
-        console.log(enemy);
 
-        this.sprite.anims.play("standing");
+        scene.anims.create({
+            key: texture,
+            frames: scene.anims.generateFrameNumbers(texture, {start:0}),
+             frameRate: 10,
+             repeat: -1
+       });
+
+        this.sprite.anims.play(texture);
         this.sprite.setScale(2,2);
 
         this.addText("");
@@ -62,6 +61,24 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
 
     public disableListeners():void {
         this.enemy.removeListener(this);
+    }
+
+    public die():void {
+        this.disableListeners();
+
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: { from: 1, to: 0 },
+            ease: "Linear",
+            duration: 200,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.isDestroyed = true;
+                this.destroy(true);
+            },
+            onCompleteScope: this
+        });
     }
 
     public updateEnemyAttributes():void {
@@ -95,7 +112,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
      * @param changedTo
      */
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
-        //this.popText((changedTo-changedFrom).toString());
         let font1: Object = { fontSize: '50px', fontFamily: 'appleKid', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
@@ -112,9 +128,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
                     blood.destroy()
                 }});
         }
-        if (changedTo <= 0) {
-            this.disableListeners();
-            this.destroy(true);
-        } else this.updateEnemyAttributes();
+
+        if (changedFrom > 0 && changedTo <= 0) {
+            this.die();
+        }else this.updateEnemyAttributes();
     }
 }

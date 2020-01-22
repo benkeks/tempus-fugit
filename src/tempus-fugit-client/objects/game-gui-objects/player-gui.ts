@@ -7,7 +7,7 @@ import {Mission} from "../../mechanics/mission";
  * @author Mustafa
  */
 export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListener{
-
+    
     private player: Player; // player object associated with this gui
     private hpText: Phaser.GameObjects.Text; // shows hp of player
     private baseAttackText: Phaser.GameObjects.Text; // shows base attack of player
@@ -74,6 +74,14 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
                 }});
         }
     }
+
+    async stateValuesChanged(player: Player) {
+        this.baseAttackText.setText(player.baseAttack.toString());
+    }
+
+    async Activated(player: Player, active: boolean) {}
+
+    async Attacking(player:Player, target:Enemy) {} // TODO: implement animation when attacking
 }
 
 /**

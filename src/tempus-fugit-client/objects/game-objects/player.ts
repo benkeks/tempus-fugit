@@ -25,6 +25,17 @@ export class Player {
 
     set baseAttack(value: number) {
         this._baseAttack = value;
+        this.listener.map(obj => obj.stateValuesChanged(this));
+    }
+    get active(): boolean {
+        return this._active;
+    }
+
+    set active(value: boolean) {
+        this._active = value;
+        this.hand.active = value;
+
+        this.listener.map(l => l.Activated(this, this.active));
     }
     public name: string; // Player's name
     public maxHP: number; // Player's maximum hit points
@@ -33,6 +44,7 @@ export class Player {
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     listener:PlayerListener[]; // List of objects listening to player events
+    public _active:boolean;
 
     public missionStates:boolean[];
 
@@ -138,6 +150,8 @@ export class Player {
                         break;
                 }
             }
+
+            this.listener.map(l => l.Attacking(this, enemy));
         }
         this.hand.removeCard(card, mission);
     }
@@ -198,4 +212,7 @@ export class Player {
  */
 export interface PlayerListener {
     playerHpChanged(changedTo: number, changedBy: number): void;
+    stateValuesChanged(player:Player):void;
+    Activated(player:Player, active:boolean);
+    Attacking(player:Player, target:Enemy);
 }
