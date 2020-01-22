@@ -24,7 +24,7 @@ export class ToolTip extends ListGUI {
         this.gameObject = gameObject;
         scene.add.existing(this);
 
-        gameObject.on('pointerover',function(pointer){
+        gameObject.setInteractive().on('pointerover',function(pointer){
             if (!this._enabled) return;
 
             this.setPosition(pointer.x, pointer.y);

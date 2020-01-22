@@ -400,7 +400,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     async Activated(player: Player, active: boolean) {}
 
-    async Attacking(player: Player, target: Enemy) {
+    async Attacking(actor, target=undefined) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
     }
   

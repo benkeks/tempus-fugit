@@ -105,6 +105,8 @@ export class Enemy {
         if (!this.applyCard(this.specialAttack, mission)){
             mission.player.takeHit(this.baseAttack);
         }
+
+        this.listener.map(l => l.Attacking(this));
     }
 
     /**
@@ -173,6 +175,7 @@ export class Enemy {
             );
             enemy.image = e.image;
             this.enemies[e.name] = enemy;
+            if (e.description) enemy.description = e.description;
         }
     }
 
@@ -185,4 +188,5 @@ export class Enemy {
  */
 export interface EnemyListener {
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
+    Attacking(enemy:Enemy);
 }

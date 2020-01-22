@@ -223,7 +223,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             targets: target,
             x: direction+"=100",
             ease: "Linear",
-            duration: 200,
+            duration: 150,
             repeat: 0,
             yoyo: true
         });
