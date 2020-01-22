@@ -62,6 +62,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
 
         this.load.spritesheet("wheel", "assets/sprites/board/Wheel-Sheet.png", {frameWidth: 64, frameHeight: 64});
+        this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", {frameWidth: 80, frameHeight: 80});
 
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
@@ -206,7 +207,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
-        this.helpButton = new HelpButton(this);
+        this.helpButton = new HelpButton(this, true);
 
     }
 }
