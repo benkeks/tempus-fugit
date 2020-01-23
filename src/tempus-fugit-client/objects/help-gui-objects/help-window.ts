@@ -3,17 +3,17 @@
 // GUI Colors
 import {HelpButton} from "./help-button";
 
-const GUI_BORDER = 0x0;
-const GUI_BORDER_HIGHLIGHT = 0xdddddd;
-const GUI_TAB = 0xeeeeee;
-const GUI_TAB_SELECTED = 0x999999;
-const GUI_FILL_LIGHT = 0xeeeeee;
-const GUI_FILL = 0xaaaaaa;
-const GUI_FILL_DARK = 0x777777;
-const GUI_SLIDER = 0x666666;
-const GUI_LABEL_BG = 0xcccccc;
-const GUI_TEXT_AREA = 0x888888;
-const GUI_TEXT_AREA_BORDER = 0xdddddd;
+const GUI_BORDER = 0x37474F;
+const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
+const GUI_TAB = 0xfafafa;
+const GUI_TAB_SELECTED = 0x455a64;
+const GUI_FILL_LIGHT = 0xfafafa;
+const GUI_FILL = 0x90A4AE;
+const GUI_FILL_DARK = 0x607d8b;
+const GUI_SLIDER = 0x455a64;
+const GUI_LABEL_BG = 0xeceff1;
+const GUI_TEXT_AREA = 0xb0bec5;
+const GUI_TEXT_AREA_BORDER = 0xcfd8dc;
 const GUI_TEXT_AREA_TEXT = 0xffffff;
 const GUI_TEXT = 0x010101;
 const GUI_CLOSE = 0xdd6666;
@@ -35,6 +35,7 @@ const BORDER_WIDTH_TAB = 3;
 const BORDER_WIDTH_PANEL = 4;
 const BORDER_WIDTH_TEXT_AREA = 2;
 const TITLE_SPACE = '                                   ';
+const LABEL_SPACE = '';
 
 
 export class HelpWindow {
@@ -202,7 +203,7 @@ export class HelpWindow {
     public createTab(scene, frame) {
         let round = 5;
         return scene.rexUI.add.label({
-            width: (HELP_WIDTH - 135) / 14,
+            width: (HELP_WIDTH - 133) / 14,
             height: 50,
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, {tl: round, tr: round}, GUI_TAB)
                 .setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
