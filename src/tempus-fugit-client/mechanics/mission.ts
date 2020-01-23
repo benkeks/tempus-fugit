@@ -173,7 +173,7 @@ export class Mission implements EnemyListener, PlayerListener {
      * emits an event for each phase, names can be seen in toPhase map
      * increments turn counter every time player turn is reached
      */
-    public nextPhase(next:number = (this.curPhase + 1) % this.numPhases):void {
+    public async nextPhase(next:number = (this.curPhase + 1) % this.numPhases) {
         if (next < this.curPhase) {
             this.endOfRound();
         }
@@ -263,6 +263,7 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
                 for (var l of this.standListener) {
                     l.updateStandGUI(this.stands);
+                    l.Attacking(stand);
                 }
             }
         }
@@ -399,7 +400,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     async Activated(player: Player, active: boolean) {}
 
-    async Attacking(player: Player, target: Enemy) {
+    async Attacking(actor, target=undefined) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
     }
   
@@ -456,6 +457,7 @@ export interface MissionListener {
 
 export interface StandListener {
     updateStandGUI(stands: [Card, Card]): void;
+    Attacking(stand:Card);
     /*removeStand(stand: Card):void;
     updateStandText(): void;
     turnRed(): void;

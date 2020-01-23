@@ -21,8 +21,9 @@ import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
-import {HelpButton} from "../objects/help-gui-objects/help-button";
-import {PauseButton} from "../objects/pause-gui-objects/pause-button";
+import { Scene, GameObjects } from "phaser";
+import { PauseButton } from "../objects/pause-gui-objects/pause-button";
+import { HelpButton } from "../objects/help-gui-objects/help-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -230,5 +231,17 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         showText(t, '', displayString.split(''), 0, interval, 10, interval * 4);
     }
 
-    Activated(game: Mission, active: boolean) { }
+    Activated(game: Mission, active: boolean) {}
+
+    public static createAttackAnimation(scene:Scene, target:GameObjects.GameObject, direction:string="+", offset:number=100):Phaser.Tweens.Tween {
+        
+        return scene.add.tween({
+            targets: target,
+            x: direction+"=100",
+            ease: "Linear",
+            duration: 150,
+            repeat: 0,
+            yoyo: true
+        });
+    }
 }

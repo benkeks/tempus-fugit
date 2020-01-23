@@ -142,19 +142,24 @@ export class Player {
                         for (let e of mission.getEnemies()) {
                             card.action(mission, e);
                         }
+                        
+                        this.listener.map(l => l.Attacking(this, enemy));
                         break;
                     case Card.RANDOM:
                         var enemies = mission.getEnemies();
                         var target = enemies[Math.floor(Math.random() * enemies.length)];
                         card.action(mission, target);
+
+                        
+                        this.listener.map(l => l.Attacking(this, enemy));
                         break;
                     case Card.DIRECTED:
                         card.action(mission, enemy);
+                        
+                        this.listener.map(l => l.Attacking(this, enemy));
                         break;
                 }
             }
-
-            this.listener.map(l => l.Attacking(this, enemy));
         }
         this.hand.removeCard(card, mission);
     }

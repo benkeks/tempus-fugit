@@ -2,6 +2,7 @@
     "enemies":[
         {
             "name":"slime1",
+			"description":"a suicide slime!",
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{
