@@ -66,6 +66,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("wheel", "assets/sprites/board/Wheel-Sheet.png", {frameWidth: 64, frameHeight: 64});
         this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", {frameWidth: 80, frameHeight: 80});
 
+        this.load.image("book", "assets/sprites/board/book.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
