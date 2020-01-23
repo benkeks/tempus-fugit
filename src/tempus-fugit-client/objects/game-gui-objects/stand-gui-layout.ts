@@ -79,7 +79,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
     Attacking(stand: Card) {
         for (let i in this.stands) {
-            if (this.stands[i] == stand) {
+            if (this.stands[i] === stand) {
                 MissionScene.createAttackAnimation(this.scene,this.elementList[i]);
             }
         }
