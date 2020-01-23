@@ -1,7 +1,8 @@
 import {HelpWindow} from "../objects/help-gui-objects/help-window";
+import {HelpButton} from "../objects/help-gui-objects/help-button";
 
 export class HelpScene extends Phaser.Scene {
-    private helpWindow: HelpWindow;
+    public helpWindow: HelpWindow;
 
     constructor() {
         super({
@@ -9,20 +10,19 @@ export class HelpScene extends Phaser.Scene {
         });
     }
 
-    init(data) { // TODO pass data in the when fairy click? to maintain state of help window
-        // TODO determine whether it's always open or or gets generated every time
-
-    }
-
     preload() {
-        this.load.pack("preload", "assets/pack.json", "preload");
+        // this.load.pack("preload", "assets/pack.json", "preload");
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
     }
 
     create() {
-        // console.log(this);
         this.helpWindow = new HelpWindow(this);
         this.helpWindow.createWindow();
+        this.scene.pause(HelpButton.currHelpParent);
+        this.events.on('wake', function (idk, data) {
+            this.scene.pause(HelpButton.currHelpParent);
+            this.helpWindow.createWindow();
+        }, this);
     }
 }
