@@ -1,12 +1,7 @@
 // GUI Colors
 const GUI_BORDER = 0x37474F;
 const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
-const GUI_FILL_LIGHT = 0xfafafa;
 const GUI_FILL = 0x90A4AE;
-const GUI_FILL_DARK = 0x607d8b;
-const GUI_LABEL_BG = 0xeceff1;
-const GUI_TEXT = 0x010101;
-
 
 export class PauseButton {
     private scene: Phaser.Scene;
@@ -15,11 +10,10 @@ export class PauseButton {
 
     constructor(scene: Phaser.Scene, isMissionScene: boolean) {
         this.scene = scene;
-        // TODO change position
         //@ts-ignore
         this.button = scene.rexUI.add.label({
-            x: isMissionScene ? 1800 : 1800,
-            y: isMissionScene ? 50 : 250,
+            x: isMissionScene ? 1870 : 1870,
+            y: isMissionScene ? 300 : 50,
             width: 50,
             height: 50,
             //@ts-ignore
@@ -41,7 +35,6 @@ export class PauseButton {
         this.button.on('pointerout', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER);
         })
-
     }
 
     public displayPause(): void {

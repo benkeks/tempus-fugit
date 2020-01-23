@@ -6,7 +6,7 @@ export class HelpButton {
     constructor(scene: Phaser.Scene, isMissionScene: boolean) {
         this.scene = scene;
         // TODO change the values
-        this.sprite = scene.add.sprite(isMissionScene ? 1780 : 1700, isMissionScene ? 400 : 120, 'fairy', 1).setScale(1.5);
+        this.sprite = scene.add.sprite(isMissionScene ? 160 : 1850, isMissionScene ? 500 : 1020, 'fairy', 1).setScale(1.5);
         scene.anims.create({
             key: 'fairy-fly',
             frames: scene.anims.generateFrameNumbers('fairy', {frames: [0, 1, 3, 4, 2, 5]}),

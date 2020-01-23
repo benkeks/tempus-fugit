@@ -3,6 +3,7 @@
 // Colors
 import {HelpButton} from "../help-gui-objects/help-button";
 import {PauseButton} from "./pause-button";
+import {MissionScene} from "../../scenes/mission-scene";
 
 const GUI_BORDER = 0x37474F;
 const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
@@ -71,7 +72,7 @@ export class PauseWindow {
             }
         })
             .layout()
-            .popUp(300);
+            .popUp(200);
 
         pause.on('button.click', function (button, groupName, index) {
             function quit() {
@@ -81,30 +82,26 @@ export class PauseWindow {
 
             function retry() {
                 console.log('retry');
-                // TODO figure out how mission scene works
-                // scene.scene.start('MissionScene', {
-                //     key: scene.missionKeys[0],
-                //     // index: i,
-                //     player: scene.player.copy(),
-                //     deck: scene.deck.copy()
-                // });
+                console.log(MissionScene.latestData);
+                scene.scene.stop(PauseButton.currPauseParent);
+                scene.scene.start('MissionScene', MissionScene.latestData);
             }
 
             function navigation() {
                 console.log('back to navigation');
-                scene.scene.sleep(PauseButton.currPauseParent);
-                scene.scene.run('NavigationScene');
+                scene.scene.stop(PauseButton.currPauseParent);
+                scene.scene.start('NavigationScene');
             }
 
             let indexToFn = [retry, navigation, quit];
 
             switch (groupName) {
                 case 'toolbar':
-                    this.window.scaleDownDestroy(300);
+                    this.window.scaleDownDestroy(200);
                     setTimeout(() => {
                         scene.scene.run(PauseButton.currPauseParent);
                         scene.scene.sleep('PauseScene');
-                    }, 300);
+                    }, 200);
                     break;
                 case 'choices':
                     if (!this.isMissionScene && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
