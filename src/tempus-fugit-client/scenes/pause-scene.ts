@@ -1,4 +1,5 @@
 import {PauseWindow} from "../objects/pause-gui-objects/pause-window";
+import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 
 export class PauseScene extends Phaser.Scene {
     private pauseWindow: PauseWindow;
@@ -6,17 +7,20 @@ export class PauseScene extends Phaser.Scene {
     constructor() {
         super({
             key: 'PauseScene'
-        })
+        });
+    }
+
+    preload() {
     }
 
     create() {
         this.pauseWindow = new PauseWindow(this);
-        this.pauseWindow.createPauseWindow();
-        // TODO PAUSE BUTTON CURRENT SCENE
-        this.scene.pause();
+        this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
+        this.scene.pause(PauseButton.currPauseParent);
+
         this.events.on('wake', function () {
-            this.scene.pause();
-            this.pauseWindow.createPauseWindow();
-        }, this)
+            this.scene.pause(PauseButton.currPauseParent);
+            this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
+        }, this);
     }
 }
