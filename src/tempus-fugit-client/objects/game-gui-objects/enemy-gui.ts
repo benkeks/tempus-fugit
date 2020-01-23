@@ -2,15 +2,19 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
+import { Scene } from "phaser";
+import { MissionScene } from "../../scenes/mission-scene";
+import { FormulaGUI } from "./formula-gui";
 
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends ListGUI {
-
+export class EnemyGUI extends ListGUI implements EnemyListener {
     public enemy: Enemy; // enemy object associated with this gui
     public toolTip:ToolTip;
     public toolTipText:Text;
+
+    public scene:Scene;
 
     //public damageText:Phaser.GameObjects.Text;
     //public posY:number;
@@ -23,6 +27,7 @@ export class EnemyGUI extends ListGUI {
         texture:string=undefined
     ) {
         super(scene, x, y);
+        this.scene = scene;
         this.enemy = enemy;
         this.enemy.listener.push(this);
 
@@ -38,14 +43,19 @@ export class EnemyGUI extends ListGUI {
        });
 
         this.sprite.anims.play(texture);
-        this.sprite.setScale(2,2);
+        this.sprite.setScale(5);
 
         this.addText("");
         this.updateEnemyAttributes();
 
-        this.setInteractive();
+        // special attack
+        //let sAttack:FormulaGUI = new FormulaGUI(scene, enemy.specialAttack.getFormula().generateRepresentation(true, true), 0, this.getBounds().height, 2, true);
+        //this.add(sAttack);
 
-        //this.addText(enemy.specialAttack.getFormula().generateRepresentation(true), ListGUI.ALIGN_LEFT);
+
+        //this.addContainter(sAttack);
+
+        this.setInteractive();
 
         this.toolTip = new ToolTip(scene, 0, 0, this);
         this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
@@ -64,8 +74,6 @@ export class EnemyGUI extends ListGUI {
     }
 
     public die():void {
-        this.disableListeners();
-
         this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },
@@ -79,6 +87,8 @@ export class EnemyGUI extends ListGUI {
             },
             onCompleteScope: this
         });
+
+        this.disableListeners();
     }
 
     public updateEnemyAttributes():void {
@@ -133,4 +143,9 @@ export class EnemyGUI extends ListGUI {
             this.die();
         }else this.updateEnemyAttributes();
     }
+
+    async Attacking(enemy: Enemy) {
+        MissionScene.createAttackAnimation(this.scene, this, "-");
+    }
+
 }

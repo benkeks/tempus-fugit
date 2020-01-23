@@ -173,7 +173,11 @@ export class Mission implements EnemyListener, PlayerListener {
      * emits an event for each phase, names can be seen in toPhase map
      * increments turn counter every time player turn is reached
      */
+<<<<<<< HEAD
     public nextPhase(next: number = (this.curPhase + 1) % this.numPhases): void {
+=======
+    public async nextPhase(next:number = (this.curPhase + 1) % this.numPhases) {
+>>>>>>> 72cf6bd3c9b0622083c7f648a6f22d472f320c2b
         if (next < this.curPhase) {
             this.endOfRound();
         }
@@ -218,7 +222,9 @@ export class Mission implements EnemyListener, PlayerListener {
 
         this.waveCounter = next;
 
-        this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        if (this.waveCounter in this.monologue) {
+            this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        }
 
         if (this.waveCounter >= this.getMaxWaveCount()) {
             this.listener.map(l => l.gameover(this, true));
@@ -258,6 +264,7 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
                 for (var l of this.standListener) {
                     l.updateStandGUI(this.stands);
+                    l.Attacking(stand);
                 }
             }
         }
@@ -268,7 +275,7 @@ export class Mission implements EnemyListener, PlayerListener {
         for (var stand of this.stands) {
             if (stand != null) stand.turnNormal();
         }
-        this.getEnemies().map(e => e.applyCard(e.specialAttack, this));
+        this.getEnemies().map(e => e.performTurn(this));
 
         this.active = false;
     }
@@ -394,7 +401,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     async Activated(player: Player, active: boolean) { }
 
-    async Attacking(player: Player, target: Enemy) {
+    async Attacking(actor, target=undefined) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
     }
 
@@ -451,6 +458,7 @@ export interface MissionListener {
 
 export interface StandListener {
     updateStandGUI(stands: [Card, Card]): void;
+    Attacking(stand:Card);
     /*removeStand(stand: Card):void;
     updateStandText(): void;
     turnRed(): void;

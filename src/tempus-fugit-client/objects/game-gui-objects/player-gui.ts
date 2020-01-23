@@ -2,6 +2,7 @@ import {Player, PlayerListener} from "../game-objects/player";
 import {Card} from "../game-objects/card";
 import {Enemy} from "../game-objects/enemy";
 import {Mission} from "../../mechanics/mission";
+import { MissionScene } from "../../scenes/mission-scene";
 
 /**
  * @author Mustafa
@@ -81,7 +82,9 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
 
     async Activated(player: Player, active: boolean) {}
 
-    async Attacking(player:Player, target:Enemy) {} // TODO: implement animation when attacking
+    async Attacking(player:Player, target:Enemy) {
+        MissionScene.createAttackAnimation(this.scene, this);
+    } 
 }
 
 /**
