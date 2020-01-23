@@ -103,7 +103,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.handGUI.fadeOut();
 
-        this.cardChannel = new CardChannel(this);
+        this.cardChannel = new CardChannel(this, 50, 66);
         this.tfgame.startCombat();
 
         this.helpButton = new HelpButton(this, true);
@@ -173,7 +173,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
         if (monolog && monolog.length > 0) {
-            this.displayMonologue(monolog);
+            // this.displayMonologue(monolog);
         }
     }
 
