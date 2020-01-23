@@ -32,4 +32,13 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
     numCardsChanged(numCards: number): void {
         this.text.setText(numCards + ' Karten');
     }
+
+    /**
+    * makes all deck related objects invisible / visible
+    * @param visible: true to make deck visible 
+    */
+    public toggleVisible(visible: boolean) {
+        this.text.visible = visible;
+        this.visible = visible;
+    }
 }

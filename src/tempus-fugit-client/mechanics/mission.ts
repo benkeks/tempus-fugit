@@ -237,7 +237,6 @@ export class Mission implements EnemyListener, PlayerListener {
 
     private drawPhase(): void {
         this.player.takeCard(this.deck);
-        this.active = true;
     }
 
     private energyPhase(): void {

@@ -117,9 +117,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async drawPhase(game: Mission) {
+    }
 
-        console.log("drawPhase");
-        game.nextPhase();
+    /**
+     * added so discard gui can call next phase in case the hand is full and the user selects a card to discard
+     */
+    async callNextPhase() {
+        this.tfgame.nextPhase();
     }
 
     async effectPhase(game: Mission) {
@@ -156,7 +160,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
-        this.displayMonologue(monolog);
+        //this.displayMonologue(monolog);
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {

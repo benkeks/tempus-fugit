@@ -9,6 +9,7 @@ import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { MissionScene } from "../../scenes/mission-scene";
 import { GameInfo } from "../../game";
+import { DiscardGUI } from "./discard-gui";
 
 
 /**
@@ -17,7 +18,7 @@ import { GameInfo } from "../../game";
 export class HandGUI extends Phaser.GameObjects.Container implements HandListener, GameStateListener {
 
     private hand: Hand; // hand object associated with handGUI object
-    private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
+    public cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
     private readonly stack: StackGUI;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
@@ -92,6 +93,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param unhover: true if card need to return to normal position on hand 
      */
     toggleHovering(card: CardGUI, unhover: Boolean): void {
+
 
         if (!this.cardGUIs.includes(card))
             return;
@@ -234,6 +236,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
         if (this.hand.active) this.fadeIn(this.gamestate);
         else this.fadeOut();
+
+        this.missionScene.callNextPhase();
     }
 
     /**
@@ -241,23 +245,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: 6th card
      */
     async discardCard(card: Card) {
-        console.log('disgardCard');
-        //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
-        let removedCard;
-        let top = this.missionScene.gameStateGUI.energyTable.bottom;
-        let bottom = GameInfo.height;
-
-        let backgroundRect = this.scene.add.rectangle(GameInfo.width / 2, bottom + (bottom - top) / 2, GameInfo.width, (bottom - top), 0x000000, 0.5);
-        backgroundRect.setDepth(1000);
-
-        if (removedCard.card !== card) {
-            // user disgards card previously on hand
-            this.hand.removeCard(removedCard.card);
-            this.hand.addCard(card);
-        } else {
-            // user disgards 6th card
-            this.stack.addCardGUI(removedCard);
-        }
+        console.log('async discard card called')
+        new DiscardGUI(this.missionScene, this.hand, this.deck, this, card);
     }
 
     /**
@@ -265,8 +254,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: card to be removed
      */
     async removeCard(card: Card) {
+        console.log('removeCard in handgui called', card, this.cardGUIs)
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
+                console.log('found card to remove')
+                this.cardGUIs[pos].setAngle(0).setScale(1);
                 this.stack.addCardGUI(this.cardGUIs[pos]);
                 //this.remove(this.cardGUIs[pos]);
                 this.cardGUIs.splice(parseInt(pos), 1);

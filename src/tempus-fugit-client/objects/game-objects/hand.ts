@@ -79,8 +79,7 @@ export class Hand {
 
 
     /**
-     * Removes the card a 'position'
-     * @param position Position at which the card should be removed
+     * Removes a card 
      * @return No return value
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
@@ -89,14 +88,12 @@ export class Hand {
         for (let i in this.cards) {
             let c = this.cards[i];
             if (c == card) {
-                this.cards[i] = null;
-
-                for (let i in this.listener) {
-                    this.listener[i].removeCard(this.cards[i]);
+                for (let k in this.listener) {
+                    this.listener[k].removeCard(this.cards[i]);
                 }
+                this.cards[i] = null;
                 return;
             }
-
         }
     }
 

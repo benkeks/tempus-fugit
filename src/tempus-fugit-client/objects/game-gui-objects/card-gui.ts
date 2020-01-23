@@ -29,13 +29,13 @@ export class CardGUI extends Phaser.GameObjects.Container {
     ) {
         super(scene, x, y);
         scene.add.existing(this);
-        this.setInteractive();
         this._cardOriginX = x;
         this._cardOriginY = y;
         this._card = card;
         this.scene = scene;
 
         this.createCard(card);
+        this.setInteractive();
     }
 
     /**
@@ -116,9 +116,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this.cardImage = image;
 
         //cross
-        this.cross = this.scene.add.sprite(this.originX, this.originY, "cross").setScale(3,3).setAlpha(0.4).setDepth(this.cardOriginZ+1);
+        this.cross = this.scene.add.sprite(this.originX, this.originY, "cross").setScale(3, 3).setAlpha(0.4).setDepth(this.cardOriginZ + 1);
         this.cross.setAlpha(0);
-
     }
 
 
@@ -166,7 +165,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
             scaleY: 1,
             duration: 100,
         });
-        this.cross.setDepth(this.cardOriginZ+1);
+        this.cross.setDepth(this.cardOriginZ + 1);
         this.unhoverTween = this.scene.tweens.add({
             targets: this.cross,
             y: this.cardOriginY,
