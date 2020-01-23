@@ -1,9 +1,9 @@
-import {Card} from "./card";
-import {PlayerListener} from "./player";
+import { Card } from "./card";
+import { PlayerListener } from "./player";
 
 export class Deck {
     cards: Card[]; // List of cards contained in the deck
-    listener:DeckListener[]; // List of objects listening to events happening in the deck
+    listener: DeckListener[]; // List of objects listening to events happening in the deck
 
     /**
      * Constructor for the Deck class (creates an empty deck)
@@ -14,8 +14,8 @@ export class Deck {
         this.listener = []
     }
 
-    public copy():Deck {
-        let d:Deck = new Deck();
+    public copy(): Deck {
+        let d: Deck = new Deck();
 
         for (let c of this.cards) {
             d.cards.push(c.copy());
@@ -52,7 +52,7 @@ export class Deck {
         return theCard;
     }
 
-    public shuffle():void {
+    public shuffle(): void {
         Deck.shuffle(this.cards);
     }
 
