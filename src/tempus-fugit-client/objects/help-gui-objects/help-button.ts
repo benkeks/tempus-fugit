@@ -1,6 +1,3 @@
-import {HelpScene} from "../../scenes/help-scene";
-import {makeLogger} from "ts-loader/dist/logger";
-
 export class HelpButton {
     private scene: Phaser.Scene;
     private sprite: Phaser.GameObjects.Sprite;
