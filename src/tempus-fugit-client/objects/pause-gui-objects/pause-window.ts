@@ -26,12 +26,15 @@ export class PauseWindow {
     private window;
     private scene: Phaser.Scene;
     private isMissionScene: boolean;
+    private instanceCounter: number = 0;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
     }
 
     public createPauseWindow(isMissionScene: boolean) {
+        if (this.instanceCounter > 0) return;
+        this.instanceCounter += 1;
         let scene = this.scene;
         this.isMissionScene = isMissionScene;
 
@@ -76,14 +79,11 @@ export class PauseWindow {
             }
 
             function retry() {
-                console.log('retry');
-                console.log(MissionScene.latestData);
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('MissionScene', MissionScene.latestData);
             }
 
             function navigation() {
-                console.log('back to navigation');
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('NavigationScene');
             }
@@ -92,11 +92,12 @@ export class PauseWindow {
 
             switch (groupName) {
                 case 'toolbar':
-                    this.window.scaleDownDestroy(200);
+                    this.instanceCounter -= 1;
+                    this.window.scaleDownDestroy(300);
                     setTimeout(() => {
                         scene.scene.run(PauseButton.currPauseParent);
                         scene.scene.sleep('PauseScene');
-                    }, 200);
+                    }, 300);
                     break;
                 case 'choices':
                     if (!this.isMissionScene && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
