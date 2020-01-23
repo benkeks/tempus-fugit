@@ -1,8 +1,7 @@
 // @ts-nocheck
-
-// GUI Colors
 import {HelpButton} from "./help-button";
 
+// GUI Colors
 const GUI_BORDER = 0x37474F;
 const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
 const GUI_TAB = 0xfafafa;

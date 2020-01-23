@@ -9,6 +9,7 @@ import Container = Phaser.GameObjects.Container;
 import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
 import {HelpButton} from "../objects/help-gui-objects/help-button";
+import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -24,6 +25,7 @@ export class NavigationScene extends Phaser.Scene {
     public alreadyInitted:boolean = false;
 
     public helpButton: HelpButton;
+    public pauseButton: PauseButton;
 
     public cheats = [
         [["up","up","down","down", "left","right","left", "right", "b", "a"], 0, this.enableAllLevels, undefined]
@@ -64,6 +66,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("wheel", "assets/sprites/board/Wheel-Sheet.png", {frameWidth: 64, frameHeight: 64});
         this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", {frameWidth: 80, frameHeight: 80});
 
+        this.load.image("pause", "assets/sprites/pause-icon.png");
 
         let enemies:string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
@@ -207,7 +210,8 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
-        this.helpButton = new HelpButton(this, true);
+        this.helpButton = new HelpButton(this, false);
+        this.pauseButton = new PauseButton(this, false);
 
     }
 }

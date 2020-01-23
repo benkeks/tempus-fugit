@@ -22,9 +22,12 @@ import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
 import {HelpButton} from "../objects/help-gui-objects/help-button";
+import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
+    static latestData: Object;
+
     public playerGUI: PlayerGUI;
     public gameStateGUI: TableGUI;
     public handGUI: HandGUI;
@@ -34,6 +37,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public standGUI: StandGUILayout;
     public textBox: Textbox;
     public helpButton: HelpButton;
+    public pauseButton: PauseButton;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -61,6 +65,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.player = data.player;
         this.tfgame.deck = data.deck;
         this.tfgame.listener.push(this);
+
+        MissionScene.latestData = {
+            key: data.key,
+            index: data.index,
+            player: data.player.copy(),
+            deck: data.deck.copy()
+        };
 
         this.tfgame.deck.shuffle();
 
@@ -95,7 +106,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardChannel = new CardChannel(this);
         this.tfgame.startCombat();
 
-        this.helpButton = new HelpButton(this, false);
+        this.helpButton = new HelpButton(this, true);
+        this.pauseButton = new PauseButton(this, true);
 
         //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
         //this.gameOverText.setOrigin(0.5, 0.5);
