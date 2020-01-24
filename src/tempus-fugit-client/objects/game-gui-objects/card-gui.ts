@@ -117,7 +117,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         //cross
         this.cross = this.scene.add.sprite(this.originX, this.originY, "cross").setScale(3, 3).setAlpha(0.4).setDepth(this.cardOriginZ + 1);
-        this.cross.setAlpha(0);
+        this.add(this.cross);
+        this.setPlayable();
+
+        //disable dragging
     }
 
 
@@ -137,16 +140,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
             scaleY: 1.5,
             duration: 100,
         });
-        this.cross.setDepth(1000);
-        this.hoverTweenCr = this.scene.tweens.add({
-            targets: this.cross,
-            y: this.cardOriginY - 100,
-            angle: 0,
-            ease: 'power2',
-            scaleX: 3,
-            scaleY: 3,
-            duration: 100,
-        });
         this.hovering = true;
     }
 
@@ -163,16 +156,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
-            duration: 100,
-        });
-        this.cross.setDepth(this.cardOriginZ + 1);
-        this.unhoverTween = this.scene.tweens.add({
-            targets: this.cross,
-            y: this.cardOriginY,
-            angle: this.cardOriginAngle,
-            ease: 'power2',
-            scaleX: 2,
-            scaleY: 2,
             duration: 100,
         });
         this.hovering = false;
@@ -197,6 +180,22 @@ export class CardGUI extends Phaser.GameObjects.Container {
      */
     fadeIn(): void {
         this.cardImage.clearTint();
+    }
+
+    setPlayable(): void {
+        this.scene.tweens.add({
+                   targets: this.cross,
+                   alpha: 0,
+                   duration: 100
+               });
+    }
+
+    setNonPlayable(): void {
+        this.scene.tweens.add({
+            targets: this.cross,
+            alpha: 0.4,
+            duration: 100
+        });
     }
 
     /**

@@ -254,7 +254,7 @@ export class Mission implements EnemyListener, PlayerListener {
         for (let i of [0, 1]) {
             let stand = this.getStands()[i];
             if (stand != null) {
-                stand.act(this, this.player);
+                let attacked = stand.act(this, this.player);
                 if (stand.getRoundsRemaining() <= 0) {
                     this.stands[i] = null;
                 }
