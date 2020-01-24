@@ -50,11 +50,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
-            this.scene.tweens.add({
-                targets: c.cross,
-                alpha: 0,
-                duration: 200
-            });
         }
     }
 
@@ -67,19 +62,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             c.fadeIn();
             if (gamestate.evaluate(c.card.getFormula())) {
                 c.enableDragging();
-                this.scene.tweens.add({
-                    targets: c.cross,
-                    alpha: 0,
-                    duration: 200
-                });
+                c.setPlayable()
             } else {
                 c.fadeOut();
-                this.scene.tweens.add({
-                    targets: c.cross,
-                    alpha: 0.4,
-                    duration: 200,
-                    delay: 300
-                });
+                c.disableDragging();
+                c.setNonPlayable();
             }
 
         }
@@ -176,9 +163,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginY = newY;
             card.cardOriginZ = 2 * i;
             card.setDepth(2 * i);
-            card.cross.x = newX;
-            card.cross.y = newY;
-            card.cross.setDepth(2 * i + 1);
 
             if (!immediate) {
                 this.scene.tweens.add({
@@ -190,27 +174,14 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                     ease: 'power2',
                     duration: 400,
                 });
-                card.cross.x = card.cardOriginX;
-                card.cross.y = card.cardOriginY;
-                card.cross.angle = card.cardOriginAngle;
-                card.cross.setAlpha(0);
-                this.scene.tweens.add({
-                    targets: card.cross,
-                    x: newX,
-                    y: newY,
-                    z: 2 * i + 1,
-                    angle: newAngle,
-                    ease: 'power2',
-                    duration: 400,
-                });
             }
             else {
                 card.x = card.cardOriginX;
                 card.y = card.cardOriginY;
                 card.angle = card.cardOriginAngle;
-                card.cross.x = card.cardOriginX;
-                card.cross.y = card.cardOriginY;
-                card.cross.angle = card.cardOriginAngle;
+            }
+            if (!this.gamestate.evaluate(card.card.getFormula())) {
+                card.disableDragging()
             }
         }
     }
