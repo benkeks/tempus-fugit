@@ -19,7 +19,8 @@
 					"triggerFunctionString":"return mission.aliveEnemiesCount<2;",
 					"text": [["slime1", "Finally I can die in peace"],["player", "What is it with these weird slimes?"]]
 				}
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
     
         },
         {   
@@ -44,7 +45,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         }
         
     ]

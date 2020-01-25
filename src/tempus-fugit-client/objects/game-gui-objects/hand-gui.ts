@@ -25,6 +25,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     public gamestate: GameState;
     public missionScene: MissionScene;
 
+    public assistance:boolean = true;
+
     constructor(
         scene: MissionScene,
         hand: Hand,

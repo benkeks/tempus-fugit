@@ -1,5 +1,6 @@
 import { Deck, DeckListener } from "../game-objects/deck";
 import { CardGUI } from "./card-gui";
+import { Card } from "../game-objects/card";
 
 /**
  * @author Mustafa
@@ -33,6 +34,7 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
         this.text.setText(numCards + ' Karten');
     }
 
+    cardTypesChanged(deck: Deck, newCards: Card[]) {}
     /**
     * makes all deck related objects invisible / visible
     * @param visible: true to make deck visible 

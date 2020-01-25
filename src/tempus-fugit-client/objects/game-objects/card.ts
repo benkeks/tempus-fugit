@@ -22,6 +22,7 @@ export class Card {
     public targets: Enemy[];
     public action:Function;
     public inDeckAtStart:number;
+    public maxCardsInDeck:number = 5;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -198,6 +199,8 @@ export class Card {
                 c.action
             );
             new_c.inDeckAtStart = parseInt(c.inDeckAtStart);
+            
+            if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
 
             this.cards[c.name] = new_c;
         }
