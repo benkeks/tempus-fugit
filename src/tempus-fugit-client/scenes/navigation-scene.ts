@@ -28,7 +28,7 @@ export class NavigationScene extends Phaser.Scene {
     public pauseButton: PauseButton;
 
     public cheats = [
-        [["up","up","down","down", "left","right","left", "right", "b", "a"], 0, this.enableAllLevels, undefined]
+        [["ArrowUp","ArrowUp","ArrowDown","ArrowDown", "ArrowLeft","ArrowRight","ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
     ];
 
     public missionDependency:{[index:number]:number[]} = {
@@ -55,8 +55,19 @@ export class NavigationScene extends Phaser.Scene {
         8:"mission1"
     };
 
-    public enableAllLevels():void {
-        console.log("konami code!");
+    public enableAllLevels(scene:NavigationScene):void {
+        let allTrue = true;
+        for (let i in scene.player.missionStates) {
+            if (!scene.player.missionStates[i]) {
+                allTrue = false;
+                break;
+            }
+        }
+
+        if (!allTrue) {
+            scene.player.missionStates = [true, true, true, true, true, true, true, true, true];
+            scene.scene.start("NavigationScene");
+        }
     }
 
     constructor() {
@@ -185,23 +196,23 @@ export class NavigationScene extends Phaser.Scene {
         let scale:number = 5;
 
         // TODO: implement cheat code
-        /*this.input.keyboard.on("keydown", e => {
+        this.input.keyboard.on("keydown", e => {
             for (let c of this.cheats) {
                 let index: number = c[1] as number;
                 let cheatCodes: string[] = c[0] as string[];
-                let callback: (() => void) = c[2] as (() => void);
+                let callback: ((scene:NavigationScene) => void) = c[2] as ((scene:NavigationScene) => void);
 
-                if (cheatCodes[index] == e.keyCode) {
+                if (cheatCodes[index] == e.key) {
                     index++;
+                    c[1] = index;
 
-                    this.time.delayedCall(500, (index,c) => {
-                        console.log(index);
-                        if (index == c[1]) {
+                    this.time.delayedCall(1000, () => {
+                       if (index == c[1]) {
                             c[1] = 0;
                         }
-                    }, [index,c], this)
+                    }, [], this)
                 } else {
-                    if (cheatCodes[0] == e.keyCode) {
+                    if (cheatCodes[0] == e.key) {
                         c[1] = 1;
                     } else {
                         c[1] = 0;
@@ -209,11 +220,11 @@ export class NavigationScene extends Phaser.Scene {
                 }
 
                 if (index >= cheatCodes.length) {
-                    callback();
+                    callback(this);
                     c[1] = 0;
                 }
             }
-        });*/
+        });
 
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameOver() && data.mission.gameWon) {
