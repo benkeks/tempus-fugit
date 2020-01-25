@@ -35,11 +35,12 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.scene = scene;
         this.setPosition(this.screenPadding, this.screenPadding);
 
-        this.background = scene.add.rectangle(this.screenPadding,this.screenPadding, GameInfo.width-2*this.screenPadding, GameInfo.height-2*this.screenPadding, 0x993300);
+        this.background = scene.add.rectangle(0,0, GameInfo.width-2*this.screenPadding, GameInfo.height-2*this.screenPadding, 0x607d8b);
+        this.background.setOrigin(0);
         this.add(this.background);
-        this.background.setVisible(false);
 
-        this.dot = scene.add.sprite(this.background.width/2,this.background.height-this.screenPadding, "heartFont");
+        this.dot = scene.add.sprite(this.background.width/2,this.background.height-this.screenPadding, "book");
+        this.dot.setScale(2.5);
         this.dot.setOrigin(0.5,0.5);
 
         this.dotParticles = scene.add.particles("runes");
@@ -54,7 +55,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             scaleY: 1
         });
 
-        this.newCardText = scene.add.text(this.dot.x, 0, "You earned new Cards!", { fontSize: '32px', fontFamily: 'appleKid', color: '#000000' });
+        this.newCardText = scene.add.text(this.dot.x, this.screenPadding/2, "You earned new Cards!", { fontSize: '32px', fontFamily: 'appleKid', color: '#000000' });
         this.newCardText.setOrigin(0.5, 0);
         this.add(this.newCardText);
 
@@ -73,16 +74,6 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         if (!this.active) return;
 
         this.displayingCards = [];
-
-        this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: { from: 0, to: 1 },
-            ease: "Linear",
-            duration: this.fadeOutDuration,
-            repeat: 0,
-            yoyo: false,
-        });
-        this.setVisible(true);
 
         this.cardContainer = this.scene.add.container(0,0);
         let def_width = 0;
@@ -108,7 +99,19 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.cardContainer.setPosition((this.background.width/2)-(this.cardContainer.getBounds().width/2) + def_width/2, def_height/2 + this.screenPadding+this.newCardText.displayHeight);
         this.add(this.cardContainer);
 
-        this.displayCards(this.displayingCards.shift());
+        this.scene.add.tween({ // fade in
+            targets: this,
+            alpha: { from: 0, to: 1 },
+            ease: "Linear",
+            duration: this.fadeOutDuration,
+            repeat: 0,
+            yoyo: false,
+            onComplete:function(tween) {
+                this.displayCards(this.displayingCards.shift());
+            },
+            onCompleteScope: this
+        });
+        this.setVisible(true);
     }
 
     public displayOKButton():void {

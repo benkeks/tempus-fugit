@@ -217,8 +217,14 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
-        this.cardViewer = new NewCardsViewer(this);
-        this.cardViewer.flush([Card.cards["Unnatural heal"], Card.cards["Natural heal"], Card.cards["Obliterate"]]);
+        if (data.mission && data.mission.loot.length > 0) {
+            let loot = data.mission.loot;
+            this.cardViewer = new NewCardsViewer(this);
+            this.cardViewer.flush(loot);
+
+            this.deck.addCardType(loot);
+        }
+
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
     }
