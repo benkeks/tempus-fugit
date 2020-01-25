@@ -31,6 +31,7 @@ export class StackGUI extends Phaser.GameObjects.Image {
      */
     clear(): void {
         for (let cardGUI of this.cardGUIs) {
+            cardGUI.cross.destroy();
             cardGUI.destroy();
         }
     }

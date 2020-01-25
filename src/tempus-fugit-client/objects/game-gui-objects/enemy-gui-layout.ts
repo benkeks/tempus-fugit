@@ -3,6 +3,7 @@ import {GameInfo} from "../../game";
 import {EnemyGUI} from "./enemy-gui";
 import { Mission, MissionListener } from "../../mechanics/mission";
 import { StoryDialog } from "../../mechanics/story-dialog";
+import { Scene } from "phaser";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public enemies:EnemyGUI[] = [];
@@ -13,8 +14,11 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
     public fadeInOffset = 500;
 
+    public scene:Scene;
+
     constructor(scene:Phaser.Scene, mission:Mission) {
         super(scene);
+        this.scene = scene;
 
         EnemyGuiLayout.enemyLayout = {
             1: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 70), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
@@ -31,7 +35,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     }
 
     public fadeIn(gameObject, from, to) {
-        this.scene.add.tween({
+            this.scene.add.tween({
             targets: gameObject,
             x: {from:from, to:to},
             ease: "Linear",
@@ -47,7 +51,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public setEnemies(enemies:Enemy[], fadeIn:boolean=false) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
-            enemy.die();
+            enemy.disableListeners();
             this.remove(enemy);
         }
 

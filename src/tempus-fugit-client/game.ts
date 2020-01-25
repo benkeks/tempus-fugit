@@ -5,6 +5,7 @@ import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugi
 import {NavigationScene} from "./scenes/navigation-scene";
 import {MissionScene} from "./scenes/mission-scene";
 import {HelpScene} from "./scenes/help-scene";
+import {PauseScene} from "./scenes/pause-scene";
 
 export abstract class GameInfo {
     public static readonly X_AXIS = 0;
@@ -48,7 +49,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene, MissionScene, HelpScene]
+    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene]
 };
 
 export class Game extends Phaser.Game {

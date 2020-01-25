@@ -9,6 +9,7 @@ export class Card {
     public static readonly GLOBAL = "global";
     public static readonly DIRECTED = "directed";
     public static readonly RANDOM = "random";
+    public static readonly PLAYER = "player";
     public static readonly OTHER = "other";
 
     public name: string; // Name of the card
@@ -137,6 +138,8 @@ export class Card {
                     }
                 } else if (this.cardKind == Card.OTHER) {
                     this.action(mission, null);
+                } else if (this.cardKind == Card.PLAYER) {
+                    this.action(mission, mission.player);
                 } else {
                     throw new TypeError("Card Type of card " + this.name + " is wrong!");
                 }

@@ -21,9 +21,14 @@ import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
+import { Scene, GameObjects } from "phaser";
+import { PauseButton } from "../objects/pause-gui-objects/pause-button";
+import { HelpButton } from "../objects/help-gui-objects/help-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
+    static latestData: Object;
+
     public playerGUI: PlayerGUI;
     public gameStateGUI: TableGUI;
     public handGUI: HandGUI;
@@ -32,6 +37,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public stackGUI: StackGUI;
     public standGUI: StandGUILayout;
     public textBox: Textbox;
+    public helpButton: HelpButton;
+    public pauseButton: PauseButton;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -41,7 +48,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public gameOverText;
 
-    public phaseWheel:WheelGUI;
+    public phaseWheel: WheelGUI;
 
     constructor() {
         super({
@@ -60,6 +67,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.deck = data.deck;
         this.tfgame.listener.push(this);
 
+        MissionScene.latestData = {
+            key: data.key,
+            index: data.index,
+            player: data.player.copy(),
+            deck: data.deck.copy()
+        };
+
         this.tfgame.deck.shuffle();
 
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
@@ -73,7 +87,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.stackGUI = new StackGUI(this, "stack");
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI);
+        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -90,8 +104,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.handGUI.fadeOut();
 
-        this.cardChannel = new CardChannel(this);
+        this.cardChannel = new CardChannel(this, 50, 66);
         this.tfgame.startCombat();
+
+        this.helpButton = new HelpButton(this, true);
+        this.pauseButton = new PauseButton(this, true);
 
         //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
         //this.gameOverText.setOrigin(0.5, 0.5);
@@ -117,35 +134,35 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async drawPhase(game: Mission) {
+    }
 
-        this.handGUI.fadeOut();
-        console.log("drawPhase");
-        game.nextPhase();
+    /**
+     * added so discard gui can call next phase in case the hand is full and the user selects a card to discard
+     */
+    async callNextPhase() {
+        this.tfgame.nextPhase();
     }
 
     async effectPhase(game: Mission) {
         console.log("effect Phase");
-        this.handGUI.fadeOut();
     }
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
-        this.handGUI.fadeOut();
+        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
     }
 
     async energyPhase(game: Mission) {
         console.log("energy Phase");
-        this.handGUI.fadeOut();
     }
 
     async playPhase(game: Mission) {
         console.log("play Phase");
-        this.handGUI.fadeIn(game);
     }
 
     async standPhase(game: Mission) {
         console.log("stand Phase");
-        this.handGUI.fadeOut();
+        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
     }
 
 
@@ -159,8 +176,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async storyMonolog(game: Mission, monolog: string) {
-        //this.handGUI.unhoverAll();
-        // this.displayMonologue(monolog);
+        this.handGUI.unhoverAll();
+        if (monolog && monolog.length > 0) {
+            this.displayMonologue(monolog);
+        }
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
@@ -168,14 +187,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     /**
-           * shows the monolog letter by letter
-           * adds animation for cursor so it seems like someone is typing
-           * @param displayString 
-           */
+    * shows the monolog letter by letter
+    * adds animation for cursor so it seems like someone is typing
+    * @param displayString 
+    */
     displayMonologue(displayString: string): void {
         //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
         let backgroundRect = this.add.rectangle(GameInfo.width / 2, GameInfo.height / 2, GameInfo.width, GameInfo.height, 0x000000);
-        backgroundRect.setDepth(10);
+        backgroundRect.setDepth(1000);
 
         let wrapWidth = 1000;
         let height = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) - wrapWidth / 2;
@@ -187,7 +206,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         });
         t.setWordWrapWidth(wrapWidth);
         t.setAlign('center');
-        t.setDepth(11);
+        t.setDepth(1001);
 
         let showText = function (target: Phaser.GameObjects.Text, displayedText: string, message: string[], index: number, interval: number, blink: number, blinkIntervall: number) {
             // print letter
@@ -214,5 +233,19 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         }
 
         showText(t, '', displayString.split(''), 0, interval, 10, interval * 4);
+    }
+
+    Activated(game: Mission, active: boolean) { }
+
+    public static createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
+
+        return scene.add.tween({
+            targets: target,
+            x: direction + "=100",
+            ease: "Linear",
+            duration: 150,
+            repeat: 0,
+            yoyo: true
+        });
     }
 }
