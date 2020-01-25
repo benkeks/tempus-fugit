@@ -3,10 +3,8 @@
         {   
             "name": "tutorial",
             "background":"forest",
-            "waves": 1,
             "enemies": [
-                ["slime1", "slime2"],
-				["slime3", "slime2"]
+                ["slime1", "slime2", "slime1"]
             ],
             "monologue":{"0":"As you're advancing, more monsters start to appear. Watch out!"}
             ,
@@ -25,24 +23,156 @@
         {   
             "name": "mission1",
             "background":"forest",
-            "waves": 5,
             "enemies": [
-                ["slime1", "slime2"],
                 ["slime2", "slime3", "slime2"],
-                ["slime3", "slime3", "goblin1"],
                 ["goblin1", "slime3", "goblin1"],
-                ["goblin1", "slime_mother", "goblin1"]
+                ["slime3", "slime_mother", "slime3"]
             ],
             "monologue":{
-				"0": "You're walking deeper into the woods... What is it with these slimes?",
-                "1": "Onwards you hear a misterious sound. It seems like someone is following you.",
-                "2": "More goblins seem to come your way, the ground is somewhat... shaking?",
-                "3": "The shaking becomes stronger and stronger, something nasty is coming your way. Be careful!"
+				"0": "You're walking deeper into the woods... What is it with these slimes? Why are they so eager to feel pain?",
+                "1": "Onwards you hear a mysterious sound. It seems like someone is following you. Tread lightly!",
+                "2": "The ground is shaking as you try to continue your journey through the woods. Someone is crying for their mother. What is going on?"
             },
             "dialogue": [
                 {
                     "triggerFunctionString":"return true;",
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
+                }
+            ]
+        },
+        {   
+            "name": "mission2",
+            "background":"forest",
+            "enemies": [
+                ["slime2", "slime2"],
+                ["slime3","slime3"],
+                ["goblin1", "moleg", "goblin1"]
+            ],
+            "monologue":{
+				"0": "Defeating the mother of all slimes sure was tiring. Hoping to never meet any of these creatures again, you follow the road. Until ...",
+                "1": "That didn't seem to be all of them. More are coming and they seem more aggressive. Watch out!",
+                "2": "The warning about this golem called Moleg sure sounded scary. Wait. Why does this rock have a mustache?"
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["",""], ["", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission3",
+            "background":"plane",
+            "enemies": [
+                ["goblin1", "goblin2", "goblin1"],
+                ["goblin2", "goblin2"],
+                ["goblin2", "goblin_general1", "goblin2"]
+            ],
+            "monologue":{
+				"0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its habitants. On your way to the port you encounter a goblin party.",
+                "1": "More of them start to appear. They seem to have alarmed their general. Let's go!",
+                "2": "You hear the sound of a warhorn. It is him. The one responsible for innocent people dying. It is time to go all out."
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["",""], ["", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission4",
+            "background":"desert_cactus",
+            "enemies": [
+                ["cactus1"],
+                ["cactus1", "cactus2", "cactus1"],
+                ["cactus2", "kingtus", "cactus2"]
+            ],
+            "monologue":{
+				"0": "The boat ride is finally over. On your way to find out, who or what is causing the creatures to become mad, you enter the desert. Soon you feel like cactis are moving around. Wait, why is one of them getting closer to you?",
+                "1": "That was weird. Why was it holding a spear? And why are you circled by more of them? Watch out!",
+                "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?"
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission5",
+            "background":"desert",
+            "enemies": [
+                ["cactus1", "cactus1"],
+                ["wormling", "wormling"],
+                ["wormling", "darude_sandworm", "wormling"]
+            ],
+            "monologue":{
+				"0": "After a heated and pointy battle with kingtus, he let you pass through and told you to head to the pyramid for clues that might help you solve the mystery about creatures drowning in madness. On your way some volatile cacti attack you.",
+                "1": "These cacti acted weird. As if they were controlled by something or someone. Wait why are there worms appearing out of nowhere? Be careful.",
+                "2": "Below you the sand starts to sink in. They seem to have called for help. Oh dear, this is not good."
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["",""], ["", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission6",
+            "background":"pyramid",
+            "enemies": [
+                ["snake", "snake", "snake"],
+                ["mummy", "pharoh_yeah", "mummy"]
+            ],
+            "monologue":{
+				"0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",
+                "1": "After defeating the snakes you venture deeper into the pyramid just to see that there is only one room. The sarcophagus inside of it seems empty. You suddenly hear music and all you can think of dancing. What is going on?"
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["",""], ["", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission7",
+            "background":"iceisland",
+            "enemies": [
+                ["goblin3", "goblin3"],
+                ["bgpuff1", "jkpuff", "bgpuff2"]
+            ],
+            "monologue":{
+				"0": "Even around these Icy lands goblins are around. These seem much fiercer though, than the ones at home",
+                "1": "Onwards you hear someone singing weird songs that make you want to rest. What is going on?"
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["",""], ["", ""]]
+                }
+            ]
+        },
+        {   
+            "name": "mission8",
+            "background":"tower",
+            "enemies": [
+                ["goblin3", "goblin_general2", "goblin3"],
+                ["ghost", "beegghost", "ghost"],
+                ["stand1", "boss", "stand2"]
+            ],
+            "monologue":{
+				"0": "The time has come to fight the one who is responsible for this mess. As you try entering the tower you are greeted by the goblin general. Watch out!",
+                "1": "Inside the tower, ghosts start to appear out of no where. You got this!",
+                "2": "This is it. You've come this far and now the time has come to confront the evil behind all of this. But the sight of what you see at the peak of the tower shocks you."
+            },
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["", ""], ["", ""]]
                 }
             ]
         }
