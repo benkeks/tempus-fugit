@@ -73,6 +73,8 @@ export class NavigationScene extends Phaser.Scene {
         this.load.image("water_background", "assets/navigation_scene/texture/water.png");
         this.load.spritesheet("bullet_point", "assets/navigation_scene/overworld/bulletpoint/bulletpoint-Sheet.png",
         {frameWidth: 10, frameHeight:5});
+        this.load.spritesheet("bullet_point_done", "assets/navigation_scene/overworld/bulletpoint/bulletpoint_done-Sheet.png",
+        {frameWidth: 10, frameHeight:5});
         this.load.image("bullet_point_inactive", "assets/navigation_scene/overworld/bulletpoint/bp_inactive.png");
         this.load.image("bullet_point_hover", "assets/navigation_scene/overworld/bulletpoint/bp_onHover.png");
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
@@ -137,9 +139,22 @@ export class NavigationScene extends Phaser.Scene {
         }
 
         if (active) {
-            b = this.add.sprite(x,y,"bullet_point");
+            
+
+            if (!this.player.missionStates[i]) {
+                b = this.add.sprite(x,y,"bullet_point");
+                b.play("blinking");
+            } else {
+                b = this.add.sprite(x,y,"bullet_point_done");
+                b.play("blinking_done");
+            }
 
             b.setInteractive({useHandCursor:true});
+
+            let xOffset = 5;
+            let yOffset = 5;
+            b.input.hitArea.setTo(-xOffset,-yOffset,b.getBounds().width + 2*xOffset,b.getBounds().height + 2*yOffset);
+            
             b.on("pointerdown", pointer => {
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
@@ -149,18 +164,13 @@ export class NavigationScene extends Phaser.Scene {
                 });
             });
 
-            if (!this.player.missionStates[i]) b.play("blinking");
-
             b.on("pointerover", pointer => {
                 b.anims.stop();
                 b.setTexture("bullet_point_hover");
             })
 
             b.on("pointerout", pointer => {
-                if (!this.player.missionStates[i]) b.anims.restart();
-                else {
-                    b.setTexture("bullet_point", 0);
-                }
+                b.anims.restart();
             })
         } else {
             b = this.add.sprite(x,y,"bullet_point_inactive");
@@ -172,10 +182,6 @@ export class NavigationScene extends Phaser.Scene {
     }
 
     create(data?) {
-        this.input.on("pointerdown", (pointer, gameObject) => {
-            console.log(pointer.x, pointer.y);
-        });
-
         let scale:number = 5;
 
         // TODO: implement cheat code
@@ -221,12 +227,19 @@ export class NavigationScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         });
+        this.anims.create({
+            key: "blinking_done",
+            frames: this.anims.generateFrameNumbers("bullet_point_done", {start:0}),
+            frameRate: 10,
+            repeat: -1
+        });
 
         this.backgroundTexture = this.add.tileSprite(GameInfo.width/2,GameInfo.height/2, GameInfo.width, GameInfo.height, "water_background");
         this.backgroundTexture.setDepth(0);
         this.backgroundTexture.setScale(scale);
 
         this.worldContainer = this.add.container(0,0);
+        this.worldContainer.setScale(scale);
 
         this.overworld = this.add.sprite(0,0, "overworld");
         this.overworld.setDepth(1);
@@ -253,8 +266,6 @@ export class NavigationScene extends Phaser.Scene {
             this.worldContainer.add(b);
         }
 
-        this.worldContainer.setScale(scale);
-        
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
 
