@@ -13,8 +13,8 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
         scene: Phaser.Scene,
         texture: string,
         deck: Deck,
-        x: number = 1600,
-        y: number = 930
+        x: number = 1545,
+        y: number = 920
     ) {
         super(scene, x, y, texture);
         scene.add.existing(this);

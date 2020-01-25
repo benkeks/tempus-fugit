@@ -92,6 +92,11 @@
             },
             {
                 "type": "image",
+                "key": "playerProfile",
+                "url": "assets/sprites/player/player_profile.png"
+            },
+            {
+                "type": "image",
                 "key": "stack",
                 "url": "assets/sprites/stack.png"
             },
