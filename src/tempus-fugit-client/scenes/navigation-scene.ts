@@ -33,11 +33,26 @@ export class NavigationScene extends Phaser.Scene {
 
     public missionDependency:{[index:number]:number[]} = {
         0:[],
-        1:[0]
+        1:[0],
+        2:[1],
+        3:[2],
+        4:[3],
+        5:[4],
+        6:[5],
+        7:[6],
+        8:[7]
     };
+    
     public missionKeys:{[index:number]:string} = {
         0:"tutorial",
-        1:"mission1"
+        1:"mission1",
+        2:"mission1",
+        3:"mission1",
+        4:"mission1",
+        5:"mission1",
+        6:"mission1",
+        7:"mission1",
+        8:"mission1"
     };
 
     public enableAllLevels():void {
@@ -59,6 +74,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("bullet_point", "assets/navigation_scene/overworld/bulletpoint/bulletpoint-Sheet.png",
         {frameWidth: 10, frameHeight:5});
         this.load.image("bullet_point_inactive", "assets/navigation_scene/overworld/bulletpoint/bp_inactive.png");
+        this.load.image("bullet_point_hover", "assets/navigation_scene/overworld/bulletpoint/bp_onHover.png");
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
@@ -83,7 +99,7 @@ export class NavigationScene extends Phaser.Scene {
 
 
         this.player = new Player("Willy", 50, 5);
-        this.player.missionStates = [false, false, false, false, false];
+        this.player.missionStates = [false, false, false, false, false, false, false, false, false];
 
         this.deck = new Deck();
 
@@ -123,7 +139,7 @@ export class NavigationScene extends Phaser.Scene {
         if (active) {
             b = this.add.sprite(x,y,"bullet_point");
 
-            b.setInteractive();
+            b.setInteractive({useHandCursor:true});
             b.on("pointerdown", pointer => {
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
@@ -134,6 +150,18 @@ export class NavigationScene extends Phaser.Scene {
             });
 
             if (!this.player.missionStates[i]) b.play("blinking");
+
+            b.on("pointerover", pointer => {
+                b.anims.stop();
+                b.setTexture("bullet_point_hover");
+            })
+
+            b.on("pointerout", pointer => {
+                if (!this.player.missionStates[i]) b.anims.restart();
+                else {
+                    b.setTexture("bullet_point", 0);
+                }
+            })
         } else {
             b = this.add.sprite(x,y,"bullet_point_inactive");
         }
@@ -144,7 +172,11 @@ export class NavigationScene extends Phaser.Scene {
     }
 
     create(data?) {
-        let scale:number = 4;
+        this.input.on("pointerdown", (pointer, gameObject) => {
+            console.log(pointer.x, pointer.y);
+        });
+
+        let scale:number = 5;
 
         // TODO: implement cheat code
         /*this.input.keyboard.on("keydown", e => {
@@ -194,23 +226,35 @@ export class NavigationScene extends Phaser.Scene {
         this.backgroundTexture.setDepth(0);
         this.backgroundTexture.setScale(scale);
 
-        this.worldContainer = this.add.container(GameInfo.width/2,GameInfo.height/2);
+        this.worldContainer = this.add.container(0,0);
 
         this.overworld = this.add.sprite(0,0, "overworld");
         this.overworld.setDepth(1);
+        this.overworld.setOrigin(0);
         this.worldContainer.add(this.overworld);
 
         this.bulletPoint = [];
-        let b1:Sprite = this.createBulletPoint(-92, 7, 0);
-        this.bulletPoint.push(b1);
-        this.worldContainer.add(b1);
+        let coordinates = [[52,151],
+                            [83,176],
+                        [125,167],
+                        [153,170],
+                        [267,138],
+                        [309,140],
+                        [348, 142],
+                        [174, 71],
+                        [121, 75]];
 
-        let b2:Sprite = this.createBulletPoint(-61, 32, 1);
-        this.bulletPoint.push(b2);
-        this.worldContainer.add(b2);
+
+        
+        for (let i=0; i < coordinates.length; i++) {
+            let b = this.createBulletPoint(coordinates[i][0], coordinates[i][1], i);
+            b.setOrigin(0.5);
+            this.bulletPoint.push(b);
+            this.worldContainer.add(b);
+        }
 
         this.worldContainer.setScale(scale);
-
+        
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
 
