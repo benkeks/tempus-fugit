@@ -1,11 +1,12 @@
 import "phaser";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
-import {StartingScene} from "./scenes/starting-scene";
+import { StartingScene } from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
-import {NavigationScene} from "./scenes/navigation-scene";
-import {MissionScene} from "./scenes/mission-scene";
-import {HelpScene} from "./scenes/help-scene";
-import {PauseScene} from "./scenes/pause-scene";
+import { NavigationScene } from "./scenes/navigation-scene";
+import { MissionScene } from "./scenes/mission-scene";
+import { HelpScene } from "./scenes/help-scene";
+import { PauseScene } from "./scenes/pause-scene";
+import { MonologScene } from "./scenes/monolog-scene";
 
 export abstract class GameInfo {
     public static readonly X_AXIS = 0;
@@ -49,7 +50,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene]
+    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene]
 };
 
 export class Game extends Phaser.Game {

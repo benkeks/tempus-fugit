@@ -1,0 +1,133 @@
+import { MissionScene } from "../../../scenes/mission-scene";
+import { GameInfo } from "../../../game";
+
+const BACKGROUND_COLOR = 0X000000;
+
+export class MonologWindow {
+    private scene: Phaser.Scene;
+    private instanceCounter: number = 0;
+    private text: Phaser.GameObjects.Text;
+    private wrapWidth = 1000;
+    private height = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) - this.wrapWidth / 2;
+    private width = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30);
+    private interval = 100;
+    private blinkIntervall = 400;
+    private blinkCount = 20;
+    private fontStyle = {
+        fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2),
+        fontFamily: "appleKid"
+    };
+    private displayAll = false;
+    private typing = true;
+
+    constructor(scene: Phaser.Scene) {
+        this.scene = scene;
+    }
+
+    public createMonologWindow(monolog: string) {
+
+        if (this.instanceCounter > 0) return;
+        this.instanceCounter += 1;
+
+        // create black background
+        this.scene.cameras.add(0, 0, GameInfo.width, GameInfo.height).setBackgroundColor(BACKGROUND_COLOR);
+
+        // monolog text
+        this.text = this.scene.add.text(this.height, this.width, '', this.fontStyle);
+        this.text.setWordWrapWidth(this.wrapWidth);
+        this.text.setAlign('center');
+        this.displayMonologue(monolog);
+
+        // skip button
+        this.scene.add.text(GameInfo.width - 200, GameInfo.height - 100, 'Skip',
+            { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2), fontFamily: "appleKid" })
+            .setInteractive()
+            .on('pointerdown', function () {
+                this.switchToMissionScene();
+            }, this).on('pointerover', function () {
+                // color red
+                this.setTint(0xff0000);
+            }).on('pointerout', function () {
+                // color white
+                this.clearTint();
+            });
+
+        // space key events
+        let clicks = 0;
+        this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+            .on('down', function (key, event) {
+
+                if (!this.typing) clicks = 2;
+
+                switch (clicks) {
+                    // faster pace if space is pressed once and typing not done
+                    case 0:
+                        this.interval = 35;
+                        clicks++;
+                        break;
+
+                    // display all text if space if pressed twice and typing not done
+                    case 1:
+                        this.displayAll = true;
+                        clicks++;
+                        break;
+
+                    // go to next scene
+                    default:
+                        this.switchToMissionScene();
+                }
+
+            }, this);
+
+    }
+
+    private switchToMissionScene(): void {
+        this.scene.scene.run('MissionScene');
+        this.scene.scene.sleep('MonologScene');
+    }
+
+    /**
+    * shows the monolog letter by letter
+    * adds animation for cursor so it seems like someone is typing
+    * @param displayString 
+    */
+    displayMonologue(displayString: string): void {
+
+        let self = this;
+        let tmp = this.blinkCount;
+
+        // pipe animation 
+        let pipeAnim = function () {
+            if (self.blinkCount == 0) {
+                self.blinkCount = tmp;
+                self.text.destroy();
+                self.switchToMissionScene();
+                return;
+            }
+
+            self.blinkCount--;
+            if (self.text.text[self.text.text.length - 1] == '.') {
+                self.text.setText(displayString + '|')
+                setTimeout(() => pipeAnim(), self.blinkIntervall)
+            } else {
+                self.text.setText(displayString + '.')
+                setTimeout(() => pipeAnim(), self.blinkIntervall)
+            }
+        }
+
+        // print letter
+        let showText = function (displayedText: string, message: string[], index: number) {
+            if (index < message.length && !self.displayAll) {
+                self.text.setText(displayedText + message[index++] + '|');
+                setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
+            } else {
+                self.typing = false;
+                setTimeout(() => pipeAnim(), self.interval)
+            }
+        }
+
+
+        showText('', displayString.split(''), 0);
+    }
+
+}
