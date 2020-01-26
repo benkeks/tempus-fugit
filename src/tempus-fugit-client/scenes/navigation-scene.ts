@@ -8,6 +8,7 @@ import TileSprite = Phaser.GameObjects.TileSprite;
 import Container = Phaser.GameObjects.Container;
 import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
+import { NewCardsViewer } from "../objects/navigation-scene-objects/new-cards-viewer";
 import {HelpButton} from "../objects/help-gui-objects/help-button";
 import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 import {DeathScene} from "./death-scene";
@@ -26,6 +27,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public alreadyInitted: boolean = false;
 
+    public cardViewer:NewCardsViewer = undefined;
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
 
@@ -174,9 +176,13 @@ export class NavigationScene extends Phaser.Scene {
             }
         });*/
 
+        // create new cards viewer
+
+
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameOver() && data.mission.gameWon) {
                 this.player.missionStates[data.index] = true;
+                
             }
         }
 
@@ -214,13 +220,20 @@ export class NavigationScene extends Phaser.Scene {
 
         this.worldContainer.setScale(scale);
 
+        if (data.mission && data.mission.loot.length > 0) {
+            let loot = data.mission.loot;
+            this.cardViewer = new NewCardsViewer(this);
+            this.cardViewer.flush(loot);
+
+            this.deck.addCardType(loot);
+        }
+
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-
     }
 
     public initGame() {
-        this.player = new Player("Willy", 1, 5);
+        this.player = new Player("Willy", 50, 5);
         this.player.missionStates = [false, false, false, false, false];
 
         this.deck = new Deck();

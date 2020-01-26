@@ -1,8 +1,5 @@
 import {MissionScene} from "./mission-scene";
 
-const TEXT_COLOR = '#fff';
-const TEXT_HOVER = '#999';
-
 export class DeathScene extends Phaser.Scene {
     static deathQuit: boolean = false;
 
@@ -26,11 +23,12 @@ export class DeathScene extends Phaser.Scene {
         this.add.rectangle(1920 / 2, 1080 / 2, 1920, 1080, 0x000000);
         this.add.sprite(1920 / 2, 430, 'skull').setScale(5);
 
-        let createText = (text) => this.add.text(0, 0, text, {fontSize: '36px'}) //TODO change font
+        let createText = (text) => this.add.text(0, 0, text, {fontSize: '36px', fontFamily: "appleKid"});
 
         this.tryAgain = createText('Try Again?');
         this.backToNav = createText('Back to Navigation');
         this.quitText = createText('Quit');
+        let gameOver = this.add.text(0,0,'GAME OVER', {fontSize: '72px', fontFamily: "appleKid"});
 
         //@ts-ignore
         let sizer = this.rexUI.add.sizer({
@@ -42,7 +40,7 @@ export class DeathScene extends Phaser.Scene {
         let texts = [this.tryAgain, this.backToNav, this.quitText];
         let indexToFn = [this.retry, this.navigation, this.quit];
 
-        texts.reduce((sizer, text) => {
+        [gameOver, ...texts].reduce((sizer, text) => {
             return sizer.add(text, 1, 'center', 5, false);
         }, sizer);
 
@@ -52,8 +50,8 @@ export class DeathScene extends Phaser.Scene {
 
         // initiate pointer over out and click events
         texts.map((txt, index) => txt.on('pointerdown', indexToFn[index], this));
-        texts.map(txt => txt.on('pointerover', () => txt.setColor(TEXT_HOVER))); // TODO fix text always turns black
-        texts.map(txt => txt.on('pointerover', () => txt.setColor(TEXT_COLOR)));
+        texts.map(txt => txt.on('pointerover', () => txt.setColor('red')));
+        texts.map(txt => txt.on('pointerout', () => txt.setColor('white')));
     }
 
     public retry() {

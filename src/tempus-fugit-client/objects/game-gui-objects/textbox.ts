@@ -52,8 +52,8 @@ export class Textbox {
             return;
 
         // position is bottom right of screen
-        const width = this.scene.scene.systems.game.canvas.width - 100;
-        const height = this.scene.scene.systems.game.canvas.height - 415;
+        const width = this.scene.scene.systems.game.canvas.width * 0.6;
+        const height = this.scene.scene.systems.game.canvas.height *0.25;
 
         // create a text box with fixed width, height depends on content
         const nextDialog = this.storyDialogQueue.shift().text;
