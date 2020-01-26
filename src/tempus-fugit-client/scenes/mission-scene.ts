@@ -172,13 +172,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
-        this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
+        this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
         if (monolog && monolog.length > 0) {
-            this.displayMonologue(monolog);
+            // this.displayMonologue(monolog);
         }
     }
 
