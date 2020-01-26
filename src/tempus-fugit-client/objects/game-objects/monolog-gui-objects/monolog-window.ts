@@ -19,6 +19,7 @@ export class MonologWindow {
     };
     private displayAll = false;
     private typing = true;
+    private done = false;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -62,7 +63,7 @@ export class MonologWindow {
                 switch (clicks) {
                     // faster pace if space is pressed once and typing not done
                     case 0:
-                        this.interval = 20;
+                        this.interval = 25;
                         clicks++;
                         break;
 
@@ -82,6 +83,7 @@ export class MonologWindow {
     }
 
     private switchToMissionScene(): void {
+        this.done = true;
         this.scene.scene.run('MissionScene');
         this.scene.scene.sleep('MonologScene');
     }
@@ -98,6 +100,8 @@ export class MonologWindow {
 
         // pipe animation 
         let pipeAnim = function () {
+            if (self.done) return;
+
             if (self.blinkCount == 0) {
                 self.blinkCount = tmp;
                 self.text.destroy();
@@ -117,6 +121,8 @@ export class MonologWindow {
 
         // print letter
         let showText = function (displayedText: string, message: string[], index: number) {
+            if (self.done) return;
+
             if (index < message.length && !self.displayAll) {
                 self.text.setText(displayedText + message[index++] + '|');
                 setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
