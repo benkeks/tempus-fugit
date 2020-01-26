@@ -301,10 +301,11 @@ export class NavigationScene extends Phaser.Scene {
         // create new cards viewer
 
 
+        let gamewon = false;
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameOver() && data.mission.gameWon) {
                 this.player.missionStates[data.index] = true;
-                
+                gamewon = true;
             }
         }
 
@@ -387,7 +388,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.levelText = new MissionNameGui(this, GameInfo.width/2, GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
 
-        if (data.mission && data.mission.loot.length > 0) {
+        if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;
             this.cardViewer = new NewCardsViewer(this);
             this.cardViewer.flush(loot);
