@@ -243,62 +243,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
-        if (monolog && monolog.length > 0) {
-            this.displayMonologue(monolog);
-        }
+        if (monolog && monolog.length > 0)
+            this.scene.run('MonologScene', { monolog });
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
         this.enemyGUI.setEnemies(enemies, true);
-    }
-
-    /**
-    * shows the monolog letter by letter
-    * adds animation for cursor so it seems like someone is typing
-    * @param displayString 
-    */
-    displayMonologue(displayString: string): void {
-        //a little bit hacky solution; adding a big black rectangle to current screen the destroying it later.
-        let backgroundRect = this.add.rectangle(GameInfo.width / 2, GameInfo.height / 2, GameInfo.width, GameInfo.height, 0x000000);
-        backgroundRect.setDepth(1000);
-
-        let wrapWidth = 1000;
-        let height = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) - wrapWidth / 2;
-        let width = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30);
-        let space = '|';
-        let interval = 100;
-        let t = this.add.text(height, width, '', {
-            fontSize: 50, fontFamily: "appleKid"
-        });
-        t.setWordWrapWidth(wrapWidth);
-        t.setAlign('center');
-        t.setDepth(1001);
-
-        let showText = function (target: Phaser.GameObjects.Text, displayedText: string, message: string[], index: number, interval: number, blink: number, blinkIntervall: number) {
-            // print letter
-            if (index < message.length) {
-                target.setText(displayedText + message[index++] + space);
-                setTimeout(function () { showText(target, displayedText + message[index - 1], message, index, interval, blink, blinkIntervall); }, interval);
-            } else {
-                // space animation at end of string
-                if (blink >= 0) {
-                    let showPipe = blink % 2 == 0;
-                    if (showPipe) {
-                        target.setText(displayedText + space);
-                        setTimeout(function () { showText(target, displayedText + space, message, index, interval, --blink, blinkIntervall); }, blinkIntervall);
-
-                    } else {
-                        target.setText(displayedText.substring(0, displayedText.length - 1));
-                        setTimeout(function () { showText(target, displayedText.substring(0, displayedText.length - 1), message, index, interval, --blink, blinkIntervall); }, blinkIntervall);
-                    }
-                } else {
-                    backgroundRect.destroy();
-                    t.destroy();
-                }
-            }
-        }
-
-        showText(t, '', displayString.split(''), 0, interval, 10, interval * 4);
     }
 
     Activated(game: Mission, active: boolean) { }
