@@ -14,13 +14,13 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
     public toolTip:ToolTip;
     public toolTipText:Text;
 
-    public scene:Scene;
+    public scene:MissionScene;
 
     //public damageText:Phaser.GameObjects.Text;
     //public posY:number;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         enemy: Enemy,
         x: number = 1500,
         y: number = 500,
@@ -145,7 +145,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
     }
 
     async Attacking(enemy: Enemy) {
-        MissionScene.createAttackAnimation(this.scene, this, "-");
+        this.scene.createAttackAnimation(this.scene, this, true, "-");
     }
 
 }

@@ -16,11 +16,11 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     private elementList: Phaser.GameObjects.Sprite[];
     private roundList: Phaser.GameObjects.Text[];
     private cardsList: CardGUI[];
-    public scene: Phaser.Scene;
+    public scene: MissionScene;
     private stands:[Card, Card];
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         x = 500,
         y = 600
 
@@ -80,7 +80,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     Attacking(stand: Card) {
         for (let i in this.stands) {
             if (this.stands[i] === stand) {
-                MissionScene.createAttackAnimation(this.scene,this.elementList[i]);
+                this.scene.createAttackAnimation(this.scene,this.elementList[i]);
             }
         }
     }

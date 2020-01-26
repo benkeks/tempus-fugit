@@ -215,7 +215,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
-        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
     }
 
     async energyPhase(game: Mission) {
@@ -228,7 +227,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async standPhase(game: Mission) {
         console.log("stand Phase");
-        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
+        this.time.delayedCall(1000, function() {
+            if (this.curPhase == 3) this.nextPhase();
+        }, [], this.tfgame);
     }
 
 
@@ -303,15 +304,22 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     Activated(game: Mission, active: boolean) { }
 
-    public static createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
-
+    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, nextPlayer:boolean=true, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
             targets: target,
             x: direction + "=100",
             ease: "Linear",
             duration: 150,
             repeat: 0,
-            yoyo: true
+            yoyo: true,
+            onComplete:() => {
+                if (nextPlayer) {
+                    this.time.delayedCall(500, function() {
+                        this.nextPlayer();
+                    }, [], this.tfgame);
+                }
+            },
+            onCompleteScope:this
         });
     }
 }
