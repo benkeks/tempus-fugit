@@ -125,7 +125,7 @@
             "background":"pyramid",
             "enemies": [
                 ["snake", "snake", "snake"],
-                ["mummy", "pharoh_yeah", "mummy"]
+                ["mummy", "pharaoh_yeah", "mummy"]
             ],
             "monologue":{
 				"0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",

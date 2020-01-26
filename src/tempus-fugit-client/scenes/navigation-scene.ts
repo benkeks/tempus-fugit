@@ -10,6 +10,8 @@ import Sprite = Phaser.GameObjects.Sprite;
 import {GameInfo} from "../game";
 import {HelpButton} from "../objects/help-gui-objects/help-button";
 import {PauseButton} from "../objects/pause-gui-objects/pause-button";
+import { MissionNameGui } from "../objects/navigation-scene-objects/mission-name-gui";
+import { Game } from "phaser";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -18,6 +20,9 @@ export class NavigationScene extends Phaser.Scene {
     public bulletPoint:Sprite[] = [];
     public overworld:Sprite;
     public worldContainer:Container;
+    public levelText:MissionNameGui;
+
+    public cloudContainer:Container[] = [];
 
     public player:Player;
     public deck:Deck;
@@ -30,6 +35,11 @@ export class NavigationScene extends Phaser.Scene {
     public cheats = [
         [["ArrowUp","ArrowUp","ArrowDown","ArrowDown", "ArrowLeft","ArrowRight","ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
     ];
+
+    public cloudDependency:{[index:number]:number[]} = {
+        0:[4,5,6],
+        1:[7,8]
+    }
 
     public missionDependency:{[index:number]:number[]} = {
         0:[],
@@ -46,13 +56,13 @@ export class NavigationScene extends Phaser.Scene {
     public missionKeys:{[index:number]:string} = {
         0:"tutorial",
         1:"mission1",
-        2:"mission1",
-        3:"mission1",
-        4:"mission1",
-        5:"mission1",
-        6:"mission1",
-        7:"mission1",
-        8:"mission1"
+        2:"mission2",
+        3:"mission3",
+        4:"mission4",
+        5:"mission5",
+        6:"mission6",
+        7:"mission7",
+        8:"mission8"
     };
 
     public enableAllLevels(scene:NavigationScene):void {
@@ -88,7 +98,9 @@ export class NavigationScene extends Phaser.Scene {
         {frameWidth: 10, frameHeight:5});
         this.load.image("bullet_point_inactive", "assets/navigation_scene/overworld/bulletpoint/bp_inactive.png");
         this.load.image("bullet_point_hover", "assets/navigation_scene/overworld/bulletpoint/bp_onHover.png");
+        this.load.image("bullet_arrow", "assets/navigation_scene/overworld/bulletpoint/arrow.png");
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
+        this.load.spritesheet("clouds", "assets/navigation_scene/overworld/islands/clouds-Sheet.png", {frameWidth: 64, frameHeight: 32});
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
         this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
 
@@ -177,11 +189,13 @@ export class NavigationScene extends Phaser.Scene {
 
             b.on("pointerover", pointer => {
                 b.anims.stop();
+                this.levelText.fadeInText(this.missionKeys[i]);
                 b.setTexture("bullet_point_hover");
             })
 
             b.on("pointerout", pointer => {
                 b.anims.restart();
+                this.levelText.fadeOut();
             })
         } else {
             b = this.add.sprite(x,y,"bullet_point_inactive");
@@ -190,6 +204,61 @@ export class NavigationScene extends Phaser.Scene {
         b.setDepth(2);
 
         return b;
+    }
+
+    public getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+      }
+    
+    public createCloudContainer(x:number, y:number, width:number, height:number, index:number):Container {
+        let c = this.add.container(x,y);
+
+        let rect = new Phaser.Geom.Rectangle(x,y,width,height);
+
+        for (let i=0; i < 50; i++) {
+            let p = rect.getRandomPoint();
+            let cloud = this.add.sprite(p.x, p.y, "clouds", this.getRandomInt(5));
+            cloud.setOrigin(0.5);
+            c.add(cloud);
+        }
+
+        let fadeOut = false;
+        let contNeeded = true;
+        for (let i of this.cloudDependency[index]) {
+            if (this.player.missionStates[i]) {
+                contNeeded = false;
+                break;
+            }
+            let active:boolean = true;
+            for (let j of this.missionDependency[i]) {
+                if (!this.player.missionStates[j])  {
+                    active = false;
+                }
+            }
+
+            if (active && !this.player.missionStates[i]) fadeOut = true;
+        }
+
+        if (contNeeded) {
+            if (fadeOut) {
+                this.add.tween({ // fade out
+                    targets: c,
+                    alpha: { from: 1, to: 0 },
+                    ease: "Linear",
+                    duration: 500,
+                    repeat: 0,
+                    yoyo: false,
+                    onComplete: function () {
+                        c.setVisible(false)
+                    },
+                    onCompleteScope: this
+                });
+            }
+        } else {
+            c.setVisible(false);
+        }
+
+        return c;
     }
 
     create(data?) {
@@ -268,14 +337,48 @@ export class NavigationScene extends Phaser.Scene {
                         [174, 71],
                         [121, 75]];
 
-
-        
         for (let i=0; i < coordinates.length; i++) {
             let b = this.createBulletPoint(coordinates[i][0], coordinates[i][1], i);
             b.setOrigin(0.5);
             this.bulletPoint.push(b);
             this.worldContainer.add(b);
+
+            if (b.texture.key == "bullet_point") {
+                let offset = 7;
+                let arr = this.add.sprite(coordinates[i][0], coordinates[i][1]-offset, "bullet_arrow");
+                arr.setScale(0.2);
+                arr.setOrigin(0,0.5);
+                arr.setRotation(-Math.PI/2)
+
+                this.add.tween({ 
+                    targets: arr,
+                    y: "-=1",
+                    ease: "Quadratic",
+                    duration: 300,
+                    repeat: -1,
+                    yoyo: true
+                });
+
+                this.worldContainer.add(arr);
+            }
         }
+
+        // clouds
+        let cloudCoordinates = [[200,80, 330, 150],
+                                [80,15, 180, 100]];
+        this.cloudContainer = [];
+
+        for (let i=0; i < cloudCoordinates.length; i++) {
+            let x = cloudCoordinates[i][0];
+            let y = cloudCoordinates[i][1];
+            
+            let cc = this.createCloudContainer(x, y, cloudCoordinates[i][2]-x, cloudCoordinates[i][3]-y, i);
+            this.cloudContainer.push(cc);
+            cc.setScale(scale);
+        }
+
+
+        this.levelText = new MissionNameGui(this, GameInfo.width/2, GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);

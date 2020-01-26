@@ -10,6 +10,7 @@ export class Enemy {
     public static enemies:{[name:string]:Enemy} = {};
     
     public name: string; // The enemy's name
+    public key:string; // key in enemies dictionary, if no given is equal to name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
@@ -37,6 +38,7 @@ export class Enemy {
 
     public copy():Enemy {
        let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks, this.sprite, this.size);
+       new_enemy.key = this.key;
        new_enemy.description = this.description;
        new_enemy.image = this.image;
 
@@ -54,6 +56,7 @@ export class Enemy {
      */
     constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
         this.name = name;
+        this.key = this.name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
@@ -174,7 +177,10 @@ export class Enemy {
                 e.size
             );
             enemy.image = e.image;
-            this.enemies[e.name] = enemy;
+
+            if (e.key) enemy.key = e.key;
+
+            this.enemies[enemy.key] = enemy;
             if (e.description) enemy.description = e.description;
         }
     }
