@@ -62,7 +62,7 @@ export class MonologWindow {
                 switch (clicks) {
                     // faster pace if space is pressed once and typing not done
                     case 0:
-                        this.interval = 35;
+                        this.interval = 20;
                         clicks++;
                         break;
 
