@@ -25,6 +25,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     public gamestate: GameState;
     public missionScene: MissionScene;
 
+    public assistance:boolean = true;
+
     constructor(
         scene: MissionScene,
         hand: Hand,
@@ -138,7 +140,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         // used static values since we only have a max of 5 cards
         let angles = [-20, -10, 0, 10, 20];
         let x = [700, 830, 960, 1090, 1220];
-        let y = [980, 950, 940, 950, 980];
+        let y = [950, 920, 910, 920, 950];
         let yOff = [0, 0, 10, 25, 0];
 
         let n = this.cardGUIs.length;

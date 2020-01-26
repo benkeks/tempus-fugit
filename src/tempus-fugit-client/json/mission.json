@@ -17,7 +17,8 @@
 					"triggerFunctionString":"return mission.aliveEnemiesCount<2;",
 					"text": [["slime1", "Finally I can die in peace"],["player", "What is it with these weird slimes?"]]
 				}
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
     
         },
         {   
@@ -38,7 +39,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission2",
@@ -58,7 +60,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["",""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission3",
@@ -78,7 +81,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["",""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission4",
@@ -98,7 +102,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission5",
@@ -118,7 +123,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["",""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission6",
@@ -136,7 +142,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["",""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission7",
@@ -154,7 +161,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["",""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         },
         {   
             "name": "mission8",
@@ -174,7 +182,8 @@
                     "triggerFunctionString":"return true;",
                     "text": [["", ""], ["", ""]]
                 }
-            ]
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
         }
         
     ]

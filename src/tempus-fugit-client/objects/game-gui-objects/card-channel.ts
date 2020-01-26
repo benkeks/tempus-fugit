@@ -31,7 +31,7 @@ export class CardChannel extends Container {
         scene.add.existing(this);
         this.missionScene = scene;
 
-        this.book = scene.add.sprite(0, 0, 'book').setScale(2.5);
+        this.book = scene.add.sprite(0, 0, 'book').setScale(3);
 
         // this.dot = scene.add.graphics({ x: 0, y: 0 });
         // this.dot.lineStyle(5, this.color, 1);
