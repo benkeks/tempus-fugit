@@ -45,8 +45,9 @@ export class TableGUI implements GameStateListener {
     constructor(
         scene: Phaser.Scene,
         game: Mission,
-        colorPrimary: number = 0x2a4f16,
-        colorHighlight: number = 0x00ff77,
+
+        colorPrimary: number = 0x5C4D4D,
+        colorHighlight: number = 0x915B4A,
         colorArrow: number = 0x376A8E,
         colorCellOver: number = 0x7b5e57,
         colorCellEdge: number = 0x260e05,
@@ -430,7 +431,7 @@ export class TableGUI implements GameStateListener {
             let top = this.variableTable.top;
             let bottom = this.variableTable.bottom;
             let graphics = this.scene.add.graphics();
-            graphics.lineGradientStyle(5, 0xffff00, 0xffea00, 0xffff1a, 0xffff00, 1);
+            graphics.lineGradientStyle(5, 0xF2F1E7, 0xF2F1E7, 0xF2F1E7, 0xF2F1E7, 1);
             this.outline = graphics.strokeRoundedRect(left, top, right - left, bottom - top, 5).setDepth(10);
         }
         this.outline.setVisible(visible);

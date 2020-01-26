@@ -27,8 +27,8 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         }
 
         if (!x || !y) {
-            x = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 100);
-            y = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 100);
+            x = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 98);
+            y = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 98);
         }
 
         super(scene, x, y);

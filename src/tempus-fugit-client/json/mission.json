@@ -17,6 +17,7 @@
                         ["player", "What the hell?!"]
                     ]
                 },
+<<<<<<< HEAD
                 {
                     "triggerFunctionString": "return mission.aliveEnemiesCount<2;",
                     "text": [
@@ -26,6 +27,15 @@
                 }
             ]
 
+=======
+				{
+					"triggerFunctionString":"return mission.aliveEnemiesCount<2;",
+					"text": [["slime1", "Finally I can die in peace"],["player", "What is it with these weird slimes?"]]
+				}
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
+    
+>>>>>>> 752f7f159e753a69b0421c7933f9e181752e5402
         },
         {
             "name": "mission1",
@@ -44,6 +54,7 @@
                 "2": "More goblins seem to come your way, the ground is somewhat... shaking?",
                 "3": "The shaking becomes stronger and stronger, something nasty is coming your way. Be careful!"
             },
+<<<<<<< HEAD
             "dialogue": [{
                 "triggerFunctionString": "return true;",
                 "text": [
@@ -51,6 +62,15 @@
                     ["player", "Oh dear..."]
                 ]
             }]
+=======
+            "dialogue": [
+                {
+                    "triggerFunctionString":"return true;",
+                    "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
+                }
+            ],
+			"loot":["Natural heal", "Unnatural heal"]
+>>>>>>> 752f7f159e753a69b0421c7933f9e181752e5402
         }
 
     ]

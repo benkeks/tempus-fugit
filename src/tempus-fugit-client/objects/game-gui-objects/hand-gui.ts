@@ -25,6 +25,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     public gamestate: GameState;
     public missionScene: MissionScene;
 
+    public assistance:boolean = true;
+
     constructor(
         scene: MissionScene,
         hand: Hand,
@@ -50,11 +52,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
-            this.scene.tweens.add({
-                targets: c.cross,
-                alpha: 0,
-                duration: 200
-            });
         }
     }
 
@@ -67,19 +64,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             c.fadeIn();
             if (gamestate.evaluate(c.card.getFormula())) {
                 c.enableDragging();
-                this.scene.tweens.add({
-                    targets: c.cross,
-                    alpha: 0,
-                    duration: 200
-                });
+                c.setPlayable()
             } else {
                 c.fadeOut();
-                this.scene.tweens.add({
-                    targets: c.cross,
-                    alpha: 0.4,
-                    duration: 200,
-                    delay: 300
-                });
+                c.disableDragging();
+                c.setNonPlayable();
             }
 
         }
@@ -151,7 +140,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         // used static values since we only have a max of 5 cards
         let angles = [-20, -10, 0, 10, 20];
         let x = [700, 830, 960, 1090, 1220];
-        let y = [980, 950, 940, 950, 980];
+        let y = [950, 920, 910, 920, 950];
         let yOff = [0, 0, 10, 25, 0];
 
         let n = this.cardGUIs.length;
@@ -176,9 +165,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginY = newY;
             card.cardOriginZ = 2 * i;
             card.setDepth(2 * i);
-            card.cross.x = newX;
-            card.cross.y = newY;
-            card.cross.setDepth(2 * i + 1);
 
             if (!immediate) {
                 this.scene.tweens.add({
@@ -190,27 +176,14 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                     ease: 'power2',
                     duration: 400,
                 });
-                card.cross.x = card.cardOriginX;
-                card.cross.y = card.cardOriginY;
-                card.cross.angle = card.cardOriginAngle;
-                card.cross.setAlpha(0);
-                this.scene.tweens.add({
-                    targets: card.cross,
-                    x: newX,
-                    y: newY,
-                    z: 2 * i + 1,
-                    angle: newAngle,
-                    ease: 'power2',
-                    duration: 400,
-                });
             }
             else {
                 card.x = card.cardOriginX;
                 card.y = card.cardOriginY;
                 card.angle = card.cardOriginAngle;
-                card.cross.x = card.cardOriginX;
-                card.cross.y = card.cardOriginY;
-                card.cross.angle = card.cardOriginAngle;
+            }
+            if (!this.gamestate.evaluate(card.card.getFormula())) {
+                card.disableDragging()
             }
         }
     }

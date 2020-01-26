@@ -21,11 +21,16 @@ export class CardGUI extends Phaser.GameObjects.Container {
     public cardImage: Phaser.GameObjects.Image;
     public cross: Phaser.GameObjects.Sprite;
 
+    public static readonly DEFAULT_WIDTH = 160;
+    public static readonly DEFAULT_HEIGHT = 260;
+
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
-        card: Card
+        card: Card,
+        width:number = CardGUI.DEFAULT_WIDTH,
+        height:number = CardGUI.DEFAULT_HEIGHT
     ) {
         super(scene, x, y);
         scene.add.existing(this);
@@ -34,7 +39,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this._card = card;
         this.scene = scene;
 
-        this.createCard(card);
+        this.createCard(card, width, height);
         this.setInteractive();
     }
 
@@ -42,10 +47,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * make container for a card
      * similar to list-gui.ts
      */
-    private createCard(card: Card): void {
+    private createCard(card: Card, width:number, height:number): void {
         // outline and background
-        let width = 160;
-        let height = 260;
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
         let font1: Object = { fontSize: '18px', fontFamily: 'appleKid', color: '#000000' }
@@ -117,7 +120,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         //cross
         this.cross = this.scene.add.sprite(this.originX, this.originY, "cross").setScale(3, 3).setAlpha(0.4).setDepth(this.cardOriginZ + 1);
-        this.cross.setAlpha(0);
+        this.add(this.cross);
+        this.setPlayable();
+
+        //disable dragging
     }
 
 
@@ -125,7 +131,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
        * makes card bigger
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
-    hover(): void {
+    public hover(): void {
         this.setDepth(999);
 
         this.hoverTween = this.scene.tweens.add({
@@ -135,16 +141,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1.5,
             scaleY: 1.5,
-            duration: 100,
-        });
-        this.cross.setDepth(1000);
-        this.hoverTweenCr = this.scene.tweens.add({
-            targets: this.cross,
-            y: this.cardOriginY - 100,
-            angle: 0,
-            ease: 'power2',
-            scaleX: 3,
-            scaleY: 3,
             duration: 100,
         });
         this.hovering = true;
@@ -163,16 +159,6 @@ export class CardGUI extends Phaser.GameObjects.Container {
             ease: 'power2',
             scaleX: 1,
             scaleY: 1,
-            duration: 100,
-        });
-        this.cross.setDepth(this.cardOriginZ + 1);
-        this.unhoverTween = this.scene.tweens.add({
-            targets: this.cross,
-            y: this.cardOriginY,
-            angle: this.cardOriginAngle,
-            ease: 'power2',
-            scaleX: 2,
-            scaleY: 2,
             duration: 100,
         });
         this.hovering = false;
@@ -197,6 +183,22 @@ export class CardGUI extends Phaser.GameObjects.Container {
      */
     fadeIn(): void {
         this.cardImage.clearTint();
+    }
+
+    setPlayable(): void {
+        this.scene.tweens.add({
+                   targets: this.cross,
+                   alpha: 0,
+                   duration: 100
+               });
+    }
+
+    setNonPlayable(): void {
+        this.scene.tweens.add({
+            targets: this.cross,
+            alpha: 0.4,
+            duration: 100
+        });
     }
 
     /**
