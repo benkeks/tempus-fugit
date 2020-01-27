@@ -5,7 +5,7 @@
 		"formula2":"l&s&n&t",
 		"formula":"n",
 		"cardKind":"global",
-		"isStandCard":"true",
+		"isStandCard":"false",
 		"standRounds":"3",
 		"action":"target.takeHit(1000, mission);",
 		"comment":"deals 100 dmg to everything. Resets board -> everything to false, but not locked",
