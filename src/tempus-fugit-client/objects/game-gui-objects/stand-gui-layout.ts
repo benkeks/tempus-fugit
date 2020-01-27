@@ -11,7 +11,7 @@ import { MissionScene } from "../../scenes/mission-scene";
 /**
  * @author Florian
  */
-export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener{
+export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener {
 
     private elementList: Phaser.GameObjects.Sprite[];
     private roundList: Phaser.GameObjects.Text[];
@@ -77,10 +77,14 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.scene.add.existing(this);
     }
 
-    Attacking(stand: Card) {
-        for (let i in this.stands) {
+
+
+    Attacking(stand: Card, index:number) {
+        for (let i of [0,1]) {
             if (this.stands[i] === stand) {
-                this.scene.createAttackAnimation(this.scene,this.elementList[i]);
+                if (i == 1 && this.stands[0] == null) i = 0;
+                this.scene.createAttackAnimation(this.scene,this.elementList[i], false, "+", 3);
+                break;
             }
         }
     }

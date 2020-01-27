@@ -213,9 +213,11 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.checkDialogEvents();
+
+        if (this.iterateEachParticipand) this.nextPlayer();
     }
 
-    public nextPlayer() {
+    public async nextPlayer() {
         switch (this.curPhase) {
             case 3:
                 this.standPhaseIterator();
@@ -228,7 +230,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public nextWave(next: number = this.waveCounter + 1): void {
         // removing this from last wave
-        this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
+        //this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
 
         this.waveCounter = next;
 
@@ -265,16 +267,17 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private standPhaseIterator() {
-        while (this.iteratorIndex < this.getStands().length && this.getStands()[this.iteratorIndex] == null) {
+        while (this.iteratorIndex < this.stands.length && this.stands[this.iteratorIndex] == null) {
             this.iteratorIndex++;
         }
 
-        if (this.iteratorIndex >= this.getStands().length) {
+        if (this.iteratorIndex >= this.stands.length) {
+            this.nextPhase();
             return;
         }
 
         let i = this.iteratorIndex;
-        let stand = this.getStands()[i];
+        let stand = this.stands[i];
         if (stand != null) {
             let attacked = stand.act(this, this.player);
             if (stand.getRoundsRemaining() <= 0) {
@@ -282,14 +285,14 @@ export class Mission implements EnemyListener, PlayerListener {
             }
             for (var l of this.standListener) {
                 l.updateStandGUI(this.stands);
-                l.Attacking(stand);
+                if (attacked) l.Attacking(stand, this.iteratorIndex);
             }
         }
 
         this.iteratorIndex++;
     }
 
-    private standPhase(): void {
+    private standPhase():void {
         this.iteratorIndex = 0;
         this.active = false;
 
@@ -297,7 +300,7 @@ export class Mission implements EnemyListener, PlayerListener {
             for (let i of [0, 1]) {
                 this.standPhaseIterator();
             }
-        } else this.nextPlayer();
+        }
     }
 
     private enemyPhaseIterator() {
@@ -312,7 +315,6 @@ export class Mission implements EnemyListener, PlayerListener {
 
         let e = this.getEnemies()[this.iteratorIndex];
         e.performTurn(this);
-        console.log(this.iteratorIndex);
 
         this.iteratorIndex++;
     }
@@ -326,7 +328,6 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         if (!this.iterateEachParticipand) this.getEnemies().map(e => e.performTurn(this));
-        else this.nextPlayer();
     }
 
     private endOfRound(): void {
@@ -407,6 +408,14 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public getStands(): Card[] {
         return this.stands;
+    }
+
+    public getStandCount():number {
+        let count = 0;
+        for (let c of this.stands) {
+            if (c != null) count++;
+        }
+        return count;
     }
 
     public getMaxWaveCount(): number {
@@ -513,7 +522,7 @@ export interface MissionListener {
 
 export interface StandListener {
     updateStandGUI(stands: [Card, Card]): void;
-    Attacking(stand: Card);
+    Attacking(stand: Card, index:number);
     /*removeStand(stand: Card):void;
     updateStandText(): void;
     turnRed(): void;

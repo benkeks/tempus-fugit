@@ -123,9 +123,10 @@ export class Card {
 
     }
 
-    public act(mission: Mission, player: Player): void {
+    public act(mission: Mission, player: Player): boolean {
+        let val:boolean = mission.gameState.evaluate(this.getFormula());
         if (this.standRounds > 0) {
-            if (mission.gameState.evaluate(this.getFormula())) {
+            if (val) {
                 if (this.cardKind == Card.RANDOM) {
                     this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
                 } else if (this.cardKind == Card.DIRECTED) {
@@ -147,6 +148,7 @@ export class Card {
             this.decreaseRoundsRemaining();
         }
 
+        return val;
     }
 
     public decreaseRoundsRemaining() {

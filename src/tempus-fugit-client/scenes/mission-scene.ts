@@ -1,9 +1,5 @@
-import { Card } from "../objects/game-objects/card";
 import { Enemy } from "../objects/game-objects/enemy";
-import { CardGUI } from "../objects/game-gui-objects/card-gui";
 import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
-import { Player } from "../objects/game-objects/player";
-import { TechDemoGame } from "../mechanics/tech-demo-game";
 import { TableGUI } from "../objects/game-gui-objects/table-gui";
 import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
@@ -17,9 +13,7 @@ import { Textbox } from "../objects/game-gui-objects/textbox";
 import { GameInfo } from "../game";
 
 import Image = Phaser.GameObjects.Image;
-import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
-import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
 import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
@@ -150,8 +144,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.textBox = new Textbox(this);
 
-        //this.stackGUI = new StackGUI(this, "stack");
-
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
@@ -175,10 +167,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-
-        //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
-        //this.gameOverText.setOrigin(0.5, 0.5);
-        //this.gameOverText.setVisible(false);
 
         this.input.keyboard.addKey("B").on("down", e => {
             this.tfgame.gameWon = true;
@@ -215,6 +203,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
+        this.iteratePhases(4, 500);
     }
 
     async energyPhase(game: Mission) {
@@ -225,11 +214,20 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         console.log("play Phase");
     }
 
+    async iteratePhases(phase:number, delay:number) {
+        if (this.tfgame.curPhase != phase) return;
+
+        this.time.delayedCall(delay, function () {
+            if (this.tfgame.curPhase == phase) {
+                this.tfgame.nextPlayer();
+                this.iteratePhases(phase, delay)
+            }
+        }, [], this);
+    }
+
     async standPhase(game: Mission) {
         console.log("stand Phase");
-        this.time.delayedCall(1000, function() {
-            if (this.curPhase == 3) this.nextPhase();
-        }, [], this.tfgame);
+        this.iteratePhases(3, 500);
     }
 
 
@@ -253,9 +251,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.enemyGUI.setEnemies(enemies, true);
     }
 
-    Activated(game: Mission, active: boolean) { }
+    Activated(game: Mission, active: boolean) {}
 
-    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, nextPlayer:boolean=true, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
+    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, nextPlayer:boolean=true, direction: string = "+", phase:number=3, offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
             targets: target,
             x: direction + "=100",
@@ -266,7 +264,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             onComplete:() => {
                 if (nextPlayer) {
                     this.time.delayedCall(500, function() {
-                        this.nextPlayer();
+                        if (this.curPhase == phase) this.nextPlayer();
                     }, [], this.tfgame);
                 }
             },

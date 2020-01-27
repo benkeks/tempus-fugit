@@ -87,6 +87,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
             },
             onCompleteScope: this
         });
+        this.disableInteractive();
+        this.toolTip.fadeOut();
 
         this.disableListeners();
     }
@@ -139,13 +141,14 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
                 }});
         }
 
+        console.log(this.enemy.name, changedTo);
         if (changedFrom > 0 && changedTo <= 0) {
             this.die();
         }else this.updateEnemyAttributes();
     }
 
     async Attacking(enemy: Enemy) {
-        this.scene.createAttackAnimation(this.scene, this, true, "-");
+        this.scene.createAttackAnimation(this.scene, this, false, "-", 4);
     }
 
 }
