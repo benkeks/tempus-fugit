@@ -46,7 +46,7 @@ export class Player {
     listener: PlayerListener[]; // List of objects listening to player events
     public _active: boolean;
 
-    public missionStates: boolean[];
+    public missionStates: boolean[] = [false, false, false, false, false, false, false, false, false];
 
     /**
      * Setter for the player's hit points
