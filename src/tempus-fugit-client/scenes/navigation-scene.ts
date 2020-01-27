@@ -12,7 +12,8 @@ import { NewCardsViewer } from "../objects/navigation-scene-objects/new-cards-vi
 import {HelpButton} from "../objects/help-gui-objects/help-button";
 import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 import { MissionNameGui } from "../objects/navigation-scene-objects/mission-name-gui";
-import { Game } from "phaser";
+import {DeathScene} from "./death-scene";
+import {PauseWindow} from "../objects/pause-gui-objects/pause-window";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -25,10 +26,10 @@ export class NavigationScene extends Phaser.Scene {
 
     public cloudContainer:Container[] = [];
 
-    public player:Player;
-    public deck:Deck;
+    public player: Player;
+    public deck: Deck;
 
-    public alreadyInitted:boolean = false;
+    public alreadyInitted: boolean = false;
 
     public cardViewer:NewCardsViewer = undefined;
     public helpButton: HelpButton;
@@ -112,61 +113,47 @@ export class NavigationScene extends Phaser.Scene {
         this.load.image("book", "assets/sprites/board/book.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
 
-        let enemies:string = NavigationScene.loadFile("json/enemies.json");
+        let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
         //console.log(Enemy.enemies);
 
-        let cards:string = NavigationScene.loadFile("json/cards.json");
+        let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
         //console.log(Card.cards);
 
-        let missions:string = NavigationScene.loadFile("json/mission.json");
+        let missions: string = NavigationScene.loadFile("json/mission.json");
         Mission.createFromJSON(missions);
         //console.log(Mission.Missions);
 
-
-        this.player = new Player("Willy", 50, 5);
-        this.player.missionStates = [false, false, false, false, false, false, false, false, false];
-
-        this.deck = new Deck();
-
-        for (let c_key in Card.cards) {
-            let c:Card = Card.cards[c_key];
-            this.deck.addCardType([c.copy()]);
-            for (let i=0; i < c.inDeckAtStart; i++) {
-                this.deck.addCard(c.copy(), true);
-            }
-        }
+        this.initGame();
 
         //console.log(this.deck);
 
         this.alreadyInitted = true;
     }
 
-    public static loadFile(filePath): string{
+    public static loadFile(filePath): string {
         let fd = null;
         let xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", filePath, false);
         xmlhttp.send();
-        if (xmlhttp.status==200) {
+        if (xmlhttp.status == 200) {
             fd = xmlhttp.responseText;
         }
         return fd;
     }
 
-    public createBulletPoint(x:number,y:number, i:number):Sprite {
-        let b:Sprite;
+    public createBulletPoint(x: number, y: number, i: number): Sprite {
+        let b: Sprite;
 
-        let active:boolean = true;
+        let active: boolean = true;
         for (let j of this.missionDependency[i]) {
-            if (!this.player.missionStates[j])  {
+            if (!this.player.missionStates[j]) {
                 active = false;
             }
         }
 
         if (active) {
-            
-
             if (!this.player.missionStates[i]) {
                 b = this.add.sprite(x,y,"bullet_point");
                 b.play("blinking");
@@ -201,7 +188,7 @@ export class NavigationScene extends Phaser.Scene {
                 this.levelText.fadeOut();
             })
         } else {
-            b = this.add.sprite(x,y,"bullet_point_inactive");
+            b = this.add.sprite(x, y, "bullet_point_inactive");
         }
 
         b.setDepth(2);
@@ -309,9 +296,15 @@ export class NavigationScene extends Phaser.Scene {
             }
         }
 
+        if (DeathScene.deathQuit || PauseWindow.pauseQuit) {    // Start from beginning if quit
+            DeathScene.deathQuit = false;
+            PauseWindow.pauseQuit = false;
+            this.player.missionStates.map(state => state = false);
+        }
+
         this.anims.create({
             key: "blinking",
-            frames: this.anims.generateFrameNumbers("bullet_point", {start:0}),
+            frames: this.anims.generateFrameNumbers("bullet_point", {start: 0}),
             frameRate: 10,
             repeat: -1
         });
@@ -322,14 +315,14 @@ export class NavigationScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.backgroundTexture = this.add.tileSprite(GameInfo.width/2,GameInfo.height/2, GameInfo.width, GameInfo.height, "water_background");
+        this.backgroundTexture = this.add.tileSprite(GameInfo.width / 2, GameInfo.height / 2, GameInfo.width, GameInfo.height, "water_background");
         this.backgroundTexture.setDepth(0);
         this.backgroundTexture.setScale(scale);
 
         this.worldContainer = this.add.container(0,0);
         this.worldContainer.setScale(scale);
 
-        this.overworld = this.add.sprite(0,0, "overworld");
+        this.overworld = this.add.sprite(0, 0, "overworld");
         this.overworld.setDepth(1);
         this.overworld.setOrigin(0);
         this.worldContainer.add(this.overworld);
@@ -398,5 +391,21 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
+    }
+
+    public initGame() {
+        
+        this.player = new Player("Willy", 50, 5);
+        this.player.missionStates = [false, false, false, false, false, false, false, false, false];
+
+        this.deck = new Deck();
+
+        for (let c_key in Card.cards) {
+            let c:Card = Card.cards[c_key];
+            this.deck.addCardType([c.copy()]);
+            for (let i=0; i < c.inDeckAtStart; i++) {
+                this.deck.addCard(c.copy(), true);
+            }
+        }
     }
 }

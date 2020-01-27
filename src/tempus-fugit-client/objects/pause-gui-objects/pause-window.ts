@@ -23,6 +23,8 @@ const TITLE_SPACER = '     ';
 
 
 export class PauseWindow {
+    static pauseQuit: boolean = false;
+
     private window;
     private scene: Phaser.Scene;
     private isMissionScene: boolean;
@@ -74,6 +76,7 @@ export class PauseWindow {
 
         pause.on('button.click', function (button, groupName, index) {
             function quit() {
+                PauseWindow.pauseQuit = true;
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('StartingScene');
             }
