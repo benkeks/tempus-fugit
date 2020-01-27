@@ -2,11 +2,12 @@
     "enemies":[
         {
             "name":"slime1",
+			"description":"a suicide slime!",
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{
-                "formula":"Ga",
-                "action": "return;"
+                "formula":"(!l& O!l)|!n",
+                "action": "mission.player.takeHit(5);"
             },
             "reactAttack":[
                 {
@@ -24,18 +25,18 @@
             "maxHP":20,
             "baseAttack":3,
             "specialAttack":{
-                "formula":"",
-                "attackStrength": 2
+                "formula":"On&s&O!s",
+                "action": "mission.player.takeHit(15);"
             },
             "reactAttack":[
                 {
                     "formula":"",
-                    "attackStrength": 2
+                    "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [],
-			"image":"slime1"
+            "sprite":"assets/sprites/enemies/slime2/slime2-Sheet.png",
+            "size": [32,32],
+			"image":"slime2"
         },
         {
             "name":"slime3",
@@ -43,17 +44,17 @@
             "baseAttack":4,
             "specialAttack":{
                 "formula":"",
-                "attackStrength": 3
+                "action": "return;"
             },
             "reactAttack":[
                 {
                     "formula":"",
-                    "attackStrength": 3
+                    "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [],
-			"image":"slime1"
+            "sprite":"assets/sprites/enemies/slime3/slime3-Sheet.png",
+            "size": [32,32],
+			"image":"slime3"
         },
         {
             "name":"slime_mother",
@@ -61,12 +62,12 @@
             "baseAttack":7,
             "specialAttack":{
                 "formula":"",
-                "attackStrength": 5
+                "attack": "return;"
             },
             "reactAttack":[
                 {
                     "formula":"",
-                    "attackStrength": 5
+                    "action": "return;"
                 }
             ],
             "sprite":"",
@@ -74,22 +75,22 @@
 			"image":"slime1"
         },
         {
-            "name":"goblin",
+            "name":"goblin1",
             "maxHP":35,
             "baseAttack":5,
             "specialAttack":{
-                "formula":"",
-                "attackStrength": 4
+                "formula":"On&s&O!s",
+                "action": "mission.player.takeHit(15);"
             },
             "reactAttack":[
                 {
-                    "formula":"",
-                    "attackStrength": 4
+                "formula":"#On&s&O!s",
+                "action": "mission.player.takeHit(15);"
                 }
             ],
-            "sprite":"",
-            "size": [],
-			"image":"slime1"
+            "sprite":"assets/sprites/enemies/goblin1/goblin1-Sheet.png",
+            "size": [32,32],
+			"image":"goblin1"
         }
     ]
 }

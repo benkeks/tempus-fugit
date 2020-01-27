@@ -4,30 +4,44 @@ import { Card } from "../game-objects/card";
 import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
 import { isForXStatement } from "@babel/types";
+import { Mission } from "../../mechanics/mission";
+import { GameState, GameStateListener } from "../game-objects/game-state";
+import { Variable } from "../../temporal-logic/variable";
+import { MissionScene } from "../../scenes/mission-scene";
+import { GameInfo } from "../../game";
+import { DiscardGUI } from "./discard-gui";
+
 
 /**
  * @author Mustafa
  */
-export class HandGUI extends Phaser.GameObjects.Container implements HandListener {
+export class HandGUI extends Phaser.GameObjects.Container implements HandListener, GameStateListener {
+
     private hand: Hand; // hand object associated with handGUI object
-    private cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
+    public cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
     private readonly stack: StackGUI;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
+    public gamestate: GameState;
+    public missionScene: MissionScene;
+
+    public assistance:boolean = true;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         hand: Hand,
         stack: StackGUI,
         deck: DeckGUI,
+        gamestate: GameState,
     ) {
         super(scene);
         this.stack = stack;
         this.hand = hand;
         this.hand.listener.push(this);
         this.deck = deck;
-        //scene.add.existing(this);
-
+        this.gamestate = gamestate;
+        this.gamestate.listener.push(this);
+        this.missionScene = scene;
     }
 
     /**
@@ -35,7 +49,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      */
     fadeOut() {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeOut();
             c.disableDragging();
@@ -45,12 +58,19 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * removes the tint from all cardGUI objects and enables dragging
      */
-    fadeIn() {
+    fadeIn(gamestate: GameState = this.gamestate) {
         //setTimeout(() => this.unhoverAll(true), 0);
-
         for (let c of this.cardGUIs) {
             c.fadeIn();
-            c.enableDragging();
+            if (gamestate.evaluate(c.card.getFormula())) {
+                c.enableDragging();
+                c.setPlayable()
+            } else {
+                c.fadeOut();
+                c.disableDragging();
+                c.setNonPlayable();
+            }
+
         }
     }
 
@@ -58,28 +78,37 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     /**
      * toggles highlighting a card
      * don't call hover method of cardGUI objects; user this moethod
-     * @param card 
+     * @param card
+     * @param unhover: true if card need to return to normal position on hand 
      */
-    toggleHovering(card: CardGUI): void {
+    toggleHovering(card: CardGUI, unhover: Boolean): void {
+
 
         if (!this.cardGUIs.includes(card))
             return;
-
-        const hover = card.hovering;
 
         let allTweensDone = true;
         for (let c of this.cardGUIs)
             if ((typeof c.hoverTween !== 'undefined' && c.hoverTween.isPlaying()) || (typeof c.unhoverTween !== 'undefined' && c.unhoverTween.isPlaying()))
                 allTweensDone = false;
 
-        // terminate if not all previous tweens are  over; else cards can get stuck
-        if (!allTweensDone)
-            return;
+        // if tween animations are not done wait 100 msec(duration of tweens)
+        // and try again
+        let self = this;
+        if (!allTweensDone) {
+            new Promise(resolve => setTimeout(resolve, 100))
+                .then(() => {
+                    self.unhoverAll();
+                    if (!unhover)
+                        card.hover()
+                })
+        } else {
 
-        this.unhoverAll();
+            this.unhoverAll();
 
-        if (!hover)
-            card.hover();
+            if (!unhover)
+                card.hover();
+        }
     }
 
     /**
@@ -98,9 +127,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.angle = card.cardOriginAngle;
                 card.setDepth(card.cardOriginZ);
                 card.setScale(1);
-                if (card.formulaGUI != null) {
-                    card.formulaGUI.destroy();
-                }
             }
         }
     }
@@ -114,7 +140,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         // used static values since we only have a max of 5 cards
         let angles = [-20, -10, 0, 10, 20];
         let x = [700, 830, 960, 1090, 1220];
-        let y = [980, 950, 940, 950, 980];
+        let y = [950, 920, 910, 920, 950];
         let yOff = [0, 0, 10, 25, 0];
 
         let n = this.cardGUIs.length;
@@ -137,15 +163,15 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             card.cardOriginAngle = newAngle;
             card.cardOriginX = newX;
             card.cardOriginY = newY;
-            card.cardOriginZ = i;
-            card.setDepth(i);
+            card.cardOriginZ = 2 * i;
+            card.setDepth(2 * i);
 
             if (!immediate) {
                 this.scene.tweens.add({
                     targets: card,
                     x: newX,
                     y: newY,
-                    z: i,
+                    z: 2 * i,
                     angle: newAngle,
                     ease: 'power2',
                     duration: 400,
@@ -156,6 +182,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.y = card.cardOriginY;
                 card.angle = card.cardOriginAngle;
             }
+            if (!this.gamestate.evaluate(card.card.getFormula())) {
+                card.disableDragging()
+            }
         }
     }
 
@@ -163,7 +192,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds one cardGUI object for given card to hand 
      * @param card: card to be added
      */
-    addCard(card: Card): void {
+    async addCard(card: Card) {
         // add card to hand, enable dragging
         let cardGUI = new CardGUI(
             this.scene,
@@ -177,15 +206,32 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         cardGUI.enableDragging();
         this.cardGUIs.push(cardGUI);
         this.arrangeCards();
+
+        if (this.hand.active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
+
+        this.missionScene.callNextPhase();
+    }
+
+    /**
+     * lets user choose a card to be disgarded when hand is full (5 card in hand)
+     * @param card: 6th card
+     */
+    async discardCard(card: Card) {
+        console.log('async discard card called')
+        new DiscardGUI(this.missionScene, this.hand, this.deck, this, card);
     }
 
     /**
      * moves a cardGUI object to stack
      * @param card: card to be removed
      */
-    removeCard(card: Card): void {
+    async removeCard(card: Card) {
+        console.log('removeCard in handgui called', card, this.cardGUIs)
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
+                console.log('found card to remove')
+                this.cardGUIs[pos].setAngle(0).setScale(1);
                 this.stack.addCardGUI(this.cardGUIs[pos]);
                 //this.remove(this.cardGUIs[pos]);
                 this.cardGUIs.splice(parseInt(pos), 1);
@@ -194,4 +240,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             }
         }
     }
+
+    async Activated(hand: Hand, active: boolean) {
+        if (active) this.fadeIn(this.gamestate);
+        else this.fadeOut();
+    }
+
+    async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) { }
+    async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [state: number]: boolean; }) {
+        if (this.hand.active) this.fadeIn();
+    }
+    async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) { }
+    async activated(gameState: GameState) { }
 }

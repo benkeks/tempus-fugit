@@ -27,36 +27,45 @@ export class Variable extends Proposition {
     private firstValue:number = 0;
 
     public getDefaultRepresentation():string {
-        return this.defaultRepresentation;
+        return this.representation;
+    }
+    public static varCount:number = 0;
+    public defaultValueFuture:boolean = false;
+    public defaultValuePast:boolean = false;
+    public finiteStatesFuture:boolean = true;
+    public finiteStatesPast:boolean = true;
+
+    public setDefaultValue(value:boolean) {
+        this.defaultValuePast = value;
+        this.defaultValueFuture = value;
     }
 
-    public defaultRepresentation = "v"+Variable.varCount++;
-    public static varCount:number = 0;
-    public defaultValue:boolean = false;
-    public finiteStates = true;
-
-    evaluateInternal(condition:number): PropositionStatus {
+    evaluateInternal(condition:number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
         let pstat : PropositionStatus = new PropositionStatus();
 
         pstat.successful = true;
         pstat.valuesLength = this._values.length;
         pstat.value = this.getValue(condition);
-        if (this.finiteStates) {
+        if (this.finiteStatesFuture) {
             pstat.maxStatus = this.firstValue + this._values.length-1;
-            pstat.minStatus = this.firstValue;
         } else {
             pstat.maxStatus = this.firstValue + pstat.valuesLength;
+        }
+
+        if (this.finiteStatesPast) {
+            pstat.minStatus = this.firstValue;
+        } else {
             pstat.minStatus = this.firstValue - 1;
         }
 
-        if ((condition > pstat.maxStatus || condition < pstat.minStatus) && this.finiteStates) {
+        if ((condition > pstat.maxStatus && this.finiteStatesFuture) || (condition < pstat.minStatus && this.finiteStatesPast)) {
             pstat.successful = false;
         }
 
         return pstat;
     }
 
-    generateRepresentation(recursive:boolean, defaultRepresentation=true): string {
+    generateRepresentation(recursive:boolean, defaultRepresentation=true, direction:number=Proposition.DEFAULT_DIRECTION): string {
         return this.representation;
     }
 
@@ -79,7 +88,8 @@ export class Variable extends Proposition {
         if (state >= 0 && state < this.values.length) {
             return this.values[state];
         } else {
-            return this.defaultValue;
+            if (state < 0) return this.defaultValuePast;
+            else return this.defaultValueFuture;
         }
     }
 
@@ -102,9 +112,9 @@ export class Variable extends Proposition {
         state -= this.firstValue;
         while(state >= this.values.length || state < 0) {
             if (state >= this.values.length) {
-                this.values.push(this.defaultValue);
+                this.values.push(this.defaultValueFuture);
             } else {
-                this.values.unshift(this.defaultValue);
+                this.values.unshift(this.defaultValuePast);
                 this.firstValue--;
                 state++;
             }
@@ -125,7 +135,7 @@ export class Variable extends Proposition {
         return v;
     }
 
-    constructor(representation:string=undefined, value:boolean[]=[]) {
+    constructor(representation:string="v"+Variable.varCount++, value:boolean[]=[]) {
         super(representation);
         this._values = value;
     }
@@ -143,8 +153,10 @@ export class Variable extends Proposition {
 
             this.values = [...assignment];
         } else if (assignment instanceof Variable) {
-            this.defaultValue = assignment.defaultValue;
-            this.finiteStates = assignment.finiteStates;
+            this.defaultValueFuture = assignment.defaultValueFuture;
+            this.defaultValuePast = assignment.defaultValuePast;
+            this.finiteStatesFuture = assignment.finiteStatesFuture;
+            this.finiteStatesPast = assignment.finiteStatesPast;
             this.applyAssignment(assignment.values);
         } else {
             console.warn("The given assignment is neither a boolean array nor a variable! typeof assignment" + typeof assignment);

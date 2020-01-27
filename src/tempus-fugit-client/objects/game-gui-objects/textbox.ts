@@ -9,7 +9,7 @@ import { StoryDialog } from "../../mechanics/story-dialog";
  * for now only displays "name: text", without icon
  */
 export class Textbox {
-    private COLOR_PRIMARY = 0x4e342e;
+    private COLOR_PRIMARY = 0x002800;
     private COLOR_LIGHT = 0x7b5e57;
     private GetValue = Phaser.Utils.Objects.GetValue;
     private storyDialogQueue: StoryDialog[] = [];
@@ -52,8 +52,8 @@ export class Textbox {
             return;
 
         // position is bottom right of screen
-        const width = this.scene.scene.systems.game.canvas.width - 100;
-        const height = this.scene.scene.systems.game.canvas.height - 415;
+        const width = this.scene.scene.systems.game.canvas.width * 0.6;
+        const height = this.scene.scene.systems.game.canvas.height *0.25;
 
         // create a text box with fixed width, height depends on content
         const nextDialog = this.storyDialogQueue.shift().text;
@@ -227,6 +227,7 @@ export class Textbox {
         let text = scene.rexUI.add.BBCodeText(0, 0, '', {
             fixedWidth: fixedWidth,
             fixedHeight: fixedHeight,
+            fontFamily: 'appleKid',
 
             fontSize: '20px',
             wrap: {

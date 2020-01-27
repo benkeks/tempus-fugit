@@ -1,5 +1,5 @@
 import {Operator} from "./operator";
-import {PropositionStatus} from "../proposition";
+import {Proposition, PropositionStatus} from "../proposition";
 
 export class Bracket extends Operator {
 
@@ -14,7 +14,7 @@ export class Bracket extends Operator {
         else return ")";
     }
 
-    evaluateInternal(condition: number): PropositionStatus {
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
         throw new Error("This function is not defined!");
     }
 

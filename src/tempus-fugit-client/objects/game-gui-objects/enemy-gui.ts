@@ -2,15 +2,19 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
+import { Scene } from "phaser";
+import { MissionScene } from "../../scenes/mission-scene";
+import { FormulaGUI } from "./formula-gui";
 
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends ListGUI implements EnemyListener{
-
+export class EnemyGUI extends ListGUI implements EnemyListener {
     public enemy: Enemy; // enemy object associated with this gui
     public toolTip:ToolTip;
     public toolTipText:Text;
+
+    public scene:Scene;
 
     //public damageText:Phaser.GameObjects.Text;
     //public posY:number;
@@ -23,30 +27,35 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
         texture:string=undefined
     ) {
         super(scene, x, y);
+        this.scene = scene;
         this.enemy = enemy;
         this.enemy.listener.push(this);
 
         if (!texture) texture = enemy.image;
 
         this.addSpriteByTexture(texture);
-        this.scene.anims.create({
-            key: "standing",
-            frames: this.scene.anims.generateFrameNumbers(texture, {start:0}),
-            frameRate: 10,
-            repeat: -1
-        });
-        console.log(this.sprite);
-        console.log(enemy);
 
-        this.sprite.anims.play("standing");
-        this.sprite.setScale(2,2);
+        scene.anims.create({
+            key: texture,
+            frames: scene.anims.generateFrameNumbers(texture, {start:0}),
+             frameRate: 10,
+             repeat: -1
+       });
+
+        this.sprite.anims.play(texture);
+        this.sprite.setScale(5);
 
         this.addText("");
         this.updateEnemyAttributes();
 
-        this.setInteractive();
+        // special attack
+        //let sAttack:FormulaGUI = new FormulaGUI(scene, enemy.specialAttack.getFormula().generateRepresentation(true, true), 0, this.getBounds().height, 2, true);
+        //this.add(sAttack);
 
-        //this.addText(enemy.specialAttack.getFormula().generateRepresentation(true), ListGUI.ALIGN_LEFT);
+
+        //this.addContainter(sAttack);
+
+        this.setInteractive();
 
         this.toolTip = new ToolTip(scene, 0, 0, this);
         this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
@@ -62,6 +71,24 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
 
     public disableListeners():void {
         this.enemy.removeListener(this);
+    }
+
+    public die():void {
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: { from: 1, to: 0 },
+            ease: "Linear",
+            duration: 200,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.isDestroyed = true;
+                this.destroy(true);
+            },
+            onCompleteScope: this
+        });
+
+        this.disableListeners();
     }
 
     public updateEnemyAttributes():void {
@@ -95,10 +122,30 @@ export class EnemyGUI extends ListGUI implements EnemyListener{
      * @param changedTo
      */
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
-        //this.popText((changedTo-changedFrom).toString());
-        if (changedTo <= 0) {
-            this.disableListeners();
-            this.destroy(true);
-        } else this.updateEnemyAttributes();
+        let font1: Object = { fontSize: '50px', fontFamily: 'appleKid', color: '#FF0000' }
+        let diff = changedFrom - changedTo;
+        if (diff >= 0) {
+            let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
+            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
+            onComplete: function () {
+                damageText.destroy()
+            }});
+            let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
+            blood.setScale(0.2,0.2);
+            blood.alpha = 0;
+            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+                onComplete: function () {
+                    blood.destroy()
+                }});
+        }
+
+        if (changedFrom > 0 && changedTo <= 0) {
+            this.die();
+        }else this.updateEnemyAttributes();
     }
+
+    async Attacking(enemy: Enemy) {
+        MissionScene.createAttackAnimation(this.scene, this, "-");
+    }
+
 }

@@ -9,6 +9,7 @@ export class Card {
     public static readonly GLOBAL = "global";
     public static readonly DIRECTED = "directed";
     public static readonly RANDOM = "random";
+    public static readonly PLAYER = "player";
     public static readonly OTHER = "other";
 
     public name: string; // Name of the card
@@ -20,8 +21,8 @@ export class Card {
     public standRounds: number;
     public targets: Enemy[];
     public action:Function;
-    public listener:StandListener[] = []; // List of objects listening to stand event
     public inDeckAtStart:number;
+    public maxCardsInDeck:number = 5;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -37,9 +38,10 @@ export class Card {
 
     public copy():Card {
         let c:Card = new Card(this.name, this.description,
-            this.image, this.formula.generateRepresentation(true, true),
+            this.image, this.formula.generateRepresentation(true, false),
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
+        c.inDeckAtStart = this.inDeckAtStart;
 
         return c;
     }
@@ -115,29 +117,32 @@ export class Card {
         } else {
             this.targets = mission.getEnemies();
         }
-        for (let i in this.listener) {
-            console.log(i);
+        /*for (let i in this.listener) {
             this.listener[i].activateStand(this);
-        }
+        }*/
 
     }
 
     public act(mission: Mission, player: Player): void {
         if (this.standRounds > 0) {
-            if (this.cardKind == Card.RANDOM) {
-                this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
-            } else if (this.cardKind == Card.DIRECTED) {
-                for (var target of this.targets) {
-                    this.action(mission, target);
+            if (mission.gameState.evaluate(this.getFormula())) {
+                if (this.cardKind == Card.RANDOM) {
+                    this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
+                } else if (this.cardKind == Card.DIRECTED) {
+                    for (var target of this.targets) {
+                        this.action(mission, target);
+                    }
+                } else if (this.cardKind == Card.GLOBAL) {
+                    for (let target of mission.getEnemies()) {
+                        this.action(mission, target);
+                    }
+                } else if (this.cardKind == Card.OTHER) {
+                    this.action(mission, null);
+                } else if (this.cardKind == Card.PLAYER) {
+                    this.action(mission, mission.player);
+                } else {
+                    throw new TypeError("Card Type of card " + this.name + " is wrong!");
                 }
-            } else if (this.cardKind == Card.GLOBAL) {
-                for (let target of mission.getEnemies()) {
-                    this.action(mission, target);
-                }
-            } else if (this.cardKind == Card.OTHER) {
-                this.action(mission, null);
-            } else {
-                throw new TypeError("Card Type of card " + this.name + " is wrong!");
             }
             this.decreaseRoundsRemaining();
         }
@@ -146,23 +151,23 @@ export class Card {
 
     public decreaseRoundsRemaining() {
         this.standRounds -= 1;
-        for (var l of this.listener) {
+        /*for (var l of this.listener) {
             l.updateStandText();
-        }
+        }*/
     }
 
 
     public turnRed() {
-        for (let i in this.listener) {
+        /*for (let i in this.listener) {
             this.listener[i].turnRed();
-        }
+        }*/
     }
 
 
     public turnNormal() {
-        for (let i in this.listener) {
+        /*for (let i in this.listener) {
             this.listener[i].turnNormal();
-        }
+        }*/
     }
 
     public static createFromJSON(jString:string) {
@@ -194,18 +199,12 @@ export class Card {
                 c.action
             );
             new_c.inDeckAtStart = parseInt(c.inDeckAtStart);
+            
+            if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
 
             this.cards[c.name] = new_c;
         }
     }
 
 
-}
-
-export interface StandListener {
-    activateStand(stand: Card): void;
-    deactiveStand(stand: Card):void;
-    updateStandText(): void;
-    turnRed(): void;
-    turnNormal(): void;
 }

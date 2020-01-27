@@ -85,7 +85,7 @@ export class Enemy {
      * @return Does not have a return value
      * @author Florian
      */
-    public applyCard(card: Card, mission: Mission): void {
+    public applyCard(card: Card, mission: Mission): boolean {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
         if (val) {
             switch (card.getKind()) {
@@ -98,6 +98,15 @@ export class Enemy {
             }
         }
 
+        return val;
+    }
+
+    public performTurn(mission:Mission):void {
+        if (!this.applyCard(this.specialAttack, mission)){
+            mission.player.takeHit(this.baseAttack);
+        }
+
+        this.listener.map(l => l.Attacking(this));
     }
 
     /**
@@ -140,7 +149,7 @@ export class Enemy {
 
         for (let e of json.enemies) {
             if (e.sprite != "" && e.size != undefined && e.size.length == 2) {
-                scene.load.spritesheet(e.name,
+                scene.load.spritesheet(e.image,
                     e.sprite,
                     {frameWidth: e.size[0], frameHeight: e.size[1]});
             } else {
@@ -166,6 +175,7 @@ export class Enemy {
             );
             enemy.image = e.image;
             this.enemies[e.name] = enemy;
+            if (e.description) enemy.description = e.description;
         }
     }
 
@@ -178,4 +188,5 @@ export class Enemy {
  */
 export interface EnemyListener {
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
+    Attacking(enemy:Enemy);
 }

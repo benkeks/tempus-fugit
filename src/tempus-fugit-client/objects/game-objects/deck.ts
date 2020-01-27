@@ -1,9 +1,10 @@
-import {Card} from "./card";
-import {PlayerListener} from "./player";
+import { Card } from "./card";
+import { PlayerListener } from "./player";
 
 export class Deck {
-    cards: Card[]; // List of cards contained in the deck
-    listener:DeckListener[]; // List of objects listening to events happening in the deck
+    public cards: Card[]; // List of cards contained in the deck
+    public cardTypes:Set<Card> = new Set();
+    public listener:DeckListener[]; // List of objects listening to events happening in the deck
 
     /**
      * Constructor for the Deck class (creates an empty deck)
@@ -14,6 +15,15 @@ export class Deck {
         this.listener = []
     }
 
+    public copy(): Deck {
+        let d: Deck = new Deck();
+
+        for (let c of this.cards) {
+            d.cards.push(c.copy());
+        }
+        return d;
+    }
+
     /**
      * Puts the card on top of the deck and informs deck listeners
      * @param card The card that is to be added to the deck
@@ -21,11 +31,26 @@ export class Deck {
      * @example someDeck.addCard(dummyCard);
      * @author Florian
      */
-    addCard(card: Card): void {
+    public addCard(card: Card, addToType:boolean=false): void {
+        if (addToType) this.addCardType([card]);
+
         this.cards.push(card);
+
         for (let i in this.listener) {
             this.listener[i].numCardsChanged(this.cards.length);
         }
+    }
+
+    public addCardType(card:Card[]) {
+        let n = [];
+        for (let c of card) {
+            if (this.cardTypes.has(c)) {
+                n.push(c);
+                this.cardTypes.add(c);
+            }
+        }
+
+        if (n.length > 0) this.listener.map(l => l.cardTypesChanged(this, n));
     }
 
     /**
@@ -43,7 +68,7 @@ export class Deck {
         return theCard;
     }
 
-    public shuffle():void {
+    public shuffle(): void {
         Deck.shuffle(this.cards);
     }
 
@@ -66,4 +91,5 @@ export class Deck {
  */
 export interface DeckListener {
     numCardsChanged(numCards: number): void;
+    cardTypesChanged(deck:Deck, newCards:Card[]);
 }

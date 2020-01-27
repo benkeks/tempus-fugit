@@ -22,11 +22,11 @@ export abstract class OneParamOperator extends Operator{
         this.precedence = 4;
     }
 
-    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true): string {
+    generateRepresentation(recursive: boolean, defaultRepresentation:boolean=true, direction:number=Proposition.DEFAULT_DIRECTION): string {
         let ownRep:string = this.representation;
         if (defaultRepresentation) {
             ownRep = this.getDefaultRepresentation();
-            if (this.direction < 0) ownRep = this.getReverseRepresentation();
+            if (direction < 0) ownRep = this.getReverseRepresentation();
         }
 
         if (!recursive) return ownRep;
@@ -35,7 +35,7 @@ export abstract class OneParamOperator extends Operator{
         if (this._operand instanceof TwoParamOperator) {
             representation = "(" + this._operand.generateRepresentation(recursive) + ")";
         } else {
-            representation = this._operand.generateRepresentation(recursive, defaultRepresentation);
+            representation = this._operand.generateRepresentation(recursive, defaultRepresentation, direction);
         }
 
         if (this.associativity == Operator.LEFT_ASSOCIATIVE) {

@@ -1,5 +1,9 @@
     export abstract class Proposition {
 
+        public static readonly FUTURE:number = 1;
+        public static readonly PAST:number = -1;
+        public static readonly DEFAULT_DIRECTION = Proposition.FUTURE;
+
         get representation(): string {
             return this._representation;
         }
@@ -32,7 +36,7 @@
          *      console.log(formula.generateRepresentation(false, true)); // prints: (Ea->b)Uc
          *
          * */
-        public abstract generateRepresentation(recursive:boolean, defaultRepresentation:boolean): string;
+        public abstract generateRepresentation(recursive:boolean, defaultRepresentation:boolean, direction:number): string;
 
         /**
          * @author Tobias Loch
@@ -40,7 +44,7 @@
          * @param condition the temporal state of the Evaluation
          * @return returns a status struct that contains the boolean value of the Evaluation, the success of the Evaluation and the minimal Condition that the variables can evaluate.
          * */
-        public abstract evaluateInternal(condition: number): PropositionStatus;
+        public abstract evaluateInternal(condition: number, direction:number): PropositionStatus;
 
         /**
          * @author Tobias Loch
@@ -73,7 +77,7 @@
          *      console.log(formula.evaluate(1)); // true
          * */
         public evaluate(condition: number): boolean {
-            let status: PropositionStatus = this.evaluateInternal(condition);
+            let status: PropositionStatus = this.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
 
             if (!status.successful) {
                 return undefined;

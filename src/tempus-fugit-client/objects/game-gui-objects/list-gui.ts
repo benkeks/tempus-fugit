@@ -1,6 +1,7 @@
 import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
+import { GameObjects } from "phaser";
 
 export class ListGUI extends Phaser.GameObjects.Container {
 
@@ -10,6 +11,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
     protected sprite: Phaser.GameObjects.Sprite;
     protected texts: Text[] = [];
 
+    protected elements = [];
+
     protected separatingLines: Line[] = [];
     protected strokeRectWidth = 2;
     protected strokeRect: Rectangle = undefined;
@@ -17,11 +20,15 @@ export class ListGUI extends Phaser.GameObjects.Container {
     public yPadding: number = 10;
     public xPadding: number = 20;
 
+    public maxY:number;
+
     public maxTextWidth: number = 0;
     public fixedMaxTextWidth: boolean = false;
 
-    public defaultColor: number = 0xAAAA;
+    public defaultColor: number = 0x404040;
     public defaultStrokeColor: number = 0xFFFF;
+
+    protected isDestroyed = false;
 
     constructor(
         scene: Phaser.Scene,
@@ -36,26 +43,30 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
     public revalidate() {
         let dHeight: number = 0;
-        if (this.sprite) dHeight = this.sprite.displayHeight;
-        let y: number = dHeight;
+        if (this.sprite) dHeight = this.sprite.displayHeight/2 + 2*this.yPadding;
+        let y: number = dHeight
         this.separatingLines[0].setVisible(false);
 
-        for (let i in this.texts) {
-            let t: Text = this.texts[i];
+        for (let i in this.elements) {
             let line: Line = this.separatingLines[i];
             let x: number = 0;
-            if (t.style.align == ListGUI.ALIGN_LEFT) x = -this.maxTextWidth;
+            let element = this.elements[i];
 
-            if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
+            if (element instanceof Text) {
+                let t: Text = element as Text;
+                if (t.style.align == ListGUI.ALIGN_LEFT) x = -this.maxTextWidth;
 
-            t.setOrigin(0.5, 0);
-            t.setPosition(0, y + this.yPadding);
+                if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
+            }
+
+            element.setPosition(-element.getBounds().width/2, y+this.yPadding);
 
             line.setOrigin(0, 0);
             let w: number = this.maxTextWidth + 2 * this.xPadding;
             line.setTo(0, 0, w, 0);
             line.setPosition(-w / 2, y);
-            let height: number = t.displayHeight + (2 * this.yPadding);
+
+            let height: number = element.getBounds().height + (2 * this.yPadding);
             //rect.setDisplaySize(this.maxTextWidth + 2*this.xPadding, height);
 
             y += height;
@@ -76,9 +87,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.add(this.strokeRect);
         this.sendToBack(this.strokeRect);
 
-
-        //this.strokeRect.setSize(this.maxTextWidth+strokeWidth, y+strokeWidth)
-        //this.strokeRect.setDisplaySize(this.maxTextWidth+strokeWidth+2*this.xPadding, y+strokeWidth*2-dHeight);
+        this.maxY = y;
     }
 
     public addSpriteByTexture(texture: string) {
@@ -93,7 +102,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
         t.style.align = alignment;
 
         this.separatingLines.push(line);
-        this.texts.push(t);
+        this.elements.push(t);
         this.add(line);
         this.add(t);
 
@@ -103,9 +112,24 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
         return t;
     }
+    public addContainter(cont: Phaser.GameObjects.Container, alignment: string = ListGUI.ALIGN_CENTRE): Phaser.GameObjects.Container {
+        let line: Line = this.scene.add.line(0, 0, 0, 0, 100, 0, this.defaultStrokeColor, 1);
+
+        this.separatingLines.push(line);
+        this.elements.push(cont);
+        this.add(line);
+        this.add(cont);
+
+        let w =  cont.getBounds().width;
+        if (this.maxTextWidth < w) this.maxTextWidth = w;
+
+        this.revalidate();
+
+        return cont;
+    }
 
     public setText(index: number, text: string): void {
-        let t: Text = this.texts[index];
+        let t: Text = this.elements[index] as Text;
         t.setText(text);
 
         if (this.maxTextWidth < t.displayWidth) this.maxTextWidth = t.displayWidth;
@@ -114,6 +138,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public isHovered(xCursor: number, yCursor: number): boolean {
+        if (this.isDestroyed) return false;
+
         let xOffset = -this.displayWidth / 2;
 
         let x1: number = this.x + xOffset;

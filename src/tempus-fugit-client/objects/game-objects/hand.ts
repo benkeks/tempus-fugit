@@ -2,9 +2,21 @@ import { Card } from "./card";
 import { PlayerListener } from "./player";
 
 export class Hand {
+    get active(): boolean {
+        return this._active;
+    }
+
+    set active(value: boolean) {
+        this._active = value;
+
+        this.listener.map(l => l.Activated(this, this.active));
+    }
+
     cards: Card[]; // A list of cards contained in the hand
     size: number; // The number of cards the hand can hold
     listener: HandListener[] = []; // A list of objects listening to events happening to this hand
+
+    public _active: boolean = true;
 
     /**
      * Constructor for the Hand class
@@ -26,12 +38,16 @@ export class Hand {
      * Puts a card at 'position' into the hand and informs hand listeners
      * @param card Card that should be added
      * @param position Position in the hand at which the card will be placed
-     * @return Returns 1 if it worked, otherwise 0
      * @example dummyPlayer.hand.addCard(dummyCard, 3);
      * @author Florian
      */
     public addCard(card: Card, position: number = -1): number {
-        if (this.isFull()) return 0;
+        if (this.isFull()) {
+            for (let i in this.listener) {
+                this.listener[i].discardCard(card);
+            }
+            return;
+        }
 
         if (position != -1) {
             this.cards[position] = card;
@@ -48,7 +64,6 @@ export class Hand {
         for (let i in this.listener) {
             this.listener[i].addCard(card);
         }
-        return 1;
     }
 
     // Checks whether the hand is full
@@ -64,15 +79,21 @@ export class Hand {
 
 
     /**
-     * Removes the card a 'position'
-     * @param position Position at which the card should be removed
+     * Removes a card 
      * @return No return value
      * @example dummyPlayer.hand.removeCard(2);
      * @author Florian
      */
-    public removeCard(position: number, mission): void {
-        for (let i in this.listener) {
-            this.listener[i].addCard(this.cards[position]);
+    public removeCard(card: Card): void {
+        for (let i in this.cards) {
+            let c = this.cards[i];
+            if (c == card) {
+                for (let k in this.listener) {
+                    this.listener[k].removeCard(this.cards[i]);
+                }
+                this.cards[i] = null;
+                return;
+            }
         }
     }
 
@@ -105,4 +126,6 @@ export class Hand {
 export interface HandListener {
     addCard(card: Card): void;
     removeCard(card: Card): void;
+    Activated(hand: Hand, active: boolean);
+    discardCard(card: Card): void;
 }
