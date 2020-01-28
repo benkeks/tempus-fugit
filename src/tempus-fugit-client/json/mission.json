@@ -40,7 +40,7 @@
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Fireball", "Lightning Strike"]
         },
         {   
             "name": "mission2",

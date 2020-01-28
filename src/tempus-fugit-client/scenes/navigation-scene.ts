@@ -286,12 +286,12 @@ export class NavigationScene extends Phaser.Scene {
         });
 
         // create new cards viewer
-
-
         let gamewon = false;
         if (data.mission !== undefined && data.index !== undefined) {
-            if (data.mission.isGameOver() && data.mission.gameWon) {
+            if (data.mission.isGameOver() && data.mission.gameWon && !this.player.missionStates[data.index]) {
                 this.player.missionStates[data.index] = true;
+                this.player.maxHP += 25;
+                this.player.currentHP = this.player.maxHP;
                 gamewon = true;
             }
         }

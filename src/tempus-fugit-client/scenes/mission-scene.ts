@@ -179,10 +179,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         //this.gameOverText.setOrigin(0.5, 0.5);
         //this.gameOverText.setVisible(false);
 
-        this.input.keyboard.addKey("B").on("down", e => {
-            this.tfgame.gameWon = true;
-            this.tfgame.waveCounter = 100;
-            this.gameover(this.tfgame, true);
+        
+        this.input.keyboard.on("keydown", e => {
+            if (e.key == "b") {
+                this.tfgame.gameWon = true;
+                this.tfgame.waveCounter = 100;
+                console.log("gameover");
+                this.gameover(this.tfgame, true);
+            }
         })
     }
 
@@ -237,6 +241,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
+        console.log(game);
         this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
