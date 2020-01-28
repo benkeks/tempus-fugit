@@ -23,6 +23,7 @@ export class Card {
     public action:Function;
     public inDeckAtStart:number;
     public maxCardsInDeck:number = 5;
+    public formulaRepresentation:string = undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -76,6 +77,11 @@ export class Card {
      */
     public getFormula(): Formula {
         return this.formula;
+    }
+
+    public getFormulaGuiString():string {
+        if (this.formulaRepresentation !== undefined) return this.formulaRepresentation;
+        else return this.formula.generateRepresentation(true, true);
     }
 
 
@@ -200,6 +206,8 @@ export class Card {
             );
             new_c.inDeckAtStart = parseInt(c.inDeckAtStart);
             
+            if (c.formulaRepresentation) new_c.formulaRepresentation = c.formulaRepresentation;
+
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
 
             this.cards[c.name] = new_c;

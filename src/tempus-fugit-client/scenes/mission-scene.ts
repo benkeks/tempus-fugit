@@ -161,6 +161,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.enemyGUI = new EnemyGuiLayout(this, this.tfgame);
 
         this.standGUI = new StandGUILayout(this);
+        this.tfgame.gameState.listener.push(this.standGUI);
         this.tfgame.standListener.push(this.standGUI);
 
         this.phaseWheel = new WheelGUI(this, this.tfgame);

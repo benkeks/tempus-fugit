@@ -22,7 +22,8 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         x: number,
         y: number,
         margin: number,
-        withRectangle: boolean
+        withRectangle: boolean,
+        downscale:boolean=true
     ) {
         super(scene, x, y);
         this.scene = scene;
@@ -62,7 +63,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         }
 
         for (let el of this.elementList) {
-            el.setScale(0.75);
+            if (downscale) el.setScale(0.75);
             if (withRectangle) el.setOrigin(0.5);
             else el.setOrigin(0);
             this.add(el);

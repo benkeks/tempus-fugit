@@ -2,10 +2,10 @@ import {Enemy, EnemyListener} from "../game-objects/enemy";
 import {ListGUI} from "./list-gui";
 import Text = Phaser.GameObjects.Text;
 import {ToolTip} from "./tool-tip";
-import { Scene } from "phaser";
+import { Scene, Game } from "phaser";
 import { MissionScene } from "../../scenes/mission-scene";
 import { FormulaGUI } from "./formula-gui";
-import { GameStateListener } from "../game-objects/game-state";
+import { GameStateListener, GameState } from "../game-objects/game-state";
 
 /**
  * @author Mustafa
@@ -49,7 +49,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.updateEnemyAttributes();
 
         // special attack
-        this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormula().generateRepresentation(true, true), 0, this.getBounds().height, 2, true);
+        this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
         this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
         this.add(this.formula);
 
@@ -118,6 +118,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         });
     }*/
 
+    public updateTint(gameState:GameState) {
+        this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+    }
+
     /**
      * change HP display of enemy
      * @param changedTo
@@ -149,10 +153,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         MissionScene.createAttackAnimation(this.scene, this, "-");
     }
 
-    roundChanged(gameSate: import("../game-objects/game-state").GameState, lastRound: number, activeRound: number) {
+    roundChanged(gameState: import("../game-objects/game-state").GameState, lastRound: number, activeRound: number) {
+        this.updateTint(gameState);
     }
     async variableChanged(gameState: import("../game-objects/game-state").GameState, oldVariable: import("../../temporal-logic/variable").Variable, variable: import("../../temporal-logic/variable").Variable, valueChanges: { [state: number]: boolean; }) {
-        this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+        this.updateTint(gameState);
     }
     energyChanged(gameState: import("../game-objects/game-state").GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {
     }

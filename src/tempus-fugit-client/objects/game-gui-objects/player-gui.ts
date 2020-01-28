@@ -84,7 +84,11 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
 
     async Attacking(player:Player, target:Enemy) {
         MissionScene.createAttackAnimation(this.scene, this);
-    } 
+    }
+
+    async cardPlayed(player:Player, card:Card) {
+        
+    }
 }
 
 /**

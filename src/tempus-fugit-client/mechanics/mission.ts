@@ -401,9 +401,11 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    async Activated(player: Player, active: boolean) { }
+    async Activated(player: Player, active: boolean) {}
 
-    async Attacking(actor, target = undefined) {
+    async Attacking(actor, target = undefined) {}
+
+    async cardPlayed(player, card) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
     }
 

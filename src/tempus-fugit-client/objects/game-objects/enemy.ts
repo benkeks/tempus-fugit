@@ -162,18 +162,23 @@ export class Enemy {
             }
 
             let arr = [];
-            for (let i in e.reactAttack) {
-                let att = e.reactAttack[i];
-                arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
-                    Card.DIRECTED, false, 0,  att.action));
+            if (e.reactAttack) {
+                for (let i in e.reactAttack) {
+                    let att = e.reactAttack[i];
+                    arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
+                        Card.DIRECTED, false, 0,  att.action));
+                }
             }
+
+            let special:Card = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
+            Card.DIRECTED, false, 0,  e.specialAttack.action);
+            if (e.specialAttack.formulaRepresentation) special.formulaRepresentation = e.specialAttack.formulaRepresentation;
 
             let enemy = new Enemy(
                 e.name,
                 e.maxHP,
                 e.baseAttack,
-                new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
-                    Card.DIRECTED, false, 0,  e.specialAttack.action),
+                special,
                 arr,
                 e.sprite,
                 e.size

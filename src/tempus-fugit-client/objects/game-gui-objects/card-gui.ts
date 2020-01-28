@@ -97,7 +97,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
 
         // formula text
-        let string = this.card.getFormula().generateRepresentation(true, true);
+        let string = this.card.getFormulaGuiString();
         let margin = 2;
         let formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
         this.add(formulaGUI);
