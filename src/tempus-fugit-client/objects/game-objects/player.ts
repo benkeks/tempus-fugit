@@ -159,10 +159,10 @@ export class Player {
                         
                         this.listener.map(l => l.Attacking(this, enemy));
                         break;
-                }
-                
-                this.listener.map(l => l.cardPlayed(this, card));
+                    }
             }
+            
+            this.listener.map(l => l.cardPlayed(this, card));
         }
         this.hand.removeCard(card);
     }

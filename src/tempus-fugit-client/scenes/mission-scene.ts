@@ -176,16 +176,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
 
-        //this.gameOverText = this.add.text(GameInfo.width / 2, GameInfo.height / 2, "GAME OVER!", { fontSize: '50px', fontStyle: 'bold', fontFamily: 'appleKid', color: '#FF0000' });
-        //this.gameOverText.setOrigin(0.5, 0.5);
-        //this.gameOverText.setVisible(false);
-
         
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
                 this.tfgame.gameWon = true;
                 this.tfgame.waveCounter = 100;
-                console.log("gameover");
                 this.gameover(this.tfgame, true);
             }
         })
@@ -219,7 +214,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async enemyPhase(game: Mission) {
         console.log("enemyPhase");
-        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
+        this.iteratePhases(4, 500);
     }
 
     async energyPhase(game: Mission) {
@@ -230,9 +225,20 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         console.log("play Phase");
     }
 
+    async iteratePhases(phase:number, delay:number) {
+        if (this.tfgame.curPhase != phase) return;
+
+        this.time.delayedCall(delay, function () {
+            if (this.tfgame.curPhase == phase) {
+                this.tfgame.nextPlayer();
+                this.iteratePhases(phase, delay)
+            }
+        }, [], this);
+    }
+
     async standPhase(game: Mission) {
         console.log("stand Phase");
-        this.time.delayedCall(1000, this.tfgame.nextPhase, [], this.tfgame);
+        this.iteratePhases(3, 500);
     }
 
 
@@ -242,7 +248,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
-        console.log(game);
         this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
@@ -257,11 +262,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.enemyGUI.setEnemies(enemies, true);
     }
 
-    Activated(game: Mission, active: boolean) {
-    }
+    Activated(game: Mission, active: boolean) {}
 
-    public static createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
-
+    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
             targets: target,
             x: direction + "=100",

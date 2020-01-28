@@ -4,6 +4,7 @@ import {EnemyGUI} from "./enemy-gui";
 import { Mission, MissionListener } from "../../mechanics/mission";
 import { StoryDialog } from "../../mechanics/story-dialog";
 import { Scene } from "phaser";
+import { MissionScene } from "../../scenes/mission-scene";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public enemies:EnemyGUI[] = [];
@@ -14,9 +15,9 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
     public fadeInOffset = 500;
 
-    public scene:Scene;
+    public scene:MissionScene;
 
-    constructor(scene:Phaser.Scene, mission:Mission) {
+    constructor(scene:MissionScene, mission:Mission) {
         super(scene);
         this.scene = scene;
 

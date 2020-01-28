@@ -17,10 +17,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public toolTipText:Text;
     public formula:FormulaGUI;
 
-    public scene:Scene;
+    public scene:MissionScene;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         enemy: Enemy,
         x: number = 1500,
         y: number = 500,
@@ -85,9 +85,12 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             onComplete: function () {
                 this.isDestroyed = true;
                 this.destroy(true);
+                this.toolTip.destroy(true);
             },
             onCompleteScope: this
         });
+        this.disableInteractive();
+        this.toolTip.enabled = false;
 
         this.disableListeners();
     }
@@ -144,13 +147,14 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                 }});
         }
 
+        console.log(this.enemy.name, changedTo);
         if (changedFrom > 0 && changedTo <= 0) {
             this.die();
         }else this.updateEnemyAttributes();
     }
 
     async Attacking(enemy: Enemy) {
-        MissionScene.createAttackAnimation(this.scene, this, "-");
+        this.scene.createAttackAnimation(this.scene, this, "-");
     }
 
     roundChanged(gameState: import("../game-objects/game-state").GameState, lastRound: number, activeRound: number) {
