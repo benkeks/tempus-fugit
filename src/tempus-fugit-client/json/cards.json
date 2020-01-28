@@ -76,7 +76,7 @@
 		"standRounds":"4",
 		"action":"target.takeHit(2, mission);",
 		"comment":"deals 2 damage to all enemies",
-		"inDeckAtStart":"20"},
+		"inDeckAtStart":"2"},
 
 		{"name":"Root pierce",
 		"description":"Deal 7 damage to a foe!",
