@@ -14,13 +14,13 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
     public toolTip:ToolTip;
     public toolTipText:Text;
 
-    public scene:Scene;
+    public scene:MissionScene;
 
     //public damageText:Phaser.GameObjects.Text;
     //public posY:number;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         enemy: Enemy,
         x: number = 1500,
         y: number = 500,
@@ -84,9 +84,12 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
             onComplete: function () {
                 this.isDestroyed = true;
                 this.destroy(true);
+                this.toolTip.destroy(true);
             },
             onCompleteScope: this
         });
+        this.disableInteractive();
+        this.toolTip.enabled = false;
 
         this.disableListeners();
     }
@@ -139,13 +142,14 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
                 }});
         }
 
+        console.log(this.enemy.name, changedTo);
         if (changedFrom > 0 && changedTo <= 0) {
             this.die();
         }else this.updateEnemyAttributes();
     }
 
     async Attacking(enemy: Enemy) {
-        MissionScene.createAttackAnimation(this.scene, this, "-");
+        this.scene.createAttackAnimation(this.scene, this, "-");
     }
 
 }
