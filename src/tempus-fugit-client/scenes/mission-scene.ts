@@ -1,23 +1,29 @@
-import { Enemy } from "../objects/game-objects/enemy";
-import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
-import { TableGUI } from "../objects/game-gui-objects/table-gui";
-import { HandGUI } from "../objects/game-gui-objects/hand-gui";
-import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
-import { StackGUI } from "../objects/game-gui-objects/stack-gui";
-import { EnemyGuiLayout } from "../objects/game-gui-objects/enemy-gui-layout";
-import { Mission, MissionListener } from "../mechanics/mission";
-import { StoryDialog } from "../mechanics/story-dialog";
+import {Card} from "../objects/game-objects/card";
+import {Enemy} from "../objects/game-objects/enemy";
+import {CardGUI} from "../objects/game-gui-objects/card-gui";
+import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
+import {Player} from "../objects/game-objects/player";
+import {TechDemoGame} from "../mechanics/tech-demo-game";
+import {TableGUI} from "../objects/game-gui-objects/table-gui";
+import {HandGUI} from "../objects/game-gui-objects/hand-gui";
+import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
+import {StackGUI} from "../objects/game-gui-objects/stack-gui";
+import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
+import {Mission, MissionListener} from "../mechanics/mission";
+import {StoryDialog} from "../mechanics/story-dialog";
 
-import { CardChannel } from "../objects/game-gui-objects/card-channel";
-import { Textbox } from "../objects/game-gui-objects/textbox";
-import { GameInfo } from "../game";
+import {CardChannel} from "../objects/game-gui-objects/card-channel";
+import {Textbox} from "../objects/game-gui-objects/textbox";
+import {GameInfo} from "../game";
 
 import Image = Phaser.GameObjects.Image;
-import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
-import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
-import { Scene, GameObjects } from "phaser";
-import { PauseButton } from "../objects/pause-gui-objects/pause-button";
-import { HelpButton } from "../objects/help-gui-objects/help-button";
+import {FormulaGUI} from "../objects/game-gui-objects/formula-gui";
+import {StandGUILayout} from "../objects/game-gui-objects/stand-gui-layout";
+import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
+import {WheelGUI} from "../objects/game-gui-objects/wheel-gui";
+import {Scene, GameObjects} from "phaser";
+import {PauseButton} from "../objects/pause-gui-objects/pause-button";
+import {HelpButton} from "../objects/help-gui-objects/help-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -81,8 +87,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         //Menun Layout
         //5C4D4D, 915B4A, A96851
         this.lowerMenu = this.add.graphics();
-        let innerTop = GameInfo.height*0.715;
-        let margin = GameInfo.width*0.01;
+        let innerTop = GameInfo.height * 0.715;
+        let margin = GameInfo.width * 0.01;
         let color1 = 0x5C4D4D;
         let color3 = 0x915B4A
         let color2 = 0xA96851;
@@ -90,56 +96,55 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         //Book box
         this.lowerMenu.lineStyle(20, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.435+margin,GameInfo.height*0.54,GameInfo.width*0.12-margin,GameInfo.height*0.25, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.435 + margin, GameInfo.height * 0.54, GameInfo.width * 0.12 - margin, GameInfo.height * 0.25, 30);
         this.lowerMenu.fillStyle(color2, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.435+margin,GameInfo.height*0.54,GameInfo.width*0.12-margin,GameInfo.height*0.25, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.435 + margin, GameInfo.height * 0.54, GameInfo.width * 0.12 - margin, GameInfo.height * 0.25, 30);
 
         //Main
         this.lowerMenu.lineStyle(20, color1, 1);
-        this.lowerMenu.strokeRoundedRect(0,GameInfo.height*0.7,GameInfo.width,GameInfo.height*1, 30);
+        this.lowerMenu.strokeRoundedRect(0, GameInfo.height * 0.7, GameInfo.width, GameInfo.height * 1, 30);
         this.lowerMenu.fillStyle(color2, 1);
-        this.lowerMenu.fillRoundedRect(0,GameInfo.height*0.7,GameInfo.width,GameInfo.height*1, 30);
-        
+        this.lowerMenu.fillRoundedRect(0, GameInfo.height * 0.7, GameInfo.width, GameInfo.height * 1, 30);
+
         this.lowerMenu.lineStyle(20, color2, 1);
-        this.lowerMenu.lineBetween(GameInfo.width*0.435+margin,GameInfo.height*0.7,GameInfo.width*0.555,GameInfo.height*0.7);
+        this.lowerMenu.lineBetween(GameInfo.width * 0.435 + margin, GameInfo.height * 0.7, GameInfo.width * 0.555, GameInfo.height * 0.7);
 
         //Profile
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.0+margin,innerTop,GameInfo.width*0.1-margin,GameInfo.height*0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.0 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.0+margin,innerTop,GameInfo.width*0.1-margin,GameInfo.height*0.27, 30);
-        this.add.sprite(GameInfo.width*0.055,GameInfo.height*0.80, "playerProfile").setScale(6);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.0 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+        this.add.sprite(GameInfo.width * 0.055, GameInfo.height * 0.80, "playerProfile").setScale(6);
 
         //Stats
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.1+margin,innerTop,GameInfo.width*0.15-margin,GameInfo.height*0.15, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.1 + margin, innerTop, GameInfo.width * 0.15 - margin, GameInfo.height * 0.15, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.1+margin,innerTop,GameInfo.width*0.15-margin,GameInfo.height*0.15, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.1 + margin, innerTop, GameInfo.width * 0.15 - margin, GameInfo.height * 0.15, 30);
 
         //Help
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.12+margin,innerTop+GameInfo.height*0.17,GameInfo.width*0.1-margin,GameInfo.height*0.1, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.12 + margin, innerTop + GameInfo.height * 0.17, GameInfo.width * 0.1 - margin, GameInfo.height * 0.1, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.12+margin,innerTop+GameInfo.height*0.17,GameInfo.width*0.1-margin,GameInfo.height*0.1, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.12 + margin, innerTop + GameInfo.height * 0.17, GameInfo.width * 0.1 - margin, GameInfo.height * 0.1, 30);
 
         //Hand box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.25+margin,innerTop,GameInfo.width*0.5-margin,GameInfo.height*0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.25 + margin, innerTop, GameInfo.width * 0.5 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.25+margin,innerTop,GameInfo.width*0.5-margin,GameInfo.height*0.27, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.25 + margin, innerTop, GameInfo.width * 0.5 - margin, GameInfo.height * 0.27, 30);
 
         //Stack box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.75+margin,innerTop,GameInfo.width*0.1-margin,GameInfo.height*0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.75+margin,innerTop,GameInfo.width*0.1-margin,GameInfo.height*0.27, 30);
-        
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+
         //Phase box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width*0.85+margin,innerTop,GameInfo.width*0.14-margin,GameInfo.height*0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.85 + margin, innerTop, GameInfo.width * 0.14 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width*0.85+margin,innerTop,GameInfo.width*0.14-margin,GameInfo.height*0.27, 30);
-
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.85 + margin, innerTop, GameInfo.width * 0.14 - margin, GameInfo.height * 0.27, 30);
 
 
         this.textBox = new Textbox(this);
@@ -237,14 +242,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
-        this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        this.scene.start(gameWon ? "NavigationScene" : "DeathScene", {mission: this.tfgame, index: this.missionIndex});
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
 
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog });
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', {monolog});
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
@@ -253,22 +258,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     Activated(game: Mission, active: boolean) {}
 
-    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, nextPlayer:boolean=true, direction: string = "+", phase:number=3, offset: number = 100): Phaser.Tweens.Tween {
+    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
             targets: target,
             x: direction + "=100",
             ease: "Linear",
             duration: 150,
             repeat: 0,
-            yoyo: true,
-            onComplete:() => {
-                if (nextPlayer) {
-                    this.time.delayedCall(500, function() {
-                        if (this.curPhase == phase) this.nextPlayer();
-                    }, [], this.tfgame);
-                }
-            },
-            onCompleteScope:this
+            yoyo: true
         });
     }
 }

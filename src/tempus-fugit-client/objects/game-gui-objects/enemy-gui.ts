@@ -84,11 +84,12 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
             onComplete: function () {
                 this.isDestroyed = true;
                 this.destroy(true);
+                this.toolTip.destroy(true);
             },
             onCompleteScope: this
         });
         this.disableInteractive();
-        this.toolTip.fadeOut();
+        this.toolTip.enabled = false;
 
         this.disableListeners();
     }
@@ -148,7 +149,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener {
     }
 
     async Attacking(enemy: Enemy) {
-        this.scene.createAttackAnimation(this.scene, this, false, "-", 4);
+        this.scene.createAttackAnimation(this.scene, this, "-");
     }
 
 }

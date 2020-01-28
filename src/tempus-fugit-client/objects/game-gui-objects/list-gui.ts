@@ -1,7 +1,7 @@
 import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
-import { GameObjects } from "phaser";
+import { GameObjects, Tweens } from "phaser";
 
 export class ListGUI extends Phaser.GameObjects.Container {
 
@@ -26,9 +26,11 @@ export class ListGUI extends Phaser.GameObjects.Container {
     public fixedMaxTextWidth: boolean = false;
 
     public defaultColor: number = 0x404040;
-    public defaultStrokeColor: number = 0xFFFF;
+    public defaultStrokeColor: number = 0xFFFFFF;
 
     protected isDestroyed = false;
+
+    public tween:Tweens.Tween;
 
     constructor(
         scene: Phaser.Scene,
@@ -151,8 +153,10 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public fadeIn(duration = 200) {
+        if (this.tween) this.tween.stop(0);
+
         this.setAlpha(0);
-        this.scene.add.tween({ // fade out
+        this.tween = this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 0, to: 1 },
             ease: "Linear",
@@ -163,8 +167,10 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.setVisible(true);
     }
     public fadeOut(duration = 200) {
+        if (this.tween) this.tween.stop(1);
+        
         this.setAlpha(1);
-        this.scene.add.tween({ // fade out
+        this.tween = this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },
             ease: "Linear",
