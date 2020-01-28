@@ -158,7 +158,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     .on( 'pointerdown', function(pointer, localX, localY, event){ 
         this.scene.add.tween({ // fade out
             targets: this,
-            alpha: { from: 1, to: 0 },
+            alpha: 0,
             ease: "Linear",
             duration: this.fadeOutDuration,
             repeat: 0,
