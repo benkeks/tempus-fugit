@@ -68,6 +68,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
             let y = positions[i][1];
 
             let enemyGUI:EnemyGUI = new EnemyGUI(this.scene, enemies[i], x, y, enemies[i].image);
+            this.mission.gameState.listener.push(enemyGUI);
 
             this.add(enemyGUI);
             this.enemies.push(enemyGUI);

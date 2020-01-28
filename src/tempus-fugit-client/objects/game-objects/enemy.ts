@@ -15,6 +15,7 @@ export class Enemy {
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
     public description:string;
+    public specialAttackDescription:string = "";
     public image:string;
 
     public specialAttack: Card; // The enemy's base attack strength
@@ -41,6 +42,7 @@ export class Enemy {
        new_enemy.key = this.key;
        new_enemy.description = this.description;
        new_enemy.image = this.image;
+       new_enemy.specialAttackDescription = this.specialAttackDescription;
 
        return new_enemy;
     }
@@ -177,6 +179,8 @@ export class Enemy {
                 e.size
             );
             enemy.image = e.image;
+
+            if (e.specialAttackDescription) enemy.specialAttackDescription = e.specialAttackDescription;
 
             if (e.key) enemy.key = e.key;
 

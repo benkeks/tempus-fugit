@@ -11,6 +11,10 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
     private elementList: Phaser.GameObjects.Sprite[];
     public scene: Phaser.Scene;
     private reps: { [char: string]: { type: string, frame: number } } = {};
+    public graphics:Phaser.GameObjects.Graphics;
+    public tintGraphics:Phaser.GameObjects.Graphics;
+
+    public tintRect
 
     constructor(
         scene: Phaser.Scene,
@@ -49,19 +53,29 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
             pos += (16 + margin);
         }
         if (withRectangle) {
-            let graphics = this.scene.add.graphics();
-            graphics.lineStyle(4, 0xFFFFFF, 0.6);
-            let outline = graphics.strokeRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
-            graphics.fillStyle(0xFFFFFF, 1);
-            let roundRect = graphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
-            this.add(outline);
+            this.graphics = this.scene.add.graphics();
+            this.graphics.lineStyle(4, 0xFFFFFF, 0.6);
+            let outline = this.graphics.strokeRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.graphics.fillStyle(0xFFFFFF, 1);
+            let roundRect = this.graphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.add(this.graphics);
         }
 
         for (let el of this.elementList) {
             el.setScale(0.75);
-            el.setOrigin(0, 0);
+            if (withRectangle) el.setOrigin(0.5);
+            else el.setOrigin(0);
             this.add(el);
         }
+
+        if (withRectangle) {
+            this.tintGraphics = this.scene.add.graphics();
+            this.tintGraphics.fillStyle(0x333333, 0.5);
+            let tint = this.tintGraphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.tintGraphics.setVisible(true);
+            this.add(this.tintGraphics);
+        }
+
         scene.add.existing(this);
     }
 

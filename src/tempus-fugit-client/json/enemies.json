@@ -3,6 +3,7 @@
         {
             "name":"slime1",
 			"description":"a suicide slime!",
+			"specialAttackDescription":"The player takes 5 damage.",
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{

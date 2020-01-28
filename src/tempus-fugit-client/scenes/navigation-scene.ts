@@ -115,7 +115,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
-        //console.log(Enemy.enemies);
+        console.log(Enemy.enemies);
 
         let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
