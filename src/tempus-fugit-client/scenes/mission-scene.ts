@@ -1,29 +1,29 @@
-import {Card} from "../objects/game-objects/card";
-import {Enemy} from "../objects/game-objects/enemy";
-import {CardGUI} from "../objects/game-gui-objects/card-gui";
-import {PlayerGUI} from "../objects/game-gui-objects/player-gui";
-import {Player} from "../objects/game-objects/player";
-import {TechDemoGame} from "../mechanics/tech-demo-game";
-import {TableGUI} from "../objects/game-gui-objects/table-gui";
-import {HandGUI} from "../objects/game-gui-objects/hand-gui";
-import {DeckGUI} from "../objects/game-gui-objects/deck-gui";
-import {StackGUI} from "../objects/game-gui-objects/stack-gui";
-import {EnemyGuiLayout} from "../objects/game-gui-objects/enemy-gui-layout";
-import {Mission, MissionListener} from "../mechanics/mission";
-import {StoryDialog} from "../mechanics/story-dialog";
+import { Card } from "../objects/game-objects/card";
+import { Enemy } from "../objects/game-objects/enemy";
+import { CardGUI } from "../objects/game-gui-objects/card-gui";
+import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
+import { Player } from "../objects/game-objects/player";
+import { TechDemoGame } from "../mechanics/tech-demo-game";
+import { TableGUI } from "../objects/game-gui-objects/table-gui";
+import { HandGUI } from "../objects/game-gui-objects/hand-gui";
+import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
+import { EnemyGuiLayout } from "../objects/game-gui-objects/enemy-gui-layout";
+import { Mission, MissionListener } from "../mechanics/mission";
+import { StoryDialog } from "../mechanics/story-dialog";
 
-import {CardChannel} from "../objects/game-gui-objects/card-channel";
-import {Textbox} from "../objects/game-gui-objects/textbox";
-import {GameInfo} from "../game";
+import { CardChannel } from "../objects/game-gui-objects/card-channel";
+import { Textbox } from "../objects/game-gui-objects/textbox";
+import { GameInfo } from "../game";
 
 import Image = Phaser.GameObjects.Image;
-import {FormulaGUI} from "../objects/game-gui-objects/formula-gui";
-import {StandGUILayout} from "../objects/game-gui-objects/stand-gui-layout";
-import {EnemyGUI} from "../objects/game-gui-objects/enemy-gui";
-import {WheelGUI} from "../objects/game-gui-objects/wheel-gui";
-import {Scene, GameObjects} from "phaser";
-import {PauseButton} from "../objects/pause-gui-objects/pause-button";
-import {HelpButton} from "../objects/help-gui-objects/help-button";
+import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
+import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
+import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
+import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
+import { Scene, GameObjects } from "phaser";
+import { PauseButton } from "../objects/pause-gui-objects/pause-button";
+import { HelpButton } from "../objects/help-gui-objects/help-button";
+import { Stack } from "../objects/game-objects/stack";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -34,7 +34,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public handGUI: HandGUI;
     public deckGUI: DeckGUI;
     public enemyGUI: EnemyGuiLayout;
-    public stackGUI: StackGUI;
+    public stack: Stack;
     public standGUI: StandGUILayout;
     public textBox: Textbox;
     public helpButton: HelpButton;
@@ -149,10 +149,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.textBox = new Textbox(this);
 
-        //this.stackGUI = new StackGUI(this, "stack");
+        this.stack = new Stack();
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
-        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stackGUI, this.deckGUI, this.tfgame.gameState);
+        this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -238,14 +238,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         this.tfgame.destroy();
-        this.scene.start(gameWon ? "NavigationScene" : "DeathScene", {mission: this.tfgame, index: this.missionIndex});
+        this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     async storyMonolog(game: Mission, monolog: string) {
         this.handGUI.unhoverAll();
 
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', {monolog});
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog });
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {

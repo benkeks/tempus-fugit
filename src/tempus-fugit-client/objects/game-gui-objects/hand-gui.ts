@@ -1,5 +1,4 @@
 import { CardGUI } from "./card-gui";
-import { StackGUI } from "./stack-gui";
 import { Card } from "../game-objects/card";
 import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
@@ -10,6 +9,7 @@ import { Variable } from "../../temporal-logic/variable";
 import { MissionScene } from "../../scenes/mission-scene";
 import { GameInfo } from "../../game";
 import { DiscardGUI } from "./discard-gui";
+import { Stack } from "../game-objects/stack";
 
 
 /**
@@ -19,18 +19,18 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
     private hand: Hand; // hand object associated with handGUI object
     public cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
-    private readonly stack: StackGUI;
+    private readonly stack: Stack;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
     public gamestate: GameState;
     public missionScene: MissionScene;
 
-    public assistance:boolean = true;
+    public assistance: boolean = true;
 
     constructor(
         scene: MissionScene,
         hand: Hand,
-        stack: StackGUI,
+        stack: Stack,
         deck: DeckGUI,
         gamestate: GameState,
     ) {
@@ -136,16 +136,17 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds animations for cards if immediate is false ( by dafault )
      */
     arrangeCards(immediate: boolean = false): void {
+        console.log('arrangecards');
 
         // used static values since we only have a max of 5 cards
-        let angles = [-20, -10, 0, 10, 20];
-        let x = [700, 830, 960, 1090, 1220];
-        let y = [950, 920, 910, 920, 950];
-        let yOff = [0, 0, 10, 25, 0];
+        let angles = [-4, -2, 0, 2, 4];
+        let x = [660, 810, 960, 1110, 1260];
+        let y = [920, 913, 910, 913, 920];
+        let yOff = [0, 0, 2, 4, 0];
 
         let n = this.cardGUIs.length;
         let even = n % 2 == 0;
-        let angleOffset = even ? 5 : 0;
+        let angleOffset = even ? 1 : 0;
         let xOffset = even ? 65 : 0;
 
         this.unhoverAll(immediate);
@@ -218,7 +219,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: 6th card
      */
     async discardCard(card: Card) {
-        console.log('async discard card called')
         new DiscardGUI(this.missionScene, this.hand, this.deck, this, card);
     }
 
@@ -227,13 +227,11 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: card to be removed
      */
     async removeCard(card: Card) {
-        console.log('removeCard in handgui called', card, this.cardGUIs)
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
-                console.log('found card to remove')
-                this.cardGUIs[pos].setAngle(0).setScale(1);
-                this.stack.addCardGUI(this.cardGUIs[pos]);
-                //this.remove(this.cardGUIs[pos]);
+                this.stack.addCard(this.cardGUIs[pos].card);
+                this.cardGUIs[pos].cross.destroy;
+                this.cardGUIs[pos].destroy;
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);
                 return;
