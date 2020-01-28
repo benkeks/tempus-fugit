@@ -21,14 +21,14 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
         this.scene = scene;
 
         EnemyGuiLayout.enemyLayout = {
-            1: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 70), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            1: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 77), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
 
-            2: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 80), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            2: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 65), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
 
-            3: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 35)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 55)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 80), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            3: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 65), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 77), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
         };
 
         this.mission = mission;
