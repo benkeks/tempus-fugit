@@ -39,7 +39,7 @@ export class CardChannel extends Container {
 
         this.dotParticles = scene.add.particles("runes");
         this.dotParticles.createEmitter({
-            frame: {frames: [0,1,2,3]},
+            frame: { frames: [0, 1, 2, 3] },
             x: 0,
             y: 0,
             speed: 100,
@@ -123,7 +123,6 @@ export class CardChannel extends Container {
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
                 if (e || (card.getKind() != Card.DIRECTED && pointer.y < this.y)) {
-                    this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);
@@ -170,7 +169,7 @@ export class CardChannel extends Container {
         this.missionScene.tfgame.player.applyCard(card.card, e, this.missionScene.tfgame);
     }
 
-    public emitCard(gameObject):void {
+    public emitCard(gameObject): void {
         this.missionScene.add.tween({ // fade out
             targets: gameObject,
             alpha: { from: 1, to: 0 },
@@ -187,7 +186,7 @@ export class CardChannel extends Container {
         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
         this.emitter = this.fadeOutParticles.createEmitter({
-            frame: {frames: [0,1,2,3],cyle:true},
+            frame: { frames: [0, 1, 2, 3], cyle: true },
             x: {
                 min: x,
                 max: x + gameObject.displayWidth
@@ -231,7 +230,7 @@ export class CardChannel extends Container {
         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
         this.emitter = this.fadeOutParticles.createEmitter({
-            frame: {frames: [0,1,2,3],cyle:true},
+            frame: { frames: [0, 1, 2, 3], cyle: true },
             x: this.x,
             y: this.y,
             speed: 400,
