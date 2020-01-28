@@ -123,8 +123,6 @@ export class CardChannel extends Container {
 
                 let e = this.cursorHoversEnemy(pointer.x, pointer.y);
                 if (e || (card.getKind() != Card.DIRECTED && pointer.y < this.y)) {
-                    console.log('removecard in card channel');
-                    this.missionScene.handGUI.removeCard(gameObject.card);
                     this.playCard(e, gameObject);
                 } else {
                     if (pointer.y < this.y) this.reEmitCard(gameObject);

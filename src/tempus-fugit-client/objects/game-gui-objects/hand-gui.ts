@@ -219,7 +219,6 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: 6th card
      */
     async discardCard(card: Card) {
-        console.log('async discard card called')
         new DiscardGUI(this.missionScene, this.hand, this.deck, this, card);
     }
 
@@ -228,11 +227,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: card to be removed
      */
     async removeCard(card: Card) {
-        //console.log('removeCard in handgui called', card, this.cardGUIs)
-        console.log('removecard in hand gui');
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
-                console.log('found card to remove')
                 this.stack.addCard(this.cardGUIs[pos].card);
                 this.cardGUIs[pos].cross.destroy;
                 this.cardGUIs[pos].destroy;
