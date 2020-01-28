@@ -97,11 +97,6 @@
             },
             {
                 "type": "image",
-                "key": "stack",
-                "url": "assets/sprites/stack.png"
-            },
-            {
-                "type": "image",
                 "key": "deck",
                 "url": "assets/sprites/deck.png"
             },
@@ -110,11 +105,11 @@
                 "key": "blood",
                 "url": "assets/sprites/blood.png"
             },
-	    {
-		"type": "image",
-		"key": "cross",
-		"url":  "assets/sprites/cross.png"
-	    },
+            {
+                "type": "image",
+                "key": "cross",
+                "url": "assets/sprites/cross.png"
+            },
             {
                 "type": "image",
                 "key": "card-outline",

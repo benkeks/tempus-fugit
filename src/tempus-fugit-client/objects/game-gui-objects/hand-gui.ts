@@ -1,5 +1,4 @@
 import { CardGUI } from "./card-gui";
-import { StackGUI } from "./stack-gui";
 import { Card } from "../game-objects/card";
 import { Hand, HandListener } from "../game-objects/hand";
 import { DeckGUI } from "./deck-gui";
@@ -10,6 +9,7 @@ import { Variable } from "../../temporal-logic/variable";
 import { MissionScene } from "../../scenes/mission-scene";
 import { GameInfo } from "../../game";
 import { DiscardGUI } from "./discard-gui";
+import { Stack } from "../game-objects/stack";
 
 
 /**
@@ -19,7 +19,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
     private hand: Hand; // hand object associated with handGUI object
     public cardGUIs: CardGUI[] = []; // a list of cardGUI objects on the hand
-    private readonly stack: StackGUI;
+    private readonly stack: Stack;
     private readonly deck: DeckGUI;
     private readonly maxCards: number = 5;
     public gamestate: GameState;
@@ -30,7 +30,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     constructor(
         scene: MissionScene,
         hand: Hand,
-        stack: StackGUI,
+        stack: Stack,
         deck: DeckGUI,
         gamestate: GameState,
     ) {
@@ -136,6 +136,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds animations for cards if immediate is false ( by dafault )
      */
     arrangeCards(immediate: boolean = false): void {
+        console.log('arrangecards');
 
         // used static values since we only have a max of 5 cards
         let angles = [-4, -2, 0, 2, 4];
@@ -227,13 +228,14 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * @param card: card to be removed
      */
     async removeCard(card: Card) {
-        console.log('removeCard in handgui called', card, this.cardGUIs)
+        //console.log('removeCard in handgui called', card, this.cardGUIs)
+        console.log('removecard in hand gui');
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
                 console.log('found card to remove')
-                this.cardGUIs[pos].setAngle(0).setScale(1);
-                this.stack.addCardGUI(this.cardGUIs[pos]);
-                //this.remove(this.cardGUIs[pos]);
+                this.stack.addCard(this.cardGUIs[pos].card);
+                this.cardGUIs[pos].cross.destroy;
+                this.cardGUIs[pos].destroy;
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);
                 return;
