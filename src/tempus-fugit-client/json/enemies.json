@@ -106,7 +106,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"assets/sprites/enemies/goblin1/goblin1-Sheet.png",
+            "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
 			"image":"goblin2"
         },
@@ -124,7 +124,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"assets/sprites/enemies/goblin1/goblin1-Sheet.png",
+            "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
 			"image":"goblin3"
         },
@@ -142,7 +142,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
 			"image":"goblin_general1"
         },
@@ -160,7 +160,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
 			"image":"goblin_general2"
         },
@@ -250,7 +250,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
             "size": [32,32],
 			"image":"wormling"
         },
@@ -269,7 +269,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"darude_sandworm"
         },
         {
@@ -286,7 +286,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
             "size": [32,32],
 			"image":"snake"
         },
@@ -305,7 +305,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [32,64],
 			"image":"mummy"
         },
         {
@@ -323,7 +323,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"pharaoh_yeah"
         },
         {
@@ -340,8 +340,8 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [32,32],
+            "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
+            "size": [64,64],
 			"image":"bgpuff1"
         },
         {
@@ -358,8 +358,8 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [32,32],
+            "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
+            "size": [64,64],
 			"image":"bgpuff2"
         },
         {
@@ -376,8 +376,8 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [32,32],
+            "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
+            "size": [64,64],
 			"image":"jkpuff"
         },
         {
@@ -394,7 +394,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
 			"image":"ghost"
         },
@@ -430,7 +430,7 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
             "size": [32,32],
 			"image":"stand1"
         },
