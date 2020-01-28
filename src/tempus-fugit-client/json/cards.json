@@ -7,7 +7,7 @@
 		"isStandCard":"false",
 		"standRounds":"3",
 		"action":"target.takeHit(1000, mission);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:-1, local:false, value:false},{variable:'l', start:0, end:-1, local:false, value:false},{variable:'t', start:0, end:-1, local:false, value:false},{variable:'s', start:0, end:-1, local:false, value:false}]);",
-		"comment":"deals 1000 dmg to everything. Resets board -> everything to false",
+		"comment":"deals 1000 dmg to everything. Resets board -> everything to false or !#F(s|l|t|n)",
 		"inDeckAtStart":"2"},
 
 		{"name":"Fireball",
@@ -39,7 +39,7 @@
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"4",
-		"action":"target.takeHit(1, mission);",
+		"action":"target.takeHit(0, mission);",
 		"comment":"",
 		"inDeckAtStart":"4"},
 
@@ -118,6 +118,17 @@
 		"standRounds":"3",
 		"action":"mission.player.heal(15);mission.gameState.setVariableValues({'n':{1:true, 2:true}});",
 		"comment":"eals player by 15 HP, also -> OOn&On",
+		"inDeckAtStart":"2"},
+
+		{"name":"Pot of Greed",
+		"description":"this card heals you by 15 HP!",
+		"image":"pot_of_greed",
+		"formula":"#Ot",
+		"cardKind":"global",
+		"isStandCard":"false",
+		"standRounds":"3",
+		"action":"",
+		"comment":"Should make you draw three cards",
 		"inDeckAtStart":"2"},
 
 		{"name":"Anti-evolution",
