@@ -269,7 +269,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"darude_sandworm"
         },
         {
@@ -305,7 +305,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [32,64],
 			"image":"mummy"
         },
         {
@@ -323,7 +323,7 @@
                 }
             ],
             "sprite":"",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"pharaoh_yeah"
         },
         {
@@ -341,7 +341,7 @@
                 }
             ],
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"bgpuff1"
         },
         {
@@ -359,7 +359,7 @@
                 }
             ],
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"bgpuff2"
         },
         {
@@ -377,7 +377,7 @@
                 }
             ],
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
-            "size": [32,32],
+            "size": [64,64],
 			"image":"jkpuff"
         },
         {
