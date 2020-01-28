@@ -10,7 +10,7 @@
 		
 		
 		"comment":"deals 1000 dmg to everything. Resets board -> everything to false",
-		"inDeckAtStart":"2"},
+		"inDeckAtStart":"20"},
 
 		{"name":"Fireball",
 		"description":"This card deals 10 damage to one chosen enemy!",
@@ -76,7 +76,7 @@
 		"standRounds":"4",
 		"action":"target.takeHit(2, mission);",
 		"comment":"deals 2 damage to all enemies",
-		"inDeckAtStart":"20"},
+		"inDeckAtStart":"2"},
 
 		{"name":"Root pierce",
 		"description":"Deal 7 damage to a foe!",

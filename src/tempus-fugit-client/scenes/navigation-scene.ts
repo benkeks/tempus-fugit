@@ -115,7 +115,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
-        console.log(Enemy.enemies);
+        //console.log(Enemy.enemies);
 
         let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
@@ -288,7 +288,7 @@ export class NavigationScene extends Phaser.Scene {
         // create new cards viewer
         let gamewon = false;
         if (data.mission !== undefined && data.index !== undefined) {
-            if (data.mission.isGameOver() && data.mission.gameWon && !this.player.missionStates[data.index]) {
+            if (data.mission.isGameWon() && !this.player.missionStates[data.index]) {
                 this.player.missionStates[data.index] = true;
                 this.player.maxHP += 25;
                 this.player.currentHP = this.player.maxHP;

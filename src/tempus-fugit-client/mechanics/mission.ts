@@ -92,7 +92,6 @@ export class Mission implements EnemyListener, PlayerListener {
     public _player: Player;
     public gameState: GameState;
 
-    public gameWon: boolean = false;
     public _active: boolean = true;
 
     private stands:[Card, Card] = [null, null];
@@ -228,7 +227,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    public nextWave(next: number = this.waveCounter + 1): void {
+    public nextWave(next: number = this.waveCounter + 1):void {
         // removing this from last wave
         //this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
 
@@ -238,11 +237,7 @@ export class Mission implements EnemyListener, PlayerListener {
             this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
         }
 
-        if (this.waveCounter >= this.getMaxWaveCount()) {
-            this.listener.map(l => l.gameover(this, true));
-            this.gameWon = true;
-            return;
-        }
+        if (this.checkGameOver()) return;        
 
         this.aliveEnemiesCount = this.getEnemies().length;
         for (let e of this.getEnemies()) {
@@ -251,6 +246,16 @@ export class Mission implements EnemyListener, PlayerListener {
 
         this.nextPhase(0);
         this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
+    }
+
+    public checkGameOver():boolean {
+        let gameWon
+        if (this.waveCounter >= this.getMaxWaveCount()) {
+            this.listener.map(l => l.gameover(this, this.isGameWon()));
+            return true;
+        }
+
+        return false;
     }
 
     private drawPhase(): void {
@@ -432,6 +437,10 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public isGameOver(): boolean {
         return this.waveCounter >= this.getMaxWaveCount() || this.player.getHP() <= 0;
+    }
+
+    public isGameWon():boolean {
+        return this.waveCounter >= this.getMaxWaveCount();
     }
 
     async enemyHpChanged(enemy: Enemy, changedFrom: number, changedTo: number) {
