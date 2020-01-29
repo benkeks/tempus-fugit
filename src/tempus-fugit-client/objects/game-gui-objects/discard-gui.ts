@@ -26,7 +26,7 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
 
         // create discard text
         let discardText = scene.add.text(850, 1000, 'Click one card to discard', {
-            fontSize: 40, fontFamily: "appleKid"
+            fontSize: 40, fontFamily: "pressStart"
         });
 
         // make deck invisible
