@@ -161,6 +161,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.enemyGUI = new EnemyGuiLayout(this, this.tfgame);
 
         this.standGUI = new StandGUILayout(this);
+        this.tfgame.gameState.listener.push(this.standGUI);
         this.tfgame.standListener.push(this.standGUI);
 
         this.phaseWheel = new WheelGUI(this, this.tfgame);
@@ -178,11 +179,16 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
-                this.tfgame.gameWon = true;
                 this.tfgame.waveCounter = 100;
+                this.tfgame.active = true;
                 this.gameover(this.tfgame, true);
             }
         })
+
+        this.events.on('resume', function () {
+            this.tfgame.active = true;
+            this.tfgame.checkGameOver();
+        }, this);
     }
 
     update(time: number, delta: number): void {
@@ -246,13 +252,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async gameover(game: Mission, gameWon: boolean) {
-        this.tfgame.destroy();
-        this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        //this.tfgame.destroy();
+        if (this.tfgame.active) {
+            this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        }
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     async storyMonolog(game: Mission, monolog: string) {
-        this.handGUI.unhoverAll();
+        this.tfgame.active = false;
 
         if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog });
     }
