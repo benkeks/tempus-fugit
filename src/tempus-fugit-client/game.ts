@@ -8,6 +8,7 @@ import {HelpScene} from "./scenes/help-scene";
 import {PauseScene} from "./scenes/pause-scene";
 import {DeathScene} from "./scenes/death-scene";
 import { MonologScene } from "./scenes/monolog-scene";
+import { NewCardsScene } from "./scenes/new-cards-scene";
 
 
 export abstract class GameInfo {
@@ -52,7 +53,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene]
+    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene, NewCardsScene]
 };
 
 export class Game extends Phaser.Game {

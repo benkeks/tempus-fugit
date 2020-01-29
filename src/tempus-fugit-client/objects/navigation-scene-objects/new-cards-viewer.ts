@@ -22,12 +22,15 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
     public screenPadding: number = Math.max(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
 
-    public background: Phaser.GameObjects.Rectangle;
+    public background: Phaser.GameObjects.Graphics;
+    public backgroundWidth;
+    public backgroundHeight;
 
     public newCardText: Phaser.GameObjects.Text;
 
-    public box: Phaser.GameObjects.Rectangle;
+    public box: Phaser.GameObjects.Graphics;
     public text: Phaser.GameObjects.Text;
+    public buttonContainer: Phaser.GameObjects.Container;
 
     constructor(scene: Scene) {
         super(scene);
@@ -35,11 +38,20 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.scene = scene;
         this.setPosition(this.screenPadding, this.screenPadding);
 
-        this.background = scene.add.rectangle(0, 0, GameInfo.width - 2 * this.screenPadding, GameInfo.height - 2 * this.screenPadding, 0x607d8b);
-        this.background.setOrigin(0);
+        this.backgroundWidth = GameInfo.width - 2 * this.screenPadding;
+        this.backgroundHeight = GameInfo.height - 2 * this.screenPadding;
+        this.background = scene.add.graphics({
+            x: 0,
+            y: 0,
+            fillStyle: { color: 0x607d8b },
+            lineStyle: { color: 0x000, width: 3 }
+        });
+        //GameInfo.width-2*this.screenPadding, GameInfo.height-2*this.screenPadding
+        this.background.fillRoundedRect(0, 0, this.backgroundWidth, this.backgroundHeight);
+        this.background.strokeRoundedRect(0, 0, this.backgroundWidth, this.backgroundHeight);
         this.add(this.background);
 
-        this.dot = scene.add.sprite(this.background.width / 2, this.background.height - this.screenPadding, "book");
+        this.dot = scene.add.sprite(this.backgroundWidth / 2, this.backgroundHeight - this.screenPadding, "book");
         this.dot.setScale(2.5);
         this.dot.setOrigin(0.5, 0.5);
 
@@ -55,14 +67,14 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             scaleY: 1
         });
 
-        this.newCardText = scene.add.text(this.dot.x, this.screenPadding / 2, "You earned new Cards!", { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
+        this.newCardText = scene.add.text(this.dot.x, this.screenPadding / 2, "You unlocked new Cards!", { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
         this.newCardText.setOrigin(0.5, 0);
         this.add(this.newCardText);
 
         this.add(this.dot);
         this.add(this.dotParticles);
 
-        this.createButton(this.dot.x, this.dot.y, this.screenPadding * 3, this.screenPadding);
+        this.createButton(this.dot.x, this.dot.y, this.screenPadding * 5, this.screenPadding);
         this.box.setAlpha(0);
         this.box.setInteractive(false);
         this.text.setAlpha(0);
@@ -96,7 +108,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             this.cardContainer.add(gui);
         }
 
-        this.cardContainer.setPosition((this.background.width / 2) - (this.cardContainer.getBounds().width / 2) + def_width / 2, def_height / 2 + this.screenPadding + this.newCardText.displayHeight);
+        this.cardContainer.setPosition((this.backgroundWidth / 2) - (this.cardContainer.getBounds().width / 2) + def_width / 2, def_height / 2 + this.screenPadding + this.newCardText.displayHeight);
         this.add(this.cardContainer);
 
         this.scene.add.tween({ // fade in
@@ -141,11 +153,17 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     }
 
     private createButton(x: number, y: number, width: number = undefined, height: number = undefined) {
-        this.box = this.scene.add.rectangle(x, y, width, height, 0x666666);
-        this.box.setOrigin(0.5, 0.5);
+        this.box = this.scene.add.graphics({
+            x: x - width / 2,
+            y: y - height / 2,
+            fillStyle: { color: 0x666666 },
+            lineStyle: { color: 0x000, width: 3 }
+        });
+        this.box.fillRoundedRect(0, 0, width, height);
+        this.box.strokeRoundedRect(0, 0, width, height);
 
-        this.text = this.scene.add.text(x, y, "OK", {
-            fontSize: 20,
+        this.text = this.scene.add.text(x, y, "Return to Navigation Scene", {
+            fontSize: 26,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
             color: '#FFFFFF'
@@ -154,22 +172,23 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
         this.sendToBack(this.box);
 
-        this.box.setInteractive({ useHandCursor: true })
-            .on('pointerdown', function (pointer, localX, localY, event) {
-                this.scene.add.tween({ // fade out
-                    targets: this,
-                    alpha: 0,
-                    ease: "Linear",
-                    duration: this.fadeOutDuration,
-                    repeat: 0,
-                    yoyo: false,
-                    onComplete: function () {
-                        this.setVisible(false);
-                        this.destroy(true);
-                    },
-                    onCompleteScope: this
-                });
-            }, this);
+        let hitArea = new Phaser.Geom.Rectangle(0, 0, width, height);
+        this.box.setInteractive({ useHandCursor: true, hitArea: hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains })
+        this.box.on('pointerdown', function (pointer, localX, localY, event) {
+            this.scene.add.tween({ // fade out
+                targets: this,
+                alpha: 0,
+                ease: "Linear",
+                duration: this.fadeOutDuration,
+                repeat: 0,
+                yoyo: false,
+                onComplete: function () {
+                    this.setVisible(false);
+                    this.destroy(true);
+                },
+                onCompleteScope: this
+            });
+        }, this);
 
         this.add(this.box);
         this.add(this.text);
