@@ -1,8 +1,10 @@
 //@ts-nocheck //ts is very annoying with rexUI
 
-import {HelpButton} from "../help-gui-objects/help-button";
-import {PauseButton} from "./pause-button";
-import {MissionScene} from "../../scenes/mission-scene";
+// Colors
+import { HelpButton } from "../help-gui-objects/help-button";
+import { PauseButton } from "./pause-button";
+import { MissionScene } from "../../scenes/mission-scene";
+
 
 const GUI_TITLE = 0xeceff1;
 const GUI_BORDER = 0x5d4037;
@@ -16,7 +18,7 @@ const GUI_CLOSE = 0xdd6666;
 const PAUSE_HEIGHT = 100;
 const PAUSE_WIDTH = 500;
 const BORDER_WIDTH = 3;
-const TITLE_SPACER = '     ';
+const TITLE_SPACER = '    ';
 
 
 export class PauseWindow {
@@ -120,9 +122,9 @@ export class PauseWindow {
         return scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, text === 'X' ? 23 : 10, color).setStrokeStyle(BORDER_WIDTH, borderColor).setDepth(50),
             text: scene.add.text(0, 0, text, {
-                fontSize: '24px',
+                fontSize: '16px',
+                fontFamily: 'pressStart',
                 color: txtColor,
-                fontFamily: "appleKid"
             }).setDepth(51),
             space: {
                 left: 10,

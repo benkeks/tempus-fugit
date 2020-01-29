@@ -20,8 +20,9 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
         scene.add.existing(this);
         this.deck = deck;
         this.scene = scene;
-        this.text = this.scene.add.text(x - 35, y + 100, deck.cards.length + ' Karten').setStyle({
-            fontFamily: 'Arial',
+        this.text = this.scene.add.text(x - 50, y + 100, deck.cards.length + ' Karten').setStyle({
+            fontSize: '12px',
+            fontFamily: 'pressStart',
         });
         this.deck.listener.push(this);
     }
@@ -34,7 +35,7 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
         this.text.setText(numCards + ' Karten');
     }
 
-    cardTypesChanged(deck: Deck, newCards: Card[]) {}
+    cardTypesChanged(deck: Deck, newCards: Card[]) { }
     /**
     * makes all deck related objects invisible / visible
     * @param visible: true to make deck visible 

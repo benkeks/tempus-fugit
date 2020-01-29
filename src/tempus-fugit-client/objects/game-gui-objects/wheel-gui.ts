@@ -100,7 +100,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
                         text: this.scene.add.text(80, 0, "  Done", {
                             fontSize: 20,
                             fontStyle: 'bold',
-                            fontFamily: 'appleKid',
+                            fontFamily: 'pressStart',
                             color: '#FFFFFF'
                         }),
                         space: {
@@ -128,7 +128,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.text = this.scene.add.text(x, y, "Done", {
             fontSize: 20,
             fontStyle: 'bold',
-            fontFamily: 'appleKid',
+            fontFamily: 'pressStart',
             color: '#FFFFFF'
         });
         this.text.setOrigin(0.5, 0.5);

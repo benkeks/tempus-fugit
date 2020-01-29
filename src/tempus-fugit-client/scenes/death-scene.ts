@@ -1,4 +1,4 @@
-import {MissionScene} from "./mission-scene";
+import { MissionScene } from "./mission-scene";
 
 export class DeathScene extends Phaser.Scene {
     static deathQuit: boolean = false;
@@ -23,12 +23,12 @@ export class DeathScene extends Phaser.Scene {
         this.add.rectangle(1920 / 2, 1080 / 2, 1920, 1080, 0x000000);
         this.add.sprite(1920 / 2, 430, 'skull').setScale(5);
 
-        let createText = (text) => this.add.text(0, 0, text, {fontSize: '36px', fontFamily: "appleKid"});
+        let createText = (text) => this.add.text(0, 0, text, { fontSize: '36px', fontFamily: "pressStart" });
 
         this.tryAgain = createText('Try Again?');
         this.backToNav = createText('Back to Navigation');
         this.quitText = createText('Quit');
-        let gameOver = this.add.text(0,0,'GAME OVER', {fontSize: '72px', fontFamily: "appleKid"});
+        let gameOver = this.add.text(0, 0, 'GAME OVER', { fontSize: '72px', fontFamily: "pressStart" });
 
         //@ts-ignore
         let sizer = this.rexUI.add.sizer({

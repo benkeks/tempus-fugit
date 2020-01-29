@@ -71,9 +71,9 @@
                     "action": "return;"
                 }
             ],
-            "sprite":"",
-            "size": [],
-			"image":"slime1"
+            "sprite":"assets/sprites/enemies/slime_mother/mama-Sheet.png",
+            "size": [64,64],
+			"image":"slime_mother"
         },
         {
             "name":"goblin1",
@@ -96,7 +96,7 @@
         {
             "name":"goblin2",
             "maxHP":40,
-            "baseAttack":8,
+            "baseAttack":6,
             "specialAttack":{
                 "formula":"",
                 "attack": "return;"
