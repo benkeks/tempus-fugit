@@ -44,7 +44,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
        });
 
         this.sprite.anims.play(texture);
-        this.sprite.setScale(5);
+        this.sprite.setScale(GameInfo.scale);
 
         this.addText("");
         this.updateEnemyAttributes();
@@ -57,18 +57,14 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.setInteractive();
 
         this.toolTip = new ToolTip(scene, 0, -GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30), this.sprite);
-        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
-        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE);
-        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, {fontSize:"22px"});
-        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'AppleKid', color: '#FF0000' }, false);
+        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
+        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
+        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
+        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
         this.add(this.toolTip);
-
-        /*this.damageText = scene.add.text(x,y,"abc",{});
-        this.damageText.setVisible(false);
-        this.add(this.damageText);*/
     }
 
     public disableListeners():void {

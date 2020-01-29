@@ -53,7 +53,7 @@ export class Textbox {
 
         // position is bottom right of screen
         const width = this.scene.scene.systems.game.canvas.width * 0.6;
-        const height = this.scene.scene.systems.game.canvas.height *0.25;
+        const height = this.scene.scene.systems.game.canvas.height * 0.25;
 
         // create a text box with fixed width, height depends on content
         const nextDialog = this.storyDialogQueue.shift().text;
@@ -227,9 +227,8 @@ export class Textbox {
         let text = scene.rexUI.add.BBCodeText(0, 0, '', {
             fixedWidth: fixedWidth,
             fixedHeight: fixedHeight,
-            fontFamily: 'appleKid',
-
-            fontSize: '20px',
+            fontFamily: 'pressStart',
+            fontSize: '14px',
             wrap: {
                 mode: 'word',
                 width: wrapWidth

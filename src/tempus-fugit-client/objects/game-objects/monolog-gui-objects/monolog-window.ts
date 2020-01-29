@@ -14,8 +14,8 @@ export class MonologWindow {
     private blinkIntervall = 400;
     private blinkCount = 20;
     private fontStyle = {
-        fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2),
-        fontFamily: "appleKid"
+        fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 1.5),
+        fontFamily: "pressStart"
     };
     private displayAll = false;
     private typing = true;
@@ -37,6 +37,7 @@ export class MonologWindow {
         this.text = this.scene.add.text(this.height, this.width, '', this.fontStyle);
         this.text.setWordWrapWidth(this.wrapWidth);
         this.text.setAlign('center');
+        this.text.setLineSpacing(20);
         this.displayMonologue(monolog);
 
         // skip button
@@ -44,7 +45,7 @@ export class MonologWindow {
         if (gameOver) text = "Return to Map"
 
         this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text,
-            { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2), fontFamily: "appleKid" })
+            this.fontStyle)
             .setInteractive()
             .on('pointerdown', function () {
                 this.switchToMissionScene();

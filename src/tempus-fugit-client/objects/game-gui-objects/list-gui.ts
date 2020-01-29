@@ -20,7 +20,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
     public yPadding: number = 10;
     public xPadding: number = 20;
 
-    public maxY:number;
+    public maxY: number;
 
     public maxTextWidth: number = 0;
     public fixedMaxTextWidth: boolean = false;
@@ -30,7 +30,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
     protected isDestroyed = false;
 
-    public tween:Tweens.Tween;
+    public tween: Tweens.Tween;
 
     constructor(
         scene: Phaser.Scene,
@@ -61,7 +61,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
                 if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
             }
 
-            element.setPosition(-element.getBounds().width/2, y+this.yPadding);
+            element.setPosition(-element.getBounds().width / 2, y + this.yPadding);
 
             line.setOrigin(0, 0);
             let w: number = this.maxTextWidth + 2 * this.xPadding;
@@ -83,12 +83,13 @@ export class ListGUI extends Phaser.GameObjects.Container {
         let strokeWidth: number = this.strokeRectWidth;
 
         this.backgroundGraphics = this.scene.add.graphics({
-            x:-(this.maxTextWidth + strokeWidth + 2 * this.xPadding)/2,
-            y: dHeight - strokeWidth, 
-            fillStyle:{color:this.defaultColor},
-            lineStyle:{width:this.strokeRectWidth, color:this.defaultStrokeColor}});
+            x: -(this.maxTextWidth + strokeWidth + 2 * this.xPadding) / 2,
+            y: dHeight - strokeWidth,
+            fillStyle: { color: this.defaultColor },
+            lineStyle: { width: this.strokeRectWidth, color: this.defaultStrokeColor }
+        });
 
-            //this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight
+        //this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight
         this.backgroundGraphics.fillRoundedRect(0, 0, this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight);
         this.backgroundGraphics.strokeRoundedRect(0, 0, this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight);
 
@@ -105,9 +106,9 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.add(this.sprite);
     }
 
-    public addText(text: string, alignment: string = ListGUI.ALIGN_CENTRE, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'AppleKid', color: '#FF0000' }, lineVisible:boolean=true): Text {
+    public addText(text: string, alignment: string = ListGUI.ALIGN_CENTRE, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FF0000' }, lineVisible: boolean = true, lineSpacing: number = 0): Text {
         let line: Line = this.scene.add.line(0, 0, 0, 0, 100, 0, this.defaultStrokeColor, 1);
-        let t: Text = this.scene.add.text(0, 0, text, font);
+        let t: Text = this.scene.add.text(0, 0, text, font).setLineSpacing(lineSpacing);
         t.style.align = alignment;
 
         this.separatingLines.push(line);
@@ -131,7 +132,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.add(line);
         this.add(cont);
 
-        let w =  cont.getBounds().width;
+        let w = cont.getBounds().width;
         if (this.maxTextWidth < w) this.maxTextWidth = w;
 
         this.revalidate();
@@ -177,7 +178,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
     public fadeOut(duration = 200) {
         if (this.tween) this.tween.stop(1);
-        
+
         this.setAlpha(1);
         this.tween = this.scene.add.tween({ // fade out
             targets: this,

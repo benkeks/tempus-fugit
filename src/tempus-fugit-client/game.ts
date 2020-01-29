@@ -20,6 +20,8 @@ export abstract class GameInfo {
     public static width: number = 1920;
     public static height: number = 1080;
 
+    public static scale:number = 5;
+
     public static convertRelativeCoordinates(axis: number, coordinate: number): number {
         if (axis == this.X_AXIS) {
             return (coordinate / 100.0) * this.width;

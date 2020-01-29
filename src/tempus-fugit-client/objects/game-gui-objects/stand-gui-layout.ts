@@ -1,10 +1,10 @@
 
 
 import GameObject = Phaser.GameObjects.GameObject;
-import {Card} from "../game-objects/card";
-import {StandListener} from "../../mechanics/mission";
-import {CardGUI} from "./card-gui";
-import {StandDescriptionGUI} from "./stand-description-gui";
+import { Card } from "../game-objects/card";
+import { StandListener } from "../../mechanics/mission";
+import { CardGUI } from "./card-gui";
+import { StandDescriptionGUI } from "./stand-description-gui";
 import { MissionScene } from "../../scenes/mission-scene";
 import { GameStateListener, GameState } from "../game-objects/game-state";
 
@@ -19,7 +19,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     private roundList: Phaser.GameObjects.Text[];
     private cardsList: CardGUI[];
     public scene: MissionScene;
-    private stands:[Card, Card];
+    private stands: [Card, Card];
 
     constructor(
         scene: MissionScene,
@@ -37,8 +37,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.scene.add.existing(this);
     }
 
-    updateStandGUI(stands:[Card, Card]) {
-        let font1: Object = { fontSize: '40px', fontFamily: 'appleKid', color: '#FFFFFF' }
+    updateStandGUI(stands: [Card, Card]) {
+        let font1: Object = { fontSize: '40px', fontFamily: 'pressStart', color: '#FFFFFF' }
         for (let el of this.elementList) {
             el.destroy();
         }
@@ -51,7 +51,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.hoverElementList = [];
         this.roundList = [];
         this.cardsList = [];
-        for (let i of [0,1]) {
+        for (let i of [0, 1]) {
             let stand = this.stands[i];
             if (stand != null) {
                 let standImage = this.scene.add.sprite(200*i, 0, stand.getImage(), 0).setScale(4, 4);
@@ -87,19 +87,19 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
 
 
-    Attacking(stand: Card, index:number) {
-        for (let i of [0,1]) {
+    Attacking(stand: Card, index: number) {
+        for (let i of [0, 1]) {
             if (this.stands[i] === stand) {
                 if (i == 1 && this.stands[0] == null) i = 0;
-                this.scene.createAttackAnimation(this.scene,this.elementList[i], "+");
+                this.scene.createAttackAnimation(this.scene, this.elementList[i], "+");
                 break;
             }
         }
     }
 
-    public updateTint(gameState:GameState) {
+    public updateTint(gameState: GameState) {
         let elementIndex = 0;
-        for (let i of [0,1]) {
+        for (let i of [0, 1]) {
             if (this.stands[i] == null) continue;
 
             if (!gameState.evaluate(this.stands[i])) {

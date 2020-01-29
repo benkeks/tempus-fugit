@@ -252,7 +252,7 @@ export class NavigationScene extends Phaser.Scene {
     }
 
     create(data?) {
-        let scale:number = 5;
+        let scale:number = GameInfo.scale;
 
         // TODO: implement cheat code
         this.input.keyboard.on("keydown", e => {
