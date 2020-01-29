@@ -23,6 +23,7 @@ export class Card {
     public action:Function;
     public inDeckAtStart:number;
     public maxCardsInDeck:number = 5;
+    public formulaRepresentation:string = undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -78,6 +79,11 @@ export class Card {
         return this.formula;
     }
 
+    public getFormulaGuiString():string {
+        if (this.formulaRepresentation !== undefined) return this.formulaRepresentation;
+        else return this.formula.generateRepresentation(true, true);
+    }
+
 
     /**
      * Getter method for the attack power attribute
@@ -123,9 +129,10 @@ export class Card {
 
     }
 
-    public act(mission: Mission, player: Player): void {
+    public act(mission: Mission, player: Player): boolean {
+        let val:boolean = mission.gameState.evaluate(this.getFormula());
         if (this.standRounds > 0) {
-            if (mission.gameState.evaluate(this.getFormula())) {
+            if (val) {
                 if (this.cardKind == Card.RANDOM) {
                     this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
                 } else if (this.cardKind == Card.DIRECTED) {
@@ -147,6 +154,7 @@ export class Card {
             this.decreaseRoundsRemaining();
         }
 
+        return val;
     }
 
     public decreaseRoundsRemaining() {
@@ -200,6 +208,8 @@ export class Card {
             );
             new_c.inDeckAtStart = parseInt(c.inDeckAtStart);
             
+            if (c.formulaRepresentation) new_c.formulaRepresentation = c.formulaRepresentation;
+
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
 
             this.cards[c.name] = new_c;

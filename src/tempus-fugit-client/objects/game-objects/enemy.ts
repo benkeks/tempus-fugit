@@ -10,10 +10,12 @@ export class Enemy {
     public static enemies:{[name:string]:Enemy} = {};
     
     public name: string; // The enemy's name
+    public key:string; // key in enemies dictionary, if no given is equal to name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
     public baseAttack: number; // The enemy's base attack strength
     public description:string;
+    public specialAttackDescription:string = "";
     public image:string;
 
     public specialAttack: Card; // The enemy's base attack strength
@@ -37,8 +39,10 @@ export class Enemy {
 
     public copy():Enemy {
        let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks, this.sprite, this.size);
+       new_enemy.key = this.key;
        new_enemy.description = this.description;
        new_enemy.image = this.image;
+       new_enemy.specialAttackDescription = this.specialAttackDescription;
 
        return new_enemy;
     }
@@ -54,6 +58,7 @@ export class Enemy {
      */
     constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
         this.name = name;
+        this.key = this.name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
@@ -157,24 +162,34 @@ export class Enemy {
             }
 
             let arr = [];
-            for (let i in e.reactAttack) {
-                let att = e.reactAttack[i];
-                arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
-                    Card.DIRECTED, false, 0,  att.action));
+            if (e.reactAttack) {
+                for (let i in e.reactAttack) {
+                    let att = e.reactAttack[i];
+                    arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
+                        Card.DIRECTED, false, 0,  att.action));
+                }
             }
+
+            let special:Card = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
+            Card.DIRECTED, false, 0,  e.specialAttack.action);
+            if (e.specialAttack.formulaRepresentation) special.formulaRepresentation = e.specialAttack.formulaRepresentation;
 
             let enemy = new Enemy(
                 e.name,
                 e.maxHP,
                 e.baseAttack,
-                new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
-                    Card.DIRECTED, false, 0,  e.specialAttack.action),
+                special,
                 arr,
                 e.sprite,
                 e.size
             );
             enemy.image = e.image;
-            this.enemies[e.name] = enemy;
+
+            if (e.specialAttackDescription) enemy.specialAttackDescription = e.specialAttackDescription;
+
+            if (e.key) enemy.key = e.key;
+
+            this.enemies[enemy.key] = enemy;
             if (e.description) enemy.description = e.description;
         }
     }

@@ -46,7 +46,7 @@ export class Player {
     listener: PlayerListener[]; // List of objects listening to player events
     public _active: boolean;
 
-    public missionStates: boolean[];
+    public missionStates: boolean[] = [false, false, false, false, false, false, false, false, false];
 
     /**
      * Setter for the player's hit points
@@ -130,6 +130,7 @@ export class Player {
                 mission.pushStand(card);
                 card.spawnStand(enemy, mission);
             } else {
+                
                 switch (card.getKind()) {
 
                     case Card.OTHER:
@@ -158,8 +159,10 @@ export class Player {
                         
                         this.listener.map(l => l.Attacking(this, enemy));
                         break;
-                }
+                    }
             }
+            
+            this.listener.map(l => l.cardPlayed(this, card));
         }
         this.hand.removeCard(card);
     }
@@ -223,4 +226,5 @@ export interface PlayerListener {
     stateValuesChanged(player: Player): void;
     Activated(player: Player, active: boolean);
     Attacking(player: Player, target: Enemy);
+    cardPlayed(player:Player, card:Card);
 }

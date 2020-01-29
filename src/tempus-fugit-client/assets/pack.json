@@ -12,6 +12,56 @@
             },
             {
                 "type": "image",
+                "key": "lightning_strike",
+                "url": "assets/sprites/cards/lightning_strike.png"
+            },
+            {
+                "type": "image",
+                "key": "dark_beam",
+                "url": "assets/sprites/cards/dark_beam1.png"
+            },
+            {
+                "type": "image",
+                "key": "sword",
+                "url": "assets/sprites/cards/atk.png"
+            },
+            {
+                "type": "image",
+                "key": "sun",
+                "url": "assets/sprites/cards/sun.png"
+            },
+            {
+                "type": "image",
+                "key": "pot_of_greed",
+                "url": "assets/sprites/cards/poteau.png"
+            },
+            {
+                "type": "image",
+                "key": "light_lens",
+                "url": "assets/sprites/cards/more_light.png"
+            },
+            {
+                "type": "image",
+                "key": "unknown",
+                "url": "assets/sprites/cards/unknown.png"
+            },
+            {
+                "type": "image",
+                "key": "transform_scribble",
+                "url": "assets/sprites/cards/transform_scribble.png"
+            },
+            {
+                "type": "image",
+                "key": "weak",
+                "url": "assets/sprites/cards/weak.png"
+            },
+            {
+                "type": "image",
+                "key": "weak_aura",
+                "url": "assets/sprites/cards/weak_aura.png"
+            },
+            {
+                "type": "image",
                 "key": "lightning_stand",
                 "url": "assets/sprites/cards/lightning_stand.png"
             },
@@ -47,7 +97,7 @@
             },
             {
                 "type": "image",
-                "key": "lightning",
+                "key": "lightning_rain",
                 "url": "assets/sprites/cards/lightning.png"
             },
             {
@@ -97,11 +147,6 @@
             },
             {
                 "type": "image",
-                "key": "stack",
-                "url": "assets/sprites/stack.png"
-            },
-            {
-                "type": "image",
                 "key": "deck",
                 "url": "assets/sprites/deck.png"
             },
@@ -110,11 +155,11 @@
                 "key": "blood",
                 "url": "assets/sprites/blood.png"
             },
-	    {
-		"type": "image",
-		"key": "cross",
-		"url":  "assets/sprites/cross.png"
-	    },
+            {
+                "type": "image",
+                "key": "cross",
+                "url": "assets/sprites/cross.png"
+            },
             {
                 "type": "image",
                 "key": "card-outline",

@@ -4,6 +4,8 @@ import {EnemyGUI} from "./enemy-gui";
 import { Mission, MissionListener } from "../../mechanics/mission";
 import { StoryDialog } from "../../mechanics/story-dialog";
 import { Scene } from "phaser";
+import { MissionScene } from "../../scenes/mission-scene";
+import { GameState } from "../game-objects/game-state";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public enemies:EnemyGUI[] = [];
@@ -14,21 +16,21 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
     public fadeInOffset = 500;
 
-    public scene:Scene;
+    public scene:MissionScene;
 
-    constructor(scene:Phaser.Scene, mission:Mission) {
+    constructor(scene:MissionScene, mission:Mission) {
         super(scene);
         this.scene = scene;
 
         EnemyGuiLayout.enemyLayout = {
-            1: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 70), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            1: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 77), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
 
-            2: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 80), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            2: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 65), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
 
-            3: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 35)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 60), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 55)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 80), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 45)]],
+            3: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 65), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 77), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 50)]],
         };
 
         this.mission = mission;
@@ -48,7 +50,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
         });
     }
 
-    public setEnemies(enemies:Enemy[], fadeIn:boolean=false) {
+    public setEnemies(enemies:Enemy[], fadeIn:boolean=false, gameState:GameState=undefined) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
             enemy.disableListeners();
@@ -68,6 +70,8 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
             let y = positions[i][1];
 
             let enemyGUI:EnemyGUI = new EnemyGUI(this.scene, enemies[i], x, y, enemies[i].image);
+            this.mission.gameState.listener.push(enemyGUI);
+            enemyGUI.updateTint(this.mission.gameState);
 
             this.add(enemyGUI);
             this.enemies.push(enemyGUI);

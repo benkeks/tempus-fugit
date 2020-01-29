@@ -92,12 +92,14 @@ export class Mission implements EnemyListener, PlayerListener {
     public _player: Player;
     public gameState: GameState;
 
-    public gameWon: boolean = false;
     public _active: boolean = true;
 
     private stands:[Card, Card] = [null, null];
 
     public loot:Card[] = []; // card name and maximal number of occurances
+
+    public iterateEachParticipand:boolean=true;
+    public iteratorIndex:number = 0;
     // TODO: effect list
 
     public copy(): Mission {
@@ -209,18 +211,25 @@ export class Mission implements EnemyListener, PlayerListener {
                 break;
         }
 
-        /*this.emitter.emit(this.getPhaseString());
-        if (this.curPhase === 0) {
-            this.incrementTurnCount();
-            this.emitter.emit('next-round');
-        }*/
-
         this.checkDialogEvents();
+
+        if (this.iterateEachParticipand) this.nextPlayer();
     }
 
-    public nextWave(next: number = this.waveCounter + 1): void {
+    public async nextPlayer() {
+        switch (this.curPhase) {
+            case 3:
+                this.standPhaseIterator();
+                break;
+            case 4:
+                this.enemyPhaseIterator();
+                break;
+        }
+    }
+
+    public nextWave(next: number = this.waveCounter + 1):void {
         // removing this from last wave
-        this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
+        //this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
 
         this.waveCounter = next;
 
@@ -228,11 +237,7 @@ export class Mission implements EnemyListener, PlayerListener {
             this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
         }
 
-        if (this.waveCounter >= this.getMaxWaveCount()) {
-            this.listener.map(l => l.gameover(this, true));
-            this.gameWon = true;
-            return;
-        }
+        if (this.checkGameOver()) return;        
 
         this.aliveEnemiesCount = this.getEnemies().length;
         for (let e of this.getEnemies()) {
@@ -241,6 +246,16 @@ export class Mission implements EnemyListener, PlayerListener {
 
         this.nextPhase(0);
         this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
+    }
+
+    public checkGameOver():boolean {
+        let gameWon
+        if (this.waveCounter >= this.getMaxWaveCount()) {
+            this.listener.map(l => l.gameover(this, this.isGameWon()));
+            return true;
+        }
+
+        return false;
     }
 
     private drawPhase(): void {
@@ -256,30 +271,68 @@ export class Mission implements EnemyListener, PlayerListener {
         this.gameState.active = false;
     }
 
-    private standPhase(): void {
-        for (let i of [0, 1]) {
-            let stand = this.getStands()[i];
-            if (stand != null) {
-                let attacked = stand.act(this, this.player);
-                if (stand.getRoundsRemaining() <= 0) {
-                    this.stands[i] = null;
-                }
-                for (var l of this.standListener) {
-                    l.updateStandGUI(this.stands);
-                    l.Attacking(stand);
-                }
+    private standPhaseIterator() {
+        while (this.iteratorIndex < this.stands.length && this.stands[this.iteratorIndex] == null) {
+            this.iteratorIndex++;
+        }
+
+        if (this.iteratorIndex >= this.stands.length) {
+            this.nextPhase();
+            return;
+        }
+
+        let i = this.iteratorIndex;
+        let stand = this.stands[i];
+        if (stand != null) {
+            let attacked = stand.act(this, this.player);
+            if (stand.getRoundsRemaining() <= 0) {
+                this.stands[i] = null;
+            }
+            for (var l of this.standListener) {
+                l.updateStandGUI(this.stands);
+                if (attacked) l.Attacking(stand, this.iteratorIndex);
             }
         }
+
+        this.iteratorIndex++;
+    }
+
+    private standPhase():void {
+        this.iteratorIndex = 0;
         this.active = false;
+
+        if (!this.iterateEachParticipand) {
+            for (let i of [0, 1]) {
+                this.standPhaseIterator();
+            }
+        }
+    }
+
+    private enemyPhaseIterator() {
+        while (this.iteratorIndex < this.getEnemies().length && this.getEnemies()[this.iteratorIndex].currentHP <= 0) {
+            this.iteratorIndex++;
+        }
+
+        if (this.iteratorIndex >= this.getEnemies().length) {
+            this.nextPhase();
+            return;
+        }
+
+        let e = this.getEnemies()[this.iteratorIndex];
+        e.performTurn(this);
+
+        this.iteratorIndex++;
     }
 
     private enemyPhase(): void {
+        this.iteratorIndex = 0;
+        this.active = false;
+
         for (var stand of this.stands) {
             if (stand != null) stand.turnNormal();
         }
-        this.getEnemies().map(e => e.performTurn(this));
 
-        this.active = false;
+        if (!this.iterateEachParticipand) this.getEnemies().map(e => e.performTurn(this));
     }
 
     private endOfRound(): void {
@@ -362,6 +415,14 @@ export class Mission implements EnemyListener, PlayerListener {
         return this.stands;
     }
 
+    public getStandCount():number {
+        let count = 0;
+        for (let c of this.stands) {
+            if (c != null) count++;
+        }
+        return count;
+    }
+
     public getMaxWaveCount(): number {
         return this.enemies.length;
     }
@@ -376,6 +437,10 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public isGameOver(): boolean {
         return this.waveCounter >= this.getMaxWaveCount() || this.player.getHP() <= 0;
+    }
+
+    public isGameWon():boolean {
+        return this.waveCounter >= this.getMaxWaveCount();
     }
 
     async enemyHpChanged(enemy: Enemy, changedFrom: number, changedTo: number) {
@@ -401,9 +466,11 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    async Activated(player: Player, active: boolean) { }
+    async Activated(player: Player, active: boolean) {}
 
-    async Attacking(actor, target = undefined) {
+    async Attacking(actor, target = undefined) {}
+
+    async cardPlayed(player, card) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
     }
 
@@ -466,7 +533,7 @@ export interface MissionListener {
 
 export interface StandListener {
     updateStandGUI(stands: [Card, Card]): void;
-    Attacking(stand: Card);
+    Attacking(stand: Card, index:number);
     /*removeStand(stand: Card):void;
     updateStandText(): void;
     turnRed(): void;

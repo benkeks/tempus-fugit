@@ -16,9 +16,10 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     private sword: Phaser.GameObjects.Sprite;
     private heart: Phaser.GameObjects.Sprite;
 
+    public scene:MissionScene;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         texture: string,
         player: Player,
         hp: number = 100,
@@ -28,6 +29,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         super(scene, x, y, texture);
         this.scene.add.existing(this);
         this.player = player;
+        this.scene = scene;
         const textStyle = {
             fontSize: '40px',
             fontStyle: 'bold',
@@ -83,8 +85,10 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     async Activated(player: Player, active: boolean) {}
 
     async Attacking(player:Player, target:Enemy) {
-        MissionScene.createAttackAnimation(this.scene, this);
+        this.scene.createAttackAnimation(this.scene, this);
     } 
+
+    async cardPlayed(player:Player, card:Card) {}
 }
 
 /**

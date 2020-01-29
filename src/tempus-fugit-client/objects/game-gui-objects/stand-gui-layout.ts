@@ -6,21 +6,22 @@ import {StandListener} from "../../mechanics/mission";
 import {CardGUI} from "./card-gui";
 import {StandDescriptionGUI} from "./stand-description-gui";
 import { MissionScene } from "../../scenes/mission-scene";
+import { GameStateListener, GameState } from "../game-objects/game-state";
 
 
 /**
  * @author Florian
  */
-export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener{
+export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener, GameStateListener {
 
     private elementList: Phaser.GameObjects.Sprite[];
     private roundList: Phaser.GameObjects.Text[];
     private cardsList: CardGUI[];
-    public scene: Phaser.Scene;
+    public scene: MissionScene;
     private stands:[Card, Card];
 
     constructor(
-        scene: Phaser.Scene,
+        scene: MissionScene,
         x = 500,
         y = 600
 
@@ -31,6 +32,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList = [];
         this.roundList = [];
         this.cardsList = [];
+
+        this.scene.add.existing(this);
     }
 
     updateStandGUI(stands:[Card, Card]) {
@@ -74,15 +77,43 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         for (let el of this.roundList) {
             this.add(el);
         }
-        this.scene.add.existing(this);
+
+        this.updateTint(this.scene.tfgame.gameState);
     }
 
-    Attacking(stand: Card) {
-        for (let i in this.stands) {
+
+
+    Attacking(stand: Card, index:number) {
+        for (let i of [0,1]) {
             if (this.stands[i] === stand) {
-                MissionScene.createAttackAnimation(this.scene,this.elementList[i]);
+                if (i == 1 && this.stands[0] == null) i = 0;
+                this.scene.createAttackAnimation(this.scene,this.elementList[i], "+");
+                break;
             }
         }
+    }
+
+    public updateTint(gameState:GameState) {
+        let elementIndex = 0;
+        for (let i of [0,1]) {
+            if (this.stands[i] == null) continue;
+
+            if (!gameState.evaluate(this.stands[i])) {
+                this.elementList[elementIndex].setTint(0x333333);
+            } else this.elementList[elementIndex].clearTint()
+            elementIndex++;
+        }
+    }
+
+    roundChanged(gameState: import("../game-objects/game-state").GameState, lastRound: number, activeRound: number) {
+        this.updateTint(gameState);
+    }
+    async variableChanged(gameState: import("../game-objects/game-state").GameState, oldVariable: import("../../temporal-logic/variable").Variable, variable: import("../../temporal-logic/variable").Variable, valueChanges: { [state: number]: boolean; }) {
+        this.updateTint(gameState);
+    }
+    energyChanged(gameState: import("../game-objects/game-state").GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number): void {
+    }
+    activated(gameState: import("../game-objects/game-state").GameState) {
     }
 
 }
