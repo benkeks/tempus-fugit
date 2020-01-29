@@ -14,6 +14,7 @@ import {PauseButton} from "../objects/pause-gui-objects/pause-button";
 import { MissionNameGui } from "../objects/navigation-scene-objects/mission-name-gui";
 import {DeathScene} from "./death-scene";
 import {PauseWindow} from "../objects/pause-gui-objects/pause-window";
+import { NewCardsScene } from "./new-cards-scene";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -31,7 +32,6 @@ export class NavigationScene extends Phaser.Scene {
 
     public alreadyInitted: boolean = false;
 
-    public cardViewer:NewCardsViewer = undefined;
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
 
@@ -334,7 +334,7 @@ export class NavigationScene extends Phaser.Scene {
                         [153,170],
                         [267,138],
                         [309,140],
-                        [348, 142],
+                        [347, 142],
                         [174, 71],
                         [121, 75]];
 
@@ -381,16 +381,16 @@ export class NavigationScene extends Phaser.Scene {
 
         this.levelText = new MissionNameGui(this, GameInfo.width/2, GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
 
-        if (data.mission && gamewon && data.mission.loot.length > 0) {
-            let loot = data.mission.loot;
-            this.cardViewer = new NewCardsViewer(this);
-            this.cardViewer.flush(loot);
-
-            this.deck.addCardType(loot);
-        }
-
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
+
+        if (data.mission && gamewon && data.mission.loot.length > 0) {
+            let loot = data.mission.loot;
+            
+            this.deck.addCardType(loot);
+            this.scene.run("NewCardScene", {loot:loot});
+            this.scene.pause("NavigationScene");
+        }
     }
 
     public initGame() {
