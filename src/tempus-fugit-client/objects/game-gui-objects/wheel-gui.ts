@@ -27,8 +27,8 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         }
 
         if (!x || !y) {
-            x = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 98);
-            y = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 98);
+            x = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 99.25);
+            y = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 97);
         }
 
         super(scene, x, y);
@@ -37,14 +37,15 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.game = game;
         game.listener.push(this);
 
-        let buttonWidth = size;
-        let buttonHeight = 50;
         this.scene = scene;
         this.size = size;
 
-        this.wheel = this.scene.add.sprite(0, -buttonHeight, "wheel", 0);
-        this.wheel.setOrigin(1, 1)
-        this.wheel.setScale(size / this.wheel.displayWidth);
+        this.wheel = this.scene.add.sprite(0, 0, "wheel", 0);
+        this.wheel.setRotation(-Math.PI/2);
+        this.wheel.setOrigin(0,1)
+
+        let scale = size / this.wheel.displayWidth;
+        this.wheel.setScale(scale);
 
         scene.anims.create({
             key: "wheel_play_to_stand",
@@ -69,69 +70,27 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
         this.add(this.wheel);
 
-        this.createButton(-buttonWidth / 2, -buttonHeight / 2, buttonWidth, buttonHeight);
+        let buttonHeight = 35;
+        let buttonWidth = 178;
+
+        this.createButton(-19, -9, buttonWidth, buttonHeight);
+        this.setScale(1.2);
     }
 
     /**
      *  creates for button for ending selection of boolean values
      */
     private createButton(x: number, y: number, width: number = undefined, height: number = undefined) {
-        /*// @ts-ignore
-        let padding = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 1)
-        let buttons = this.scene.uirexUI.add
-            .buttons({
-                x: x,
-                y: y - padding,
-                orientation: "y",
-                buttons: [
-                    // @ts-ignore
-                    this.scene.rexUI.add.label({
-                        width: 70,
-                        height: 30,
-                        // @ts-ignore
-                        background: this.scene.rexUI.add.roundRectangle(
-                            0,
-                            0,
-                            120,
-                            60,
-                            10,
-                            COLOR_BUTTON
-                        ),
-                        text: this.scene.add.text(80, 0, "  Done", {
-                            fontSize: 20,
-                            fontStyle: 'bold',
-                            fontFamily: 'pressStart',
-                            color: '#FFFFFF'
-                        }),
-                        space: {
-                            left: 10,
-                            right: 10
-                        }
-                    })
-                ]
-            })
-            .layout();
-
-        buttons.on(
-            "button.click",
-            function (button, index, pointer, event) {
-                this.game.nextPhase();
-            },
-            this
-        );
-
-        this.add(buttons);*/
-
         this.box = this.scene.add.rectangle(x, y, width, height, 0x666666);
-        this.box.setOrigin(0.5, 0.5);
+        this.box.setOrigin(1);
 
-        this.text = this.scene.add.text(x, y, "Done", {
+        this.text = this.scene.add.text(x-width/2, y-height/2, "Done", {
             fontSize: 20,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
             color: '#FFFFFF'
         });
-        this.text.setOrigin(0.5, 0.5);
+        this.text.setOrigin(0.5);
 
         this.sendToBack(this.box);
 

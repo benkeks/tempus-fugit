@@ -28,9 +28,9 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
     public newCardText: Phaser.GameObjects.Text;
 
-    public box: Phaser.GameObjects.Graphics;
-    public text: Phaser.GameObjects.Text;
-    public buttonContainer: Phaser.GameObjects.Container;
+    public box:Phaser.GameObjects.Graphics;
+    public text:Phaser.GameObjects.Text;
+    public hoverBox:Phaser.GameObjects.Graphics;
 
     constructor(scene: Scene) {
         super(scene);
@@ -154,15 +154,20 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
     private createButton(x: number, y: number, width: number = undefined, height: number = undefined) {
         this.box = this.scene.add.graphics({
-            x: x - width / 2,
-            y: y - height / 2,
-            fillStyle: { color: 0x666666 },
-            lineStyle: { color: 0x000, width: 3 }
-        });
-        this.box.fillRoundedRect(0, 0, width, height);
-        this.box.strokeRoundedRect(0, 0, width, height);
+            x:x-width/2,
+            y:y-height/2,
+            fillStyle: {color:0x666666},
+            lineStyle:{color:0x000, width:3}});
+        this.box.fillRoundedRect(0,0,width, height);
+        this.box.strokeRoundedRect(0,0,width,height);
+        this.hoverBox = this.scene.add.graphics({
+            x:x-width/2,
+            y:y-height/2,
+            lineStyle:{color:0xFFFFFF, width:3}});
+        this.hoverBox.strokeRoundedRect(0,0,width, height);
+        this.hoverBox.setVisible(false);
 
-        this.text = this.scene.add.text(x, y, "Return to Navigation Scene", {
+        this.text = this.scene.add.text(x,y, "Return to Map",{
             fontSize: 26,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
@@ -173,24 +178,29 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.sendToBack(this.box);
 
         let hitArea = new Phaser.Geom.Rectangle(0, 0, width, height);
-        this.box.setInteractive({ useHandCursor: true, hitArea: hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains })
-        this.box.on('pointerdown', function (pointer, localX, localY, event) {
-            this.scene.add.tween({ // fade out
-                targets: this,
-                alpha: 0,
-                ease: "Linear",
-                duration: this.fadeOutDuration,
-                repeat: 0,
-                yoyo: false,
-                onComplete: function () {
-                    this.setVisible(false);
-                    this.destroy(true);
-                },
-                onCompleteScope: this
-            });
-        }, this);
+        this.box.setInteractive({ useHandCursor: true, hitArea:hitArea, hitAreaCallback:Phaser.Geom.Rectangle.Contains})
+        this.box.on( 'pointerdown', function(pointer, localX, localY, event){
+        this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: 0,
+            ease: "Linear",
+            duration: this.fadeOutDuration,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.setVisible(false);
+                this.destroy(true);
+            },
+            onCompleteScope: this
+        });
+     }, this). on("pointerover", function () {
+         this.hoverBox.setVisible(true);
+     },this). on("pointerout", function() {
+        this.hoverBox.setVisible(false);
+     }, this);
 
         this.add(this.box);
+        this.add(this.hoverBox);
         this.add(this.text);
     }
 

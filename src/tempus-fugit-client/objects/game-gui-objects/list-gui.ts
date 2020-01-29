@@ -44,8 +44,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public revalidate() {
-        let dHeight: number = 0;
-        if (this.sprite) dHeight = this.sprite.displayHeight / 2 + 2 * this.yPadding;
+        let dHeight: number = 2*this.yPadding;
+        //if (this.sprite) dHeight = this.sprite.displayHeight/2 + 2*this.yPadding;
         let y: number = dHeight
         this.separatingLines[0].setVisible(false);
 
@@ -101,6 +101,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
     public addSpriteByTexture(texture: string) {
         this.sprite = this.scene.add.sprite(0, 0, texture, 0);
+        this.sprite.setOrigin(0.5,1);
 
         this.add(this.sprite);
     }

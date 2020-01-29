@@ -15,6 +15,7 @@ import { GameStateListener, GameState } from "../game-objects/game-state";
 export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener, GameStateListener {
 
     private elementList: Phaser.GameObjects.Sprite[];
+    private hoverElementList:StandDescriptionGUI[];
     private roundList: Phaser.GameObjects.Text[];
     private cardsList: CardGUI[];
     public scene: MissionScene;
@@ -47,35 +48,38 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         }
         this.stands = stands;
         this.elementList = [];
+        this.hoverElementList = [];
         this.roundList = [];
         this.cardsList = [];
         for (let i of [0, 1]) {
             let stand = this.stands[i];
             if (stand != null) {
-                let standImage = this.scene.add.sprite(200 * i, 0, stand.getImage(), 0).setScale(4, 4);
-                let desc = null;
+                let standImage = this.scene.add.sprite(200*i, 0, stand.getImage(), 0).setScale(4, 4);
+                let desc = new StandDescriptionGUI(this.scene, 200*i, 0, stand);
+                desc.depth = 1000;
+                desc.setScale(2);
+                this.scene.add.existing(desc);
+                
                 standImage.setInteractive();
-                standImage.on("pointerover", function (pointer) {
-                    desc = new StandDescriptionGUI(this.scene, this.x + 200 * i, this.y, stand);
-                    desc.depth = 1000;
-                    desc.setScale(2, 2);
-                    this.scene.add.existing(desc);
+                standImage.on("pointerover", function(pointer){
+                    desc.fadeInAnimation();
                 }, this);
-                standImage.on("pointerout", function (pointer) {
-                    desc.destroy();
+                    
+                desc.setInteractive().on("pointerout", function(pointer){
+                    desc.fadeOutAnimation();
                 }, this);
-                let tw = this.scene.tweens.add({ targets: standImage, duration: 400, y: standImage.y - 5, ease: "Linear", yoyo: true, repeat: -1, delay: 0, loopDelay: 0 });
+                let tw = this.scene.tweens.add({targets: standImage,duration: 400, y: standImage.y-5, ease: "Linear", yoyo: true, repeat: -1, delay: 0, loopDelay: 0});
+                let text = this.scene.add.text(200*i, 70, stand.getRoundsRemaining().toString(), font1);
 
-
+                desc.setVisible(false);
+                this.hoverElementList.push(desc);
                 this.elementList.push(standImage);
-                this.roundList.push(this.scene.add.text(200 * i, 70, stand.getRoundsRemaining().toString(), font1));
+                this.roundList.push(text);
+
+                this.add(standImage);
+                this.add(text);
+                this.add(desc);
             }
-        }
-        for (let el of this.elementList) {
-            this.add(el);
-        }
-        for (let el of this.roundList) {
-            this.add(el);
         }
 
         this.updateTint(this.scene.tfgame.gameState);

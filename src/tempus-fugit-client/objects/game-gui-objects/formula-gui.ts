@@ -13,8 +13,9 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
     private reps: { [char: string]: { type: string, frame: number } } = {};
     public graphics:Phaser.GameObjects.Graphics;
     public tintGraphics:Phaser.GameObjects.Graphics;
+    public bounds:Phaser.Geom.Rectangle;
 
-    public tintRect
+    public tintRect;
 
     constructor(
         scene: Phaser.Scene,
@@ -56,6 +57,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         if (withRectangle) {
             this.graphics = this.scene.add.graphics();
             this.graphics.lineStyle(4, 0xFFFFFF, 0.6);
+            this.bounds = new Phaser.Geom.Rectangle(-20,22,(16 + margin) * (formulaString.length + 1), 44);
             let outline = this.graphics.strokeRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
             this.graphics.fillStyle(0xFFFFFF, 1);
             let roundRect = this.graphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
