@@ -2,7 +2,11 @@ import { Card } from "./card";
 import { PlayerListener } from "./player";
 
 export class Deck {
+    
+    public static Decks:{[mission:string]:Set<Card>};
+    
     public cards: Card[]; // List of cards contained in the deck
+    public deck:Set<Card> = new Set();
     public cardTypes:Set<Card> = new Set();
     public listener:DeckListener[]; // List of objects listening to events happening in the deck
 
@@ -68,6 +72,15 @@ export class Deck {
         return theCard;
     }
 
+    public setUpDeck():void {
+        this.cards = [];
+        this.deck.forEach(c => {
+            for (let i=0; i < c.maxCardsInDeck; i++) {
+                this.cards.push(c.copy());
+            }
+        });
+    }
+    
     public shuffle(): void {
         Deck.shuffle(this.cards);
     }

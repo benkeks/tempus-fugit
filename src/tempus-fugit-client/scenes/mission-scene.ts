@@ -76,6 +76,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             deck: data.deck.copy()
         };
 
+        this.tfgame.deck.setUpDeck();
         this.tfgame.deck.shuffle();
 
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)

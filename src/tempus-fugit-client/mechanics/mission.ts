@@ -148,7 +148,6 @@ export class Mission implements EnemyListener, PlayerListener {
         this.toPhase.set(3, 'stand-phase');
         this.toPhase.set(4, 'enemy-phase');
 
-
         this.gameState = new GameState();
         this.gameState.maxEnergy = 4;
         this.gameState.setVariable("l", false);
@@ -504,6 +503,16 @@ export class Mission implements EnemyListener, PlayerListener {
                 for (let i in m.loot) {
                     mission.loot.push(Card.cards[m.loot[i]].copy());
                 }
+            }
+
+            if (m.deck) {
+                let cards:Set<Card> = new Set();
+                for (let c of m.deck) {
+                    let card = Card.cards[c].copy();
+                    cards.add(card);
+                }
+                
+                Deck.Decks[mission.name] = cards;
             }
 
             this.Missions[m.name] = mission;
