@@ -1,7 +1,7 @@
-import {Enemy, EnemyListener} from "../game-objects/enemy";
-import {ListGUI} from "./list-gui";
+import { Enemy, EnemyListener } from "../game-objects/enemy";
+import { ListGUI } from "./list-gui";
 import Text = Phaser.GameObjects.Text;
-import {ToolTip} from "./tool-tip";
+import { ToolTip } from "./tool-tip";
 import { Scene, Game } from "phaser";
 import { MissionScene } from "../../scenes/mission-scene";
 import { FormulaGUI } from "./formula-gui";
@@ -10,21 +10,21 @@ import { GameStateListener, GameState } from "../game-objects/game-state";
 /**
  * @author Mustafa
  */
-export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListener{
-    
-    public enemy: Enemy; // enemy object associated with this gui
-    public toolTip:ToolTip;
-    public toolTipText:Text;
-    public formula:FormulaGUI;
+export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListener {
 
-    public scene:MissionScene;
+    public enemy: Enemy; // enemy object associated with this gui
+    public toolTip: ToolTip;
+    public toolTipText: Text;
+    public formula: FormulaGUI;
+
+    public scene: MissionScene;
 
     constructor(
         scene: MissionScene,
         enemy: Enemy,
         x: number = 1500,
         y: number = 500,
-        texture:string=undefined
+        texture: string = undefined
     ) {
         super(scene, x, y);
         this.scene = scene;
@@ -37,10 +37,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         scene.anims.create({
             key: texture,
-            frames: scene.anims.generateFrameNumbers(texture, {start:0}),
-             frameRate: 10,
-             repeat: -1
-       });
+            frames: scene.anims.generateFrameNumbers(texture, { start: 0 }),
+            frameRate: 10,
+            repeat: -1
+        });
 
         this.sprite.anims.play(texture);
         this.sprite.setScale(5);
@@ -50,16 +50,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         // special attack
         this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
-        this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
+        this.formula.setPosition(-this.formula.getBounds().width / 2, this.maxY + this.yPadding * 2);
         this.add(this.formula);
 
         this.setInteractive();
-
         this.toolTip = new ToolTip(scene, 0, 0, this);
-        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
-        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, {fontSize:"22px"});
-        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'AppleKid', color: '#FF0000' }, false);
-        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE);
+        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
+        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
+        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
@@ -70,11 +69,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.add(this.damageText);*/
     }
 
-    public disableListeners():void {
+    public disableListeners(): void {
         this.enemy.removeListener(this);
     }
 
-    public die():void {
+    public die(): void {
         this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },
@@ -95,7 +94,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.disableListeners();
     }
 
-    public updateEnemyAttributes():void {
+    public updateEnemyAttributes(): void {
         this.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
     }
 
@@ -121,7 +120,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         });
     }*/
 
-    public updateTint(gameState:GameState) {
+    public updateTint(gameState: GameState) {
         this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
     }
 
@@ -129,28 +128,32 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
      * change HP display of enemy
      * @param changedTo
      */
-    async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
-        let font1: Object = { fontSize: '50px', fontFamily: 'appleKid', color: '#FF0000' }
+    async enemyHpChanged(enemy: Enemy, changedFrom: number, changedTo: number) {
+        let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
-            let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
-            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
-            onComplete: function () {
-                damageText.destroy()
-            }});
-            let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
+            let damageText = this.scene.add.text(this.x - 20, this.y - 50, diff.toString(), font1);
+            this.scene.tweens.add({
+                targets: damageText, duration: 600, y: damageText.y - 40, ease: "Linear", delay: 500,
+                onComplete: function () {
+                    damageText.destroy()
+                }
+            });
+            let blood = this.scene.add.sprite(this.x, this.y + 30, "blood");
             //blood.setScale(0.2,0.2);
             blood.alpha = 0;
-            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+            this.scene.tweens.add({
+                targets: blood, duration: 200, alpha: 1, ease: "power2", yoyo: true,
                 onComplete: function () {
                     blood.destroy()
-                }});
+                }
+            });
         }
 
         console.log(this.enemy.name, changedTo);
         if (changedFrom > 0 && changedTo <= 0) {
             this.die();
-        }else this.updateEnemyAttributes();
+        } else this.updateEnemyAttributes();
     }
 
     async Attacking(enemy: Enemy) {
