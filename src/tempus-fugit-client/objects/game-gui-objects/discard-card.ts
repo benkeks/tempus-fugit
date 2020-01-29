@@ -37,8 +37,8 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         let height = 260;
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
-        let font1: Object = { fontSize: '18px', fontFamily: 'appleKid', color: '#000000' }
-        let font2: Object = { fontSize: '12px', fontFamily: 'appleKid', color: '#000000' }
+        let font1: Object = { fontSize: '18px', fontFamily: 'pressStart', color: '#000000' }
+        let font2: Object = { fontSize: '12px', fontFamily: 'pressStart', color: '#000000' }
         this.setSize(width, height);
 
         // outline

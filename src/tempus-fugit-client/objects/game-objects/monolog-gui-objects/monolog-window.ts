@@ -15,7 +15,7 @@ export class MonologWindow {
     private blinkCount = 20;
     private fontStyle = {
         fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2),
-        fontFamily: "appleKid"
+        fontFamily: "pressStart"
     };
     private displayAll = false;
     private typing = true;
@@ -41,7 +41,7 @@ export class MonologWindow {
 
         // skip button
         this.scene.add.text(GameInfo.width - 200, GameInfo.height - 100, 'Skip',
-            { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2), fontFamily: "appleKid" })
+            { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 2), fontFamily: "pressStart" })
             .setInteractive()
             .on('pointerdown', function () {
                 this.switchToMissionScene();

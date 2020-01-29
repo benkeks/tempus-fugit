@@ -29,8 +29,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
         x: number,
         y: number,
         card: Card,
-        width:number = CardGUI.DEFAULT_WIDTH,
-        height:number = CardGUI.DEFAULT_HEIGHT
+        width: number = CardGUI.DEFAULT_WIDTH,
+        height: number = CardGUI.DEFAULT_HEIGHT
     ) {
         super(scene, x, y);
         scene.add.existing(this);
@@ -47,12 +47,12 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * make container for a card
      * similar to list-gui.ts
      */
-    private createCard(card: Card, width:number, height:number): void {
+    private createCard(card: Card, width: number, height: number): void {
         // outline and background
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
-        let font1: Object = { fontSize: '18px', fontFamily: 'appleKid', color: '#000000' }
-        let font2: Object = { fontSize: '12px', fontFamily: 'appleKid', color: '#000000' }
+        let font1: Object = { fontSize: '18px', fontFamily: 'pressStart', color: '#000000' }
+        let font2: Object = { fontSize: '12px', fontFamily: 'pressStart', color: '#000000' }
         this.setSize(width, height);
 
         // outline
@@ -187,10 +187,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
     setPlayable(): void {
         this.scene.tweens.add({
-                   targets: this.cross,
-                   alpha: 0,
-                   duration: 100
-               });
+            targets: this.cross,
+            alpha: 0,
+            duration: 100
+        });
     }
 
     setNonPlayable(): void {
