@@ -85,7 +85,7 @@ export class MonologWindow {
     private switchToMissionScene(): void {
         this.done = true;
         this.scene.scene.run('MissionScene');
-        this.scene.scene.sleep('MonologScene');
+        this.scene.scene.stop('MonologScene');
     }
 
     /**
