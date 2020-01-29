@@ -54,12 +54,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.add(this.formula);
 
         this.setInteractive();
-
         this.toolTip = new ToolTip(scene, 0, 0, this);
-        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "26px" });
-        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "22px" });
-        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FF0000' }, false);
-        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE);
+        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
+        this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
+        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();

@@ -10,7 +10,7 @@ export class MissionNameGui extends ListGUI {
         this.scene = scene;
         this.setVisible(false);
 
-        this.addText("", ListGUI.ALIGN_CENTRE, { fontSize: '40px', fontFamily: 'pressStart', color: '#FFFFFF' });
+        this.addText("", ListGUI.ALIGN_CENTRE, { fontSize: '30px', fontFamily: 'pressStart', color: '#FFFFFF' });
     }
 
     public fadeInText(text: string): void {
