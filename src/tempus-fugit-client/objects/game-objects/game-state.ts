@@ -121,6 +121,8 @@ export class GameState {
             let value = interval.value;
             let local = interval.local;
 
+            if (variableIntervals.direction) direction = parseInt(variableIntervals.direction);
+
             let offset = 0;
             if (local) offset = this.activeState
 

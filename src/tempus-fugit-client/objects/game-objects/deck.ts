@@ -3,7 +3,7 @@ import { PlayerListener } from "./player";
 
 export class Deck {
     
-    public static Decks:{[mission:string]:Set<Card>};
+    public static Decks:{[mission:string]:Set<Card>} = {};
     
     public cards: Card[]; // List of cards contained in the deck
     public deck:Set<Card> = new Set();
@@ -21,6 +21,7 @@ export class Deck {
 
     public copy(): Deck {
         let d: Deck = new Deck();
+        d.deck = this.deck;
 
         for (let c of this.cards) {
             d.cards.push(c.copy());

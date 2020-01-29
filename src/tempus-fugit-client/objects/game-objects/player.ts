@@ -25,6 +25,7 @@ export class Player {
 
     set baseAttack(value: number) {
         this._baseAttack = value;
+        
         this.listener.map(obj => obj.stateValuesChanged(this));
     }
     get active(): boolean {
@@ -43,7 +44,7 @@ export class Player {
     private _baseAttack: number; // Player's attack strength without using a card
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
-    listener: PlayerListener[]; // List of objects listening to player events
+    public listener: PlayerListener[] = []; // List of objects listening to player events
     public _active: boolean;
 
     public missionStates: boolean[] = [false, false, false, false, false, false, false, false, false];
@@ -104,12 +105,12 @@ export class Player {
      */
     constructor(name: string, hp: number, baseAttack: number) {
         this.name = name;
+        this.listener = [];
         this.maxHP = hp;
         this._currentHP = this.maxHP;
         this._baseAttack = baseAttack;
         this.hand = new Hand(5);
         this.states = [];
-        this.listener = [];
     }
 
     /**

@@ -18,7 +18,8 @@
                     ["player", "Oh dear..."]
                 ]
             }],
-            "loot": ["Natural heal", "Unnatural heal"]
+            "loot": ["Natural heal", "Unnatural heal"],
+			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
         },
         {
             "name": "mission1",

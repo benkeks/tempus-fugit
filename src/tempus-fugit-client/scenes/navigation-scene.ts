@@ -127,7 +127,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.initGame();
 
-        //console.log(this.deck);
+        //console.log(Deck.Decks);
 
         this.alreadyInitted = true;
     }
