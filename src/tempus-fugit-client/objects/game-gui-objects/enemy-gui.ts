@@ -6,6 +6,7 @@ import { Scene, Game } from "phaser";
 import { MissionScene } from "../../scenes/mission-scene";
 import { FormulaGUI } from "./formula-gui";
 import { GameStateListener, GameState } from "../game-objects/game-state";
+import { GameInfo } from "../../game";
 
 /**
  * @author Mustafa
@@ -55,15 +56,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         this.setInteractive();
 
-        this.toolTip = new ToolTip(scene, 0, 0, this);
+        this.toolTip = new ToolTip(scene, 0, -GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30), this.sprite);
         this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE,{fontSize:"26px"});
+        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE);
         this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, {fontSize:"22px"});
         this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'AppleKid', color: '#FF0000' }, false);
-        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
-        //this.separatingLines[2].setVisible(false);
+        this.add(this.toolTip);
 
         /*this.damageText = scene.add.text(x,y,"abc",{});
         this.damageText.setVisible(false);

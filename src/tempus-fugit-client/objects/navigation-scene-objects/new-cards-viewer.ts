@@ -30,7 +30,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
     public box:Phaser.GameObjects.Graphics;
     public text:Phaser.GameObjects.Text;
-    public buttonContainer:Phaser.GameObjects.Container;
+    public hoverBox:Phaser.GameObjects.Graphics;
 
     constructor(scene:Scene) {
         super(scene);
@@ -159,8 +159,14 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             lineStyle:{color:0x000, width:3}});
         this.box.fillRoundedRect(0,0,width, height);
         this.box.strokeRoundedRect(0,0,width,height);
+        this.hoverBox = this.scene.add.graphics({
+            x:x-width/2,
+            y:y-height/2,
+            lineStyle:{color:0xFFFFFF, width:3}});
+        this.hoverBox.strokeRoundedRect(0,0,width, height);
+        this.hoverBox.setVisible(false);
 
-        this.text = this.scene.add.text(x,y, "Return to Navigation Scene",{
+        this.text = this.scene.add.text(x,y, "Return to Map",{
             fontSize: 26,
             fontStyle: 'bold',
             fontFamily: 'appleKid',
@@ -186,9 +192,14 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             },
             onCompleteScope: this
         });
+     }, this). on("pointerover", function () {
+         this.hoverBox.setVisible(true);
+     },this). on("pointerout", function() {
+        this.hoverBox.setVisible(false);
      }, this);
 
         this.add(this.box);
+        this.add(this.hoverBox);
         this.add(this.text);
     }
 

@@ -262,7 +262,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async storyMonolog(game: Mission, monolog: string) {
         this.tfgame.active = false;
 
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog });
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog:monolog, gameOver:game.isGameWon()});
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {

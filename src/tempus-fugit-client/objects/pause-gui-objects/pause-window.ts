@@ -53,7 +53,7 @@ export class PauseWindow {
             toolbar: scene.add.existing(toolbar),
             choices: [
                 this.createLabel(scene, 'Retry', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
-                this.createLabel(scene, 'Return to Navigation', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
+                this.createLabel(scene, 'Return to Map', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
                 this.createLabel(scene, 'Quit', GUI_LABEL_BG),
             ],
             align: {
