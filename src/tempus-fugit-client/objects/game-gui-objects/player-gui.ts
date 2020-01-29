@@ -3,6 +3,7 @@ import { Card } from "../game-objects/card";
 import { Enemy } from "../game-objects/enemy";
 import { Mission } from "../../mechanics/mission";
 import { MissionScene } from "../../scenes/mission-scene";
+import { GameInfo } from "../../game";
 
 /**
  * @author Mustafa
@@ -36,7 +37,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
             fontFamily: 'pressStart',
             color: '#FFFFFF'
         };
-        this.setScale(5, 5);
+        this.setScale(GameInfo.scale);
 
         this.baseAttackText = this.scene.add.text(this.x + 70, this.y + 230, player.baseAttack.toString()).setStyle(textStyle);
         this.sword = this.scene.add.sprite(this.x - 10, this.y + 260, "swordFont").setScale(0.4);

@@ -27,8 +27,6 @@ export class ToolTip extends ListGUI {
         gameObject.setInteractive().on('pointerover',function(pointer){
             if (!this._enabled) return;
 
-            this.setPosition(pointer.x, pointer.y);
-
             this.faderTimer = this.scene.time.delayedCall(this.popUpDelay, this.fadeIn, [], this);
         }, this);
 
@@ -42,4 +40,6 @@ export class ToolTip extends ListGUI {
 
         this.setVisible(false);
     }
+
+    
 }

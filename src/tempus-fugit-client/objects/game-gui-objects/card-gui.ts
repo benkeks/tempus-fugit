@@ -24,6 +24,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
     public static readonly DEFAULT_WIDTH = 160;
     public static readonly DEFAULT_HEIGHT = 260;
 
+    public fadeTween;
+
     constructor(
         scene: Phaser.Scene,
         x: number,
@@ -197,6 +199,38 @@ export class CardGUI extends Phaser.GameObjects.Container {
      */
     fadeIn(): void {
         this.cardImage.clearTint();
+    }
+
+    public fadeInAnimation(duration = 200) {
+        if (this.fadeTween) this.fadeTween.stop(0);
+
+        this.setAlpha(0);
+        this.fadeTween = this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: 1,
+            ease: "Linear",
+            duration: duration,
+            repeat: 0,
+            yoyo: false
+        });
+        this.setVisible(true);
+    }
+    public fadeOutAnimation(duration = 200) {
+        if (this.fadeTween) this.fadeTween.stop(1);
+        
+        this.setAlpha(1);
+        this.fadeTween = this.scene.add.tween({ // fade out
+            targets: this,
+            alpha: 0,
+            ease: "Linear",
+            duration: duration,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+                this.setVisible(false)
+            },
+            onCompleteScope: this
+        });
     }
 
     setPlayable(): void {

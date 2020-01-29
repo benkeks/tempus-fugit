@@ -25,7 +25,7 @@ export class MonologWindow {
         this.scene = scene;
     }
 
-    public createMonologWindow(monolog: string) {
+    public createMonologWindow(monolog: string, gameOver:boolean) {
 
         if (this.instanceCounter > 0) return;
         this.instanceCounter += 1;
@@ -41,7 +41,10 @@ export class MonologWindow {
         this.displayMonologue(monolog);
 
         // skip button
-        this.scene.add.text(GameInfo.width - 200, GameInfo.height - 100, 'Skip',
+        let text = "Skip";
+        if (gameOver) text = "Return to Map"
+
+        this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text,
             this.fontStyle)
             .setInteractive()
             .on('pointerdown', function () {
@@ -52,7 +55,8 @@ export class MonologWindow {
             }).on('pointerout', function () {
                 // color white
                 this.clearTint();
-            });
+            }).setOrigin(1,0);
+        
 
         // space key events
         let clicks = 0;
