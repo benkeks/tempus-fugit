@@ -127,7 +127,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.initGame();
 
-        //console.log(this.deck);
+        //console.log(Deck.Decks);
 
         this.alreadyInitted = true;
     }
@@ -169,6 +169,7 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset,-yOffset,b.getBounds().width + 2*xOffset,b.getBounds().height + 2*yOffset);
             
             b.on("pointerdown", pointer => {
+                this.deck.deck = Deck.Decks[this.missionKeys[i]];
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
                     index: i,
@@ -399,13 +400,5 @@ export class NavigationScene extends Phaser.Scene {
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
 
         this.deck = new Deck();
-
-        for (let c_key in Card.cards) {
-            let c:Card = Card.cards[c_key];
-            this.deck.addCardType([c.copy()]);
-            for (let i=0; i < c.inDeckAtStart; i++) {
-                this.deck.addCard(c.copy(), true);
-            }
-        }
     }
 }
