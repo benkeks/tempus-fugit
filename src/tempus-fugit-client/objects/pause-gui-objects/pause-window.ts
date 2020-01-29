@@ -4,16 +4,14 @@
 import { HelpButton } from "../help-gui-objects/help-button";
 import { PauseButton } from "./pause-button";
 import { MissionScene } from "../../scenes/mission-scene";
-import { RIGHT } from "phaser";
 
-const GUI_BORDER = 0x37474F;
-const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
+
 const GUI_TITLE = 0xeceff1;
-const GUI_FILL = 0x90A4AE;
-const GUI_FILL_DARK = 0x607d8b;
-const GUI_LABEL_BG = 0xcfd8dc;
-// const GUI_TEXT = 0x010101;
-const GUI_TEXT = 0xffffff;
+const GUI_BORDER = 0x5d4037;
+const GUI_BORDER_HIGHLIGHT = 0xd7ccc8;
+const GUI_FILL = 0xa96851;
+const GUI_FILL_DARK = 0x5c4d4d;
+const GUI_LABEL_BG = 0xeceff1;
 const GUI_CLOSE = 0xdd6666;
 
 // Format constants
@@ -42,7 +40,7 @@ export class PauseWindow {
         this.isMissionScene = isMissionScene;
 
         let title = this.createLabel(scene, TITLE_SPACER + 'Paused', GUI_TITLE).setDraggable();
-        let toolbar = [this.createLabel(scene, 'X', GUI_CLOSE, 0)];
+        let toolbar = [this.createLabel(scene, 'X', GUI_CLOSE, 0, 'black')];
 
         let pause = scene.rexUI.add.dialog({
             x: 1920 / 2,
@@ -120,7 +118,7 @@ export class PauseWindow {
         this.window = pause;
     }
 
-    public createLabel(scene, text, color, borderColor = GUI_BORDER, txtColor = GUI_TEXT) {
+    public createLabel(scene, text, color, borderColor = GUI_BORDER, txtColor = 'brown') {
         return scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, text === 'X' ? 23 : 10, color).setStrokeStyle(BORDER_WIDTH, borderColor).setDepth(50),
             text: scene.add.text(0, 0, text, {

@@ -1,25 +1,39 @@
 // @ts-nocheck
 import {HelpButton} from "./help-button";
+import {
+    op_and,
+    op_or,
+    op_not,
+    op_impl,
+    op_biImpl,
+    op_evPast,
+    op_evFuture,
+    op_glPast,
+    op_glFuture,
+    op_nextPast,
+    op_nextFuture,
+    op_until,
+    op_klammer
+} from "./help-data"
 
 // GUI Colors
-const GUI_BORDER = 0x37474F;
-const GUI_BORDER_HIGHLIGHT = 0xECEFF1;
+const GUI_BORDER = 0x5d4037;
+const GUI_BORDER_HIGHLIGHT = 0xd7ccc8;
 const GUI_TAB = 0xfafafa;
-const GUI_TAB_SELECTED = 0x455a64;
+const GUI_TAB_SELECTED = 0xbcaaa4;
 const GUI_FILL_LIGHT = 0xfafafa;
-const GUI_FILL = 0x90A4AE;
-const GUI_FILL_DARK = 0x607d8b;
-const GUI_SLIDER = 0x455a64;
+const GUI_FILL = 0xa96851;
+const GUI_FILL_DARK = 0x5c4d4d;
+const GUI_SLIDER = 0x915b4a;
 const GUI_LABEL_BG = 0xeceff1;
-const GUI_TEXT_AREA = 0xb0bec5;
+const GUI_TEXT_AREA = 0xf2f1e7;
 const GUI_TEXT_AREA_BORDER = 0xcfd8dc;
-const GUI_TEXT_AREA_TEXT = 0xffffff;
-const GUI_TEXT = 0x010101;
 const GUI_CLOSE = 0xdd6666;
 
 // Table Colors
 const TABLE_BACKGROUND = 0x81D4FA;
 const TABLE_BACKGROUND_RUNE = 0x03A9F4;
+const TABLE_BACKGROUND_CURRENT = 0x00BCD4;
 const TABLE_BORDERS = 0x000000;
 const TABLE_DOT = 0x9e0b00;
 
@@ -52,7 +66,7 @@ export class HelpWindow {
         let scene = this.scene;
 
         // Create Title and Toolbar
-        let title = this.createLabel(scene, 10, TITLE_SPACE + 'Help'+ TITLE_SPACE, GUI_FILL_LIGHT).setDraggable();
+        let title = this.createLabel(scene, 10, TITLE_SPACE + 'Help' + TITLE_SPACE, GUI_FILL_LIGHT).setDraggable();
         let toolbar = [this.createLabel(scene, 23, 'X', GUI_CLOSE)];
 
         // Create Tabs with structure
@@ -106,23 +120,22 @@ export class HelpWindow {
         this.helpGUI = dialog;
     }
 
-    public createLabel(scene, round, text, bgColor, formula?) {
+    public createLabel(scene, round, text, bgColor) {
         let label = scene.rexUI.add.label({
             width: 0,
             height: 0,
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, round, bgColor).setStrokeStyle(BORDER_WIDTH_LABEL, GUI_BORDER).setDepth(50),
             text: scene.add.text(0, 0, text, {
-                fontSize: '24px',
-                color: GUI_TEXT
+                fontSize: '16px',
+                color: 'black',
+                fontFamily: "pressStart"
             }).setDepth(51),
-            icon: formula? this.createFormula(scene, formula): undefined,
             space: {
                 left: 10,
                 right: 10,
                 top: 10,
                 bottom: 10,
                 text: 100,
-                icon: 100
             }
         });
         // label.dontExpand = true;
@@ -158,7 +171,7 @@ export class HelpWindow {
                         elements.push(this.createTextArea(scene, data.text));
                         break;
                     case 'label':
-                        elements.push(this.createLabel(scene, 10, data.text, data.color, data.formula));
+                        elements.push(this.createLabel(scene, 10, data.text, data.color));
                         break;
                     case 'table':
                         elements.push(this.createTable(scene, data.table));
@@ -207,7 +220,7 @@ export class HelpWindow {
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, {tl: round, tr: round}, GUI_TAB)
                 .setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
                 .setDepth(19),
-            icon: scene.add.sprite(0, 0, 'operators', frame).setDepth(111).setScale(1.25),
+            icon: frame === 13 ? this.createFormula(scene, '()') : scene.add.sprite(0, 0, 'operators', frame).setDepth(111).setScale(1.25),
             space: {
                 left: 10,
                 right: 10,
@@ -266,7 +279,7 @@ export class HelpWindow {
         if (!oldPanel) sizer.add(scene.rexUI.add.roundRectangle(0, 0, 1, 1, 0, undefined), 1, 'center', 5, true);
 
         elements.reduce(function (sizer, element) {
-            return element.dontExpand ? sizer.add(element, 1, 'center', 5, false) : sizer.add(element, 1, 'center', 5, true); // args: child, proportion, align, padding, expand
+            return element.dontExpand ? sizer.add(element, 1, 'center', 10, false) : sizer.add(element, 1, 'center', 10, true); // args: child, proportion, align, padding, expand
         }, sizer);
 
         return sizer;
@@ -279,8 +292,9 @@ export class HelpWindow {
                 .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER)
                 .setDepth(90),
             text: scene.add.text(0, 0, text, {
-                fontSize: '20px',
-                // color: GUI_TEXT_AREA_TEXT,   // if uncommented text turns black although color white????
+                fontSize: '14px',
+                color: 'brown',
+                fontFamily: "pressStart",
                 wordWrap: {
                     // width: 900
                 },
@@ -330,13 +344,15 @@ export class HelpWindow {
         });
         // Cell generator function
         let createCell = (r_index, c_index, cell) => {
+            let colors = [TABLE_BACKGROUND, TABLE_BACKGROUND_CURRENT];
+
             let runeFrame = (index) => (index + 2) % 4;
             let addRune = (index) => scene.add.sprite(0, 0, "runes", runeFrame(index)).setDepth(100);
-            let addDot = (hasDot) => hasDot ? scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, TABLE_DOT).setDepth(100) : undefined;
-            let bgColor = (isRune) => isRune === 0 ? TABLE_BACKGROUND_RUNE : TABLE_BACKGROUND;
+            let addDot = (hasDot) => hasDot / 10 >= 1 ? scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, TABLE_DOT).setDepth(100) : undefined;
+            let bgColor = (isRune, cell) => isRune === 0 ? TABLE_BACKGROUND_RUNE : colors[cell % 10];
 
             return scene.rexUI.add.label({
-                background: scene.rexUI.add.roundRectangle(0, 0, CELL_WIDTH, CELL_HEIGHT, 0, bgColor(c_index)).setDepth(99),
+                background: scene.rexUI.add.roundRectangle(0, 0, CELL_WIDTH, CELL_HEIGHT, 0, bgColor(c_index, cell)).setDepth(99),
                 icon: c_index === 0 ? addRune(r_index) : addDot(cell),
                 space: {
                     left: CELL_WIDTH / 2 - 10 // center dots and runes in cell
@@ -385,343 +401,6 @@ export class HelpWindow {
     };
 
 // TODO make content for help
-    static help_data = [
-        {
-            frame: 0,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'formula',
-                    string: 'l&n'
-                },
-                {
-                    type: 'text-area',
-                    text: 'testing this out with two tabs'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 1, 0, 0, 0, 0],
-                        [0, 1, 0, 0, 0, 0],
-                        [0, 0, 1, 1, 0, 0],
-                        [0, 1, 0, 0, 0, 0],
-                    ]
-                }]
-
-        },
-        {
-            frame: 1,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG,
-                    formula: '(l&n)|(l&s)'
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 2,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 3,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 4,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 5,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 6,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 7,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-
-        {
-            frame: 8,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 9,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 10,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 11,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 12,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 13,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-        {
-            frame: 14,
-            panel: [
-                {
-                    type: 'label',
-                    text: 'Example',
-                    color: GUI_LABEL_BG
-                },
-                {
-                    type: 'text-area',
-                    text: 'content should have switched to this on click'
-                },
-                {
-                    type: 'table',
-                    table: [
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 0, 0, 1, 0],
-                        [0, 0, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 0],
-                    ]
-                }]
-        },
-    ]
+//     static help_data = [op_and, op_or, op_not];
+    static help_data = [op_and, op_or, op_not, op_impl, op_biImpl, op_evPast, op_evFuture, op_glPast, op_glFuture, op_nextPast, op_nextFuture, op_until, op_klammer]; // test array
 };
