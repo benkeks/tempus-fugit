@@ -32,6 +32,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList = [];
         this.roundList = [];
         this.cardsList = [];
+
+        this.scene.add.existing(this);
     }
 
     updateStandGUI(stands:[Card, Card]) {
@@ -75,7 +77,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         for (let el of this.roundList) {
             this.add(el);
         }
-        this.scene.add.existing(this);
+
+        this.updateTint(this.scene.tfgame.gameState);
     }
 
 

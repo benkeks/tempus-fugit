@@ -5,6 +5,7 @@ import { Mission, MissionListener } from "../../mechanics/mission";
 import { StoryDialog } from "../../mechanics/story-dialog";
 import { Scene } from "phaser";
 import { MissionScene } from "../../scenes/mission-scene";
+import { GameState } from "../game-objects/game-state";
 
 export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public enemies:EnemyGUI[] = [];
@@ -49,7 +50,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
         });
     }
 
-    public setEnemies(enemies:Enemy[], fadeIn:boolean=false) {
+    public setEnemies(enemies:Enemy[], fadeIn:boolean=false, gameState:GameState=undefined) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
             enemy.disableListeners();
@@ -70,6 +71,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
             let enemyGUI:EnemyGUI = new EnemyGUI(this.scene, enemies[i], x, y, enemies[i].image);
             this.mission.gameState.listener.push(enemyGUI);
+            enemyGUI.updateTint(this.mission.gameState);
 
             this.add(enemyGUI);
             this.enemies.push(enemyGUI);
