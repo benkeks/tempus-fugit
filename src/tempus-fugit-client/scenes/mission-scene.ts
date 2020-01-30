@@ -24,7 +24,11 @@ import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
+
+import {HelpWindow} from "../objects/help-gui-objects/help-window";
+
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -261,6 +265,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         if (this.tfgame.active) {
             this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
         }
+        this.updateHelp();
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
@@ -284,5 +289,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             repeat: 0,
             yoyo: true
         });
+    }
+
+    public updateHelp() {
+        let data = HelpWindow.order[this.missionIndex];
+        if (data && data.once) {
+            (<Array<any>>data.tabs).map(t => HelpWindow.help_data.push(t));
+            if (data.index) HelpWindow.lastIndex = data.index;
+            data.once = false;
+            if (data.tabs.length) HelpButton.newInfo = true;
+        }
     }
 }
