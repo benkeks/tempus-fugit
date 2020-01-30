@@ -63,7 +63,8 @@
                     "text": [["",""], ["", ""]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
         {
             "name": "mission3",
@@ -84,7 +85,8 @@
                     "text": [["",""], ["", ""]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Anti-evolution"],
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name": "mission4",
