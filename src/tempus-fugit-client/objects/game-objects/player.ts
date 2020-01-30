@@ -16,7 +16,7 @@ export class Player {
     }
 
     set currentHP(value: number) {
-        this._currentHP = value;
+        this._currentHP = Math.max(0,value);
         //this.listener.map(obj => obj.playerHpChanged(value));
     }
     get baseAttack(): number {
@@ -187,6 +187,12 @@ export class Player {
         this.currentHP += life;
         for (let l of this.listener) {
             l.playerHpChanged(this.currentHP, life);
+        }
+    }
+
+    public attackWithBaseAttack(mission: Mission): void {
+        for (let en of mission.getEnemies()) {
+            en.takeHit(this.baseAttack, mission);
         }
     }
 

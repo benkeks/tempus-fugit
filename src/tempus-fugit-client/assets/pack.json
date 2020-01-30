@@ -170,6 +170,11 @@
                 "key": "swordFont",
                 "url": "assets/font/fontletter/overlay/sword.png"
             },
+	    {
+		"type": "image",
+		"key": "baseAttack",
+		"url": "assets/sprites/baseattack.png"
+	    },
             {
                 "type": "image",
                 "key": "heartFont",

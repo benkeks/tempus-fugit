@@ -65,8 +65,14 @@ export class Deck {
      * @example myNewCard = someDeck.takeCardOnTop();
      * @author Florian
      */
-    takeCardOnTop(): Card {
+    public takeCardOnTop(): Card {
         var theCard = this.cards.shift();
+
+        if (this.cards.length <= 0) { // setup deck new
+            this.setUpDeck();
+            this.shuffle();
+        }
+
         for (let i in this.listener) {
             this.listener[i].numCardsChanged(this.cards.length);
         }
