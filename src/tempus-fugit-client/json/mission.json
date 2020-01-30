@@ -19,7 +19,7 @@
                 ]
             }],
             "loot": ["Root pierce", "Natural heal", "Guiding Light"],
-			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
+			"deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
         },
         {
             "name": "mission1",
@@ -42,7 +42,7 @@
                 }
             ],
 			"loot":["Light stand", "Unnatural heal"],
-      "deck":["Fireball", "Lightning_strike", "Lower woodland spirit", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
         {
             "name": "mission2",

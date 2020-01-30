@@ -197,7 +197,7 @@
 		"comment":"Base attack up by 1 and: -> Gl",
 		"inDeckAtStart":"2"},
 
-		{"name":"Lower woodland spirit",
+		{"name":"Lower woodland stand",
 		"description":"this stand deals 2 damage to all enemies!",
 		"image":"nature_stand",
 		"formula":"n",
