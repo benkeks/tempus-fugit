@@ -5,9 +5,6 @@ export class HelpButton {
     private sprite: Phaser.GameObjects.Sprite;
     private notification: Phaser.GameObjects.Sprite;
 
-    private test1: Phaser.GameObjects.Sprite;
-    private test2: Phaser.GameObjects.Sprite;
-
     private isMissionScene: boolean;
     static currHelpParent: string;
 
@@ -34,14 +31,6 @@ export class HelpButton {
             this.sprite.anims.stop();
             this.sprite.anims.setProgress(1 / 6);
         });
-
-        this.test1 = scene.add.sprite(100, 100, 'fairy', 1);
-        this.test2 = scene.add.sprite(100, 300, 'fairy', 1);
-        this.test1.setInteractive();
-        this.test2.setInteractive();
-
-        this.test1.on('pointerdown', this.createNotification, this);
-        this.test2.on('pointerdown', this.destroyNotification, this);
     }
 
     public displayHelp(): void {
@@ -52,11 +41,20 @@ export class HelpButton {
     }
 
     public createNotification() {
-        this.notification = this.scene.add.sprite(this.isMissionScene ? 335 : 1830, this.isMissionScene ? 1015 : 980, 'notification').setScale(2);
+        this.notification = this.scene.add.sprite(this.isMissionScene ? 320 : 1835, this.isMissionScene ? 980 : 985, 'notification').setScale(2);
+        this.scene.add.tween({
+            targets: this.notification,
+            y: "+=15",
+            ease: "Linear",
+            duration: 200,
+            repeat: 10,
+            yoyo: true
+        });
     }
 
     public destroyNotification() {
         if(this.notification) this.notification.destroy();
+        HelpButton.newInfo = false;
     }
 
 

@@ -296,6 +296,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         if (data && data.once) {
             data.tabs.map(t => HelpWindow.help_data.push(t));
             data.once = false;
+            if (data.index) HelpWindow.lastIndex = data.index;
             if (data.tabs.length) HelpButton.newInfo = true;
         }
     }

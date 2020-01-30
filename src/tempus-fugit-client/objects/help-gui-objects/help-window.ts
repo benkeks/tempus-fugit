@@ -52,7 +52,7 @@ const LABEL_SPACE = '';
 
 
 export class HelpWindow {
-    static currMissionIndex;
+    static lastIndex = 0;
 
     private scene: Phaser.Scene;
     public helpGUI;
@@ -199,6 +199,8 @@ export class HelpWindow {
             this.createPanel(panel, scene, ...elements);
             panel.layout();
             scroll.layout();
+
+            HelpWindow.lastIndex = index;
         }, this);
 
         tabs.on('button.over', function highlightBorder(button) {
@@ -208,7 +210,7 @@ export class HelpWindow {
             button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
         });
 
-        tabs.emitButtonClick('top', this.prevIndex);
+        tabs.emitButtonClick('top', HelpWindow.lastIndex);
 
         return tabs;
     }
@@ -406,22 +408,27 @@ export class HelpWindow {
     static order = [
         {
             once: true,
+            index: 4,
             tabs: [op_nextFuture, op_nextPast]
         },
         {
             once: true,
+            index: 6,
             tabs: [op_evFuture, op_evPast]
         },
         {
             once: true,
+            index: 8,
             tabs: [op_glFuture, op_glPast]
         },
         {
             once: true,
+            index: 10,
             tabs: [op_impl]
         },
         {
             once: true,
+            index: 11,
             tabs: [op_biImpl]
         },
         {
@@ -430,6 +437,7 @@ export class HelpWindow {
         },
         {
             once: true,
+            index: 12,
             tabs: [op_until]
         },
         {
