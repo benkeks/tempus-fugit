@@ -233,7 +233,7 @@
                     "text": [["jkpuff","You insolent brat. You killed all of the audience. I will make you pay for that"], ["player", "King Janpuff, I am here to stop this mess. Please let me pass through."], ["jkpuff", "NEVER. NOW REST IN PEACE."]]
                 }
             ],
-			"loot":[""],
+			"loot":["Strength"],
         "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
@@ -263,7 +263,7 @@
                     "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but it is obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like they did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
                 }
             ],
-			"loot":[""],
+			"loot":["Strength"],
         "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         }
 

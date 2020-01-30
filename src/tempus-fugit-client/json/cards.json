@@ -118,7 +118,7 @@
 		"standRounds":"3",
 		"action":"mission.player.heal(15);mission.gameState.setVariableValues({'n':{1:true, 2:true}});",
 		"comment":"eals player by 15 HP, also -> OOn&On",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Vase of Desire",
 		"description":"Draw 3 spell cards.",
@@ -129,7 +129,7 @@
 		"standRounds":"3",
 		"action":"mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);",
 		"comment":"Should make you draw three cards",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Anti-evolution",
 		"description":"Deals 12 damage to a foe but unsets nature",
