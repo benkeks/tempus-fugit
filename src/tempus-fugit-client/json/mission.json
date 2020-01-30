@@ -14,8 +14,8 @@
             "dialogue": [{
                 "triggerFunctionString": "return true;",
                 "text": [
-                    ["slime_mother", "How dare you kill my younglings?! You are going to pay for that!"],
-                    ["player", "Oh dear..."]
+                    ["Slimes", "Stop! Noone enters this forest and gets out alive!"],
+                    ["player", "I cannot afford to be stopped by you. Prepare to die!"]
                 ]
             }],
             "loot": ["Root pierce", "Natural heal", "Guiding Light"],
@@ -97,7 +97,7 @@
                 ["cactus2", "kingtus", "cactus2"]
             ],
             "monologue":{
-				"0": "The boat ride is finally over. On your way to find out, who or what is causing the creatures to become mad, you enter the desert. Soon you feel like cactis are moving around. Wait, why is one of them getting closer to you?",
+				"0": "The boat ride is finally over. On your way to find out, who or what is causing the creatures to become mad, you enter the desert. Soon you feel like cacti are moving around. Wait, why is one of them getting closer to you?",
                 "1": "That was weird. Why was it holding a spear? And why are you circled by more of them? Watch out!",
                 "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?"
             },

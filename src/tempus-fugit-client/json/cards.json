@@ -155,7 +155,7 @@
 
 		{"name":"Sun flare",
 		"description":"this card deals 20 damage to all enemies!",
-		"image":"dark_beam",
+		"image":"sun",
 		"formula":"(#Gl&OFn)|t",
 		"cardKind":"global",
 		"isStandCard":"false",
@@ -209,7 +209,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Root pierce",
-		"description":"Deal 7 damage to a enemy!",
+		"description":"Deal 7 damage to an enemy!",
 		"image":"tree",
 		"formula":"n&l",
 		"cardKind":"directed",
