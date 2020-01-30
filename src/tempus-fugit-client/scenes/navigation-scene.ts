@@ -174,7 +174,8 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset,-yOffset,b.getBounds().width + 2*xOffset,b.getBounds().height + 2*yOffset);
             
             b.on("pointerdown", pointer => {
-                this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
                     index: i,

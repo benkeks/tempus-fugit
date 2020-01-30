@@ -211,8 +211,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         })
 
         this.events.on('resume', function () {
-            this.tfgame.active = true;
-            this.tfgame.checkGameOver();
+            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
         }, this);
     }
 
@@ -279,15 +278,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async gameover(game: Mission, gameWon: boolean) {
         //this.tfgame.destroy();
-        if (this.tfgame.active) {
-            this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        if (!gameWon) {
+            this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
         }
         this.updateHelp();
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     storyMonolog(game: Mission, monolog: string) {
-        this.tfgame.active = false;
         if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
     }
 

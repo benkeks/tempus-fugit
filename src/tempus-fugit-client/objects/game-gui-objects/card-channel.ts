@@ -49,12 +49,12 @@ export class CardChannel extends Container {
             scaleY: 1
         });
 
-        //this.dotParticles.setVisible(false);
+        this.dotParticles.setVisible(false);
 
         this.decisionArrow = new DecisionArrow(scene);
 
-        this.add(this.dotParticles);
         this.add(this.book);
+        this.add(this.dotParticles);
         // this.add(this.dot);
 
         this.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, x), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, y));
