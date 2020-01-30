@@ -16,6 +16,9 @@ export class TutorialScene extends Phaser.Scene {
     public preload() {
         if (this.preloaded) return;
 
+        this.load.image("tutorialSlide1", "assets/tutorial/slide1.png");
+        this.load.image("tutorialSlide2", "assets/tutorial/slide2.png");
+        this.load.image("tutorialSlide3", "assets/tutorial/slide3.png");
 
     }
 
