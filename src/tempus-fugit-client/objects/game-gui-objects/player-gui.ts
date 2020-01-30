@@ -25,7 +25,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         player: Player,
         hp: number = 100,
         x: number = 300,
-        y: number = 500
+        y: number = 480
     ) {
         super(scene, x, y, texture);
         this.scene.add.existing(this);
