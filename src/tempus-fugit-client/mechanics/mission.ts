@@ -527,6 +527,9 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
             }
 
+            if (m.key) mission.key = m.key;
+            else mission.key = m.name;
+
             if (m.deck) {
                 let cards: Set<Card> = new Set();
                 for (let c of m.deck) {
@@ -534,11 +537,8 @@ export class Mission implements EnemyListener, PlayerListener {
                     cards.add(card);
                 }
 
-                Deck.Decks[mission.name] = cards;
+                Deck.Decks[mission.key] = cards;
             }
-
-            if (m.key) mission.key = m.key;
-            else mission.key = m.name;
 
             this.Missions[mission.key] = mission;
         }
