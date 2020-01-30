@@ -127,7 +127,7 @@
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.deck.takeCardOnTop();mission.player.deck.takeCardOnTop();mission.player.deck.takeCardOnTop();",
+		"action":"mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);",
 		"comment":"Should make you draw three cards",
 		"inDeckAtStart":"2"},
 

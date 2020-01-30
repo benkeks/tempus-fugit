@@ -72,6 +72,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public static Missions: { [name: string]: Mission } = {};
     public name: string;
+    public key: string;
     public background: string;
     public waveCounter: number;
     public _enemies: Enemy[][] = [];
@@ -115,6 +116,7 @@ export class Mission implements EnemyListener, PlayerListener {
             mission.enemies.push(new_wave);
         }
 
+        mission.key = this.key;
         mission.name = this.name;
         mission.background = this.background;
         mission.monologue = { ...this.monologue };
@@ -527,6 +529,9 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
             }
 
+            if (m.key) mission.key = m.key;
+            else mission.key = m.name;
+
             if (m.deck) {
                 let cards: Set<Card> = new Set();
                 for (let c of m.deck) {
@@ -534,10 +539,10 @@ export class Mission implements EnemyListener, PlayerListener {
                     cards.add(card);
                 }
 
-                Deck.Decks[mission.name] = cards;
+                Deck.Decks[mission.key] = cards;
             }
 
-            this.Missions[m.name] = mission;
+            this.Missions[mission.key] = mission;
         }
     }
 

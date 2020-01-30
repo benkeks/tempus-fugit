@@ -13,6 +13,7 @@ export class Card {
     public static readonly OTHER = "other";
 
     public name: string; // Name of the card
+    public key:string;
     public description: string; // Description of the card
     public image: string; // A string describing the image on the card
     public formula: Formula; // A formula attached to the card
@@ -43,6 +44,7 @@ export class Card {
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
         c.maxCardsInDeck = this.maxCardsInDeck;
+        c.key = this.key;
 
         return c;
     }
@@ -107,6 +109,7 @@ export class Card {
     constructor(name: string, description: string, image: string, formula: string, cardKind: string,
                 isStandCard: boolean, standRounds: number, actionString: string) {
         this.name = name;
+        this.key = name;
         this.description = description;
         this.image = image;
         this.formula = new Formula();
@@ -211,8 +214,9 @@ export class Card {
             if (c.formulaRepresentation) new_c.formulaRepresentation = c.formulaRepresentation;
 
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
+            if (c.key) new_c.key = c.key;
 
-            this.cards[c.name] = new_c;
+            this.cards[new_c.key] = new_c;
         }
     }
 
