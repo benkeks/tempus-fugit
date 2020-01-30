@@ -202,6 +202,21 @@
             },
             {
                 "type": "image",
+                "key": "forest_bg1",
+                "url": "assets/backgrounds/forest/bg1.png"
+            },
+            {
+                "type": "image",
+                "key": "forest_bg2",
+                "url": "assets/backgrounds/forest/bg2.png"
+            },
+            {
+                "type": "image",
+                "key": "forest_bg3",
+                "url": "assets/backgrounds/forest/bg3.png"
+            },
+            {
+                "type": "image",
                 "key": "cardIcon",
                 "url": "assets/sprites/text-box/user.png"
             }, {
