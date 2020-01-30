@@ -52,7 +52,7 @@
 			"loot":["Light stand", "Unnatural heal"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
-        {   
+        {
             "name":"Moleg the Golem",
             "key": "mission2",
             "background":"forest_bg2",
@@ -87,7 +87,7 @@
 			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
-        {   
+        {
             "name":"Goblins everywhere",
             "key": "mission3",
             "background":"forest_bg3",
@@ -119,10 +119,10 @@
                     "text": [["goblin_general1","Wizard, we finally meet. I have orders to eliminate you. My man and I are here to take you down on behalf of the liberator."],["player", "The liberator? What are you talking about? Is he responsible for the creatures going mad? Anyways. Stop harming innocent people or I will have to end you."]]
                 }
             ],
-			"loot":["Anti-evolution"],
+			"loot":["Lightning stand", "Lightning rain", "Vase of Desire"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
-        {   
+        {
             "name":"Cacti Party",
             "key": "mission4",
             "background":"desert_bg3",
@@ -144,9 +144,11 @@
                     "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", "Your highness, I am not here to cause you any harm. I am here on a quest to save the creatures from my homeland that have gotten mad."],["kingtus","HOHO, WELL THEN YOU HAVE TO PROVE IT BY BEATING ME"], ["player","Heavens, here we go again. Bring it then."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Incinerate", "Dark beam"],
+        "deck":["Fireball", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+
         },
-        {   
+        {
             "name":"What Worm is this?",
             "key": "mission5",
             "background":"desert_bg3",
@@ -173,9 +175,10 @@
                     "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Please don't eat me."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Obliterate", "Strength"],
+        "deck":["Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
-        {   
+        {
             "name":"Club Pyramid",
             "key": "mission6",
             "background":"desert_bg3",
@@ -195,9 +198,10 @@
                     "text": [["pharaoh_yeah","Who dares to barge in here and disturb this party?"], ["player", "I am here to find out who is cursing these creatures? Please tell me how to stop dancing and who is behind all this mess."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Aura of Weakness"],
+        "deck":["Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
-        {   
+        {
             "name":"King Janpuff live in concert",
             "key": "mission7",
             "background":"iceisland",
@@ -229,9 +233,10 @@
                     "text": [["jkpuff","You insolent brat. You killed all of the audience. I will make you pay for that"], ["player", "King Janpuff, I am here to stop this mess. Please let me pass through."], ["jkpuff", "NEVER. NOW REST IN PEACE."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":[""],
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
-        {   
+        {
             "name":"The final act",
             "key": "mission8",
             "background":"tower",
@@ -258,7 +263,8 @@
                     "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but it is obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like they did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":[""],
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         }
 
     ]
