@@ -15,6 +15,8 @@ import { MissionNameGui } from "../objects/navigation-scene-objects/mission-name
 import {DeathScene} from "./death-scene";
 import {PauseWindow} from "../objects/pause-gui-objects/pause-window";
 import { NewCardsScene } from "./new-cards-scene";
+import { TutorialWindow } from "../objects/tutorial-objects/tutorial-window";
+import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -34,6 +36,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
+    public tutorialButton: TutorialButton;
 
     public cheats = [
         [["ArrowUp","ArrowUp","ArrowDown","ArrowDown", "ArrowLeft","ArrowRight","ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
@@ -384,6 +387,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
+        this.tutorialButton = new TutorialButton(this, 100,100);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;
