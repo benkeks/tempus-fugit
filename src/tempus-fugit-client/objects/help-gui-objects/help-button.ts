@@ -1,12 +1,19 @@
 export class HelpButton {
+    static newInfo: boolean = false;
+
     private scene: Phaser.Scene;
     private sprite: Phaser.GameObjects.Sprite;
+    private notification: Phaser.GameObjects.Sprite;
+
+    private isMissionScene: boolean;
     static currHelpParent: string;
 
     constructor(scene: Phaser.Scene, isMissionScene: boolean) {
+        this.isMissionScene = isMissionScene;
         this.scene = scene;
-        // TODO change the values
         this.sprite = scene.add.sprite(isMissionScene ? 335 : 1850, isMissionScene ? 1015 : 1020, 'fairy', 1).setScale(1.5);
+        if (HelpButton.newInfo) this.createNotification();
+
         scene.anims.create({
             key: 'fairy-fly',
             frames: scene.anims.generateFrameNumbers('fairy', {frames: [0, 1, 3, 4, 2, 5]}),
@@ -22,17 +29,32 @@ export class HelpButton {
         });
         this.sprite.on('pointerout', () => {
             this.sprite.anims.stop();
-            this.sprite.anims.setProgress(1/6);
+            this.sprite.anims.setProgress(1 / 6);
         });
     }
 
     public displayHelp(): void {
         let s = this.scene.scene;
-        // Uncomment if we decide not to pause the scene that calls help to avoid spawning help multiple times // run will wake a scene if it is paused but start a new one if it is active
-        // let isActive = s.isActive('HelpScene');
-        // if (!isActive)
-        s.run('HelpScene');
+        this.destroyNotification();
+        s.run('HelpScene', this.scene);
         HelpButton.currHelpParent = s.key;
+    }
+
+    public createNotification() {
+        this.notification = this.scene.add.sprite(this.isMissionScene ? 320 : 1835, this.isMissionScene ? 980 : 985, 'notification').setScale(2);
+        this.scene.add.tween({
+            targets: this.notification,
+            y: "+=15",
+            ease: "Linear",
+            duration: 200,
+            repeat: 10,
+            yoyo: true
+        });
+    }
+
+    public destroyNotification() {
+        if(this.notification) this.notification.destroy();
+        HelpButton.newInfo = false;
     }
 
 
