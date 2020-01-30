@@ -3,6 +3,7 @@ import {HelpButton} from "../objects/help-gui-objects/help-button";
 
 export class HelpScene extends Phaser.Scene {
     public helpWindow: HelpWindow;
+    public parentScene: Phaser.Scene;
 
     constructor() {
         super({
@@ -16,7 +17,7 @@ export class HelpScene extends Phaser.Scene {
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
     }
 
-    create() {
+    create(data) {
         this.helpWindow = new HelpWindow(this);
         this.helpWindow.createWindow();
         this.scene.pause(HelpButton.currHelpParent);

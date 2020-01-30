@@ -52,8 +52,9 @@ const LABEL_SPACE = '';
 
 
 export class HelpWindow {
-    private scene: Phaser.Scene;
+    static currMissionIndex;
 
+    private scene: Phaser.Scene;
     public helpGUI;
     public prevTab;
     public prevIndex = 0;
@@ -400,7 +401,40 @@ export class HelpWindow {
         [")"]: {type: "operators", frame: 14}
     };
 
-// TODO make content for help
-//     static help_data = [op_and, op_or, op_not];
-    static help_data = [op_and, op_or, op_not, op_impl, op_biImpl, op_evPast, op_evFuture, op_glPast, op_glFuture, op_nextPast, op_nextFuture, op_until, op_klammer]; // test array
+    // static help_data = [op_and, op_or, op_not, op_impl, op_biImpl, op_evPast, op_evFuture, op_glPast, op_glFuture, op_nextPast, op_nextFuture, op_until, op_klammer]; // test array
+    static help_data = [op_and, op_or, op_not, op_klammer];
+    static order = [
+        {
+            once: true,
+            tabs: [op_nextFuture, op_nextPast]
+        },
+        {
+            once: true,
+            tabs: [op_evFuture, op_evPast]
+        },
+        {
+            once: true,
+            tabs: [op_glFuture, op_glPast]
+        },
+        {
+            once: true,
+            tabs: [op_impl]
+        },
+        {
+            once: true,
+            tabs: [op_biImpl]
+        },
+        {
+            once: false,
+            tabs: []
+        },
+        {
+            once: true,
+            tabs: [op_until]
+        },
+        {
+            once: false,
+            tabs: []
+        }
+    ];
 };
