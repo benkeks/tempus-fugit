@@ -14,12 +14,12 @@
             "dialogue": [{
                 "triggerFunctionString": "return true;",
                 "text": [
-                    ["slime_mother", "How dare you kill my younglings?! You are going to pay for that!"],
-                    ["player", "Oh dear..."]
+                    ["Slimes", "Stop! Noone enters this forest and gets out alive!"],
+                    ["player", "I cannot afford to be stopped by you. Prepare to die!"]
                 ]
             }],
-            "loot": ["Natural heal", "Unnatural heal"],
-			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
+            "loot": ["Root pierce", "Natural heal", "Guiding Light"],
+			"deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
         },
         {
             "name": "mission1",
@@ -41,9 +41,10 @@
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
                 }
             ],
-			"loot":["Fireball", "Lightning Strike"]
+			"loot":["Light stand", "Unnatural heal"],
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
-        {   
+        {
             "name": "mission2",
             "background":"forest_bg2",
             "enemies": [
@@ -62,9 +63,10 @@
                     "text": [["",""], ["", ""]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission3",
             "background":"forest_bg3",
             "enemies": [
@@ -83,9 +85,10 @@
                     "text": [["",""], ["", ""]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Anti-evolution"],
+      "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
-        {   
+        {
             "name": "mission4",
             "background":"desert_bg3",
             "enemies": [
@@ -94,7 +97,7 @@
                 ["cactus2", "kingtus", "cactus2"]
             ],
             "monologue":{
-				"0": "The boat ride is finally over. On your way to find out, who or what is causing the creatures to become mad, you enter the desert. Soon you feel like cactis are moving around. Wait, why is one of them getting closer to you?",
+				"0": "The boat ride is finally over. On your way to find out, who or what is causing the creatures to become mad, you enter the desert. Soon you feel like cacti are moving around. Wait, why is one of them getting closer to you?",
                 "1": "That was weird. Why was it holding a spear? And why are you circled by more of them? Watch out!",
                 "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?"
             },
@@ -106,7 +109,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission5",
             "background":"desert_bg3",
             "enemies": [
@@ -127,7 +130,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission6",
             "background":"desert_bg3",
             "enemies": [
@@ -146,7 +149,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission7",
             "background":"iceisland",
             "enemies": [
@@ -165,7 +168,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission8",
             "background":"tower",
             "enemies": [
