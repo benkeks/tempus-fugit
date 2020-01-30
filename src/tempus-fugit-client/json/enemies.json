@@ -10,12 +10,6 @@
                 "formula":"(!l& O!l)|!n",
                 "action": "mission.player.takeHit(5);"
             },
-            "reactAttack":[
-                {
-                    "formula":"d->a",
-                    "action": "return;"
-                }
-            ],
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
             "size": [32, 32],
 			"image":"slime1"
@@ -29,12 +23,6 @@
                 "formula":"On&s&O!s",
                 "action": "mission.player.takeHit(15);"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/slime2/slime2-Sheet.png",
             "size": [32,32],
 			"image":"slime2"
@@ -47,12 +35,6 @@
                 "formula":"",
                 "action": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/slime3/slime3-Sheet.png",
             "size": [32,32],
 			"image":"slime3"
@@ -65,12 +47,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/slime_mother/mama-Sheet.png",
             "size": [64,64],
 			"image":"slime_mother"
@@ -83,12 +59,6 @@
                 "formula":"On&s&O!s",
                 "action": "mission.player.takeHit(15);"
             },
-            "reactAttack":[
-                {
-                "formula":"#On&s&O!s",
-                "action": "mission.player.takeHit(15);"
-                }
-            ],
             "sprite":"assets/sprites/enemies/goblin1/goblin1-Sheet.png",
             "size": [32,32],
 			"image":"goblin1"
@@ -101,12 +71,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
 			"image":"goblin2"
@@ -119,12 +83,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
 			"image":"goblin3"
@@ -137,12 +95,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
 			"image":"goblin_general1"
@@ -155,12 +107,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
 			"image":"goblin_general2"
@@ -173,12 +119,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/moleg/moleg-Sheet.png",
             "size": [64,64],
 			"image":"moleg"
@@ -191,12 +131,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/cactus1/cactus1-Sheet.png",
             "size": [32,64],
 			"image":"cactus1"
@@ -209,12 +143,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/cactus2/cactus2-Sheet.png",
             "size": [32,64],
 			"image":"cactus2"
@@ -227,12 +155,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/kingtus/kingtus-Sheet.png",
             "size": [64,64],
 			"image":"kingtus"
@@ -245,12 +167,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
             "size": [32,32],
 			"image":"wormling"
@@ -263,12 +179,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"",
             "size": [64,64],
 			"image":"darude_sandworm"
@@ -281,12 +191,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
             "size": [32,32],
 			"image":"snake"
@@ -299,12 +203,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"",
             "size": [32,64],
 			"image":"mummy"
@@ -317,12 +215,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"",
             "size": [64,64],
 			"image":"pharaoh_yeah"
@@ -335,12 +227,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
             "size": [64,64],
 			"image":"bgpuff1"
@@ -353,12 +239,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
             "size": [64,64],
 			"image":"bgpuff2"
@@ -371,12 +251,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
             "size": [64,64],
 			"image":"jkpuff"
@@ -389,12 +263,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
 			"image":"ghost"
@@ -407,12 +275,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"",
             "size": [32,32],
 			"image":"beegghost"
@@ -425,12 +287,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
             "size": [32,32],
 			"image":"stand1"
@@ -443,12 +299,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"",
             "size": [32,32],
 			"image":"stand2"
@@ -461,12 +311,6 @@
                 "formula":"",
                 "attack": "return;"
             },
-            "reactAttack":[
-                {
-                    "formula":"",
-                    "action": "return;"
-                }
-            ],
             "sprite":"assets/sprites/enemies/boss/boss-Sheet.png",
             "size": [32,64],
 			"image":"boss"
