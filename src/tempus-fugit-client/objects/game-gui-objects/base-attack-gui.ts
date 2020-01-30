@@ -9,6 +9,7 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
     public scene: Phaser.Scene;
     public icon: Phaser.GameObjects.Sprite;
     public box: Phaser.GameObjects.Rectangle;
+    public shadow: Phaser.GameObjects.Rectangle;
     public text: Phaser.GameObjects.Text;
     public game: Mission;
 
@@ -44,6 +45,10 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         this.box = this.scene.add.rectangle(x+88, y+40, width, height, 0x666666);
         this.box.setOrigin(1);
         this.sendToBack(this.box);
+        this.shadow = this.scene.add.rectangle(x+88, y+40, width, height, 0x666666);
+        this.shadow.setOrigin(1);
+        this.shadow.setAlpha(0.0);
+
 
 
         this.icon = this.scene.add.sprite(x+25, y-30, "baseAttack").setScale(1.5);
@@ -60,13 +65,15 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         this.box
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
-                this.game.player.attackWithBaseAttack();
+                this.game.player.attackWithBaseAttack(this.game);
+                this.game.player.takeCard(this.game.deck);
                 this.game.nextPhase(Mission.STAND_PHASE);
             }, this);
 
         this.add(this.box);
         this.add(this.icon);
         this.add(this.text);
+        this.add(this.shadow);
     }
 
     async drawPhase(game: Mission) {
@@ -93,8 +100,24 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
     async gameover(game: Mission, gameWon: boolean) {
     }
     async Activated(game: Mission, active: boolean) {
-        if (!active) this.box.disableInteractive();
-        else this.box.setInteractive();
+        if (!active) {
+            this.box.disableInteractive();
+            this.shadow.setAlpha(0.7);
+        } else
+        {
+            this.box.setInteractive();
+            this.shadow.setAlpha(0.0);
+        }
+    }
+    async baseAttackPossible(game: Mission, active: boolean) {
+        if (!active) {
+            this.box.disableInteractive();
+            this.shadow.setAlpha(0.7);
+        } else
+            {
+                this.box.setInteractive();
+                this.shadow.setAlpha(0.0);
+            }
     }
 
 }

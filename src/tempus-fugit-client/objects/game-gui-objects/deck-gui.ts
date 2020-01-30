@@ -40,7 +40,7 @@ export class DeckGUI extends Phaser.GameObjects.Container implements DeckListene
      */
     numCardsChanged(numCards: number): void {
         if (numCards < 10) {
-            this.text.x = this.x-5;
+            this.text.x = this.x-7;
         } else {
             this.text.x = this.x-30;
         }

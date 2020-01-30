@@ -45,11 +45,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public textBox: Textbox;
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
-<<<<<<< HEAD
-    public baseAttack: BaseAttackGUI;
-=======
     public tutorialButton: TutorialButton;
->>>>>>> 48d1977a74309b7397d6d21f8236ef8f2e72dd6c
+    public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -157,7 +154,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         //Base attack box
         this.lowerMenu.lineStyle(6, color1, 1);
         this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
-        this.lowerMenu.fillStyle(color3, 1);
+        this.lowerMenu.fillStyle(0x666666, 1);
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
 
         //Cards left box
@@ -306,6 +303,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     Activated(game: Mission, active: boolean) { }
+    async baseAttackPossible(game: Mission, active: boolean) {    }
 
     public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({

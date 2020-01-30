@@ -190,8 +190,10 @@ export class Player {
         }
     }
 
-    public attackWithBaseAttack(): void {
-
+    public attackWithBaseAttack(mission: Mission): void {
+        for (let en of mission.getEnemies()) {
+            en.takeHit(this.baseAttack, mission);
+        }
     }
 
     /**
