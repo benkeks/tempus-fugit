@@ -8,7 +8,7 @@
 		"standRounds":"3",
 		"action":"target.takeHit(1000, mission);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:-1, local:false, value:false},{variable:'l', start:0, end:-1, local:false, value:false},{variable:'t', start:0, end:-1, local:false, value:false},{variable:'s', start:0, end:-1, local:false, value:false}]);",
 		"comment":"deals 1000 dmg to everything. Resets board -> everything to false or !#F(s|l|t|n)",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"1"},
 
 		{"name":"Fireball",
 		"description":"Deals 8 damage to a foe, also sets strength two rounds from now",
@@ -30,7 +30,7 @@
 		"standRounds":"4",
 		"action":"mission.player.baseAttack += 3;mission.gameState.setVariableValues({'s':{1:true, 2:true}});",
 		"comment":"Os&OOs",
-		"inDeckAtStart":"4"},
+		"maxCardsInDeck":"1"},
 
 		{"name":"Aura of Weakness",
 		"description":"Decreases enemies' atk by 3",
@@ -41,7 +41,7 @@
 		"standRounds":"4",
 		"action":"target.baseAttack-=3;",
 		"comment":"",
-		"inDeckAtStart":"4"},
+		"maxCardsInDeck":"1"},
 
 		{"name":"Higher nature stand",
 		"description":"Deals 10 dmg to all enemies!",
@@ -52,7 +52,7 @@
 		"standRounds":"4",
 		"action":"target.takeHit(10, mission);",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Light stand",
 		"description":"Deals 4 dmg to all enemies!",
@@ -63,7 +63,7 @@
 		"standRounds":"4",
 		"action":"target.takeHit(4, mission);",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Heal stand",
 		"description":"Heals 15 dmg!",
@@ -74,7 +74,7 @@
 		"standRounds":"4",
 		"action":"mission.player.heal(15);",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning stand",
 		"description":"Deals 15 dmg to all enemies!",
@@ -85,7 +85,7 @@
 		"standRounds":"4",
 		"action":"target.takeHit(15, mission);",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning Strike",
 		"description":"Deals 10 damage to a foe but un-sets light this round",
@@ -107,7 +107,7 @@
 		"standRounds":"3",
 		"action":"target.takeHit(25, mission);mission.gameState.setAllVariableValues({variable:'l', start:0, end:-1, local:false, value:true});",
 		"comment":"Deals 25 dmg to all enemies, also: ->",
-		"inDeckAtStart":"4"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Natural heal",
 		"description":"Heals you by 15 HP and sets the next two nature",
@@ -143,7 +143,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Dark beam",
-		"description":"Deals 25 damage to an enemy but un-sets this and the next two light!",
+		"description":"Deals 25 damage to a foe but un-sets three light!",
 		"image":"dark_beam",
 		"formula":"(l|#Ol)<->t&s",
 		"cardKind":"directed",
@@ -151,10 +151,10 @@
 		"standRounds":"3",
 		"action":"target.takeHit(25, mission);mission.gameState.setAllVariableValues({variable:'l', start:0, end:3, local:true, value:false});mission.gameState.setAllVariableValues({variable:'t', start:0, end:3, local:true, value:true});",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeckt":"2"},
 
 		{"name":"Sun flare",
-		"description":"Deals 20 damage to all enemies, sets this and the next two strength & light",
+		"description":"Deals 20 damage to all enemies, sets three strength & light",
 		"image":"sun",
 		"formula":"(#Gl&OFn)|t",
 		"cardKind":"global",
@@ -162,10 +162,10 @@
 		"standRounds":"3",
 		"action":"target.takeHit(20, mission);mission.gameState.setAllVariableValues({variable:'s', start:0, end:3, local:true, value:true});mission.gameState.setAllVariableValues({variable:'l', start:0, end:3, local:true, value:true});",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Incinerate",
-		"description":"Deals 100 damage to an enemy but unsets all nature from this round onwards!",
+		"description":"Deals 100 damage to an enemy but unsets all nature from now on!",
 		"image":"light_lens",
 		"formula":"!n&#O#Fl&t",
 		"cardKind":"targeted",
@@ -173,10 +173,10 @@
 		"standRounds":"3",
 		"action":"target.takeHit(100, mission);mission.gameState.setAllVariableValues({variable:'n', start:0, end:-1, local:true, value:false});",
 		"comment":"",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Unnatural heal",
-		"description":"this card heals you by 50 HP but un-sets all nature from this round onwards!",
+		"description":"Heals you by 50 HP but un-sets all nature from this round on!",
 		"image":"big_heal",
 		"formula":"#On&n&t&s",
 		"cardKind":"player",
@@ -184,7 +184,7 @@
 		"standRounds":"3",
 		"action":"mission.player.heal(50);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:-1, local:true, value:false}]);",
 		"comment":"heals player by 50 and: -> !Fn",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Guiding Light",
 		"description":"Augments Base attack by 1 and globally light",
@@ -195,7 +195,7 @@
 		"standRounds":"3",
 		"action":"mission.player.baseAttack+=1;mission.gameState.setAllVariableValues([{variable:'l', start:1, end:3, local:true, value:true}]);",
 		"comment":"Base attack up by 1 and: -> Gl",
-		"inDeckAtStart":"2"},
+		"maxCardsInDeck":"2"},
 
 		{"name":"Lower woodland stand",
 		"description":"this stand deals 2 damage to all enemies!",
@@ -209,7 +209,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Root pierce",
-		"description":"Deal 7 damage to an enemy!",
+		"description":"7 dmg to a foe, sets the next two transmute and next strength",
 		"image":"tree",
 		"formula":"n&l",
 		"cardKind":"directed",
@@ -217,6 +217,6 @@
 		"standRounds":"4",
 		"action":"target.takeHit(7, mission);mission.gameState.setAllVariableValues([{variable:'t', start:1, end:3, local:true, value:true}]);mission.gameState.setVariableValues({'s':{1:true}});",
 		"comment":"deals 7 damage to a random foe",
-		"inDeckAtStart":"2"}
+		"maxCardsInDeck":"3"}
 
 ]}
