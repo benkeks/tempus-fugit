@@ -190,6 +190,12 @@ export class Player {
         }
     }
 
+    public attackWithBaseAttack(mission: Mission): void {
+        for (let en of mission.getEnemies()) {
+            en.takeHit(this.baseAttack, mission);
+        }
+    }
+
     /**
      * Player takes the card on top of 'deck' and adds it to his hand
      * @param deck The deck that the card is taken from
