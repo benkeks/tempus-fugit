@@ -186,7 +186,7 @@ export class NavigationScene extends Phaser.Scene {
 
             b.on("pointerover", pointer => {
                 b.anims.stop();
-                this.levelText.fadeInText(this.missionKeys[i]);
+                this.levelText.fadeInText(Mission.Missions[this.missionKeys[i]].name);
                 b.setTexture("bullet_point_hover");
             })
 

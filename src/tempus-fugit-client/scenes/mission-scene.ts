@@ -187,6 +187,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.lineStyle(20, color1, 1);
         this.lowerMenu.strokeRect(0, 0, GameInfo.width, GameInfo.height)
 
+        //console.log(this.tfgame.deck);
+
         this.textBox = new Textbox(this, this.handGUI, this.tfgame);
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -214,7 +216,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
-                this.tfgame.nextWave(this.tfgame._enemies.length);
+                this.tfgame.nextWave(100);
             }
         })
 
@@ -224,6 +226,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     update(time: number, delta: number): void {
+
         if (this.cardChannel) {
             this.cardChannel.decisionArrow.update(time, delta);
         }
