@@ -209,7 +209,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780,300);
+        this.tutorialButton = new TutorialButton(this, 1780,310);
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {

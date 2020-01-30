@@ -27,7 +27,7 @@ export class DeckGUI extends Phaser.GameObjects.Container implements DeckListene
             fontSize: '30px',
             fontFamily: 'pressStart',
         });
-        this.scene.add.text(x - 55, y + 90, "Karten auf\ndem Stapel").setStyle({
+        this.scene.add.text(x - 55, y + 90, "Cards in\nthe Deck").setStyle({
             fontSize: '12px',
             fontFamily: 'pressStart',
         });
