@@ -15,6 +15,8 @@ import { MissionNameGui } from "../objects/navigation-scene-objects/mission-name
 import {DeathScene} from "./death-scene";
 import {PauseWindow} from "../objects/pause-gui-objects/pause-window";
 import { NewCardsScene } from "./new-cards-scene";
+import { TutorialWindow } from "../objects/tutorial-objects/tutorial-window";
+import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -34,6 +36,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
+    public tutorialButton: TutorialButton;
 
     public cheats = [
         [["ArrowUp","ArrowUp","ArrowDown","ArrowDown", "ArrowLeft","ArrowRight","ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
@@ -111,7 +114,9 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", {frameWidth: 80, frameHeight: 80});
 
         this.load.image("book", "assets/sprites/board/book.png");
+        this.load.image("questionMark", "assets/sprites/questionmark.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
+        this.load.image("notification", "assets/sprites/notification.png");
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
@@ -169,7 +174,8 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset,-yOffset,b.getBounds().width + 2*xOffset,b.getBounds().height + 2*yOffset);
             
             b.on("pointerdown", pointer => {
-                this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
                     index: i,
@@ -384,6 +390,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
+        this.tutorialButton = new TutorialButton(this, 1780,50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;

@@ -25,7 +25,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         player: Player,
         hp: number = 100,
         x: number = 300,
-        y: number = 550
+        y: number = 480
     ) {
         super(scene, x, y, texture);
         this.scene.add.existing(this);
@@ -39,11 +39,11 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         };
         this.setScale(GameInfo.scale);
 
-        this.baseAttackText = this.scene.add.text(this.x + 70, this.y + 230, player.baseAttack.toString()).setStyle(textStyle);
-        this.sword = this.scene.add.sprite(this.x - 10, this.y + 260, "swordFont").setScale(0.4);
+        this.baseAttackText = this.scene.add.text(this.x + 70, this.y + 280, player.baseAttack.toString()).setStyle(textStyle);
+        this.sword = this.scene.add.sprite(this.x - 10, this.y + 310, "swordFont").setScale(0.4);
         this.sword.setScale(2, 2);
-        this.hpText = this.scene.add.text(this.x + 70, this.y + 320, player.getHP().toString()).setStyle(textStyle);
-        this.heart = this.scene.add.sprite(this.x - 10, this.y + 340, "heartFont").setScale(0.4);
+        this.hpText = this.scene.add.text(this.x + 70, this.y + 370, player.getHP().toString()).setStyle(textStyle);
+        this.heart = this.scene.add.sprite(this.x - 10, this.y + 390, "heartFont").setScale(0.4);
         this.heart.setScale(2, 2);
         this.player.listener.push(this);
     }
@@ -55,7 +55,6 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     async playerHpChanged(changedTo: number, changedBy: number) {
         this.hpText.setText('' + changedTo);
         let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' };
-        console.log(changedBy);
         if (changedBy > 0) {
             font1 = { fontSize: '50px', fontFamily: 'pressStart', color: '#00DD00' }
             let damageText = this.scene.add.text(this.x - 20, this.y - 100, Math.abs(changedBy).toString(), font1);
@@ -74,7 +73,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
                 }
             });
             let blood = this.scene.add.sprite(this.x, this.y + 30, "blood");
-            blood.setScale(0.3, 0.4);
+            //blood.setScale(0.3, 0.4);
             blood.alpha = 0;
             this.scene.tweens.add({
                 targets: blood, duration: 200, alpha: 1, ease: "power2", yoyo: true,

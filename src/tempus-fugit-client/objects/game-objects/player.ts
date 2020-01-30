@@ -16,7 +16,7 @@ export class Player {
     }
 
     set currentHP(value: number) {
-        this._currentHP = value;
+        this._currentHP = Math.max(0,value);
         //this.listener.map(obj => obj.playerHpChanged(value));
     }
     get baseAttack(): number {
