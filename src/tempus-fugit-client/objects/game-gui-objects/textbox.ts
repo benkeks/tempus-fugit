@@ -43,10 +43,10 @@ export class Textbox {
      * adds a story dialog to textbox queue
      * @param dialog 
      */
-    public addStoryDialog(dialog: StoryDialog, blocking: boolean = false) {
+    public addStoryDialog(dialog: StoryDialog, blocking: boolean) {
 
         if (blocking) {
-
+            this.scene.scene.run('BTextBoxScene', { dialog: dialog, handGUI: this.handGUI, mission: this.mission });
 
         } else {
             if (!this.nonBlockingTextBox) this.nonBlockingTextBox = new NBTextbox(this.scene, this.handGUI, this.mission, this.nextPageIcon, this.typeSpeed, this.boxWidth);

@@ -248,9 +248,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.iteratePhases(3, 500);
     }
 
-
-    async storyDialog(game: Mission, dialog: StoryDialog) {
-        this.textBox.addStoryDialog(dialog);
+    storyDialog(game: Mission, dialog: StoryDialog) {
+        this.tfgame.paused = true;
+        this.scene.pause('MissionScene');
+        this.textBox.addStoryDialog(dialog, dialog.blocking);
     }
 
     async gameover(game: Mission, gameWon: boolean) {
@@ -261,10 +262,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
-    async storyMonolog(game: Mission, monolog: string) {
+    storyMonolog(game: Mission, monolog: string) {
         this.tfgame.active = false;
-
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog:monolog, gameOver:game.isGameWon()});
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {

@@ -12,7 +12,9 @@ export class MonologScene extends Phaser.Scene {
     preload() {
     }
 
-    create(data: { monolog: string, gameOver:boolean }) {
+    create(data: { monolog: string, gameOver: boolean }) {
+
+        // if bocking textbox scene is active, pause this scene and go back 
 
         this.monologWindow = new MonologWindow(this);
         this.monologWindow.createMonologWindow(data.monolog, data.gameOver);
