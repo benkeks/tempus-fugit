@@ -235,7 +235,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         if (this.inQueue)
-            this.inQueue = false
+            this.inQueue = false;
 
         if (this.waveCounter in this.monologue) {
             this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
