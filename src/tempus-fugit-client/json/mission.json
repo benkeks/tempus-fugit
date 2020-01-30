@@ -18,8 +18,8 @@
                     ["player", "Wait, what is going on here? Why are you in pain?"]
                 ]
             }],
-            "loot": ["Natural heal", "Unnatural heal"],
-			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
+            "loot": ["Root pierce", "Natural heal", "Guiding Light"],
+			"deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
         },
         {
             "name": "Mother of slimes",
@@ -48,7 +48,8 @@
                     "text": [["goblin1", "This is the one who did it to 'em, my liege."],["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "I didn't mean to, they were in pain. Please. I don't want to do this!"]]
                 }
             ],
-			"loot":["Fireball", "Lightning Strike"]
+			"loot":["Light stand", "Unnatural heal"],
+            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
         {   
             "name":"Moleg the Golem",
@@ -81,7 +82,8 @@
                     "text": [["moleg","Hello there young wizard. I heard you were wreaking havoc around these forest and killing the slimes. For that you must feel the wrath of Moleg"], ["player", "Please wait. I can explain. Can't you see that lately the creatures have been aggressive?"], ["moleg", "Nonsense! I am going to crush you!"]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
+            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
         {   
             "name":"Goblins everywhere",
@@ -114,7 +116,8 @@
                     "text": [["goblin_general1","Wizard, we finally meet. I have orders to eliminate you. My man and I are here to take you down on behalf of the liberator."],["player", "The liberator? What are you talking about? Is he responsible for the creatures going mad? Anyways. Stop harming innocent people or I will have to end you."]]
                 }
             ],
-			"loot":["Natural heal", "Unnatural heal"]
+			"loot":["Anti-evolution"],
+            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {   
             "name":"Cacti Party",

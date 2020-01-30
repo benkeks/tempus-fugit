@@ -478,7 +478,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    async playerHpChanged(changedTo: number) {
+    async playerHpChanged(changedTo: number, changedBy:number) {
         if (changedTo <= 0) {
             this.listener.map(l => l.gameover(this, false));
         }
@@ -516,6 +516,7 @@ export class Mission implements EnemyListener, PlayerListener {
             for (let dial of m.dialogue) {
                 let sd: StoryDialog = new StoryDialog(dial.text);
                 sd.triggerFunctionString = dial.triggerFunctionString;
+                sd.blocking = dial.blocking;
                 sd.parsetriggerFunctionString();
                 mission.dialogue.push(sd);
             }
