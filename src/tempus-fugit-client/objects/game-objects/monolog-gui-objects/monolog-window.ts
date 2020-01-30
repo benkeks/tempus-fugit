@@ -56,8 +56,8 @@ export class MonologWindow {
                 // color white
                 this.clearTint();
             })
-        //.setOrigin(1, 0);
 
+        //.setOrigin(1, 0);
 
         // space key events
         let clicks = 0;
