@@ -38,12 +38,12 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 2, zu beginn",
+                    "triggerFunctionString":"return mission.curPhase==1;//Welle 2, zu beginn",
                     "blocking":"true",
                     "text": [["slime 3","PLEASE MAKE IT STOP. WE DON'T WANT TO HURT ANYONE."], ["player", "This is outrageous, the slimes are normally peaceful creatures. Who is responsible for this?"]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3, wenn sie spawned",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3, wenn sie spawned",
                     "blocking":"true",
                     "text": [["goblin1", "This is the one who did it to 'em, my liege."],["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "I didn't mean to, they were in pain. Please. I don't want to do this!"]]
                 }
@@ -66,17 +66,17 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Zu beginn der 1. Welle;",
+                    "triggerFunctionString":"return mission.curPhase==0;//Zu beginn der 1. Welle;",
                     "blocking":"false",
                     "text": [["slime2","You'll pay for hurting our mother and our brethren."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 2: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==1;//Welle 2: zu beginn;",
                     "blocking":"true",
                     "text": [["slime3","You sure are strong, but Moleg the golem will avenge us and our mother for your crimes."], ["player", "A golem? I thought golems were nonexistant in these lands..."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3: zu beginn",
                     "blocking":"true",
                     "text": [["moleg","Hello there young wizard. I heard you were wreaking havoc around these forest and killing the slimes. For that you must feel the wrath of Moleg"], ["player", "Please wait. I can explain. Can't you see that lately the creatures have been aggressive?"], ["moleg", "Nonsense! I am going to crush you!"]]
                 }
@@ -99,17 +99,17 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 1: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase == 0;//Welle 1: zu beginn;",
                     "blocking":"true",
                     "text": [["player","Hold right there goblin scum. Tell your general to leave these lands!"], ["goblin2", "Don't tell us what to do. Give us everything you have or pay with your blood."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 2: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==1;//Welle 2: zu beginn;",
                     "blocking":"false",
                     "text": [["goblin2","GENERAL, THE WIZARD IS 'ERE."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3: zu beginn;",
                     "blocking":"true",
                     "text": [["goblin_general1","Wizard, we finally meet. I have orders to eliminate you. My man and I are here to take you down on behalf of the liberator."],["player", "The liberator? What are you talking about? Is he responsible for the creatures going mad? Anyways. Stop harming innocent people or I will have to end you."]]
                 }
@@ -132,7 +132,7 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase == 2;//Welle 3: zu beginn;",
                     "blocking":"true",
                     "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", "Your highness, I am not here to cause you any harm. I am here on a quest to save the creatures from my homeland that have gotten mad."],["kingtus","HOHO, WELL THEN YOU HAVE TO PROVE IT BY BEATING ME"], ["player","Heavens, here we go again. Bring it then."]]
                 }
@@ -155,12 +155,12 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 1: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==0;//Welle 1: zu beginn;",
                     "blocking":"true",
                     "text": [["player", "Who are you? On behalf of Kingtus please let me pass."],["cactus1","I do you one better, Where are you?"], ["cactus2", " No, I do you one better, Why are you?"]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3: zu beginn;",
                     "blocking":"true",
                     "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Please don't eat me."]]
                 }
@@ -181,7 +181,7 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 2: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==1;//Welle 2: zu beginn;",
                     "blocking":"true",
                     "text": [["pharaoh_yeah","Who dares to barge in here and disturb this party?"], ["player", "I am here to find out who is cursing these creatures? Please tell me how to stop dancing and who is behind all this mess."]]
                 }
@@ -204,17 +204,17 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 1: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==0;//Welle 1: zu beginn;",
                     "blocking":"true",
                     "text": [["goblin3","You damned wizard finally showed up. Meet your doom here and let us enjoy the beautiful voice of King Janpuff and co."], ["player", "Not this again."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 2: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==1;//Welle 2: zu beginn;",
                     "blocking":"true",
                     "text": [["goblin3","You will never beat the liberator. He frees us from you filthy humans and gives us true power and meaning. In his castle he resides and you will stand no chance against him."], ["player", "A Castle? Interesting. I will have to beat King Janpuff first though, before I can proceed."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3: zu beginn;",
                     "blocking":"true",
                     "text": [["jkpuff","You insolent brat. You killed all of the audience. I will make you pay for that"], ["player", "King Janpuff, I am here to stop this mess. Please let me pass through."], ["jkpuff", "NEVER. NOW REST IN PEACE."]]
                 }
@@ -237,12 +237,12 @@
             },
             "dialogue": [
                 {
-                    "triggerFunctionString":"//Welle 1: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==0;//Welle 1: zu beginn;",
                     "blocking":"true",
                     "text": [["goblin_general2", "Wizard brat. So we finally meet again. I have been eager to kill you after our last meeting. You shall not pass."], ["player", "Don't stand in my way. The liberator is the reason for innocent bloodshedding. If you won't let me pass now, I will have to kill you."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 3: zu beginn;",
+                    "triggerFunctionString":"return mission.curPhase==2;//Welle 3: zu beginn;",
                     "blocking":"true",
                     "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but it is obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like they did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
                 }
