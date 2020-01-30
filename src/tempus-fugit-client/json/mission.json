@@ -34,7 +34,8 @@
             "monologue": {
                 "0": "You're walking deeper into the woods... What is it with these slimes? Why are they so eager to feel pain?",
                 "1": "Onwards you hear a mysterious sound. It seems like someone is following you. Tread lightly!",
-                "2": "The ground is shaking as you try to continue your journey through the woods. Someone is crying for their mother. What is going on?"
+                "2": "The ground is shaking as you try to continue your journey through the woods. Someone is crying for their mother. What is going on?",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -63,7 +64,8 @@
             "monologue":{
 				"0": "Defeating the mother of all slimes sure left you scarred. Hopeing to find out who did this to them, you follow the road. Until ...",
                 "1": "That didn't seem to be all of them. More are coming and they seem more aggressive. Watch out!",
-                "2": "The warning about this golem called Moleg sure sounded scary. Wait... Why does this rock have a mustache?"
+                "2": "The warning about this golem called Moleg sure sounded scary. Wait... Why does this rock have a mustache?",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -97,7 +99,8 @@
             "monologue": {
                 "0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its habitants. On your way to the port you encounter a goblin party.",
                 "1": "More of them start to appear. They seem to have alarmed their general. Let's go!",
-                "2": "You hear the sound of a warhorn. It is him. The one responsible for innocent people dying. It is time to go all out."
+                "2": "You hear the sound of a warhorn. It is him. The one responsible for innocent people dying. It is time to go all out.",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -131,7 +134,8 @@
             "monologue":{
 				"0": "The boat ride is finally over. On your way to find out, who this liberator is and what is causing the creatures to become mad, you enter the desert. Soon you feel like cactis are moving around. Wait, why is one of them getting closer to you?",
                 "1": "That was weird. Why was it holding a spear? And why are you circled by more of them? Watch out!",
-                "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?"
+                "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -154,7 +158,8 @@
             "monologue":{
 				"0": "After a heated and pointy battle with kingtus, he let you pass through and told you to head to the pyramid for clues that might help you solve the mystery about creatures drowning in madness. On your way some volatile cacti attack you.",
                 "1": "These cacti were acting weird. As if they were controlled by something or someone. Wait why are there worms appearing out of nowhere? Be careful.",
-                "2": "Below you the sand starts to sink in. They seem to have called for help. Oh dear, this is not good."
+                "2": "Below you the sand starts to sink in. They seem to have called for help. Oh dear, this is not good.",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -180,7 +185,8 @@
             ],
             "monologue": {
                 "0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",
-                "1": "After defeating the snakes you venture deeper into the pyramid just to see that there is only one room. The sarcophagus inside of it seems empty. You suddenly hear music and all you can think of dancing. What is going on?"
+                "1": "After defeating the snakes you venture deeper into the pyramid just to see that there is only one room. The sarcophagus inside of it seems empty. You suddenly hear music and all you can think of dancing. What is going on?",
+                "2": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -203,7 +209,8 @@
             "monologue":{
 				"0": "Even around these Icy lands goblins are around. These seem much fiercer though, than the ones at home",
                 "1": "A concert? In the middle of nowhere when it is freezing? How awful. Suddenly more goblins start to appear.",
-                "2": "That was some interesting information about this so called liberator. Who is he? Onwards you hear someone singing weird songs that makes you want to rest. What is going on?"
+                "2": "That was some interesting information about this so called liberator. Who is he? Onwards you hear someone singing weird songs that makes you want to rest. What is going on?",
+                "3": "Congratulations! You won!"
             },
             "dialogue": [
                 {
@@ -236,7 +243,8 @@
             "monologue": {
                 "0": "The time has come to fight the one who is responsible for this mess. As you try entering the tower you are greeted by the goblin general. Watch out!",
                 "1": "Inside the tower, ghosts start to appear out of no where. You got this!",
-                "2": "This is it. You've come this far and now the time has come to confront the evil behind all of this. But the sight of what you see at the peak of the tower shocks you."
+                "2": "This is it. You've come this far and now the time has come to confront the evil behind all of this. But the sight of what you see at the peak of the tower shocks you.",
+                "3": "Congratulations! You finished the game!"
             },
             "dialogue": [
                 {
