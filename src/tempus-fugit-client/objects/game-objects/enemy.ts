@@ -13,7 +13,7 @@ export class Enemy {
     public key:string; // key in enemies dictionary, if no given is equal to name
     public maxHP: number; // The enemy's maximum hit points
     public currentHP: number; // The enemy's current hit points
-    public baseAttack: number; // The enemy's base attack strength
+    public _baseAttack: number; // The enemy's base attack strength
     public description:string;
     public specialAttackDescription:string = "";
     public image:string;
@@ -21,9 +21,18 @@ export class Enemy {
     public specialAttack: Card; // The enemy's base attack strength
     public reactAttacks: Card[]; // List of react effects
 
-    public listener:EnemyListener[]; // A list of objects listening to events happening in the enemy
+    public listener:EnemyListener[] = []; // A list of objects listening to events happening in the enemy
     public sprite:string;
     public size:number[];
+
+    get baseAttack():number {
+        return this._baseAttack;
+    }
+    set baseAttack(val:number) {
+        this._baseAttack = val;
+        
+        this.listener.map(l => l.baseAttackChanged(this));
+    }
 
    public getHP(): number {
         return this.currentHP;
@@ -57,7 +66,7 @@ export class Enemy {
      * @author Florian
      */
     constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
-        this.name = name;
+        this.listener = [];this.name = name;
         this.key = this.name;
         this.maxHP = hp;
         this.currentHP = this.maxHP;
@@ -66,7 +75,6 @@ export class Enemy {
         this.reactAttacks = reactAttacks;
         this.sprite = sprite;
         this.size = size;
-        this.listener = [];
 
     }
 
@@ -204,4 +212,5 @@ export class Enemy {
 export interface EnemyListener {
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
     Attacking(enemy:Enemy);
+    baseAttackChanged(enemy:Enemy);
 }

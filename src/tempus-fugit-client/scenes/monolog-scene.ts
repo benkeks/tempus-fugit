@@ -12,10 +12,10 @@ export class MonologScene extends Phaser.Scene {
     preload() {
     }
 
-    create(data: { monolog: string }) {
+    create(data: { monolog: string, gameOver:boolean }) {
 
         this.monologWindow = new MonologWindow(this);
-        this.monologWindow.createMonologWindow(data.monolog);
+        this.monologWindow.createMonologWindow(data.monolog, data.gameOver);
         this.scene.pause('MissionScene');
 
         this.events.on('wake', function () {

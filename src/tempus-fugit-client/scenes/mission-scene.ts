@@ -76,6 +76,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             deck: data.deck.copy()
         };
 
+        this.tfgame.deck.setUpDeck();
         this.tfgame.deck.shuffle();
 
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
@@ -263,7 +264,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async storyMonolog(game: Mission, monolog: string) {
         this.tfgame.active = false;
 
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog });
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog:monolog, gameOver:game.isGameWon()});
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
