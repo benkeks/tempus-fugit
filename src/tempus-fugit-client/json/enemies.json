@@ -32,7 +32,7 @@
             "maxHP":25,
             "baseAttack":4,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "action": "return;"
             },
             "sprite":"assets/sprites/enemies/slime3/slime3-Sheet.png",
@@ -44,7 +44,7 @@
             "maxHP":60,
             "baseAttack":7,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/slime_mother/mama-Sheet.png",
@@ -68,7 +68,7 @@
             "maxHP":40,
             "baseAttack":6,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
@@ -80,7 +80,7 @@
             "maxHP":90,
             "baseAttack":8,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
@@ -92,7 +92,7 @@
             "maxHP":100,
             "baseAttack":13,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
@@ -104,7 +104,7 @@
             "maxHP":300,
             "baseAttack":30,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
@@ -116,7 +116,7 @@
             "maxHP":90,
             "baseAttack":15,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/moleg/moleg-Sheet.png",
@@ -128,7 +128,7 @@
             "maxHP":45,
             "baseAttack":10,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/cactus1/cactus1-Sheet.png",
@@ -140,7 +140,7 @@
             "maxHP":50,
             "baseAttack":11,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/cactus2/cactus2-Sheet.png",
@@ -152,7 +152,7 @@
             "maxHP":120,
             "baseAttack":20,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/kingtus/kingtus-Sheet.png",
@@ -164,7 +164,7 @@
             "maxHP":55,
             "baseAttack":12,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
@@ -176,7 +176,7 @@
             "maxHP":130,
             "baseAttack":23,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"",
@@ -188,7 +188,7 @@
             "maxHP":50,
             "baseAttack":15,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
@@ -200,7 +200,7 @@
             "maxHP":70,
             "baseAttack":18,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"",
@@ -212,7 +212,7 @@
             "maxHP":150,
             "baseAttack":25,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"",
@@ -224,7 +224,7 @@
             "maxHP":100,
             "baseAttack":17,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
@@ -236,7 +236,7 @@
             "maxHP":100,
             "baseAttack":17,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
@@ -248,7 +248,7 @@
             "maxHP":160,
             "baseAttack":28,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
@@ -260,7 +260,7 @@
             "maxHP":110,
             "baseAttack":20,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
@@ -272,7 +272,7 @@
             "maxHP":130,
             "baseAttack":30,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"",
@@ -284,7 +284,7 @@
             "maxHP":160,
             "baseAttack":33,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
@@ -296,7 +296,7 @@
             "maxHP":160,
             "baseAttack":33,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"",
@@ -308,7 +308,7 @@
             "maxHP":200,
             "baseAttack":45,
             "specialAttack":{
-                "formula":"",
+                "formula":"n",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/boss/boss-Sheet.png",
