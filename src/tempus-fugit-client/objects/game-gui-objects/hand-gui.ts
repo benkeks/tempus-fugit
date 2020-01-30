@@ -231,7 +231,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             if (this.cardGUIs[pos].card === card) {
                 this.stack.addCard(this.cardGUIs[pos].card);
                 this.cardGUIs[pos].cross.destroy;
-                this.cardGUIs[pos].destroy;
+                this.cardGUIs[pos].destroy();
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);
                 return;
