@@ -1,14 +1,15 @@
-import {Mission} from "./mission";
+import { Mission } from "./mission";
 
 export class StoryDialog {
 
-    public activeLine:number = -1;
-    
-    public text:string[][];
-    public triggerFunction:Function = undefined;
-    public triggerFunctionString:string;
+    public activeLine: number = -1;
 
-    public parsetriggerFunctionString(triggerFunction:string=undefined) {
+    public text: string[][];
+    public triggerFunction: Function = undefined;
+    public triggerFunctionString: string;
+    public blocking: boolean = true;
+
+    public parsetriggerFunctionString(triggerFunction: string = undefined) {
         if (!triggerFunction) {
             triggerFunction = this.triggerFunctionString;
         }
@@ -16,7 +17,7 @@ export class StoryDialog {
         this.triggerFunction = eval("(function(mission){" + triggerFunction + "})");
     }
 
-    public isTriggered(mission:Mission):boolean {
+    public isTriggered(mission: Mission): boolean {
         if (!this.triggerFunction) {
             this.parsetriggerFunctionString();
         }
@@ -24,18 +25,18 @@ export class StoryDialog {
         return this.triggerFunction(mission);
     }
 
-    public copy():StoryDialog {
+    public copy(): StoryDialog {
         let sd = new StoryDialog([...this.text]);
         sd.triggerFunctionString = this.triggerFunctionString;
         sd.triggerFunction = this.triggerFunction;
         return sd;
     }
 
-    constructor(text:string[][]) {
+    constructor(text: string[][]) {
         this.text = text;
     }
 
-    public readLine():string[] {
+    public readLine(): string[] {
         this.activeLine++;
         if (this.activeLine < this.text.length) {
             return this.text[this.activeLine];
