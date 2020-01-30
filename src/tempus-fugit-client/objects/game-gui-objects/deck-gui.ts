@@ -7,7 +7,8 @@ import { Card } from "../game-objects/card";
  */
 export class DeckGUI extends Phaser.GameObjects.Container implements DeckListener {
     private deck: Deck;
-    private text: Phaser.GameObjects.Text; // shows number of cards
+    public text: Phaser.GameObjects.Text; // shows number of cards
+    public description: Phaser.GameObjects.Text;
     public x: number;
     public y: number;
 
@@ -27,7 +28,7 @@ export class DeckGUI extends Phaser.GameObjects.Container implements DeckListene
             fontSize: '30px',
             fontFamily: 'pressStart',
         });
-        this.scene.add.text(x - 55, y + 90, "Cards in\nthe Deck").setStyle({
+        this.description = this.scene.add.text(x - 55, y + 90, "Cards in\nthe Deck").setStyle({
             fontSize: '12px',
             fontFamily: 'pressStart',
         });
@@ -40,9 +41,9 @@ export class DeckGUI extends Phaser.GameObjects.Container implements DeckListene
      */
     numCardsChanged(numCards: number): void {
         if (numCards < 10) {
-            this.text.x = this.x-7;
+            this.text.x = this.x - 7;
         } else {
-            this.text.x = this.x-30;
+            this.text.x = this.x - 30;
         }
         this.text.setText(numCards.toString());
     }

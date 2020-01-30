@@ -38,7 +38,7 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
         let font1: Object = { fontSize: '18px', fontFamily: 'pressStart', color: '#000000' }
-        let font2: Object = { fontSize: '12px', fontFamily: 'pressStart', color: '#000000' }
+        let font2: Object = { fontSize: '16px', fontFamily: 'pressStart', color: '#000000' }
         this.setSize(width, height);
 
         // outline
@@ -54,30 +54,39 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         this.add(roundRect);
         this.sendToBack(roundRect);
 
-        // first horizontal line
+        // first line
         let lineColor = rectOutlineColor;
-        let formulaLine1 = this.scene.add.line(0, 0, 0, 80 - height / 2, width, 80 - height / 2, lineColor, 1);
+        let formulaLine1 = this.scene.add.line(0, 0, 0, 50 - height / 2, width, 50 - height / 2, lineColor, 1);
         formulaLine1.setLineWidth(2);
         this.add(formulaLine1);
         formulaLine1.setOrigin(0, 0);
         formulaLine1.setPosition(-(width / 2), 0);
 
         // second horizontal line
-        let formulaLine2 = this.scene.add.line(0, 0, 0, 200 - height / 2, width, 200 - height / 2, lineColor, 1);
+        let formulaLine2 = this.scene.add.line(0, 0, 0, 80 - height / 2, width, 80 - height / 2, lineColor, 1);
         formulaLine2.setLineWidth(2);
         this.add(formulaLine2);
         formulaLine2.setOrigin(0, 0);
         formulaLine2.setPosition(-(width / 2), 0);
 
+        // third horizontal line
+        let formulaLine3 = this.scene.add.line(0, 0, 0, 200 - height / 2, width, 200 - height / 2, lineColor, 1);
+        formulaLine3.setLineWidth(2);
+        this.add(formulaLine3);
+        formulaLine3.setOrigin(0, 0);
+        formulaLine3.setPosition(-(width / 2), 0);
+
 
         // texts
-        let padding = 10;
-        let maxTextWidth = width - 4 * padding;
+        let padding = 5;
+        let maxTextWidth = width;
 
         // card title
         let title = this.scene.add.text(0, 0, card.getName(), font1);
+        title.setLineSpacing(5);
+        title.setScale(0.6);
         this.add(title);
-        title.style.setWordWrapWidth(maxTextWidth, true);
+        title.style.setWordWrapWidth(maxTextWidth + 100, true);
         title.setOrigin(0.5, 0);
         title.setPosition(0, padding - height / 2);
 
@@ -87,15 +96,16 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         let margin = 2;
         let formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
         this.add(formulaGUI);
-        formulaGUI.setPosition(-8 * string.length, padding + 40 - height / 2);
+        formulaGUI.setPosition(-8 * string.length, padding + 48 - height / 2);
 
         // effect text
         let effektText = this.scene.add.text(0, 0, card.getDescription(), font2);
         this.add(effektText);
-        effektText.style.setWordWrapWidth(maxTextWidth, true);
+        effektText.setScale(0.6);
+        effektText.setLineSpacing(5);
+        effektText.style.setWordWrapWidth(maxTextWidth + 100, true);
         effektText.setOrigin(0.5, 0);
         effektText.setPosition(0, padding + 200 - height / 2);
-
         // image
         let image = this.scene.add.image(0, 0, card.getImage());
         image.setDisplaySize(140, 120)

@@ -14,9 +14,9 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
     public game: Mission;
 
     constructor(scene: Scene,
-                game: Mission,
-                x: number = undefined,
-                y: number = undefined,) {
+        game: Mission,
+        x: number = undefined,
+        y: number = undefined, ) {
 
         super(scene, x, y);
         scene.add.existing(this);
@@ -33,6 +33,7 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         this.setScale(1.2);
     }
 
+
     /**
      *  creates for button for ending selection of boolean values
      */
@@ -42,18 +43,18 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         this.box.strokeRoundedRect(GameInfo.width * 0.8, GameInfo.height * 0.72, GameInfo.width * 0.08, GameInfo.height * 0.1, 30);
         this.box.fillStyle(0x666666, 1);
         this.box.fillRoundedRect(GameInfo.width * 0.8, GameInfo.height * 0.72, GameInfo.width * 0.08, GameInfo.height * 0.1, 30);*/
-        this.box = this.scene.add.rectangle(x+88, y+40, width, height, 0x666666);
+        this.box = this.scene.add.rectangle(x + 88, y + 40, width, height, 0x666666);
         this.box.setOrigin(1);
         this.sendToBack(this.box);
-        this.shadow = this.scene.add.rectangle(x+88, y+40, width, height, 0x666666);
+        this.shadow = this.scene.add.rectangle(x + 88, y + 40, width, height, 0x666666);
         this.shadow.setOrigin(1);
         this.shadow.setAlpha(0.0);
 
 
 
-        this.icon = this.scene.add.sprite(x+25, y-30, "baseAttack").setScale(1.5);
+        this.icon = this.scene.add.sprite(x + 25, y - 30, "baseAttack").setScale(1.5);
 
-        this.text = this.scene.add.text(x+25, y+20, " Base\nAttack", {
+        this.text = this.scene.add.text(x + 25, y + 20, " Base\nAttack", {
             fontSize: 12,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
@@ -103,8 +104,7 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         if (!active) {
             this.box.disableInteractive();
             this.shadow.setAlpha(0.7);
-        } else
-        {
+        } else {
             this.box.setInteractive();
             this.shadow.setAlpha(0.0);
         }
@@ -113,11 +113,10 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
         if (!active) {
             this.box.disableInteractive();
             this.shadow.setAlpha(0.7);
-        } else
-            {
-                this.box.setInteractive();
-                this.shadow.setAlpha(0.0);
-            }
+        } else {
+            this.box.setInteractive();
+            this.shadow.setAlpha(0.0);
+        }
     }
 
 }
