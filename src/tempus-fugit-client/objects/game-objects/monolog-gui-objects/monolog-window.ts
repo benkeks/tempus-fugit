@@ -57,8 +57,8 @@ export class MonologWindow {
                 // color white
                 this.clearTint();
             })
-        //.setOrigin(1, 0);
 
+        //.setOrigin(1, 0);
 
         // space key events
         this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)

@@ -116,6 +116,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.image("book", "assets/sprites/board/book.png");
         this.load.image("questionMark", "assets/sprites/questionmark.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
+        this.load.image("notification", "assets/sprites/notification.png");
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
