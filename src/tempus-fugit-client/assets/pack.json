@@ -217,6 +217,21 @@
             },
             {
                 "type": "image",
+                "key": "desert_bg1",
+                "url": "assets/backgrounds/desert/bg1.png"
+            },
+            {
+                "type": "image",
+                "key": "desert_bg2",
+                "url": "assets/backgrounds/desert/bg2.png"
+            },
+            {
+                "type": "image",
+                "key": "desert_bg3",
+                "url": "assets/backgrounds/desert/bg3.png"
+            },
+            {
+                "type": "image",
                 "key": "cardIcon",
                 "url": "assets/sprites/text-box/user.png"
             }, {
