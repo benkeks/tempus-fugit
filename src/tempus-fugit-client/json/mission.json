@@ -87,7 +87,7 @@
         },
         {   
             "name": "mission4",
-            "background":"desert_cactus",
+            "background":"desert_bg3",
             "enemies": [
                 ["cactus1"],
                 ["cactus1", "cactus2", "cactus1"],
@@ -108,7 +108,7 @@
         },
         {   
             "name": "mission5",
-            "background":"desert",
+            "background":"desert_bg3",
             "enemies": [
                 ["cactus1", "cactus1"],
                 ["wormling", "wormling"],
@@ -129,7 +129,7 @@
         },
         {   
             "name": "mission6",
-            "background":"pyramid",
+            "background":"desert_bg3",
             "enemies": [
                 ["snake", "snake", "snake"],
                 ["mummy", "pharaoh_yeah", "mummy"]
