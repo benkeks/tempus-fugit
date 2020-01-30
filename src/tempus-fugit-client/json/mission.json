@@ -18,7 +18,7 @@
                     ["player", "Oh dear..."]
                 ]
             }],
-            "loot": ["Natural heal", "Unnatural heal"],
+            "loot": ["Root pierce", "Natural heal", "Guiding Light"],
 			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
         },
         {
@@ -41,9 +41,10 @@
                     "text": [["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "Oh dear..."]]
                 }
             ],
-			"loot":["Fireball", "Lightning Strike"]
+			"loot":["Light stand", "Unnatural heal"],
+      "deck":["Fireball", "Lightning_strike", "Lower woodland spirit", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
-        {   
+        {
             "name": "mission2",
             "background":"forest",
             "enemies": [
@@ -64,7 +65,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission3",
             "background":"plane",
             "enemies": [
@@ -85,7 +86,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission4",
             "background":"desert_cactus",
             "enemies": [
@@ -106,7 +107,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission5",
             "background":"desert",
             "enemies": [
@@ -127,7 +128,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission6",
             "background":"pyramid",
             "enemies": [
@@ -146,7 +147,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission7",
             "background":"iceisland",
             "enemies": [
@@ -165,7 +166,7 @@
             ],
 			"loot":["Natural heal", "Unnatural heal"]
         },
-        {   
+        {
             "name": "mission8",
             "background":"tower",
             "enemies": [
