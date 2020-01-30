@@ -1,6 +1,6 @@
 {
 	"cards":	[{"name":"Obliterate",
-		"description":"this card obliterates.",
+		"description":"this card obliterates, and completely resets your spell book.",
 		"image":"obliterate",
 		"formula":"#Gs&l&t&n",
 		"cardKind":"global",
@@ -11,7 +11,7 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Fireball",
-		"description":"This card deals 8 damage to one chosen enemy!",
+		"description":"Deals 8 damage to a foe, also sets strength two rounds from now",
 		"image":"fireball",
 		"formula":"(l|n)&s",
 		"cardKind":"directed",
@@ -22,7 +22,7 @@
 		"maxCardsInDeck":"4"},
 
 		{"name":"Strength",
-		"description":"Increases base attack by 3!",
+		"description":"Increases base attack by 3, also set the next two strength",
 		"image":"sword",
 		"formula":"#OOs&#Os&s",
 		"cardKind":"player",
@@ -33,7 +33,7 @@
 		"inDeckAtStart":"4"},
 
 		{"name":"Aura of Weakness",
-		"description":"Should decrease enemies atk by 3",
+		"description":"Decreases enemies' atk by 3",
 		"image":"weak_aura",
 		"formula":"!s&t&#Ot",
 		"cardKind":"global",
@@ -88,7 +88,7 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Lightning Strike",
-		"description":"this card deals 10 damage to an enemy",
+		"description":"Deals 10 damage to a foe but un-sets light this round",
 		"image":"lightning_strike",
 		"formula":"l&(n|t)",
 		"cardKind":"directed",
@@ -99,7 +99,7 @@
 		"maxCardsInDeck":"4"},
 
 		{"name":"Lightning rain",
-		"description":"this card deals 25 damage to all enemies",
+		"description":"Deals 25 damage to all enemies and sets light from now on",
 		"image":"lightning_rain",
 		"formula":"(#O#On)&#F(l&t)&s",
 		"cardKind":"global",
@@ -110,7 +110,7 @@
 		"inDeckAtStart":"4"},
 
 		{"name":"Natural heal",
-		"description":"this card heals you by 15 HP!",
+		"description":"Heals you by 15 HP and sets the next two nature",
 		"image":"slight_heal",
 		"formula":"n&#On",
 		"cardKind":"player",
@@ -121,7 +121,7 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Vase of Desire",
-		"description":"Take 3 cards.",
+		"description":"Draw 3 spell cards.",
 		"image":"pot_of_greed",
 		"formula":"#Ot",
 		"cardKind":"player",
@@ -132,7 +132,7 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Anti-evolution",
-		"description":"this card deals 12 damage to an enemy!",
+		"description":"Deals 12 damage to a foe but unsets nature",
 		"image":"unknown",
 		"formula":"n&t&!l",
 		"cardKind":"directed",
@@ -143,7 +143,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Dark beam",
-		"description":"this card deals 25 damage to an enemy!",
+		"description":"Deals 25 damage to an enemy but un-sets this and the next two light!",
 		"image":"dark_beam",
 		"formula":"(l|#Ol)<->t&s",
 		"cardKind":"directed",
@@ -154,18 +154,18 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Sun flare",
-		"description":"this card deals 20 damage to all enemies!",
+		"description":"Deals 20 damage to all enemies, sets this and the next two strength & light",
 		"image":"sun",
 		"formula":"(#Gl&OFn)|t",
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"target.takeHit(20, mission);mission.gameState.setAllVariableValues({variable:'s', start:0, end:3, local:true, value:true});mission.gameState.setAllVariableValues({variable:'l', start:0, end:2, local:true, value:true});",
+		"action":"target.takeHit(20, mission);mission.gameState.setAllVariableValues({variable:'s', start:0, end:3, local:true, value:true});mission.gameState.setAllVariableValues({variable:'l', start:0, end:3, local:true, value:true});",
 		"comment":"",
 		"inDeckAtStart":"2"},
 
 		{"name":"Incinerate",
-		"description":"this card deals 100 damage to an enemy!",
+		"description":"Deals 100 damage to an enemy but unsets all nature from this round onwards!",
 		"image":"light_lens",
 		"formula":"!n&#O#Fl&t",
 		"cardKind":"targeted",
@@ -176,7 +176,7 @@
 		"inDeckAtStart":"2"},
 
 		{"name":"Unnatural heal",
-		"description":"this card heals you by 50 HP!",
+		"description":"this card heals you by 50 HP but un-sets all nature from this round onwards!",
 		"image":"big_heal",
 		"formula":"#On&n&t&s",
 		"cardKind":"player",
