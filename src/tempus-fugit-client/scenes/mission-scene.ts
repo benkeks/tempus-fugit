@@ -177,7 +177,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
 
-        
+
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
                 this.tfgame.waveCounter = 100;
@@ -289,7 +289,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         if (data && data.once) {
             data.tabs.map(t => HelpWindow.help_data.push(t));
             data.once = false;
-            HelpButton.newInfo = true;
+            if (data.tabs.length) HelpButton.newInfo = true;
         }
     }
 }
