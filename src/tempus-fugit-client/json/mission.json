@@ -14,7 +14,7 @@
             "dialogue": [{
                 "triggerFunctionString": "return true;",
                 "text": [
-                    ["Slimes", "Stop! Noone enters this forest and gets out alive!"],
+                    ["slime1", "Stop! Noone enters this forest and gets out alive!"],
                     ["player", "I cannot afford to be stopped by you. Prepare to die!"]
                 ]
             }],

@@ -70,8 +70,8 @@ export class NBTextbox {
         let icons = [];
         for (let i in nextDialog) {
             content.push(nextDialog[i][1]);
-            //icons.push(nextDialog[i][0]); TODO dummy icons for now ; change when icon sprites are done         
-            icons.push(Number(i) % 2 == 0 ? 'swordFont' : 'heartFont');
+            icons.push(nextDialog[i][0]); //TODO dummy icons for now ; change when icon sprites are done         
+            //icons.push(Number(i) % 2 == 0 ? 'swordFont' : 'heartFont');
         }
 
         const firstLine = content.shift();
