@@ -5,22 +5,29 @@ import { Card } from "../game-objects/card";
 /**
  * @author Mustafa
  */
-export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
+export class DeckGUI extends Phaser.GameObjects.Container implements DeckListener {
     private deck: Deck;
     private text: Phaser.GameObjects.Text; // shows number of cards
+    public x: number;
+    public y: number;
 
     constructor(
         scene: Phaser.Scene,
-        texture: string,
         deck: Deck,
         x: number = 1545,
         y: number = 920
     ) {
-        super(scene, x, y, texture);
+        super(scene, x, y);
         scene.add.existing(this);
         this.deck = deck;
         this.scene = scene;
-        this.text = this.scene.add.text(x - 50, y + 100, deck.cards.length + ' Karten').setStyle({
+        this.x = x;
+        this.y = y;
+        this.text = this.scene.add.text(x - 30, y + 40, deck.cards.length.toString()).setStyle({
+            fontSize: '30px',
+            fontFamily: 'pressStart',
+        });
+        this.scene.add.text(x - 55, y + 90, "Karten auf\ndem Stapel").setStyle({
             fontSize: '12px',
             fontFamily: 'pressStart',
         });
@@ -32,7 +39,12 @@ export class DeckGUI extends Phaser.GameObjects.Sprite implements DeckListener {
      * @param numCards: number of cards
      */
     numCardsChanged(numCards: number): void {
-        this.text.setText(numCards + ' Karten');
+        if (numCards < 10) {
+            this.text.x = this.x-7;
+        } else {
+            this.text.x = this.x-30;
+        }
+        this.text.setText(numCards.toString());
     }
 
     cardTypesChanged(deck: Deck, newCards: Card[]) { }
