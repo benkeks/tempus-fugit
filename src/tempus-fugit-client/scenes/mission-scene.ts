@@ -269,8 +269,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyDialog(game: Mission, dialog: StoryDialog) {
-        this.tfgame.paused = true;
-        this.scene.pause('MissionScene');
         this.textBox.addStoryDialog(dialog, dialog.blocking);
     }
 

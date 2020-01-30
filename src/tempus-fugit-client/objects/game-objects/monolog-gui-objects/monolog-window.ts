@@ -89,7 +89,11 @@ export class MonologWindow {
 
     private switchToMissionScene(): void {
         this.done = true;
-        this.scene.scene.run('MissionScene');
+        if (this.scene.scene.isPaused("BTextBoxScene")) {
+            this.scene.scene.run("BTextBoxScene");
+        } else {
+            this.scene.scene.run('MissionScene');
+        }
         this.scene.scene.stop('MonologScene');
     }
 

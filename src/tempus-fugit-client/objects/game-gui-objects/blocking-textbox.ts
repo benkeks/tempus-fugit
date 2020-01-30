@@ -57,10 +57,6 @@ export class BTextBox {
     private switchToMissionScene(): void {
         this.scene.scene.run('MissionScene');
         this.scene.scene.stop('BTextBoxScene');
-        if (this.mission.inQueue) {
-            this.mission.paused = false;
-            this.mission.displayStoryMonolog();
-        }
     }
 
     /**
