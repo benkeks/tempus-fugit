@@ -216,11 +216,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
-<<<<<<< HEAD
                 this.tfgame.nextWave(100);
-=======
-                this.tfgame.nextWave(this.tfgame._enemies.length);
->>>>>>> 732b47130d64eb285b3e60543ff0cd9631a288f9
             }
         })
 
