@@ -71,7 +71,8 @@ export class Enemy {
         this.maxHP = hp;
         this.currentHP = this.maxHP;
         this.baseAttack = baseAttack;
-        this.specialAttack = specialAttack;
+        if (specialAttack) this.specialAttack = specialAttack;
+        else this.specialAttack = undefined;
         this.reactAttacks = reactAttacks;
         this.sprite = sprite;
         this.size = size;
@@ -178,9 +179,12 @@ export class Enemy {
                 }
             }
 
-            let special:Card = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
-            Card.DIRECTED, false, 0,  e.specialAttack.action);
-            if (e.specialAttack.formulaRepresentation) special.formulaRepresentation = e.specialAttack.formulaRepresentation;
+            let special = undefined;
+            if (e.specialAttack) {
+                special = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
+                Card.DIRECTED, false, 0,  e.specialAttack.action);
+                if (e.specialAttack.formulaRepresentation) special.formulaRepresentation = e.specialAttack.formulaRepresentation;
+            }
 
             let enemy = new Enemy(
                 e.name,
