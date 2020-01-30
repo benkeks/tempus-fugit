@@ -2,12 +2,6 @@ import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
 
-const COLOR_PRIMARY = 0x2a4f16;
-const COLOR_LIGHT = 0x7b5e57;
-const COLOR_DARK = 0x260e05;
-const COLOR_RED = 0x9e0b00;
-const COLOR_PRIMARY_LIGHT = 0x00ff77;
-
 /**
  * @author Mustafa
  */
@@ -18,7 +12,7 @@ export class TableGUI implements GameStateListener {
     private game: Mission;
 
     public variableTable; // game state table
-    private variableTableCellWidth = 90; // width of a cell
+    private variableTableCellWidth = 90.4; // width of a cell
     private variableTableCellHeight = 60; // height of a cell
     private initialColumnCount = 20; // number of visible columns
     private tableColumnCount = 20; // number of total columns
@@ -47,9 +41,9 @@ export class TableGUI implements GameStateListener {
         game: Mission,
 
         colorPrimary: number = 0x5C4D4D,
-        colorHighlight: number = 0x915B4A,
+        colorHighlight: number = 0xc9c7c5,
         colorArrow: number = 0x376A8E,
-        colorCellOver: number = 0x7b5e57,
+        colorCellOver: number = 0xff0000,
         colorCellEdge: number = 0x260e05,
         energyTexture: string = "energyFont"
     ) {
@@ -91,7 +85,7 @@ export class TableGUI implements GameStateListener {
      * @param paddingTop : distance from top side of table to top edge of screen 
      */
 
-    private createVariableTable(paddingLeft: number = 15, paddingTop: number = 10): void {
+    private createVariableTable(paddingLeft: number = 10, paddingTop: number = 10): void {
         let numVar = Object.keys(this.variables).length;
         let itemCount = this.initialColumnCount * numVar;
         let self = this;
@@ -255,7 +249,7 @@ export class TableGUI implements GameStateListener {
 
         let cellWidth = 40;
         let cellHeight = 30;
-        let bottom = this.variableTable.bottom + 30;
+        let bottom = this.variableTable.bottom + 35;
         let self = this;
         // items in table
         let items = [];
@@ -464,7 +458,7 @@ export class TableGUI implements GameStateListener {
      * creates two arrows for scrolling columns to the left / right
      */
     setUpScrollingArrows() {
-        let bottom = this.variableTable.bottom + 30;
+        let bottom = this.variableTable.bottom + 35;
 
         // arrows for scrolling, 
         let rightTweenSucc;

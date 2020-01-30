@@ -1,4 +1,3 @@
-import { MissionScene } from "../../../scenes/mission-scene";
 import { GameInfo } from "../../../game";
 
 const BACKGROUND_COLOR = 0X000000;
@@ -20,6 +19,8 @@ export class MonologWindow {
     private displayAll = false;
     private typing = true;
     private done = false;
+
+    public clicks:number = 0;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -45,38 +46,36 @@ export class MonologWindow {
         if (gameOver) text = "Return to Map"
 
         this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text,
-            this.fontStyle)
-            .setInteractive()
+            this.fontStyle).setOrigin(1,1)
+            .setInteractive({useHandCursor:true})
             .on('pointerdown', function () {
                 this.switchToMissionScene();
             }, this).on('pointerover', function () {
-                // color red
-                this.setTint(0xff0000);
-            }).on('pointerout', function () {
-                // color white
-                this.clearTint();
-            })
+            // color red
+            this.setTint(0xff0000);
+        }).on('pointerout', function () {
+            // color white
+            this.clearTint();
+        })
+
         //.setOrigin(1, 0);
 
-
         // space key events
-        let clicks = 0;
         this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
             .on('down', function (key, event) {
+                if (!this.typing) this.clicks = 2;
 
-                if (!this.typing) clicks = 2;
-
-                switch (clicks) {
+                switch (this.clicks) {
                     // faster pace if space is pressed once and typing not done
                     case 0:
                         this.interval = 25;
-                        clicks++;
+                        this.clicks++;
                         break;
 
                     // display all text if space if pressed twice and typing not done
                     case 1:
                         this.displayAll = true;
-                        clicks++;
+                        this.clicks++;
                         break;
 
                     // go to next scene
@@ -90,21 +89,25 @@ export class MonologWindow {
 
     private switchToMissionScene(): void {
         this.done = true;
-        this.scene.scene.run('MissionScene');
+        if (this.scene.scene.isPaused("BTextBoxScene")) {
+            this.scene.scene.run("BTextBoxScene");
+        } else {
+            this.scene.scene.run('MissionScene');
+        }
         this.scene.scene.stop('MonologScene');
     }
 
     /**
-    * shows the monolog letter by letter
-    * adds animation for cursor so it seems like someone is typing
-    * @param displayString 
-    */
+     * shows the monolog letter by letter
+     * adds animation for cursor so it seems like someone is typing
+     * @param displayString
+     */
     displayMonologue(displayString: string): void {
 
         let self = this;
         let tmp = this.blinkCount;
 
-        // pipe animation 
+        // pipe animation
         let pipeAnim = function () {
             if (self.done) return;
 

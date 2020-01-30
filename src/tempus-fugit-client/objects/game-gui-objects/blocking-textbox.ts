@@ -57,10 +57,6 @@ export class BTextBox {
     private switchToMissionScene(): void {
         this.scene.scene.run('MissionScene');
         this.scene.scene.stop('BTextBoxScene');
-        if (this.mission.inQueue) {
-            this.mission.paused = false;
-            this.mission.displayStoryMonolog();
-        }
     }
 
     /**
@@ -83,8 +79,8 @@ export class BTextBox {
         let icons = [];
         for (let i in nextDialog) {
             content.push(nextDialog[i][1]);
-            //icons.push(nextDialog[i][0]); TODO dummy icons for now ; change when icon sprites are done         
-            icons.push(Number(i) % 2 == 0 ? 'swordFont' : 'heartFont');
+            icons.push(nextDialog[i][0]); // TODO dummy icons for now ; change when icon sprites are done         
+            //icons.push(Number(i) % 2 == 0 ? 'swordFont' : 'heartFont');
         }
 
         const firstLine = content.shift();
@@ -120,6 +116,7 @@ export class BTextBox {
         const fixedHeight = this.GetValue(config, 'fixedHeight', 0);
 
         // create textbox
+        let icon = scene.add.image(0, 0, firstIcon).setScale(GameInfo.scale).setDepth(100);
         // @ts-ignore
         const textBox = scene.rexUI.add.textBox({
             x: x,
@@ -127,7 +124,7 @@ export class BTextBox {
             // @ts-ignore
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, this.COLOR_PRIMARY)
                 .setStrokeStyle(2, this.COLOR_LIGHT),
-            icon: scene.add.image(0, 0, firstIcon).setDisplaySize(32, 32),
+            icon: icon,
             text: this.getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
             action: scene.add.image(0, 0, 'nextPage').setTint(this.COLOR_LIGHT).setVisible(false),
             space: {
@@ -135,7 +132,7 @@ export class BTextBox {
                 right: 20,
                 top: 20,
                 bottom: 20,
-                icon: 20,
+                icon: 0,
                 text: 10,
             }
         })

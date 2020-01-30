@@ -50,9 +50,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.updateEnemyAttributes();
 
         // special attack
-        this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
-        this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
-        this.add(this.formula);
+        if (enemy.specialAttack) {
+            this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
+            this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
+            this.add(this.formula);
+        }
 
         this.setInteractive();
 
@@ -119,7 +121,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }*/
 
     public updateTint(gameState:GameState) {
-        this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+        if (this.formula) this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
     }
 
     /**
@@ -127,7 +129,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
      * @param changedTo
      */
     async enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo:number) {
-        let font1: Object = { fontSize: '50px', fontFamily: 'appleKid', color: '#FF0000' }
+        let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);

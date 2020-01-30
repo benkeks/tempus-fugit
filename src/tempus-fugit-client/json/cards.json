@@ -127,7 +127,7 @@
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.deck.takeCardOnTop();mission.player.deck.takeCardOnTop();mission.player.deck.takeCardOnTop();",
+		"action":"mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);mission.player.takeCard(mission.deck);",
 		"comment":"Should make you draw three cards",
 		"inDeckAtStart":"2"},
 
@@ -155,7 +155,7 @@
 
 		{"name":"Sun flare",
 		"description":"this card deals 20 damage to all enemies!",
-		"image":"dark_beam",
+		"image":"sun",
 		"formula":"(#Gl&OFn)|t",
 		"cardKind":"global",
 		"isStandCard":"false",
@@ -197,7 +197,7 @@
 		"comment":"Base attack up by 1 and: -> Gl",
 		"inDeckAtStart":"2"},
 
-		{"name":"Lower woodland spirit",
+		{"name":"Lower woodland stand",
 		"description":"this stand deals 2 damage to all enemies!",
 		"image":"nature_stand",
 		"formula":"n",
@@ -209,7 +209,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Root pierce",
-		"description":"Deal 7 damage to a enemy!",
+		"description":"Deal 7 damage to an enemy!",
 		"image":"tree",
 		"formula":"n&l",
 		"cardKind":"directed",

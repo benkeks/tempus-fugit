@@ -33,10 +33,6 @@ export class CardChannel extends Container {
 
         this.book = scene.add.sprite(0, 0, 'book').setScale(3);
 
-        // this.dot = scene.add.graphics({ x: 0, y: 0 });
-        // this.dot.lineStyle(5, this.color, 1);
-        // this.dot.strokeCircle(0, 0, 50);
-
         this.dotParticles = scene.add.particles("runes");
         this.dotParticles.createEmitter({
             frame: { frames: [0, 1, 2, 3] },
@@ -49,13 +45,12 @@ export class CardChannel extends Container {
             scaleY: 1
         });
 
-        //this.dotParticles.setVisible(false);
+        this.dotParticles.setVisible(false);
 
         this.decisionArrow = new DecisionArrow(scene);
 
-        this.add(this.dotParticles);
         this.add(this.book);
-        // this.add(this.dot);
+        this.add(this.dotParticles);
 
         this.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, x), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, y));
         this.decisionArrow.setPosition(this.x, this.y);

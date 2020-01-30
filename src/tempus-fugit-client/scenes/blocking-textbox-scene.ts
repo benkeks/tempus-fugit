@@ -34,6 +34,11 @@ export class BTextBoxScene extends Phaser.Scene {
             this.blockingTextBox = new BTextBox(this, data.handGUI, data.mission);
             this.blockingTextBox.addStoryDialog(data.dialog);
         }, this);
+
+        if (this.scene.isActive("MonologScene")) {
+            this.scene.bringToTop("MonologScene");
+            this.scene.pause("BTextBoxScene");
+        }
     }
 }
 

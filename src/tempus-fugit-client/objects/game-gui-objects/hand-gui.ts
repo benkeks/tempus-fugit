@@ -211,7 +211,9 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         if (this.hand.active) this.fadeIn(this.gamestate);
         else this.fadeOut();
 
-        this.missionScene.callNextPhase();
+        // console.log(this.hand.cardQueue);
+        //this.missionScene.callNextPhase();
+        this.hand.playNextCard();
     }
 
     /**
@@ -229,9 +231,10 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     async removeCard(card: Card) {
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
+                console.log('removing card');
                 this.stack.addCard(this.cardGUIs[pos].card);
                 this.cardGUIs[pos].cross.destroy;
-                this.cardGUIs[pos].destroy;
+                this.cardGUIs[pos].destroy();
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);
                 return;

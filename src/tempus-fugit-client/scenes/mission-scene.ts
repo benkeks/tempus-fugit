@@ -24,7 +24,12 @@ import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
+import { BaseAttackGUI } from "../objects/game-gui-objects/base-attack-gui";
+
+import { HelpWindow } from "../objects/help-gui-objects/help-window";
+
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -41,6 +46,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
+    public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -78,14 +84,24 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             deck: data.deck.copy()
         };
 
+        
+        this.input.keyboard.on("keydown", e => {
+            if (e.key == "b") {
+                this.tfgame.nextWave(this.tfgame._enemies.length);
+            }
+        });
+
         this.tfgame.deck.setUpDeck();
         this.tfgame.deck.shuffle();
 
-        this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
-        let scaleX = this.cameras.main.width / this.background.width
-        let scaleY = this.cameras.main.height / this.background.height
-        let scale = Math.max(scaleX, scaleY)
-        this.background.setScale(scale).setScrollFactor(0)
+        // this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
+        // let scaleX = this.cameras.main.width / this.background.width
+        // let scaleY = this.cameras.main.height / this.background.height
+        // let scale = Math.max(scaleX, scaleY)
+        // this.background.setScale(scale).setScrollFactor(0)
+        this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
+            .setScale(1);
+
 
         //Menun Layout
         //5C4D4D, 915B4A, A96851
@@ -93,9 +109,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         let innerTop = GameInfo.height * 0.715;
         let margin = GameInfo.width * 0.01;
         let color1 = 0x5C4D4D;
-        let color3 = 0x915B4A
+        let color3 = 0x915B4A;
         let color2 = 0xA96851;
 
+        // Uppder box
+        this.lowerMenu.fillStyle(color2, 1);
+        this.lowerMenu.fillRect(10, 0, GameInfo.width - 20, GameInfo.height * 0.239);
+        this.lowerMenu.lineStyle(15, color1, 1);
+        this.lowerMenu.strokeRoundedRect(0, 0, GameInfo.width, GameInfo.height * 0.239, 30);
 
         //Book box
         this.lowerMenu.lineStyle(20, color1, 1);
@@ -137,11 +158,17 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillStyle(color3, 1);
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.25 + margin, innerTop, GameInfo.width * 0.5 - margin, GameInfo.height * 0.27, 30);
 
-        //Stack box
+        //Base attack box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+        this.lowerMenu.fillStyle(0x666666, 1);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+
+        //Cards left box
+        this.lowerMenu.lineStyle(6, color1, 1);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop + GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop + GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
 
         //Phase box
         this.lowerMenu.lineStyle(6, color1, 1);
@@ -150,12 +177,24 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.85 + margin, innerTop, GameInfo.width * 0.14 - margin, GameInfo.height * 0.27, 30);
 
 
-
         this.stack = new Stack();
 
-        this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
+        this.deckGUI = new DeckGUI(this, this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
+        this.tfgame.player.hand.missionScene = this;
         this.gameStateGUI = new TableGUI(this, this.tfgame)
+
+        // box for arrow and energy
+        this.lowerMenu.fillStyle(color2, 1);
+        this.lowerMenu.fillRoundedRect(0, GameInfo.height * 0.242, 30 + this.gameStateGUI.energyTable.x + this.gameStateGUI.energyTable.width / 2, 50, 10);
+        this.lowerMenu.lineStyle(10, color1, 1);
+        this.lowerMenu.strokeRoundedRect(0, GameInfo.height * 0.242, 30 + this.gameStateGUI.energyTable.x + this.gameStateGUI.energyTable.width / 2, 50, 10);
+
+        // outline
+        this.lowerMenu.lineStyle(20, color1, 1);
+        this.lowerMenu.strokeRect(0, 0, GameInfo.width, GameInfo.height)
+
+        //console.log(this.tfgame.deck);
 
         this.textBox = new Textbox(this, this.handGUI, this.tfgame);
 
@@ -168,6 +207,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.gameState.listener.push(this.standGUI);
         this.tfgame.standListener.push(this.standGUI);
 
+        this.baseAttack = new BaseAttackGUI(this, this.tfgame, GameInfo.width * 0.8, GameInfo.height * 0.8);
         this.phaseWheel = new WheelGUI(this, this.tfgame);
 
         this.tfgame.player.takeCard(this.tfgame.deck);
@@ -179,23 +219,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780,300);
-
-        this.input.keyboard.on("keydown", e => {
-            if (e.key == "b") {
-                this.tfgame.waveCounter = 100;
-                this.tfgame.active = true;
-                this.gameover(this.tfgame, true);
-            }
-        })
+        this.tutorialButton = new TutorialButton(this, 1780, 310);
 
         this.events.on('resume', function () {
-            this.tfgame.active = true;
-            this.tfgame.checkGameOver();
+            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
         }, this);
     }
 
     update(time: number, delta: number): void {
+
         if (this.cardChannel) {
             this.cardChannel.decisionArrow.update(time, delta);
         }
@@ -215,6 +247,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
      */
     async callNextPhase() {
         this.tfgame.nextPhase();
+        this.tfgame.player.hand.discardGUIStarted = false;
     }
 
     async effectPhase(game: Mission) {
@@ -251,21 +284,19 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyDialog(game: Mission, dialog: StoryDialog) {
-        this.tfgame.paused = true;
-        this.scene.pause('MissionScene');
         this.textBox.addStoryDialog(dialog, dialog.blocking);
     }
 
     async gameover(game: Mission, gameWon: boolean) {
         //this.tfgame.destroy();
-        if (this.tfgame.active) {
-            this.scene.start(gameWon ? "NavigationScene" : "DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        if (!gameWon) {
+            this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
         }
+        this.updateHelp();
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     storyMonolog(game: Mission, monolog: string) {
-        this.tfgame.active = false;
         if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
     }
 
@@ -274,6 +305,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     Activated(game: Mission, active: boolean) { }
+    async baseAttackPossible(game: Mission, active: boolean) { }
 
     public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
@@ -284,5 +316,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             repeat: 0,
             yoyo: true
         });
+    }
+
+    public updateHelp() {
+        let data = HelpWindow.order[this.missionIndex];
+        if (data && data.once) {
+            (<Array<any>>data.tabs).map(t => HelpWindow.help_data.push(t));
+            if (data.index) HelpWindow.lastIndex = data.index;
+            data.once = false;
+            if (data.tabs.length) HelpButton.newInfo = true;
+        }
     }
 }
