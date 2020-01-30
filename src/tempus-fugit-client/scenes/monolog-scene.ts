@@ -27,7 +27,6 @@ export class MonologScene extends Phaser.Scene {
         }, this);
 
         if (this.scene.isActive("BTextBoxScene")) {
-            console.log("bt is active");
             this.scene.bringToTop("MonologScene");
             this.scene.pause("BTextBoxScene");
         }
