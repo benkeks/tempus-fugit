@@ -24,6 +24,7 @@ import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
+import {BaseAttackGUI} from "../objects/game-gui-objects/base-attack-gui";
 
 import {HelpWindow} from "../objects/help-gui-objects/help-window";
 
@@ -45,6 +46,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
+    public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -149,11 +151,17 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillStyle(color3, 1);
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.25 + margin, innerTop, GameInfo.width * 0.5 - margin, GameInfo.height * 0.27, 30);
 
-        //Stack box
+        //Base attack box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+        this.lowerMenu.fillStyle(0x666666, 1);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+
+        //Cards left box
+        this.lowerMenu.lineStyle(6, color1, 1);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop+GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop+GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
 
         //Phase box
         this.lowerMenu.lineStyle(6, color1, 1);
@@ -164,7 +172,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.stack = new Stack();
 
-        this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
+        this.deckGUI = new DeckGUI(this, this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
@@ -189,6 +197,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.gameState.listener.push(this.standGUI);
         this.tfgame.standListener.push(this.standGUI);
 
+        this.baseAttack =  new BaseAttackGUI(this, this.tfgame, GameInfo.width * 0.8, GameInfo.height * 0.8);
         this.phaseWheel = new WheelGUI(this, this.tfgame);
 
         this.tfgame.player.takeCard(this.tfgame.deck);
@@ -200,13 +209,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780,300);
+        this.tutorialButton = new TutorialButton(this, 1780,310);
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
-                this.tfgame.waveCounter = 100;
-                this.tfgame.active = true;
-                this.gameover(this.tfgame, true);
+                this.tfgame.nextWave(this.tfgame._enemies.length);
             }
         })
 
@@ -294,6 +301,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     Activated(game: Mission, active: boolean) { }
+    async baseAttackPossible(game: Mission, active: boolean) {    }
 
     public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
