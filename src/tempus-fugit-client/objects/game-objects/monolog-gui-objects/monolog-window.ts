@@ -55,7 +55,7 @@ export class MonologWindow {
             }).on('pointerout', function () {
                 // color white
                 this.clearTint();
-            }).setOrigin(1,0);
+            });//.setOrigin(1,0);
         
 
         // space key events

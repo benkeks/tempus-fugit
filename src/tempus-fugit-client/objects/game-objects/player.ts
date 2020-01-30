@@ -190,6 +190,10 @@ export class Player {
         }
     }
 
+    public attackWithBaseAttack(): void {
+
+    }
+
     /**
      * Player takes the card on top of 'deck' and adds it to his hand
      * @param deck The deck that the card is taken from
