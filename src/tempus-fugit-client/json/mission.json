@@ -71,7 +71,7 @@
                     "text": [["slime2","You'll pay for hurting our mother and our brethren."]]
                 },
                 {
-                    "triggerFunctionString":"//Welle 2: wenn ein slime3 schon tod ist und der andere nur noch halbes leben hat",
+                    "triggerFunctionString":"//Welle 2: zu beginn;",
                     "blocking":"true",
                     "text": [["slime3","You sure are strong, but Moleg the golem will avenge us and our mother for your crimes."], ["player", "A golem? I thought golems were nonexistant in these lands..."]]
                 },
