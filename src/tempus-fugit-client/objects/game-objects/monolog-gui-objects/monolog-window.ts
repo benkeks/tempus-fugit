@@ -61,8 +61,10 @@ export class MonologWindow {
         //.setOrigin(1, 0);
 
         // space key events
-        this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-            .on('down', function (key, event) {
+        this.scene.input.keyboard.on("keydown", e => {
+                console.log(e.key);
+                if (e.key != " ") return;
+
                 if (!this.typing) this.clicks = 2;
 
                 switch (this.clicks) {
