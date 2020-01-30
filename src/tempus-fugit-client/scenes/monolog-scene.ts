@@ -25,5 +25,10 @@ export class MonologScene extends Phaser.Scene {
             this.monologWindow = new MonologWindow(this);
             this.monologWindow.createMonologWindow(data.monolog);
         }, this);
+
+        if (this.scene.isActive("BTextBoxScene")) {
+            this.scene.bringToTop("MonologScene");
+            this.scene.pause("BTextBoxScene");
+        }
     }
 }
