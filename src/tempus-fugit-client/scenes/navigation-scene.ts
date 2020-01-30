@@ -114,6 +114,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", {frameWidth: 80, frameHeight: 80});
 
         this.load.image("book", "assets/sprites/board/book.png");
+        this.load.image("questionMark", "assets/sprites/questionmark.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
@@ -387,7 +388,7 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.tutorialButton = new TutorialButton(this, 100,100);
+        this.tutorialButton = new TutorialButton(this, 1780,50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;

@@ -24,6 +24,7 @@ import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
+import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
@@ -39,6 +40,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public textBox: Textbox;
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
+    public tutorialButton: TutorialButton;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -177,7 +179,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-
+        this.tutorialButton = new TutorialButton(this, 1780,300);
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {

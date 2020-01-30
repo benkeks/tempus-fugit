@@ -66,7 +66,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         this.background = this.scene.add.graphics({
             x: 0,
             y: 0,
-            fillStyle: { color: 0x607d8b },
+            fillStyle: { color: 0xa96851 },
             lineStyle: { color: 0x000, width: 3 }
         });
         this.background.fillRoundedRect(0, 0, this.backgroundWidth, this.backgroundHeight);
@@ -80,6 +80,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         this.setUpScrollingArrows();
         this.setUpTitle();
         this.setUpExit();
+
+        this.fadeIn();
     }
 
     public initSprites(sprites:string[], rect:Phaser.Geom.Rectangle) {
