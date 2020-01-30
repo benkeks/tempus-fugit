@@ -148,13 +148,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.85 + margin, innerTop, GameInfo.width * 0.14 - margin, GameInfo.height * 0.27, 30);
 
 
-        this.textBox = new Textbox(this);
 
         this.stack = new Stack();
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
+
+        this.textBox = new Textbox(this, this.handGUI, this.tfgame);
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
         this.playerGUI.listener.push(this.tfgame.player);
@@ -177,7 +178,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
 
-        
+
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
                 this.tfgame.waveCounter = 100;
@@ -231,7 +232,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         console.log("play Phase");
     }
 
-    async iteratePhases(phase:number, delay:number) {
+    async iteratePhases(phase: number, delay: number) {
         if (this.tfgame.curPhase != phase) return;
 
         this.time.delayedCall(delay, function () {
@@ -247,9 +248,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.iteratePhases(3, 500);
     }
 
-
-    async storyDialog(game: Mission, dialog: StoryDialog) {
-        this.textBox.addStoryDialog(dialog);
+    storyDialog(game: Mission, dialog: StoryDialog) {
+        this.tfgame.paused = true;
+        this.scene.pause('MissionScene');
+        this.textBox.addStoryDialog(dialog, dialog.blocking);
     }
 
     async gameover(game: Mission, gameWon: boolean) {
@@ -260,17 +262,16 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
-    async storyMonolog(game: Mission, monolog: string) {
+    storyMonolog(game: Mission, monolog: string) {
         this.tfgame.active = false;
-
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog:monolog, gameOver:game.isGameWon()});
+        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
         this.enemyGUI.setEnemies(enemies, true);
     }
 
-    Activated(game: Mission, active: boolean) {}
+    Activated(game: Mission, active: boolean) { }
 
     public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
         return scene.add.tween({
