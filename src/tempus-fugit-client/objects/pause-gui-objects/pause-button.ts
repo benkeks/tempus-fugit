@@ -13,7 +13,7 @@ export class PauseButton {
         //@ts-ignore
         this.button = scene.rexUI.add.label({
             x: isMissionScene ? 1870 : 1870,
-            y: isMissionScene ? 300 : 50,
+            y: isMissionScene ? 310 : 50,
             width: 50,
             height: 50,
             //@ts-ignore

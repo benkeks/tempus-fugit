@@ -52,8 +52,9 @@ const LABEL_SPACE = '';
 
 
 export class HelpWindow {
-    private scene: Phaser.Scene;
+    static lastIndex = 0;
 
+    private scene: Phaser.Scene;
     public helpGUI;
     public prevTab;
     public prevIndex = 0;
@@ -198,6 +199,8 @@ export class HelpWindow {
             this.createPanel(panel, scene, ...elements);
             panel.layout();
             scroll.layout();
+
+            HelpWindow.lastIndex = index;
         }, this);
 
         tabs.on('button.over', function highlightBorder(button) {
@@ -207,7 +210,7 @@ export class HelpWindow {
             button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER)
         });
 
-        tabs.emitButtonClick('top', this.prevIndex);
+        tabs.emitButtonClick('top', HelpWindow.lastIndex);
 
         return tabs;
     }
@@ -400,7 +403,46 @@ export class HelpWindow {
         [")"]: {type: "operators", frame: 14}
     };
 
-// TODO make content for help
-//     static help_data = [op_and, op_or, op_not];
-    static help_data = [op_and, op_or, op_not, op_impl, op_biImpl, op_evPast, op_evFuture, op_glPast, op_glFuture, op_nextPast, op_nextFuture, op_until, op_klammer]; // test array
+    // static help_data = [op_and, op_or, op_not, op_impl, op_biImpl, op_evPast, op_evFuture, op_glPast, op_glFuture, op_nextPast, op_nextFuture, op_until, op_klammer]; // test array
+    static help_data = [op_and, op_or, op_not, op_klammer];
+    static order = [
+        {
+            once: true,
+            index: 4,
+            tabs: [op_nextFuture, op_nextPast]
+        },
+        {
+            once: true,
+            index: 6,
+            tabs: [op_evFuture, op_evPast]
+        },
+        {
+            once: true,
+            index: 8,
+            tabs: [op_glFuture, op_glPast]
+        },
+        {
+            once: true,
+            index: 10,
+            tabs: [op_impl]
+        },
+        {
+            once: true,
+            index: 11,
+            tabs: [op_biImpl]
+        },
+        {
+            once: false,
+            tabs: []
+        },
+        {
+            once: true,
+            index: 12,
+            tabs: [op_until]
+        },
+        {
+            once: false,
+            tabs: []
+        }
+    ];
 };

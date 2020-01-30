@@ -116,6 +116,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.image("book", "assets/sprites/board/book.png");
         this.load.image("questionMark", "assets/sprites/questionmark.png");
         this.load.image("pause", "assets/sprites/pause-icon.png");
+        this.load.image("notification", "assets/sprites/notification.png");
 
         let enemies: string = NavigationScene.loadFile("json/enemies.json");
         Enemy.createFromJSON(enemies, this);
@@ -173,7 +174,8 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset,-yOffset,b.getBounds().width + 2*xOffset,b.getBounds().height + 2*yOffset);
             
             b.on("pointerdown", pointer => {
-                this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
                     index: i,

@@ -591,7 +591,7 @@ export const op_nextFuture = {
         },
         {
             type: 'formula',
-            string: 'X((n&s)->!l)'
+            string: 'X((n&s)-!l)'
         },
         {
             type: 'text-area',
