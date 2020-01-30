@@ -25,7 +25,7 @@ import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
 
-import {HelpWindow} from "../objects/help-gui-objects/help-window";
+import { HelpWindow } from "../objects/help-gui-objects/help-window";
 
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 
@@ -166,6 +166,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
+        this.tfgame.player.hand.missionScene = this;
         this.gameStateGUI = new TableGUI(this, this.tfgame)
 
         // box for arrow and energy
@@ -200,7 +201,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780,300);
+        this.tutorialButton = new TutorialButton(this, 1780, 300);
 
         this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
@@ -236,6 +237,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
      */
     async callNextPhase() {
         this.tfgame.nextPhase();
+        this.tfgame.player.hand.discardGUIStarted = false;
     }
 
     async effectPhase(game: Mission) {

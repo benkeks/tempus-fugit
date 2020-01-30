@@ -46,8 +46,6 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
             discardCard
                 .on('pointerdown', function (
                 ) {
-                    console.log('clicked', this, discardText);
-                    discardText.setText('ASdfasdfasdf');
                     // destroy discard cards
                     for (let c of discardCards) c.destroy();
                     // destroy discard text
@@ -58,10 +56,14 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
                     for (let c of handGUI.cardGUIs) c.setVisible(true);
                     // remove clicked card from hand
                     hand.removeCard(this.card);
-                    if (this.card != card) {
-                        hand.addCard(card);
+                    if (this.card != card) hand.addCardToGUI(card);
+                    hand.discardGUIStarted = false;
+                    if (hand.cardQueue.length == 0) {
+                        hand.playNextCard();
                     } else {
-                        scene.callNextPhase();
+                        setTimeout(() => {
+                            hand.playNextCard();
+                        }, 250);
                     }
                 });
         }

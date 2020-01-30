@@ -1,5 +1,6 @@
 import { Card } from "./card";
 import { PlayerListener } from "./player";
+import { Mission } from "../../mechanics/mission";
 
 export class Hand {
     get active(): boolean {
@@ -17,6 +18,9 @@ export class Hand {
     listener: HandListener[] = []; // A list of objects listening to events happening to this hand
 
     public _active: boolean = true;
+    public cardQueue: Card[] = [];
+    public missionScene;
+    public discardGUIStarted = false;
 
     /**
      * Constructor for the Hand class
@@ -30,25 +34,50 @@ export class Hand {
             this.cards[i] = null;
         }
         this.listener = [];
-
-
     }
 
     /**
-     * Puts a card at 'position' into the hand and informs hand listeners
+     * Adds card to queue
      * @param card Card that should be added
-     * @param position Position in the hand at which the card will be placed
      * @example dummyPlayer.hand.addCard(dummyCard, 3);
      * @author Florian
      */
-    public addCard(card: Card, position: number = -1): number {
-        if (this.isFull()) {
-            for (let i in this.listener) {
-                this.listener[i].discardCard(card);
+    public addCard(card: Card) {
+        console.log('added card to queue', this.cardQueue);
+        this.cardQueue.push(card);
+        this.playNextCard();
+    }
+
+    public playNextCard() {
+        if (this.cardQueue.length == 0) {
+            console.log('no more cards to play, going to next phase')
+            if (this.missionScene.tfgame.curPhase == Mission.DRAW_PHASE) {
+                this.missionScene.callNextPhase();
             }
             return;
         }
+        else {
+            if (this.isFull() && this.discardGUIStarted) {
+                console.log('hand is full and discardgui already started');
+                return;
+            }
 
+            let card = this.cardQueue.shift();
+            if (this.isFull() && !this.discardGUIStarted) {
+                console.log('starting discard gui since hand if ful')
+                this.discardGUIStarted = true;
+                for (let i in this.listener) {
+                    this.listener[i].discardCard(card);
+                }
+            } else {
+                console.log('added card to non full hand', this.cardQueue);
+                this.addCardToGUI(card);
+            }
+        }
+    }
+
+    public addCardToGUI(card: Card) {
+        let position = -1;
         if (position != -1) {
             this.cards[position] = card;
         } else {
