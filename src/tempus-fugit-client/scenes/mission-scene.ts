@@ -79,11 +79,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.deck.setUpDeck();
         this.tfgame.deck.shuffle();
 
-        this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
-        let scaleX = this.cameras.main.width / this.background.width
-        let scaleY = this.cameras.main.height / this.background.height
-        let scale = Math.max(scaleX, scaleY)
-        this.background.setScale(scale).setScrollFactor(0)
+        // this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, this.tfgame.background)
+        // let scaleX = this.cameras.main.width / this.background.width
+        // let scaleY = this.cameras.main.height / this.background.height
+        // let scale = Math.max(scaleX, scaleY)
+        // this.background.setScale(scale).setScrollFactor(0)
+        this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
+            .setScale(1);
+
 
         //Menun Layout
         //5C4D4D, 915B4A, A96851
@@ -91,9 +94,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         let innerTop = GameInfo.height * 0.715;
         let margin = GameInfo.width * 0.01;
         let color1 = 0x5C4D4D;
-        let color3 = 0x915B4A
+        let color3 = 0x915B4A;
         let color2 = 0xA96851;
 
+        // Uppder box
+        this.lowerMenu.fillStyle(color2, 1);
+        this.lowerMenu.fillRect(10, 0, GameInfo.width - 20, GameInfo.height * 0.239);
+        this.lowerMenu.lineStyle(15, color1, 1);
+        this.lowerMenu.strokeRoundedRect(0, 0, GameInfo.width, GameInfo.height * 0.239, 30);
 
         //Book box
         this.lowerMenu.lineStyle(20, color1, 1);
@@ -148,12 +156,21 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.85 + margin, innerTop, GameInfo.width * 0.14 - margin, GameInfo.height * 0.27, 30);
 
 
-
         this.stack = new Stack();
 
         this.deckGUI = new DeckGUI(this, "deck", this.tfgame.deck);
         this.handGUI = new HandGUI(this, this.tfgame.player.hand, this.stack, this.deckGUI, this.tfgame.gameState);
         this.gameStateGUI = new TableGUI(this, this.tfgame)
+
+        // box for arrow and energy
+        this.lowerMenu.fillStyle(color2, 1);
+        this.lowerMenu.fillRoundedRect(0, GameInfo.height * 0.242, 30 + this.gameStateGUI.energyTable.x + this.gameStateGUI.energyTable.width / 2, 50, 10);
+        this.lowerMenu.lineStyle(10, color1, 1);
+        this.lowerMenu.strokeRoundedRect(0, GameInfo.height * 0.242, 30 + this.gameStateGUI.energyTable.x + this.gameStateGUI.energyTable.width / 2, 50, 10);
+
+        // outline
+        this.lowerMenu.lineStyle(20, color1, 1);
+        this.lowerMenu.strokeRect(0, 0, GameInfo.width, GameInfo.height)
 
         this.textBox = new Textbox(this, this.handGUI, this.tfgame);
 
