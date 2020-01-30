@@ -25,7 +25,7 @@ export class Player {
 
     set baseAttack(value: number) {
         this._baseAttack = value;
-        
+
         this.listener.map(obj => obj.stateValuesChanged(this));
     }
     get active(): boolean {
@@ -126,12 +126,13 @@ export class Player {
     public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
         let val: boolean = mission.gameState.evaluate(card.getFormula());
         console.log("valid: " + val);
+        this.hand.removeCard(card);
         if (val) {
             if (card.stand()) {
                 mission.pushStand(card);
                 card.spawnStand(enemy, mission);
             } else {
-                
+
                 switch (card.getKind()) {
 
                     case Card.OTHER:
@@ -144,7 +145,7 @@ export class Player {
                         for (let e of mission.getEnemies()) {
                             card.action(mission, e);
                         }
-                        
+
                         this.listener.map(l => l.Attacking(this, enemy));
                         break;
                     case Card.RANDOM:
@@ -152,20 +153,19 @@ export class Player {
                         var target = enemies[Math.floor(Math.random() * enemies.length)];
                         card.action(mission, target);
 
-                        
+
                         this.listener.map(l => l.Attacking(this, enemy));
                         break;
                     case Card.DIRECTED:
                         card.action(mission, enemy);
-                        
+
                         this.listener.map(l => l.Attacking(this, enemy));
                         break;
-                    }
+                }
             }
-            
+
             this.listener.map(l => l.cardPlayed(this, card));
         }
-        this.hand.removeCard(card);
     }
 
 
@@ -233,5 +233,5 @@ export interface PlayerListener {
     stateValuesChanged(player: Player): void;
     Activated(player: Player, active: boolean);
     Attacking(player: Player, target: Enemy);
-    cardPlayed(player:Player, card:Card);
+    cardPlayed(player: Player, card: Card);
 }
