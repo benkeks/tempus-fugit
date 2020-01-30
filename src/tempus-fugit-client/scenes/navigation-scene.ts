@@ -399,6 +399,11 @@ export class NavigationScene extends Phaser.Scene {
             this.scene.run("NewCardScene", { loot: loot });
             this.scene.pause("NavigationScene");
         }
+
+        if (!data.mission) {
+            let s = this.scene;
+            s.run('TutorialScene', {backScene:s.key, guided:true});
+        }
     }
 
     public initGame() {
