@@ -25,7 +25,7 @@ export class MonologWindow {
         this.scene = scene;
     }
 
-    public createMonologWindow(monolog: string, gameOver:boolean) {
+    public createMonologWindow(monolog: string, gameOver: boolean) {
 
         if (this.instanceCounter > 0) return;
         this.instanceCounter += 1;
@@ -56,8 +56,8 @@ export class MonologWindow {
                 // color white
                 this.clearTint();
             })
-            // .setOrigin(1,0);
-        
+
+        //.setOrigin(1, 0);
 
         // space key events
         let clicks = 0;

@@ -1,6 +1,5 @@
 import { GameInfo } from "../game";
-import { Formula } from "../temporal-logic/formula";
-import { Variable } from "../temporal-logic/variable";
+import {TutorialWindow} from "../objects/tutorial-objects/tutorial-window";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -58,5 +57,6 @@ export class StartingScene extends Phaser.Scene {
             playText.setColor('#402539');
 
         });
+
     }
 }

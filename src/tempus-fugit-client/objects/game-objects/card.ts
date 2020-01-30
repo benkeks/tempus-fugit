@@ -42,7 +42,7 @@ export class Card {
             this.image, this.formula.generateRepresentation(true, false),
             this.cardKind, this.isStandCard, this.standRounds, "");
         c.action = this.action;
-        c.inDeckAtStart = this.inDeckAtStart;
+        c.maxCardsInDeck = this.maxCardsInDeck;
 
         return c;
     }
@@ -91,6 +91,7 @@ export class Card {
      */
 
     public setActionFunction(actionString:string) {
+        //console.log(this.name, "  ", actionString);
         this.action = eval("(function(mission, enemy){"+actionString+"})");
     }
 
@@ -206,7 +207,6 @@ export class Card {
                 parseInt(c.standRounds),
                 c.action
             );
-            new_c.inDeckAtStart = parseInt(c.inDeckAtStart);
             
             if (c.formulaRepresentation) new_c.formulaRepresentation = c.formulaRepresentation;
 

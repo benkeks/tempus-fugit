@@ -1,7 +1,7 @@
 {
     "missions": [{
             "name": "tutorial",
-            "background":"forest",
+            "background":"forest_bg1",
             "enemies": [
                 ["slime1", "slime2", "slime1"]
             ],
@@ -18,11 +18,12 @@
                     ["player", "Oh dear..."]
                 ]
             }],
-            "loot": ["Natural heal", "Unnatural heal"]
+            "loot": ["Natural heal", "Unnatural heal"],
+			"deck":["Fireball", "Lightning Strike", "Lower woodland spirit", "Anti-evolution"]
         },
         {
             "name": "mission1",
-            "background": "forest",
+            "background": "forest_bg1",
             "waves": 5,
             "enemies": [
                 ["slime2", "slime3", "slime2"],
@@ -44,7 +45,7 @@
         },
         {   
             "name": "mission2",
-            "background":"forest",
+            "background":"forest_bg2",
             "enemies": [
                 ["slime2", "slime2"],
                 ["slime3","slime3"],
@@ -65,7 +66,7 @@
         },
         {   
             "name": "mission3",
-            "background":"plane",
+            "background":"forest_bg3",
             "enemies": [
                 ["goblin1", "goblin2", "goblin1"],
                 ["goblin2", "goblin2"],
@@ -86,7 +87,7 @@
         },
         {   
             "name": "mission4",
-            "background":"desert_cactus",
+            "background":"desert_bg3",
             "enemies": [
                 ["cactus1"],
                 ["cactus1", "cactus2", "cactus1"],
@@ -107,7 +108,7 @@
         },
         {   
             "name": "mission5",
-            "background":"desert",
+            "background":"desert_bg3",
             "enemies": [
                 ["cactus1", "cactus1"],
                 ["wormling", "wormling"],
@@ -128,7 +129,7 @@
         },
         {   
             "name": "mission6",
-            "background":"pyramid",
+            "background":"desert_bg3",
             "enemies": [
                 ["snake", "snake", "snake"],
                 ["mummy", "pharaoh_yeah", "mummy"]

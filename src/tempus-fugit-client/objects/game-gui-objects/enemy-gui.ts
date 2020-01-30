@@ -154,6 +154,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.scene.createAttackAnimation(this.scene, this, "-");
     }
 
+    async baseAttackChanged(enemy:Enemy) {
+        this.updateEnemyAttributes();
+    }
+
     roundChanged(gameState: import("../game-objects/game-state").GameState, lastRound: number, activeRound: number) {
         this.updateTint(gameState);
     }

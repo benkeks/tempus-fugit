@@ -2,6 +2,7 @@ import Text = Phaser.GameObjects.Text;
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Line = Phaser.GameObjects.Line;
 import { GameObjects, Tweens } from "phaser";
+import { GameInfo } from "../../game";
 
 export class ListGUI extends Phaser.GameObjects.Container {
 
@@ -151,15 +152,11 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
     public isHovered(xCursor: number, yCursor: number): boolean {
         if (this.isDestroyed) return false;
+        let width = this.sprite.width*GameInfo.scale;
+        let height = this.sprite.height*GameInfo.scale;
+        let rect = new Phaser.Geom.Rectangle(this.x-width/2, this.y-height, width, height);
 
-        let xOffset = -this.displayWidth / 2;
-
-        let x1: number = this.x + xOffset;
-        let y1: number = this.y;
-        let x2: number = x1 + this.displayWidth;
-        let y2: number = y1 + this.displayHeight;
-
-        return xCursor > x1 && xCursor < x2 && yCursor > y1 && yCursor < y2;
+        return Phaser.Geom.Rectangle.Contains(rect, xCursor, yCursor);
     }
 
     public fadeIn(duration = 200) {

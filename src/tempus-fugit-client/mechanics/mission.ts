@@ -94,12 +94,14 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public _active: boolean = true;
 
-    private stands:[Card, Card] = [null, null];
+    private stands: [Card, Card] = [null, null];
 
-    public loot:Card[] = []; // card name and maximal number of occurances
+    public loot: Card[] = []; // card name and maximal number of occurances
 
-    public iterateEachParticipand:boolean=true;
-    public iteratorIndex:number = 0;
+    public iterateEachParticipand: boolean = true;
+    public iteratorIndex: number = 0;
+    public paused: boolean = false;
+    public inQueue = false;
     // TODO: effect list
 
     public copy(): Mission {
@@ -148,16 +150,14 @@ export class Mission implements EnemyListener, PlayerListener {
         this.toPhase.set(3, 'stand-phase');
         this.toPhase.set(4, 'enemy-phase');
 
-
         this.gameState = new GameState();
-        this.gameState.maxEnergy = 4;
         this.gameState.setVariable("l", false);
         this.gameState.setVariable("t", false);
         this.gameState.setVariable("n", false);
         this.gameState.setVariable("s", false);
     }
 
-    private checkDialogEvents() {
+    public checkDialogEvents() {
         for (let i = 0; i < this.dialogue.length; i++) {
             let d: StoryDialog = this.dialogue[i];
             if (d.isTriggered(this)) {
@@ -227,17 +227,33 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    public nextWave(next: number = this.waveCounter + 1):void {
+
+    public displayStoryMonolog() {
+        if (this.paused) {
+            this.inQueue = true;
+            return;
+        }
+
+        if (this.inQueue)
+            this.inQueue = false
+
+        if (this.waveCounter in this.monologue) {
+            this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        }
+    }
+
+    public nextWave(next: number = this.waveCounter + 1): void {
         // removing this from last wave
         //this.getEnemies().map(e => e.listener.splice(e.listener.indexOf(this), 1));
 
         this.waveCounter = next;
 
-        if (this.waveCounter in this.monologue) {
-            this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
-        }
+        this.displayStoryMonolog();
+        // if (this.waveCounter in this.monologue) {
+        //     this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
+        // }
 
-        if (this.checkGameOver()) return;        
+        if (this.checkGameOver()) return;
 
         this.aliveEnemiesCount = this.getEnemies().length;
         for (let e of this.getEnemies()) {
@@ -248,7 +264,7 @@ export class Mission implements EnemyListener, PlayerListener {
         this.listener.map(l => l.waveChanged(this, next, this.getEnemies()));
     }
 
-    public checkGameOver():boolean {
+    public checkGameOver(): boolean {
         let gameWon
         if (this.waveCounter >= this.getMaxWaveCount()) {
             this.listener.map(l => l.gameover(this, this.isGameWon()));
@@ -297,7 +313,7 @@ export class Mission implements EnemyListener, PlayerListener {
         this.iteratorIndex++;
     }
 
-    private standPhase():void {
+    private standPhase(): void {
         this.iteratorIndex = 0;
         this.active = false;
 
@@ -415,7 +431,7 @@ export class Mission implements EnemyListener, PlayerListener {
         return this.stands;
     }
 
-    public getStandCount():number {
+    public getStandCount(): number {
         let count = 0;
         for (let c of this.stands) {
             if (c != null) count++;
@@ -439,7 +455,7 @@ export class Mission implements EnemyListener, PlayerListener {
         return this.waveCounter >= this.getMaxWaveCount() || this.player.getHP() <= 0;
     }
 
-    public isGameWon():boolean {
+    public isGameWon(): boolean {
         return this.waveCounter >= this.getMaxWaveCount();
     }
 
@@ -466,9 +482,11 @@ export class Mission implements EnemyListener, PlayerListener {
         }
     }
 
-    async Activated(player: Player, active: boolean) {}
+    async Activated(player: Player, active: boolean) { }
 
-    async Attacking(actor, target = undefined) {}
+    async Attacking(actor, target = undefined) { }
+
+    baseAttackChanged(enemy: Enemy) { }
 
     async cardPlayed(player, card) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
@@ -506,6 +524,16 @@ export class Mission implements EnemyListener, PlayerListener {
                 }
             }
 
+            if (m.deck) {
+                let cards: Set<Card> = new Set();
+                for (let c of m.deck) {
+                    let card = Card.cards[c].copy();
+                    cards.add(card);
+                }
+
+                Deck.Decks[mission.name] = cards;
+            }
+
             this.Missions[m.name] = mission;
         }
     }
@@ -533,7 +561,7 @@ export interface MissionListener {
 
 export interface StandListener {
     updateStandGUI(stands: [Card, Card]): void;
-    Attacking(stand: Card, index:number);
+    Attacking(stand: Card, index: number);
     /*removeStand(stand: Card):void;
     updateStandText(): void;
     turnRed(): void;
