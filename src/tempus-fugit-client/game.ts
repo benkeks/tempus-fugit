@@ -2,13 +2,15 @@ import "phaser";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { StartingScene } from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
-import {NavigationScene} from "./scenes/navigation-scene";
-import {MissionScene} from "./scenes/mission-scene";
-import {HelpScene} from "./scenes/help-scene";
-import {PauseScene} from "./scenes/pause-scene";
-import {DeathScene} from "./scenes/death-scene";
+import { NavigationScene } from "./scenes/navigation-scene";
+import { MissionScene } from "./scenes/mission-scene";
+import { HelpScene } from "./scenes/help-scene";
+import { PauseScene } from "./scenes/pause-scene";
+import { DeathScene } from "./scenes/death-scene";
 import { MonologScene } from "./scenes/monolog-scene";
 import { NewCardsScene } from "./scenes/new-cards-scene";
+import { BTextBoxScene } from "./scenes/blocking-textbox-scene";
+import { TutorialScene } from "./scenes/tutorial-scene";
 
 
 export abstract class GameInfo {
@@ -20,7 +22,7 @@ export abstract class GameInfo {
     public static width: number = 1920;
     public static height: number = 1080;
 
-    public static scale:number = 5;
+    public static scale: number = 5;
 
     public static convertRelativeCoordinates(axis: number, coordinate: number): number {
         if (axis == this.X_AXIS) {
@@ -55,7 +57,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene, NewCardsScene]
+    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene, NewCardsScene, BTextBoxScene, TutorialScene]
 };
 
 export class Game extends Phaser.Game {

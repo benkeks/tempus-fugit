@@ -1,7 +1,7 @@
 {
     "missions": [{
             "name": "tutorial",
-            "background":"forest",
+            "background":"forest_bg1",
             "enemies": [
                 ["slime1", "slime2", "slime1"]
             ],
@@ -23,7 +23,7 @@
         },
         {
             "name": "mission1",
-            "background": "forest",
+            "background": "forest_bg1",
             "waves": 5,
             "enemies": [
                 ["slime2", "slime3", "slime2"],
@@ -46,7 +46,7 @@
         },
         {
             "name": "mission2",
-            "background":"forest",
+            "background":"forest_bg2",
             "enemies": [
                 ["slime2", "slime2"],
                 ["slime3","slime3"],
@@ -68,7 +68,7 @@
         },
         {
             "name": "mission3",
-            "background":"plane",
+            "background":"forest_bg3",
             "enemies": [
                 ["goblin1", "goblin2", "goblin1"],
                 ["goblin2", "goblin2"],
