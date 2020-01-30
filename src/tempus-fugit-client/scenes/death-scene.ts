@@ -21,7 +21,7 @@ export class DeathScene extends Phaser.Scene {
     create(data) {
         this.sceneData = data;
         this.add.rectangle(1920 / 2, 1080 / 2, 1920, 1080, 0x000000);
-        this.add.sprite(1920 / 2, 430, 'skull').setScale(5);
+        this.add.sprite(1920 / 2, 400, 'skull').setScale(5);
 
         let createText = (text) => this.add.text(0, 0, text, { fontSize: '36px', fontFamily: "pressStart" });
 
@@ -34,7 +34,7 @@ export class DeathScene extends Phaser.Scene {
         let sizer = this.rexUI.add.sizer({
             orientation: 'y',
             x: 1920 / 2,
-            y: 800
+            y: 900
         });
 
         let texts = [this.tryAgain, this.backToNav, this.quitText];

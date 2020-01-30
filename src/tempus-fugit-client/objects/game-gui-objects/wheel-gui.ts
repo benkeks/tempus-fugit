@@ -131,5 +131,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         if (!active) this.box.disableInteractive();
         else this.box.setInteractive();
     }
+    async baseAttackPossible(game: Mission, active: boolean) {
+    }
 
 }

@@ -19,7 +19,7 @@
                 ]
             }],
             "loot": ["Root pierce", "Natural heal", "Guiding Light"],
-			"deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
+            "deck": ["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
         },
         {
             "name": "Mother of slimes",
@@ -31,8 +31,8 @@
                 ["slime2", "slime3", "slime2"],
                 ["goblin1", "slime_mother", "goblin1"]
             ],
-            "monologue":{
-				"0": "You're walking deeper into the woods... What is it with these slimes? Why are they so eager to feel pain?",
+            "monologue": {
+                "0": "You're walking deeper into the woods... What is it with these slimes? Why are they so eager to feel pain?",
                 "1": "Onwards you hear a mysterious sound. It seems like someone is following you. Tread lightly!",
                 "2": "The ground is shaking as you try to continue your journey through the woods. Someone is crying for their mother. What is going on?"
             },
@@ -57,7 +57,7 @@
             "background":"forest_bg2",
             "enemies": [
                 ["slime2", "slime2"],
-                ["slime3","slime3"],
+                ["slime3", "slime3"],
                 ["goblin1", "moleg", "goblin1"]
             ],
             "monologue":{
@@ -94,8 +94,8 @@
                 ["goblin2", "goblin2"],
                 ["goblin2", "goblin_general1", "goblin2"]
             ],
-            "monologue":{
-				"0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its habitants. On your way to the port you encounter a goblin party.",
+            "monologue": {
+                "0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its habitants. On your way to the port you encounter a goblin party.",
                 "1": "More of them start to appear. They seem to have alarmed their general. Let's go!",
                 "2": "You hear the sound of a warhorn. It is him. The one responsible for innocent people dying. It is time to go all out."
             },
@@ -178,8 +178,8 @@
                 ["snake", "snake", "snake"],
                 ["mummy", "pharaoh_yeah", "mummy"]
             ],
-            "monologue":{
-				"0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",
+            "monologue": {
+                "0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",
                 "1": "After defeating the snakes you venture deeper into the pyramid just to see that there is only one room. The sarcophagus inside of it seems empty. You suddenly hear music and all you can think of dancing. What is going on?"
             },
             "dialogue": [
@@ -233,8 +233,8 @@
                 ["ghost", "beegghost", "ghost"],
                 ["stand1", "boss", "stand2"]
             ],
-            "monologue":{
-				"0": "The time has come to fight the one who is responsible for this mess. As you try entering the tower you are greeted by the goblin general. Watch out!",
+            "monologue": {
+                "0": "The time has come to fight the one who is responsible for this mess. As you try entering the tower you are greeted by the goblin general. Watch out!",
                 "1": "Inside the tower, ghosts start to appear out of no where. You got this!",
                 "2": "This is it. You've come this far and now the time has come to confront the evil behind all of this. But the sight of what you see at the peak of the tower shocks you."
             },

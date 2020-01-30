@@ -237,7 +237,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         if (this.inQueue)
-            this.inQueue = false
+            this.inQueue = false;
 
         if (this.waveCounter in this.monologue) {
             this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
@@ -287,6 +287,7 @@ export class Mission implements EnemyListener, PlayerListener {
     private playPhase(): void {
         this.player.active = true;
         this.gameState.active = false;
+        this.listener.map(l => l.baseAttackPossible(this, true));
     }
 
     private standPhaseIterator() {
@@ -492,6 +493,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     async cardPlayed(player, card) {
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
+        this.listener.map(l => l.baseAttackPossible(this, false));
     }
 
 
@@ -562,6 +564,7 @@ export interface MissionListener {
     waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void;
     gameover(game: Mission, gameWon: boolean): void;
     Activated(game: Mission, active: boolean);
+    baseAttackPossible(game: Mission, active: boolean);
 }
 
 

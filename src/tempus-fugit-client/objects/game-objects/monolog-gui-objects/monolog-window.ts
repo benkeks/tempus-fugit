@@ -51,12 +51,12 @@ export class MonologWindow {
             .on('pointerdown', function () {
                 this.switchToMissionScene();
             }, this).on('pointerover', function () {
-                // color red
-                this.setTint(0xff0000);
-            }).on('pointerout', function () {
-                // color white
-                this.clearTint();
-            })
+            // color red
+            this.setTint(0xff0000);
+        }).on('pointerout', function () {
+            // color white
+            this.clearTint();
+        })
 
         //.setOrigin(1, 0);
 
@@ -94,16 +94,16 @@ export class MonologWindow {
     }
 
     /**
-    * shows the monolog letter by letter
-    * adds animation for cursor so it seems like someone is typing
-    * @param displayString 
-    */
+     * shows the monolog letter by letter
+     * adds animation for cursor so it seems like someone is typing
+     * @param displayString
+     */
     displayMonologue(displayString: string): void {
 
         let self = this;
         let tmp = this.blinkCount;
 
-        // pipe animation 
+        // pipe animation
         let pipeAnim = function () {
             if (self.done) return;
 
