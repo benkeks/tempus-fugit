@@ -7,8 +7,8 @@
                 ["slime1", "slime2", "slime1"]
             ],
             "monologue": {
-                "0": "Sample Text1",
-                "1": "Sample Text2"
+                "0": "Hey.... Listen.... Once upon a time, on an island, far away from anything you could imagine, evil forces have started to corrupt all living creatures and beings. A young wizard and I, his loyal fairy, take it upon ourselves to defeat these evil forces that have corrupted the Islands of Tempus Fugit. Our story begins when someday, out of nowhere, slimes started to attack. Watch out!",
+                "1": "Congratulations! You won!"
             },
             "dialogue": [{
                 "triggerFunctionString": "return true;",
