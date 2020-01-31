@@ -203,7 +203,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"assets/sprites/enemies/pharaoh_yeah/mummy-Sheet.png",
+            "sprite":"assets/sprites/enemies/mummy/mummy-Sheet.png",
             "size": [32,64],
 			"image":"mummy"
         },
@@ -287,7 +287,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/stand2/stand2-Sheet.png",
             "size": [32,32],
 			"image":"stand2"
         },         
