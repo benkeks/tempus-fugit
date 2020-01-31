@@ -198,7 +198,7 @@
                     "text": [["pharaoh_yeah","Who dares to barge in here and disturb this party?"], ["player", "I am here to find out who is cursing these creatures? Please tell me how to stop dancing and who is behind all this mess."]]
                 }
             ],
-			"loot":["Aura of Weakness"],
+			"loot":["Aura of Weakness", "Higher heal stand"],
         "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
@@ -234,7 +234,7 @@
                 }
             ],
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         },
         {
             "name":"The final act",
@@ -264,7 +264,7 @@
                 }
             ],
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         }
 
     ]
