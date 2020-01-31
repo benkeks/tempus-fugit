@@ -168,7 +168,7 @@
 		"description":"Deals 100 damage to an enemy but unsets all nature from now on!",
 		"image":"light_lens",
 		"formula":"!n&#O#Fl&t",
-		"cardKind":"targeted",
+		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"3",
 		"action":"target.takeHit(100, mission);mission.gameState.setAllVariableValues({variable:'n', start:0, end:-1, local:true, value:false});",
