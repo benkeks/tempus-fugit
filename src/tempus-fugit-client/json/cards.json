@@ -167,7 +167,7 @@
 		{"name":"Sun flare",
 		"description":"Deals 20 damage to all enemies, sets three strength & light",
 		"image":"sun",
-		"formula":"(#G(l|n)&s",
+		"formula":"#G(l|n)&s",
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"3",
