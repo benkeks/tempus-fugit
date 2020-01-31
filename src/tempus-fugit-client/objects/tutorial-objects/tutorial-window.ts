@@ -25,7 +25,7 @@ const TITLE_SPACER = '    ';
 export class TutorialWindow extends Phaser.GameObjects.Container{
     public scene: Phaser.Scene;
 
-    public static spriteKeys = [["forest", "Fight"], ["forest", "Defense"]];
+    public static spriteKeys;
 
     private sprites:Phaser.GameObjects.Sprite[] = [];
     private spriteBackgrounds:Phaser.GameObjects.Graphics[] = [];
@@ -59,7 +59,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         this.scene = scene;
         scene.add.existing(this);
 
-        TutorialWindow.spriteKeys = ["forest","overworld", "forest"];
+        TutorialWindow.spriteKeys = ["tutorialSlide1","tutorialSlide2", "tutorialSlide3"];
 
         this.backgroundWidth = GameInfo.width - 2 * this.screenPadding;
         this.backgroundHeight = GameInfo.height - 2 * this.screenPadding;
