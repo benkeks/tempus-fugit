@@ -120,7 +120,7 @@
                 }
             ],
 			"loot":["Lightning stand", "Lightning rain", "Vase of Desire"],
-            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Fireball", "Lightning Strike", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Cacti Party",
@@ -144,8 +144,8 @@
                     "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", "Your highness, I am not here to cause you any harm. I am here on a quest to save the creatures from my homeland that have gotten mad."],["kingtus","HOHO, WELL THEN YOU HAVE TO PROVE IT BY BEATING ME"], ["player","Heavens, here we go again. Bring it then."]]
                 }
             ],
-			"loot":["Incinerate", "Dark beam"],
-        "deck":["Fireball", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+			"loot":["Strength", "Dark beam"],
+        "deck":["Fireball", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
 
         },
         {
@@ -175,8 +175,8 @@
                     "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Please don't eat me."]]
                 }
             ],
-			"loot":["Obliterate", "Strength"],
-        "deck":["Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+			"loot":["Obliterate", "Incinerate"],
+        "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Club Pyramid",
@@ -199,7 +199,7 @@
                 }
             ],
 			"loot":["Aura of Weakness"],
-        "deck":["Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+        "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"King Janpuff live in concert",
@@ -234,7 +234,7 @@
                 }
             ],
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"The final act",
@@ -264,7 +264,7 @@
                 }
             ],
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+        "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         }
 
     ]
