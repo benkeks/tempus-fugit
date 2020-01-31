@@ -125,7 +125,7 @@
         {
             "name":"Cacti Party",
             "key": "mission4",
-            "background":"desert_bg3",
+            "background":"desert_bg1",
             "enemies": [
                 ["cactus1"],
                 ["cactus1", "cactus2", "cactus1"],
@@ -151,7 +151,7 @@
         {
             "name":"What Worm is this?",
             "key": "mission5",
-            "background":"desert_bg3",
+            "background":"desert_bg2",
             "enemies": [
                 ["cactus1", "cactus2"],
                 ["wormling", "wormling"],
@@ -204,7 +204,7 @@
         {
             "name":"King Janpuff live in concert",
             "key": "mission7",
-            "background":"iceisland",
+            "background":"snow_bg1",
             "enemies": [
                 ["goblin3"],
                 ["goblin3", "goblin3"],
@@ -239,10 +239,10 @@
         {
             "name":"The final act",
             "key": "mission8",
-            "background":"tower",
+            "background":"snow_bg2",
             "enemies": [
                 ["goblin3", "goblin_general2", "goblin3"],
-                ["ghost", "beegghost", "ghost"],
+                ["ghost", "ghost", "ghost"],
                 ["stand1", "boss", "stand2"]
             ],
             "monologue": {

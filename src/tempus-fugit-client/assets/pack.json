@@ -237,6 +237,16 @@
             },
             {
                 "type": "image",
+                "key": "snow_bg1",
+                "url": "assets/backgrounds/snow/bg1.png"
+            },
+            {
+                "type": "image",
+                "key": "snow_bg2",
+                "url": "assets/backgrounds/snow/bg2.png"
+            },
+            {
+                "type": "image",
                 "key": "cardIcon",
                 "url": "assets/sprites/text-box/user.png"
             }, {

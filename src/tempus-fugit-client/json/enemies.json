@@ -179,7 +179,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/darude_sandworm/darude_sandworm-Sheet.png",
             "size": [64,64],
 			"image":"darude_sandworm"
         },
@@ -203,7 +203,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/pharaoh_yeah/mummy-Sheet.png",
             "size": [32,64],
 			"image":"mummy"
         },
@@ -215,7 +215,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"",
+            "sprite":"assets/sprites/enemies/pharaoh_yeah/pharaoh_yeah-Sheet.png",
             "size": [64,64],
 			"image":"pharaoh_yeah"
         },
@@ -266,18 +266,6 @@
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
 			"image":"ghost"
-        },
-        {
-            "name":"beegghost",
-            "maxHP":130,
-            "baseAttack":30,
-            "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
-            },
-            "sprite":"",
-            "size": [32,32],
-			"image":"beegghost"
         },
         {
             "name":"stand1",
