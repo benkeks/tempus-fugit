@@ -20,12 +20,15 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
 
         console.log('discardCard');
 
+        // change boxes
+        scene.deckGUI.description.setVisible(false);
+
         // make card on handgui invisible
         for (let cardGUI of handGUI.cardGUIs)
             cardGUI.setVisible(false);
 
         // create discard text
-        let discardText = scene.add.text(850, 1000, 'Click one card to discard', {
+        let discardText = scene.add.text(600, 1010, 'Click one card to discard', {
             fontSize: 40, fontFamily: "pressStart"
         });
 
@@ -37,15 +40,17 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
         // create new discard objects
         for (let index in handGUI.cardGUIs) {
             discardCards.push(
-                new DiscardCard(scene, 600 + Number(index) * 200, 860, handGUI.cardGUIs[index].card));
+                new DiscardCard(scene, 590 + Number(index) * 190, 860, handGUI.cardGUIs[index].card)
+                    .setScale(1.05));
         }
         // 6th card
-        discardCards.push(new DiscardCard(scene, 1600, 860, card));
+        discardCards.push(new DiscardCard(scene, 590 + 5 * 190, 860, card).setScale(1.05));
 
         for (let discardCard of discardCards) {
             discardCard
                 .on('pointerdown', function (
                 ) {
+                    scene.deckGUI.description.setVisible(true);
                     // destroy discard cards
                     for (let c of discardCards) c.destroy();
                     // destroy discard text

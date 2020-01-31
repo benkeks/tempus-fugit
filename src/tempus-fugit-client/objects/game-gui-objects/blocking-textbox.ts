@@ -35,7 +35,7 @@ export class BTextBox {
      * @param typeSpeed: typing speed in ms
      * @param boxWidth: fixed width of textbox.
      */
-    constructor(scene: Phaser.Scene, handGUI: HandGUI, mission: Mission, nextPageIcon: string = 'nextPage', typeSpeed: number = 50, boxWidth: number = 810) {
+    constructor(scene: Phaser.Scene, handGUI: HandGUI, mission: Mission, nextPageIcon: string = 'nextPage', typeSpeed: number = 50, boxWidth: number = 700) {
         this.typeSpeed = typeSpeed;
         this.boxWidth = boxWidth;
         this.scene = scene;
@@ -69,7 +69,7 @@ export class BTextBox {
         }
 
         // position of box
-        let x = GameInfo.width / 2 - this.boxWidth / 2 - 61;
+        let x = GameInfo.width / 2 - this.boxWidth / 2 - 112;
         let y = 770;
 
         // create a text box with fixed width, height depends on content
@@ -79,8 +79,7 @@ export class BTextBox {
         let icons = [];
         for (let i in nextDialog) {
             content.push(nextDialog[i][1]);
-            icons.push(nextDialog[i][0]); // TODO dummy icons for now ; change when icon sprites are done         
-            //icons.push(Number(i) % 2 == 0 ? 'swordFont' : 'heartFont');
+            icons.push(nextDialog[i][0]);
         }
 
         const firstLine = content.shift();
@@ -181,18 +180,13 @@ export class BTextBox {
                     return;
                 }
 
-                // display new line / full line
-                // let icon = textBox.getElement('action').setVisible(false);
-                // textBox.resetChildVisibleState(icon);
-
-                //change speaker icon
-                let nextIcon = icons.shift();
-                textBox.getElement('icon').setTexture(nextIcon);
-
                 if (showNewLine) {
                     const newLine = content.shift();
                     textBox.start(newLine);
                     showNewLine = false;
+                    //change speaker icon
+                    let nextIcon = icons.shift();
+                    textBox.getElement('icon').setTexture(nextIcon);
                 } else {
                     if (textBox.isTyping) {
                         textBox.stop(true);
