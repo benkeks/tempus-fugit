@@ -332,7 +332,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async music(mission:Mission, sound:string) {
-        MusicScene.instance.play(sound);
+        if (mission.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                MusicScene.instance.play(sound);
+            }, [], this);
+        } else {
+            MusicScene.instance.play(sound);
+        }
     }
 
     Activated(game: Mission, active: boolean) { }
