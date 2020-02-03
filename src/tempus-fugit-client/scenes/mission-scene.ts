@@ -61,6 +61,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public phaseWheel: WheelGUI;
 
+    public delay:number = 1250;
+
     constructor() {
         super({
             key: "MissionScene"
@@ -223,6 +225,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tutorialButton = new TutorialButton(this, 1780, 310);
 
         this.events.on('resume', function () {
+            this.tfgame.active = true;
             if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
         }, this);
     }
@@ -285,7 +288,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyDialog(game: Mission, dialog: StoryDialog) {
-        this.textBox.addStoryDialog(dialog, dialog.blocking);
+        game.active = false;
+        
+        if (game.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                this.textBox.addStoryDialog(dialog, dialog.blocking);
+            }, [], this);
+        } else {
+            this.textBox.addStoryDialog(dialog, dialog.blocking);
+        }
     }
 
     async gameover(game: Mission, gameWon: boolean) {
@@ -298,11 +309,26 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyMonolog(game: Mission, monolog: string) {
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+        if (monolog && monolog.length > 0) {
+            game.active = false;
+            if (game.waveCounter > 0) {
+                this.time.delayedCall(this.delay, () => {
+                    this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+                }, [], this);
+            } else {
+                this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+            }
+        }
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
-        this.enemyGUI.setEnemies(enemies, true);
+        if (game.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                this.enemyGUI.setEnemies(enemies, true);
+            }, [], this);
+        } else {
+            this.enemyGUI.setEnemies(enemies, true);
+        }
     }
 
     async music(mission:Mission, sound:string) {

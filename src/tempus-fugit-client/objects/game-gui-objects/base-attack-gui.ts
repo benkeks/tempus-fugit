@@ -67,8 +67,10 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
                 this.game.player.attackWithBaseAttack(this.game);
-                this.game.player.takeCard(this.game.deck);
-                this.game.nextPhase(Mission.STAND_PHASE);
+                this.scene.time.delayedCall(500, () => {
+                    this.game.player.takeCard(this.game.deck);
+                    this.game.nextPhase(Mission.STAND_PHASE);
+                }, [], this)
             }, this);
 
         this.add(this.box);

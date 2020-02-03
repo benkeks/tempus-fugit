@@ -118,8 +118,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
     }
 
     public setSlide(next:number=this.activeIndex+1):boolean {
-        if (next >= this.sprites.length) next = 0;
-        else if (next < 0) next = this.sprites.length-1;
+        if (next >= this.sprites.length) return false;
+        else if (next < 0) return false;
 
         if (this.guided && next == this.sprites.length-1 && !this.exitText.visible) this.fadeIn([this.exitBackground, this.exitText]);
 

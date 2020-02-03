@@ -146,7 +146,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                 }});
         }
 
-        console.log(this.enemy.name, changedTo);
         if (changedFrom > 0 && changedTo <= 0) {
             this.die();
         }else this.updateEnemyAttributes();

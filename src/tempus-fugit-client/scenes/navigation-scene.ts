@@ -83,7 +83,7 @@ export class NavigationScene extends Phaser.Scene {
 
         if (!allTrue) {
             scene.player.missionStates = [true, true, true, true, true, true, true, true, true];
-            scene.scene.start("NavigationScene");
+            scene.scene.start("NavigationScene", {mission:true});
         }
     }
 

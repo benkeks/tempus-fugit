@@ -43,10 +43,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
             ease: "Linear",
             duration: 500,
             repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-            },
-            onCompleteScope: this
+            yoyo: false
         });
     }
 
