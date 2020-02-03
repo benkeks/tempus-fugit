@@ -13,7 +13,7 @@ export class Next extends OneParamOperator {
     }
 
     evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let status:PropositionStatus = this.operand.evaluateInternal(condition+direction, direction);
+        let status:PropositionStatus = this.operand.evaluateInternal(condition+direction, Proposition.DEFAULT_DIRECTION);
 
         return status;
     }

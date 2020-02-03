@@ -27,7 +27,7 @@ export class PauseButton {
             }
         }).layout();
 
-        this.button.setInteractive();
+        this.button.setInteractive({useHandCursor:true});
         this.button.on('pointerdown', this.displayPause, this);
         this.button.on('pointerover', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);

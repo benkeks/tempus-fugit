@@ -17,6 +17,7 @@ import { PauseWindow } from "../objects/pause-gui-objects/pause-window";
 import { NewCardsScene } from "./new-cards-scene";
 import { TutorialWindow } from "../objects/tutorial-objects/tutorial-window";
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+import { MusicScene } from "./music-scene";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -128,7 +129,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let missions: string = NavigationScene.loadFile("json/mission.json");
         Mission.createFromJSON(missions);
-        //console.log(Mission.Missions);
+        console.log(Mission.Missions);
 
         this.initGame();
 
@@ -260,6 +261,7 @@ export class NavigationScene extends Phaser.Scene {
 
     create(data?) {
         let scale: number = GameInfo.scale;
+        MusicScene.instance.play("spaceInvaders");
 
         // TODO: implement cheat code
         this.input.keyboard.on("keydown", e => {

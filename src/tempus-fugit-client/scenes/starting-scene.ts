@@ -1,5 +1,8 @@
 import { GameInfo } from "../game";
 import {TutorialWindow} from "../objects/tutorial-objects/tutorial-window";
+import { Formula } from "../temporal-logic/formula";
+import { GameState } from "../objects/game-objects/game-state";
+import { MusicScene } from "./music-scene";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -21,7 +24,18 @@ export class StartingScene extends Phaser.Scene {
     }
 
     create(data) {
-        console.log("booting");
+
+        /*let f = new Formula("(#O#On)&#F(l&t)&s");
+        console.log(f.generateRepresentation(true, true));
+        console.log(f.generateRepresentation(true, false));
+        let gs = new GameState();
+        gs.setVariableValues({"l": {0:false, 1:true, 2:false},
+                                "t":{0:true, 1:false, 2:true},
+                                "n":{0:true, 1:false, 2:false},
+                                "s":{0:false, 1:false, 2:true}});
+        gs.activeState = 2;
+        console.log(gs.evaluate(f));*/
+        this.scene.run("MusicScene", {startSong:"pacman"});
 
         this.cameras.main.setBackgroundColor('#89CFF0')
 

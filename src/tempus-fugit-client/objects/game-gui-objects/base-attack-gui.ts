@@ -100,6 +100,7 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
     }
     async gameover(game: Mission, gameWon: boolean) {
     }
+    async music(game:Mission, song:string) {}
     async Activated(game: Mission, active: boolean) {
         if (!active) {
             this.box.disableInteractive();

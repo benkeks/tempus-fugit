@@ -29,6 +29,7 @@ import { BaseAttackGUI } from "../objects/game-gui-objects/base-attack-gui";
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
 
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+import { MusicScene } from "./music-scene";
 
 
 
@@ -302,6 +303,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
         this.enemyGUI.setEnemies(enemies, true);
+    }
+
+    async music(mission:Mission, sound:string) {
+        MusicScene.instance.play(sound);
     }
 
     Activated(game: Mission, active: boolean) { }

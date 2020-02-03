@@ -143,6 +143,10 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             onCompleteScope: this
         });
         
+        // disable left and right button
+        this.leftButton.disableInteractive();
+        this.rightButton.disableInteractive();
+
         sprite.setVisible(true);
         background.setVisible(true);
         this.scene.add.tween({ // fade in
@@ -151,7 +155,12 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             ease: "Linear",
             duration: duration,
             repeat: 0,
-            yoyo: false
+            yoyo: false,
+            onComplete: function() {
+                this.leftButton.setInteractive();
+                this.rightButton.setInteractive();
+            },
+            onCompleteScope: this
         });
 
         this.activeIndex = next;

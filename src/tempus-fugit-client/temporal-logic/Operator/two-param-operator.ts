@@ -29,16 +29,16 @@ export abstract class TwoParamOperator extends Operator{
         let representation:string = ownRep;
 
         if (this.leftOperand instanceof Operator && (<Operator>this.leftOperand).precedence < this.precedence) {
-            representation = "(" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation, direction) + ")" + representation;
+            representation = "(" + this.leftOperand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION) + ")" + representation;
         } else {
-            representation = this.leftOperand.generateRepresentation(recursive, defaultRepresentation, direction) +  representation;
+            representation = this.leftOperand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION) +  representation;
         }
 
 
         if (this.rightOperand instanceof Operator && (<Operator>this.rightOperand).precedence <= this.precedence) {
-            representation = representation + "(" + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, direction) + ")";
+            representation = representation + "(" + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION) + ")";
         } else {
-            representation = representation + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, direction);
+            representation = representation + this.rightOperand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION);
         }
 
         return representation;

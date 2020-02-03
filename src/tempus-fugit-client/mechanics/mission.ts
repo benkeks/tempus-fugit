@@ -77,6 +77,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public waveCounter: number;
     public _enemies: Enemy[][] = [];
     public monologue: { [wave: string]: string } = {};
+    public music: { [wave: string]: string } = {};
     public dialogue: StoryDialog[] = [];
 
     public readonly numPhases: number = 5;
@@ -120,6 +121,7 @@ export class Mission implements EnemyListener, PlayerListener {
         mission.name = this.name;
         mission.background = this.background;
         mission.monologue = { ...this.monologue };
+        mission.music = { ...this.music };
         mission.dialogue = [];
         for (let d of this.dialogue) {
             mission.dialogue.push(d.copy());
@@ -254,6 +256,10 @@ export class Mission implements EnemyListener, PlayerListener {
         // if (this.waveCounter in this.monologue) {
         //     this.listener.map(l => l.storyMonolog(this, this.monologue[this.waveCounter]));
         // }
+
+        if (this.waveCounter in this.music) {
+            this.listener.map(l => l.music(this, this.music[this.waveCounter]));
+        }
 
         if (this.checkGameOver()) return;
 
@@ -513,6 +519,7 @@ export class Mission implements EnemyListener, PlayerListener {
                 mission.enemies.push(wave_enemies);
             }
 
+            if (m.music) mission.music = m.music;
             mission.monologue = m.monologue;
 
             for (let dial of m.dialogue) {
@@ -564,6 +571,7 @@ export interface MissionListener {
     waveChanged(game: Mission, activeWave: number, enemies: Enemy[]): void;
     gameover(game: Mission, gameWon: boolean): void;
     Activated(game: Mission, active: boolean);
+    music(game:Mission, key:string);
     baseAttackPossible(game: Mission, active: boolean);
 }
 

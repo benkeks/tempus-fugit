@@ -100,7 +100,8 @@ export class GameState {
             let values = variableValues[v];
             
             let changes = {};
-            let oldVariable = this.getVariable(v).copy();
+            let oldVariable = undefined;
+            if (v in this.variables) oldVariable = this.getVariable(v).copy()
             for (let index in values) {
                 let val = values[index];
 
