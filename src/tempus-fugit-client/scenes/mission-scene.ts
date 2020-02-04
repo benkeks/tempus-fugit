@@ -225,8 +225,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780, 310);
-        this.soundButton = new SoundButton(this, 1690, 310);
+        this.tutorialButton = new TutorialButton(this, 1690, 310);
+        this.soundButton = new SoundButton(this, 1780, 310);
 
         this.events.on('resume', function () {
             this.tfgame.active = true;

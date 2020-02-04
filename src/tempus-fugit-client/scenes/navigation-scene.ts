@@ -398,20 +398,23 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.tutorialButton = new TutorialButton(this, 1780, 50);
-        this.soundButton = new SoundButton(this, 1690, 50);
+        this.tutorialButton = new TutorialButton(this, 1690, 50);
+        this.soundButton = new SoundButton(this, 1780, 50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;
+            let final = false;
+            if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
 
             this.deck.addCardType(loot);
-            this.scene.run("NewCardScene", { loot: loot });
+            this.scene.run("NewCardScene", { loot: loot, final:final});
             this.scene.pause("NavigationScene");
         }
 
         if (data.tutorial) {
             let s = this.scene;
             s.run('TutorialScene', {backScene:s.key, guided:true});
+            //this.scene.run("NewCardScene", {final:true});
         }
     }
 

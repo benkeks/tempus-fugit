@@ -6,6 +6,8 @@ import { MusicScene } from "./music-scene";
 
 export class StartingScene extends Phaser.Scene {
 
+    private musicStarted = false;
+
     constructor() {
         super({
             key: "StartingScene"
@@ -35,7 +37,12 @@ export class StartingScene extends Phaser.Scene {
                                 "s":{0:false, 1:false, 2:true}});
         gs.activeState = 2;
         console.log(gs.evaluate(f));*/
-        this.scene.run("MusicScene", {startSong:"pacman"});
+        let startSong="pacman";
+        if (!this.musicStarted) {
+            this.scene.run("MusicScene", {startSong:startSong});
+            this.musicStarted = true;
+        } else MusicScene.instance.play(startSong)
+        MusicScene.instance.muted = false;
 
         this.cameras.main.setBackgroundColor('#89CFF0')
 
