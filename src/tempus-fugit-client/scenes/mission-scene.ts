@@ -30,6 +30,7 @@ import { HelpWindow } from "../objects/help-gui-objects/help-window";
 
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
+import { SoundButton } from "../objects/sound-button";
 
 
 
@@ -47,6 +48,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
+    public soundButton:SoundButton;
+
     public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
@@ -223,6 +226,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
         this.tutorialButton = new TutorialButton(this, 1780, 310);
+        this.soundButton = new SoundButton(this, 1690, 310);
 
         this.events.on('resume', function () {
             this.tfgame.active = true;

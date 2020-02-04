@@ -1,5 +1,5 @@
 import { GameInfo } from "../game";
-import {TutorialWindow} from "../objects/tutorial-objects/tutorial-window";
+import {SoundButton} from "../objects/sound-button";
 import { Formula } from "../temporal-logic/formula";
 import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
@@ -60,7 +60,7 @@ export class StartingScene extends Phaser.Scene {
 
         playText.setInteractive({ useHandCursor: true }).on("pointerdown", () => {
             let s: String = "abc";
-            this.scene.start("NavigationScene");
+            this.scene.start("NavigationScene", {tutorial:true});
         });
 
         playText.on('pointerover', () => {

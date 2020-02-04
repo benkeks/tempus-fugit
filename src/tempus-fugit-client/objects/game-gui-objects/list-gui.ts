@@ -60,9 +60,14 @@ export class ListGUI extends Phaser.GameObjects.Container {
                 if (t.style.align == ListGUI.ALIGN_LEFT) x = -this.maxTextWidth;
 
                 if (this.fixedMaxTextWidth) t.style.setWordWrapWidth(this.maxTextWidth, true);
+
+                element.setOrigin(0.5,0);
+                
+                element.setPosition(0, y + this.yPadding);
+            } else {
+                element.setPosition(-element.getBounds().width / 2, y + this.yPadding);
             }
 
-            element.setPosition(-element.getBounds().width / 2, y + this.yPadding);
 
             line.setOrigin(0, 0);
             let w: number = this.maxTextWidth + 2 * this.xPadding;
@@ -159,13 +164,16 @@ export class ListGUI extends Phaser.GameObjects.Container {
         return Phaser.Geom.Rectangle.Contains(rect, xCursor, yCursor);
     }
 
-    public fadeIn(duration = 200) {
+    public fadeIn(duration = 200, scale:boolean=false) {
         if (this.tween) this.tween.stop(0);
 
         this.setAlpha(0);
+        
+        if (scale) this.setScale(0,1);
         this.tween = this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 0, to: 1 },
+            scaleX: (scale) ? 1 : {},
             ease: "Linear",
             duration: duration,
             repeat: 0,

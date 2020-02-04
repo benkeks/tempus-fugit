@@ -302,7 +302,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         if (this.iteratorIndex >= this.stands.length) {
-            this.nextPhase();
+            this.nextPhase(Mission.ENEMY_PHASE);
             return;
         }
 
@@ -339,7 +339,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         if (this.iteratorIndex >= this.getEnemies().length) {
-            this.nextPhase();
+            this.nextPhase(Mission.DRAW_PHASE);
             return;
         }
 
@@ -498,7 +498,7 @@ export class Mission implements EnemyListener, PlayerListener {
     baseAttackChanged(enemy: Enemy) { }
 
     async cardPlayed(player, card) {
-        if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase();
+        if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase(Mission.PLAY_PHASE);
         this.listener.map(l => l.baseAttackPossible(this, false));
     }
 
