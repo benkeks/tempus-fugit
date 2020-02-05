@@ -268,7 +268,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async energyPhase(game: Mission) {
-        //console.log("energy Phase");
+        this.playerGUI.reposition();
+        this.enemyGUI.reposition();
     }
 
     async playPhase(game: Mission) {

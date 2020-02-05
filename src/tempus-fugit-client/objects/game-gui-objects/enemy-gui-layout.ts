@@ -80,4 +80,10 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
             if (fadeIn) this.fadeIn(enemyGUI, x+this.fadeInOffset, x);
         }
     }
+
+    public reposition() {
+        for (let e of this.enemies) {
+            e.reposition();
+        }
+    }
 }

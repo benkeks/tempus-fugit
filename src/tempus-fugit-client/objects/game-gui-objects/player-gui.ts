@@ -16,6 +16,8 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     public listener: EnemyAttackListener[] = []; // List of objects listening to enemy attack events
     private sword: Phaser.GameObjects.Sprite;
     private heart: Phaser.GameObjects.Sprite;
+    private properX: number;
+    private properY: number;
 
     public scene: MissionScene;
 
@@ -45,6 +47,8 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         this.hpText = this.scene.add.text(this.x + 105, this.y + 390, player.getHP().toString()).setStyle(textStyle).setOrigin(0.5,0);
         this.heart = this.scene.add.sprite(this.x - 10, this.y + 410, "heartFont").setScale(0.4);
         this.heart.setScale(2, 2);
+        this.properX = x;
+        this.properY = y;
         this.player.listener.push(this);
     }
 
@@ -82,6 +86,11 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
                 }
             });
         }
+    }
+
+    public reposition() {
+        this.x = this.properX;
+        this.y = this.properY;
     }
 
     async stateValuesChanged(player: Player) {
