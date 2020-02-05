@@ -112,6 +112,7 @@ export class NavigationScene extends Phaser.Scene {
             { frameWidth: 10, frameHeight: 5 });
         this.load.image("bullet_point_inactive", "assets/navigation_scene/overworld/bulletpoint/bp_inactive.png");
         this.load.image("bullet_point_hover", "assets/navigation_scene/overworld/bulletpoint/bp_onHover.png");
+        this.load.image("bullet_point_hover_done", "assets/navigation_scene/overworld/bulletpoint/bp_done_onHover.png");
         this.load.image("bullet_arrow", "assets/navigation_scene/overworld/bulletpoint/arrow.png");
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
         this.load.spritesheet("clouds", "assets/navigation_scene/overworld/islands/clouds-Sheet.png", { frameWidth: 64, frameHeight: 32 });
@@ -158,7 +159,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public createBulletPoint(x: number, y: number, i: number): Sprite {
         let b: Sprite;
-
+        let done: boolean = true;
         let active: boolean = true;
         for (let j of this.missionDependency[i]) {
             if (!this.player.missionStates[j]) {
@@ -170,9 +171,11 @@ export class NavigationScene extends Phaser.Scene {
             if (!this.player.missionStates[i]) {
                 b = this.add.sprite(x, y, "bullet_point");
                 b.play("blinking");
+                done = false;
             } else {
                 b = this.add.sprite(x, y, "bullet_point_done");
                 b.play("blinking_done");
+                done = true;
             }
 
             b.setInteractive({ useHandCursor: true });
@@ -193,9 +196,17 @@ export class NavigationScene extends Phaser.Scene {
             });
 
             b.on("pointerover", pointer => {
-                b.anims.stop();
-                this.levelText.fadeInText(Mission.Missions[this.missionKeys[i]].name);
-                b.setTexture("bullet_point_hover");
+                if(!done){
+                    b.anims.stop();
+                    this.levelText.fadeInText(Mission.Missions[this.missionKeys[i]].name);
+                    b.setTexture("bullet_point_hover");
+                } else {
+                    b.anims.stop();
+                    this.levelText.fadeInText(Mission.Missions[this.missionKeys[i]].name);
+                    b.setTexture("bullet_point_hover_done");
+                }
+
+            
             })
 
             b.on("pointerout", pointer => {
