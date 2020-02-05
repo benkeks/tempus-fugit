@@ -144,7 +144,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.0 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.0 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
-        this.add.sprite(GameInfo.width * 0.055, GameInfo.height * 0.80, "playerProfile").setScale(6);
+        this.add.sprite(GameInfo.width * 0.055, GameInfo.height * 0.80, "playerProfile").setScale(6).setAlpha(0.5);
 
         //Stats
         this.lowerMenu.lineStyle(6, color1, 1);

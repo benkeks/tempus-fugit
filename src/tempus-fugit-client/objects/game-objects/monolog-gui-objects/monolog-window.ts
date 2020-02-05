@@ -20,6 +20,7 @@ export class MonologWindow {
     private typing = true;
     private done = false;
     private skipcont: Phaser.GameObjects.Text;
+    private gameOver: boolean;
 
     public clicks:number = 0;
 
@@ -31,6 +32,7 @@ export class MonologWindow {
 
         if (this.instanceCounter > 0) return;
         this.instanceCounter += 1;
+        this.gameOver = gameOver;
 
         // create black background
         this.scene.cameras.add(0, 0, GameInfo.width, GameInfo.height).setBackgroundColor(BACKGROUND_COLOR);
@@ -79,7 +81,7 @@ export class MonologWindow {
                     case 1:
                         this.displayAll = true;
                         this.clicks++;
-                        this.skipcont.text = "Continue";
+                        if (!this.gameOver) this.skipcont.text = "Continue";
                         break;
 
                     // go to next scene
@@ -140,7 +142,7 @@ export class MonologWindow {
                 self.text.setText(displayedText + message[index++] + '|');
                 setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
             } else {
-                self.skipcont.text = "Continue";
+                if (!self.gameOver) self.skipcont.text = "Continue";
                 self.typing = false;
                 setTimeout(() => pipeAnim(), self.interval)
             }
