@@ -1,6 +1,6 @@
 {
     "missions": [{
-            "name": "A slimey surprise",
+            "name": "A slimy surprise",
             "key": "tutorial",
             "background":"forest_bg1",
             "enemies": [
@@ -224,7 +224,7 @@
             ],
             "music":{
                 "0":"battle_theme",
-                "2":"boss_theme"
+                "1":"boss_theme"
 			},
 			"loot":["Aura of Weakness", "Higher heal stand"],
             "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
