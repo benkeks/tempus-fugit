@@ -1,6 +1,8 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
+import { ToolTip } from "./tool-tip";
+import { ListGUI } from "./list-gui";
 
 /**
  * @author Mustafa
@@ -207,7 +209,7 @@ export class TableGUI implements GameStateListener {
                         width = cell.width,
                         height = cell.height,
                         variable = cell.item.variable;
-                    return scene.rexUI.add.label({
+                    let label = scene.rexUI.add.label({
                         width: width,
                         height: height,
                         background: scene.rexUI.add
@@ -218,19 +220,52 @@ export class TableGUI implements GameStateListener {
                             left: 30
                         }
                     });
+/*
+                    let text = variable;
+                    if (variable == "l") text = "light";
+                    if (variable == "t") text = "transform";
+                    if (variable == "n") text = "nature";
+                    if (variable == "s") text = "strength";
+                    let tooltip:ToolTip = new ToolTip(this.scene, variableNameTable.x+30, variableNameTable.y+20*i);
+                    tooltip.addText(text);*/
+
+                    return label;
                 }
             })
             .layout();
 
         // add items to table
+        let tooltips:ListGUI[] = [];
         let items = [];
         for (let i = 0; i < numVar; i++) {
+            let key = Object.keys(this.variables).find(key => this.variables[key] === i)
             items.push({
                 id: i,
-                variable: Object.keys(this.variables).find(key => this.variables[key] === i)
+                variable: key
             });
+            
+            let text = "";
+            if (key == "l") text = "light";
+            if (key == "t") text = "transform";
+            if (key == "n") text = "nature";
+            if (key == "s") text = "strength";
+            let tooltip:ListGUI = new ListGUI(this.scene, 475, 250);
+            tooltip.addText(text, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' });
+            tooltip.setVisible(false);
+            tooltip.fixedMaxTextWidth = true;
+            tooltip.maxTextWidth = 175;
+            tooltip.revalidate();
+
+            tooltips.push(tooltip);
         }
         variableNameTable.setItems(items);
+
+        
+        variableNameTable.on("cell.over", function(cellContainer, cellIndex) {
+            tooltips[cellIndex].fadeIn()
+        }).on("cell.out", function(cellContainer, cellIndex) {
+            tooltips[cellIndex].fadeOut()
+        })
     }
 
     /**

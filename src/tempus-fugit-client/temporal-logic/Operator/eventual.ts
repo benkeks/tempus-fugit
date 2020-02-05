@@ -13,7 +13,7 @@ export class Eventual extends OneParamOperator {
     }
 
     evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, direction);
+        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
 
         let status:PropositionStatus = new PropositionStatus();
         let i:number = condition;
@@ -27,7 +27,7 @@ export class Eventual extends OneParamOperator {
             status.successful = true;
 
             i+=direction;
-            operandStatus = this.operand.evaluateInternal(i, direction);
+            operandStatus = this.operand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
         }
         return status;
     }

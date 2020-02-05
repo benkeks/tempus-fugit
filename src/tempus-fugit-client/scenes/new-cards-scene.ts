@@ -12,7 +12,7 @@ export class NewCardsScene extends Scene {
     }
 
     create(data?) {
-        this.newCardsGui = new NewCardsViewer(this);
+        this.newCardsGui = new NewCardsViewer(this, data.final);
         this.newCardsGui.flush(data.loot);
 
         this.newCardsGui.on("destroy", function() {

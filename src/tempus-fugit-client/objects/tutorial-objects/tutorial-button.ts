@@ -27,7 +27,7 @@ export class TutorialButton {
             }
         }).layout();
 
-        this.button.setInteractive();
+        this.button.setInteractive({useHandCursor:true});
         this.button.on('pointerdown', this.displayTutorial, this);
         this.button.on('pointerover', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);
@@ -40,6 +40,6 @@ export class TutorialButton {
     public displayTutorial(): void {
         let s = this.scene.scene;
         TutorialButton.pauseParent = s.key;
-        s.run('TutorialScene', {backScene:s.key, guided:true});
+        s.run('TutorialScene', {backScene:s.key, guided:false});
     }
 }

@@ -17,6 +17,10 @@ import { PauseWindow } from "../objects/pause-gui-objects/pause-window";
 import { NewCardsScene } from "./new-cards-scene";
 import { TutorialWindow } from "../objects/tutorial-objects/tutorial-window";
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+import { MusicScene } from "./music-scene";
+import { SoundButton } from "../objects/sound-button";
+import { Sound } from "phaser";
+import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -37,6 +41,9 @@ export class NavigationScene extends Phaser.Scene {
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
+    public soundButton: SoundButton;
+
+    public static instance:NavigationScene;
 
     public cheats = [
         [["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
@@ -82,7 +89,7 @@ export class NavigationScene extends Phaser.Scene {
 
         if (!allTrue) {
             scene.player.missionStates = [true, true, true, true, true, true, true, true, true];
-            scene.scene.start("NavigationScene");
+            scene.scene.start("NavigationScene", {tutorial:false});
         }
     }
 
@@ -90,6 +97,7 @@ export class NavigationScene extends Phaser.Scene {
         super({
             key: "NavigationScene"
         });
+        NavigationScene.instance = this;
     }
 
     preload() {
@@ -124,7 +132,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
-        //console.log(Card.cards);
+        console.log(Card.cards);
 
         let missions: string = NavigationScene.loadFile("json/mission.json");
         Mission.createFromJSON(missions);
@@ -260,6 +268,7 @@ export class NavigationScene extends Phaser.Scene {
 
     create(data?) {
         let scale: number = GameInfo.scale;
+        MusicScene.instance.play("spaceInvaders");
 
         // TODO: implement cheat code
         this.input.keyboard.on("keydown", e => {
@@ -390,20 +399,27 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.tutorialButton = new TutorialButton(this, 1780, 50);
+        this.tutorialButton = new TutorialButton(this, 1690, 50);
+        this.soundButton = new SoundButton(this, 1780, 50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;
+            let final = false;
+            if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
 
             this.deck.addCardType(loot);
-            this.scene.run("NewCardScene", { loot: loot });
+            this.scene.run("NewCardScene", { loot: loot, final:final});
             this.scene.pause("NavigationScene");
         }
 
-        if (!data.mission) {
+        if (data.tutorial) {
             let s = this.scene;
             s.run('TutorialScene', {backScene:s.key, guided:true});
+            //this.scene.run("NewCardScene", {final:true});
         }
+
+        Deck.Decks["custom"] = Deck.Decks["tutorial"]
+        //new DeckBuilder(this);
     }
 
     public initGame() {

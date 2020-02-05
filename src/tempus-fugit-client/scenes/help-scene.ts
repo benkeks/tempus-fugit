@@ -18,6 +18,7 @@ export class HelpScene extends Phaser.Scene {
     }
 
     create(data) {
+        this.sys.canvas.style.cursor = "default";
         this.helpWindow = new HelpWindow(this);
         this.helpWindow.createWindow();
         this.scene.pause(HelpButton.currHelpParent);

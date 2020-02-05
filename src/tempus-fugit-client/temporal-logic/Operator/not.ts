@@ -9,7 +9,7 @@ export class Not extends OneParamOperator {
     }
 
     evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, direction);
+        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
 
         let status:PropositionStatus = new PropositionStatus();
         status.successful = operandStatus.successful;

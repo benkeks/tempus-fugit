@@ -33,9 +33,9 @@ export abstract class OneParamOperator extends Operator{
         let representation:string = "";
 
         if (this._operand instanceof TwoParamOperator) {
-            representation = "(" + this._operand.generateRepresentation(recursive) + ")";
+            representation = "(" + this._operand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION) + ")";
         } else {
-            representation = this._operand.generateRepresentation(recursive, defaultRepresentation, direction);
+            representation = this._operand.generateRepresentation(recursive, defaultRepresentation, Proposition.DEFAULT_DIRECTION);
         }
 
         if (this.associativity == Operator.LEFT_ASSOCIATIVE) {

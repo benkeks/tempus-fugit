@@ -49,6 +49,9 @@
                     "text": [["goblin1", "This is the one who did it to 'em, my liege."],["slime_mother","How dare you kill my younglings?! You are going to pay for that!"], ["player", "I didn't mean to, they were in pain. Please. I don't want to do this!"]]
                 }
             ],
+			"music":{
+				"1":"pacman"
+			},
 			"loot":["Light stand", "Unnatural heal"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
