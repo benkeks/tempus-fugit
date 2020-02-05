@@ -132,7 +132,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
-        console.log(Card.cards);
+        //console.log(Card.cards);
 
         let missions: string = NavigationScene.loadFile("json/mission.json");
         Mission.createFromJSON(missions);
@@ -412,14 +412,14 @@ export class NavigationScene extends Phaser.Scene {
             this.scene.pause("NavigationScene");
         }
 
-        if (data.tutorial) {
+        if (data.tutorial && false) {
             let s = this.scene;
             s.run('TutorialScene', {backScene:s.key, guided:true});
             //this.scene.run("NewCardScene", {final:true});
         }
 
         Deck.Decks["custom"] = Deck.Decks["tutorial"]
-        //new DeckBuilder(this);
+        new DeckBuilder(this);
     }
 
     public initGame() {
