@@ -37,7 +37,7 @@ export class StartingScene extends Phaser.Scene {
                                 "s":{0:false, 1:false, 2:true}});
         gs.activeState = 2;
         console.log(gs.evaluate(f));*/
-        let startSong="pacman";
+        let startSong="navigationscene";
         if (!this.musicStarted) {
             this.scene.run("MusicScene", {startSong:startSong});
             this.musicStarted = true;
