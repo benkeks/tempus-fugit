@@ -14,8 +14,8 @@
             "image":"slime1"
         },
 
-        {   "name":"Slime test",
-            "key":"slime2"
+        {   "name":"slime name test",
+            "key":"slime2",
       			"description":"a well-read slime",
       			"specialAttackDescription":"The player takes 10 damage.",
             "maxHP":20,
