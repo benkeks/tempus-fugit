@@ -419,13 +419,9 @@ export class NavigationScene extends Phaser.Scene {
         }
 
         Deck.Decks["custom"] = Deck.Decks["tutorial"]
-<<<<<<< Updated upstream
-        new DeckBuilder(this);
-=======
         // TODO: make deck to list
         //this.player.addCardType(Deck.Decks["custom"].deck)
         new DeckBuilder(this, this.player);
->>>>>>> Stashed changes
     }
 
     public initGame() {

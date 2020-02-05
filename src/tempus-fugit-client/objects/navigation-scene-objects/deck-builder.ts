@@ -16,11 +16,8 @@ const GUI_FILL = 0xa96851;
 const GUI_FILL_DARK = 0x5c4d4d;
 const GUI_SLIDER = 0x915b4a;
 
-<<<<<<< Updated upstream
-=======
 const CARD_CONTAINER_COLOR = 0x999999;
 
->>>>>>> Stashed changes
 export class DeckBuilder extends Phaser.GameObjects.Container {
 
     public backgroundWidth:number;
@@ -76,36 +73,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
         this.deckViewerRect = new Phaser.Geom.Rectangle(this.x+this.middle+this.middlePadding + this.screenPadding, this.y+this.screenPadding+this.screenPadding/2,
             this.backgroundWidth-this.middle-this.screenPadding, this.backgroundHeight-this.screenPadding);
 
-<<<<<<< Updated upstream
-        this.initDeckViewer();
-
-        this.scene.input.on("drag", function(pointer, gameObject) {
-            if (!gameObject || !(gameObject instanceof CardGUI)) return;
-            let drag = this.getDragCard(gameObject.card);
-            drag.setVisible(true);
-            gameObject.setVisible(false);
-            //this.bringToTop(drag);
-
-            drag.setPosition(pointer.x, pointer.y);
-        },this)
-
-        this.scene.input.on("dragend", function(pointer, gameObject) {
-            if (!gameObject || !(gameObject instanceof CardGUI)) return;
-            let card:Card = gameObject.card;
-            let drag = this.dragCards[gameObject.card.name];
-
-            drag.setVisible(false);
-            gameObject.setVisible(true);
-
-            if (!Phaser.Geom.Rectangle.Contains(this.deckViewerRect, pointer.x, pointer.y)) {
-                this.removeCardFromDeck(card);
-            }
-            console.log(Deck.Decks[this.deck]);
-        }, this);
-
-        let label= this.createCardContainer(Card.cards["Anti-evolution"]);
-        label.setPosition(500,500);
-=======
         this.cardsViewerRect = new Phaser.Geom.Rectangle(this.x+this.screenPadding+this.screenPadding/2, this.y + this.screenPadding+this.screenPadding/2, 
             this.middle-this.middlePadding -this.screenPadding*1.5, this.backgroundHeight-this.screenPadding);
 
@@ -114,7 +81,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
 
         //let label= this.createCardContainer(Card.cards["Anti-evolution"]);
         //label.setPosition(500,500);
->>>>>>> Stashed changes
     }
 
     public initDeckViewer() {
@@ -137,8 +103,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
                 bottom: 0,
                 line: 15,
             }
-<<<<<<< Updated upstream
-=======
         });
 
         //@ts-ignore
@@ -158,7 +122,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
                 bottom: 0,
                 text:5,
             },
->>>>>>> Stashed changes
         });
         header.layout();
 
@@ -172,12 +135,7 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
                     mask:{padding:5}},
             scrollMode:"v",
             //@ts-ignore
-<<<<<<< Updated upstream
-            background: this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-                .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER),
-=======
             background:background,
->>>>>>> Stashed changes
             slider: {
                 //@ts-ignore
                 track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, GUI_SLIDER),
@@ -188,14 +146,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
                 right: 15,
                 top: 15,
                 bottom: 10,
-<<<<<<< Updated upstream
-        
-                panel: 10,
-            },
-        });
-        this.deckSlider.setOrigin(0);
-        //console.log(this.deckViewer);
-=======
                 header:20,
         
                 panel: 10,
@@ -204,7 +154,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
             draggable:false,
         });
         this.deckSlider.setOrigin(0);
->>>>>>> Stashed changes
 
         this.add(this.deckSlider);
 
@@ -220,30 +169,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
         this.deckSlider.layout();
     }
 
-<<<<<<< Updated upstream
-    public createCardContainer(card:Card) {
-        let maxWidth = 50;
-
-        //@ts-ignore
-        let background = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER);
-
-        let sprite = this.scene.add.sprite(0,0, card.image);
-        let scale = maxWidth/sprite.displayWidth;
-        sprite.setScale(scale);
-
-        let name = this.scene.add.text(0,0, card.name, { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' })
-
-        //@ts-ignore
-        let label = this.scene.rexUI.add.label({
-            width:150,
-            height:50,
-            background:background,
-            orientation:"h",
-            icon:sprite,
-            text:name,
-            draggable:true,
-=======
     public initCardsViewer() {
         if (this.cardsViewer) this.cardsViewer.destroy(true);
         if (this.cardsSlider) this.cardsSlider.destroy(true);
@@ -275,23 +200,11 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
             height:50,
             orientation:"h",
             text:this.scene.add.text(0,0,"Available Cards", { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
->>>>>>> Stashed changes
             space: {
                 left:5,
                 right:5,
                 icon:5,
                 text:5
-<<<<<<< Updated upstream
-            }
-        });
-        label.layout();
-
-        background.setInteractive().on("pointerover", function() {
-            console.log("over");
-        })
-
-        console.log(label)
-=======
             },
         });
         header.layout();
@@ -424,7 +337,6 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
         },this);
 
         label.input.draggable = true;
->>>>>>> Stashed changes
 
         return label;
     }
@@ -432,10 +344,7 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
     public createCard(card:Card):CardGUI {
         let c:CardGUI = new CardGUI(this.scene,0,0,card).setScale(2)
         c.cross.destroy(true);
-<<<<<<< Updated upstream
-=======
         c.setDepth(100);
->>>>>>> Stashed changes
 
         return c;
     }
@@ -443,14 +352,10 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
     public getDragCard(card:Card) {
         if (!(card.name in this.dragCards)) {
             let drag = this.createCard(card).setVisible(false);
-<<<<<<< Updated upstream
-            this.dragCards[card.name] = drag;
-=======
             drag.disableDragging();
             drag.disableInteractive();
             this.dragCards[card.name] = drag;
             drag.setDepth(150);
->>>>>>> Stashed changes
         }
 
         return this.dragCards[card.name];
@@ -458,24 +363,11 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
 
     public addCardToDeck(card:Card, checkIfAlreadyInside:boolean=true) {
         if (checkIfAlreadyInside) {
-<<<<<<< Updated upstream
-            if (Deck.Decks[this.deck].has(card)) {
-=======
             if (Deck.Decks[this.deckName].deck.has(card)) {
->>>>>>> Stashed changes
                 return;
             }
         }
 
-<<<<<<< Updated upstream
-        let scale = 2;
-        let cardgui = this.createCard(card);
-        cardgui.enableDragging();
-        
-        let x_pad = (this.deckViewer.width - this.cardsInRow*cardgui.displayWidth)/(this.cardsInRow-1);
-        this.deckViewer.setItemSpacing(x_pad);
-
-=======
         this.removeCardFromCardsViewer(card);
 
         let cardgui = this.createCard(card);
@@ -509,27 +401,18 @@ export class DeckBuilder extends Phaser.GameObjects.Container {
         let x_pad = (this.deckViewer.width - this.cardsInRow*cardgui.displayWidth)/(this.cardsInRow-1);
         this.deckViewer.setItemSpacing(x_pad);
 
->>>>>>> Stashed changes
         this.deckViewer.add(cardgui, {}, card.name);
         this.update();
     }
 
     public removeCardFromDeck(card:Card) {
-<<<<<<< Updated upstream
-        if (!(Deck.Decks[this.deck].has(card))) return;
-=======
         if (!(Deck.Decks[this.deckName].deck.has(card))) return;
->>>>>>> Stashed changes
 
         let elem = this.deckViewer.getElement("items").find(function(c){return c.card.name==card.name})
         this.deckViewer.remove(elem);
         this.update();
         elem.destroy(true);
 
-<<<<<<< Updated upstream
-        Deck.Decks[this.deck].delete(card);
-=======
         this.addCardToCardsViewer(card);
->>>>>>> Stashed changes
     }
 }
