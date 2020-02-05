@@ -20,6 +20,7 @@ import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 import { Sound } from "phaser";
+import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -416,6 +417,9 @@ export class NavigationScene extends Phaser.Scene {
             s.run('TutorialScene', {backScene:s.key, guided:true});
             //this.scene.run("NewCardScene", {final:true});
         }
+
+        Deck.Decks["custom"] = Deck.Decks["tutorial"]
+        new DeckBuilder(this);
     }
 
     public initGame() {
