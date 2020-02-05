@@ -8,7 +8,7 @@ import { CardGUI } from "../game-gui-objects/card-gui";
 export class NewCardsViewer extends Phaser.GameObjects.Container {
     public active: boolean = true;
 
-    public displayingCards: CardGUI[];
+    public displayingCards;
     public cardContainer: Phaser.GameObjects.Container;
 
     public scene: Scene;
@@ -32,11 +32,14 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     public text:Phaser.GameObjects.Text;
     public hoverBox:Phaser.GameObjects.Graphics;
 
-    constructor(scene: Scene) {
+    public final:boolean;
+
+    constructor(scene: Scene, final:boolean=false) {
         super(scene);
         scene.add.existing(this);
         this.scene = scene;
         this.setPosition(this.screenPadding, this.screenPadding);
+        this.final = final;
 
         this.backgroundWidth = GameInfo.width - 2 * this.screenPadding;
         this.backgroundHeight = GameInfo.height - 2 * this.screenPadding;
@@ -66,8 +69,10 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             scaleX: 1,
             scaleY: 1
         });
+        let text = "You unlocked new Cards!";
+        if (final) text = "You unlocked a cheat code!";
 
-        this.newCardText = scene.add.text(this.dot.x, this.screenPadding / 2, "You unlocked new Cards!", { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
+        this.newCardText = scene.add.text(this.dot.x, this.screenPadding / 2, text, { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
         this.newCardText.setOrigin(0.5, 0);
         this.add(this.newCardText);
 
@@ -82,30 +87,39 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.setVisible(false);
     }
 
-    public async flush(cards: Card[]) {
+    public async flush(cards?: Card[]) {
         if (!this.active) return;
-
+        if (!cards && !this.final) return;
+        
+        this.cardContainer = this.scene.add.container(0, 0);
         this.displayingCards = [];
 
-        this.cardContainer = this.scene.add.container(0, 0);
         let def_width = 0;
         let def_height = 0;
-        for (let i in cards) {
-            let c = cards[i];
+        if (this.final) { // display cheat code
+            let text = this.scene.add.text(0,300,"up up down down left right left right b a", { fontSize: '26px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' });
+            text.setAlpha(0);
 
-            let scale = 2;
-            let w = CardGUI.DEFAULT_WIDTH * scale;
-            let h = CardGUI.DEFAULT_HEIGHT * scale;
+            this.cardContainer.add(text);
+            this.displayingCards.push(text);
+        } else {
+            for (let i in cards) {
+                let c = cards[i];
 
-            let gui = new CardGUI(this.scene, 0, 0, c);
-            gui.setScale(scale);
-            gui.setAlpha(0);
-            def_width = gui.displayWidth;
-            def_height = gui.displayHeight;
+                let scale = 2;
+                let w = CardGUI.DEFAULT_WIDTH * scale;
+                let h = CardGUI.DEFAULT_HEIGHT * scale;
 
-            gui.setPosition((gui.displayWidth + this.screenPadding) * parseInt(i), 0);
-            this.displayingCards.push(gui);
-            this.cardContainer.add(gui);
+                let gui = new CardGUI(this.scene, 0, 0, c);
+                gui.setScale(scale);
+                gui.setAlpha(0);
+                def_width = gui.displayWidth;
+                def_height = gui.displayHeight;
+
+                gui.setPosition((gui.displayWidth + this.screenPadding) * parseInt(i), 0);
+                this.displayingCards.push(gui);
+                this.cardContainer.add(gui);
+            }
         }
 
         this.cardContainer.setPosition((this.backgroundWidth / 2) - (this.cardContainer.getBounds().width / 2) + def_width / 2, def_height / 2 + this.screenPadding + this.newCardText.displayHeight);
@@ -119,7 +133,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             repeat: 0,
             yoyo: false,
             onComplete: function (tween) {
-                this.displayCards(this.displayingCards.shift());
+                this.displayCards();
             },
             onCompleteScope: this
         });
@@ -204,7 +218,13 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.add(this.text);
     }
 
-    public displayCards(gameObject): void {
+    public displayCards(): void {
+        if (this.displayingCards.length <= 0) {
+            this.displayOKButton();
+            return;
+        }
+        let gameObject = this.displayingCards.shift();
+
         this.scene.time.delayedCall(this.fadeOutDuration, function () {
             this.emitter.setQuantity(0);
         }, [], this);
@@ -217,8 +237,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             repeat: 0,
             yoyo: false,
             onComplete: function () {
-                if (this.displayingCards.length > 0) this.displayCards(this.displayingCards.shift());
-                else this.displayOKButton();
+                this.displayCards();
             },
             onCompleteScope: this
         });

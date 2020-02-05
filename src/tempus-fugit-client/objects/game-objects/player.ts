@@ -194,6 +194,8 @@ export class Player {
         for (let en of mission.getEnemies()) {
             en.takeHit(this.baseAttack, mission);
         }
+        
+        this.listener.map(l => l.Attacking(this, undefined));
     }
 
     /**

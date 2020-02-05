@@ -4,6 +4,7 @@
 import { HelpButton } from "../help-gui-objects/help-button";
 import { PauseButton } from "./pause-button";
 import { MissionScene } from "../../scenes/mission-scene";
+import { NavigationScene } from "../../scenes/navigation-scene";
 
 
 const GUI_TITLE = 0xeceff1;
@@ -75,6 +76,8 @@ export class PauseWindow {
 
         pause.on('button.click', function (button, groupName, index) {
             function quit() {
+                NavigationScene.instance.initGame();
+
                 PauseWindow.pauseQuit = true;
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('StartingScene');

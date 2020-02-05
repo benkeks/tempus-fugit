@@ -23,6 +23,7 @@ export class TutorialScene extends Phaser.Scene {
     }
 
     public create(data?) {
+        this.sys.canvas.style.cursor = "default";
         this.tutWindow = new TutorialWindow(this, data.guided);
         this.backScene = data.backScene;
         this.scene.pause(this.backScene);

@@ -13,8 +13,8 @@ export class Release extends TwoParamOperator {
     }
 
     evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, direction);
-        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, direction);
+        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
+        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
 
         let status:PropositionStatus = new PropositionStatus();
         let i:number = condition;
@@ -36,8 +36,8 @@ export class Release extends TwoParamOperator {
             }
 
             i+=direction;
-            leftStatus = this.leftOperand.evaluateInternal(i, direction);
-            rightStatus = this.rightOperand.evaluateInternal(i, direction);
+            leftStatus = this.leftOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
+            rightStatus = this.rightOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
         }
         return status;
     }

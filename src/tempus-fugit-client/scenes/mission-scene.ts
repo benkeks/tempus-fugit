@@ -29,6 +29,8 @@ import { BaseAttackGUI } from "../objects/game-gui-objects/base-attack-gui";
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
 
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
+import { MusicScene } from "./music-scene";
+import { SoundButton } from "../objects/sound-button";
 
 
 
@@ -46,6 +48,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public helpButton: HelpButton;
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
+    public soundButton:SoundButton;
+
     public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
@@ -59,6 +63,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public gameOverText;
 
     public phaseWheel: WheelGUI;
+
+    public delay:number = 1250;
 
     constructor() {
         super({
@@ -219,9 +225,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.helpButton = new HelpButton(this, true);
         this.pauseButton = new PauseButton(this, true);
-        this.tutorialButton = new TutorialButton(this, 1780, 310);
+        this.tutorialButton = new TutorialButton(this, 1690, 310);
+        this.soundButton = new SoundButton(this, 1780, 310);
 
         this.events.on('resume', function () {
+            this.tfgame.active = true;
             if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
         }, this);
     }
@@ -284,7 +292,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyDialog(game: Mission, dialog: StoryDialog) {
-        this.textBox.addStoryDialog(dialog, dialog.blocking);
+        game.active = false;
+        
+        if (game.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                this.textBox.addStoryDialog(dialog, dialog.blocking);
+            }, [], this);
+        } else {
+            this.textBox.addStoryDialog(dialog, dialog.blocking);
+        }
     }
 
     async gameover(game: Mission, gameWon: boolean) {
@@ -297,11 +313,36 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     storyMonolog(game: Mission, monolog: string) {
-        if (monolog && monolog.length > 0) this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+        if (monolog && monolog.length > 0) {
+            game.active = false;
+            if (game.waveCounter > 0) {
+                this.time.delayedCall(this.delay, () => {
+                    this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+                }, [], this);
+            } else {
+                this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+            }
+        }
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
-        this.enemyGUI.setEnemies(enemies, true);
+        if (game.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                this.enemyGUI.setEnemies(enemies, true);
+            }, [], this);
+        } else {
+            this.enemyGUI.setEnemies(enemies, true);
+        }
+    }
+
+    async music(mission:Mission, sound:string) {
+        if (mission.waveCounter > 0) {
+            this.time.delayedCall(this.delay, () => {
+                MusicScene.instance.play(sound);
+            }, [], this);
+        } else {
+            MusicScene.instance.play(sound);
+        }
     }
 
     Activated(game: Mission, active: boolean) { }

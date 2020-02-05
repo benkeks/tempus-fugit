@@ -127,6 +127,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     }
     async gameover(game: Mission, gameWon: boolean) {
     }
+    async music(game:Mission, song:string) {}
     async Activated(game: Mission, active: boolean) {
         if (!active) this.box.disableInteractive();
         else this.box.setInteractive();

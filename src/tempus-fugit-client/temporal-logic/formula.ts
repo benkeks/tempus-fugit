@@ -175,6 +175,7 @@ export class Formula extends Proposition {
      * */
     public parse(formula:any):Proposition {
         if (typeof formula === "string") {
+            this.representation = formula as string;
             return this.parse(Formula.scan(formula as string));
         } else if (formula instanceof Array) {
             let somethingIsNotProposition = false;

@@ -67,8 +67,10 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
                 this.game.player.attackWithBaseAttack(this.game);
-                this.game.player.takeCard(this.game.deck);
-                this.game.nextPhase(Mission.STAND_PHASE);
+                this.scene.time.delayedCall(500, () => {
+                    this.game.player.takeCard(this.game.deck);
+                    this.game.nextPhase(Mission.STAND_PHASE);
+                }, [], this)
             }, this);
 
         this.add(this.box);
@@ -100,6 +102,7 @@ export class BaseAttackGUI extends Phaser.GameObjects.Container implements Missi
     }
     async gameover(game: Mission, gameWon: boolean) {
     }
+    async music(game:Mission, song:string) {}
     async Activated(game: Mission, active: boolean) {
         if (!active) {
             this.box.disableInteractive();

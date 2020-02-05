@@ -14,6 +14,7 @@ export class PauseScene extends Phaser.Scene {
     }
 
     create() {
+        this.sys.canvas.style.cursor = "default";
         this.pauseWindow = new PauseWindow(this);
         this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
         this.scene.pause(PauseButton.currPauseParent);

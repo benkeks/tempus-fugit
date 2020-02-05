@@ -22,7 +22,7 @@ export class HelpButton {
             repeat: -1,
         });
         this.sprite.anims.load('fairy-fly');
-        this.sprite.setInteractive();
+        this.sprite.setInteractive({useHandCursor:true});
         this.sprite.on('pointerdown', this.displayHelp, this);
         this.sprite.on('pointerover', () => {
             this.sprite.anims.play('fairy-fly');

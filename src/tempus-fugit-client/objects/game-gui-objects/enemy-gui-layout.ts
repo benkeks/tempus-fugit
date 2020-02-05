@@ -39,14 +39,14 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public fadeIn(gameObject, from, to) {
             this.scene.add.tween({
             targets: gameObject,
-            x: {from:from, to:to},
+            x: to,
             ease: "Linear",
             duration: 500,
             repeat: 0,
             yoyo: false,
-            onComplete: function () {
-            },
-            onCompleteScope: this
+            onComplete:function () {
+                gameObject.setPosition(to, gameObject.y);
+            }
         });
     }
 
