@@ -42,10 +42,11 @@ export class MusicScene extends Scene {
     }
 
     preload() {
-        this.musicKeys = ["pacman", "spaceInvaders"]
+        this.musicKeys = ["navigationscene", "battle_theme", "boss_theme"]
 
-        this.load.audio(this.musicKeys[0], "assets/songs/pacman.mp3")
-        this.load.audio(this.musicKeys[1], "assets/songs/spaceInvaders.mp3")
+        this.load.audio(this.musicKeys[0], "assets/songs/navigationscene.wav")
+        this.load.audio(this.musicKeys[1], "assets/songs/battle_theme.wav")
+        this.load.audio(this.musicKeys[2], "assets/songs/boss_theme.wav")
 
     }
 

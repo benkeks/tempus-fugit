@@ -268,7 +268,7 @@ export class NavigationScene extends Phaser.Scene {
 
     create(data?) {
         let scale: number = GameInfo.scale;
-        MusicScene.instance.play("spaceInvaders");
+        MusicScene.instance.play("navigationscene");
 
         // TODO: implement cheat code
         this.input.keyboard.on("keydown", e => {
