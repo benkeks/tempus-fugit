@@ -1,9 +1,8 @@
 {
     "enemies":[
-        {
-            "name":"slime1",
-			"description":"a suicide slime!",
-			"specialAttackDescription":"The player takes 5 damage.",
+        {   "name":"slime1",
+            "description":"a suicide slime!",
+            "specialAttackDescription":"The player takes 5 damage.",
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{
@@ -12,11 +11,11 @@
             },
             "sprite": "assets/sprites/enemies/slime1/slime1-Sheet.png",
             "size": [32, 32],
-			"image":"slime1"
-
+            "image":"slime1"
         },
-        {
-            "name":"slime2",
+
+        {   "name":"Slime test",
+            "key":"slime2"
       			"description":"a well-read slime",
       			"specialAttackDescription":"The player takes 10 damage.",
             "maxHP":20,
@@ -27,10 +26,10 @@
             },
             "sprite":"assets/sprites/enemies/slime2/slime2-Sheet.png",
             "size": [32,32],
-			"image":"slime2"
+			      "image":"slime2"
         },
-        {
-            "name":"slime3",
+
+        {   "name":"slime3",
             "description":"Another slime!",
       			"specialAttackDescription":"The player takes 15 damage.",
             "maxHP":25,
@@ -41,39 +40,39 @@
             },
             "sprite":"assets/sprites/enemies/slime3/slime3-Sheet.png",
             "size": [32,32],
-			"image":"slime3"
+			      "image":"slime3"
         },
-        {
-            "name":"slime_mother",
-			      "description":"The mother of all slimes!",
+
+        {   "name":"slime_mother",
+    	      "description":"The mother of all slimes!",
       			"specialAttackDescription":"The player takes 20 damage.",
             "maxHP":60,
             "baseAttack":7,
             "specialAttack":{
-                "formula":"#F(!t)|!(n|l|s)",
+                "formula":"!(n|l|s)",
                 "action": "mission.player.takeHit(20);",
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/slime_mother/mama-Sheet.png",
             "size": [64,64],
-			"image":"slime_mother"
+    	      "image":"slime_mother"
         },
-        {
-            "name":"goblin1",
+
+        {   "name":"goblin1",
             "description":"A GAAAAAAAAWBLIN!",
-      			"specialAttackDescription":"The player takes 15 damage.",
+      			"specialAttackDescription":"The player takes 10 damage.",
             "maxHP":35,
             "baseAttack":5,
             "specialAttack":{
                 "formula":"#O(l&t)",
-                "action": "mission.player.takeHit(15);"
+                "action": "mission.player.takeHit(10);"
             },
             "sprite":"assets/sprites/enemies/goblin1/goblin1-Sheet.png",
             "size": [32,32],
-			"image":"goblin1"
+			      "image":"goblin1"
         },
-        {
-            "name":"goblin2",
+
+        {   "name":"goblin2",
             "description":"A filthy gaaaaaaaawblin!",
       			"specialAttackDescription":"The player takes 15 damage.",
             "maxHP":40,
@@ -85,10 +84,10 @@
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
-			"image":"goblin2"
+			      "image":"goblin2"
         },
-        {
-            "name":"goblin3",
+
+        {   "name":"goblin3",
             "description":"Ech",
       			"specialAttackDescription":"The player takes 15 damage.",
             "maxHP":90,
@@ -100,10 +99,10 @@
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
             "size": [32,32],
-			"image":"goblin3"
+			      "image":"goblin3"
         },
-        {
-            "name":"goblin_general1",
+
+        {   "name":"goblin_general1",
             "description":"A huge pile of disgusting.",
       			"specialAttackDescription":"The player takes 20 damage.",
             "maxHP":100,
@@ -115,10 +114,10 @@
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
-			"image":"goblin_general1"
+			      "image":"goblin_general1"
         },
-        {
-            "name":"goblin_general2",
+
+        {   "name":"goblin_general2",
             "description":"Checking my description won't save you",
       			"specialAttackDescription":"You take 50 damage.",
             "maxHP":300,
@@ -130,10 +129,10 @@
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
             "size": [64,64],
-			"image":"goblin_general2"
+			      "image":"goblin_general2"
         },
-        {
-            "name":"moleg",
+
+        {   "name":"moleg",
             "description":"A golem with a mustache!",
       			"specialAttackDescription":"The player takes 25 damage.",
             "maxHP":90,
@@ -144,10 +143,10 @@
             },
             "sprite":"assets/sprites/enemies/moleg/moleg-Sheet.png",
             "size": [64,64],
-			"image":"moleg"
+			      "image":"moleg"
         },
-        {
-            "name":"cactus1",
+
+        {   "name":"cactus1",
             "description":"Ouch, spiky!",
             "maxHP":45,
             "baseAttack":10,
@@ -157,10 +156,10 @@
             },
             "sprite":"assets/sprites/enemies/cactus1/cactus1-Sheet.png",
             "size": [32,64],
-			"image":"cactus1"
+			      "image":"cactus1"
         },
-        {
-            "name":"cactus2",
+
+        {   "name":"cactus2",
             "description":"Y'all even reading these?",
             "maxHP":50,
             "baseAttack":11,
@@ -170,10 +169,10 @@
             },
             "sprite":"assets/sprites/enemies/cactus2/cactus2-Sheet.png",
             "size": [32,64],
-			"image":"cactus2"
+			      "image":"cactus2"
         },
-        {
-            "name":"kingtus",
+
+        {   "name":"kingtus",
             "description":"Yeah he works out",
             "maxHP":120,
             "baseAttack":20,
@@ -183,10 +182,10 @@
             },
             "sprite":"assets/sprites/enemies/kingtus/kingtus-Sheet.png",
             "size": [64,64],
-			"image":"kingtus"
+			      "image":"kingtus"
         },
-        {
-            "name":"wormling",
+
+        {   "name":"wormling",
             "description":"A wriggly worm",
             "maxHP":55,
             "baseAttack":12,
@@ -196,10 +195,10 @@
             },
             "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
             "size": [32,32],
-			"image":"wormling"
+			      "image":"wormling"
         },
-        {
-            "name":"darude_sandworm",
+
+        {   "name":"darude_sandworm",
             "description":"What's this thing's name again?",
             "maxHP":130,
             "baseAttack":23,
@@ -209,10 +208,10 @@
             },
             "sprite":"assets/sprites/enemies/darude_sandworm/darude_sandworm-Sheet.png",
             "size": [64,64],
-			"image":"darude_sandworm"
+			      "image":"darude_sandworm"
         },
-        {
-            "name":"snake",
+
+        {   "name":"snake",
             "description":"Jones has left the Lobby",
             "maxHP":50,
             "baseAttack":15,
@@ -222,10 +221,9 @@
             },
             "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
             "size": [32,32],
-			"image":"snake"
+			      "image":"snake"
         },
-        {
-            "name":"mummy",
+        {   "name":"mummy",
             "description":"Dead but alive",
             "maxHP":70,
             "baseAttack":18,
@@ -235,10 +233,10 @@
             },
             "sprite":"assets/sprites/enemies/mummy/mummy-Sheet.png",
             "size": [32,64],
-			"image":"mummy"
+			      "image":"mummy"
         },
-        {
-            "name":"pharaoh_yeah",
+
+        {   "name":"pharaoh_yeah",
             "description":"The woke one",
             "maxHP":150,
             "baseAttack":25,
@@ -248,10 +246,10 @@
             },
             "sprite":"assets/sprites/enemies/pharaoh_yeah/pharaoh_yeah-Sheet.png",
             "size": [64,64],
-			"image":"pharaoh_yeah"
+			      "image":"pharaoh_yeah"
         },
-        {
-            "name":"bgpuff1",
+
+        {   "name":"bgpuff1",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
@@ -261,10 +259,10 @@
             },
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
             "size": [64,64],
-			"image":"bgpuff1"
+			      "image":"bgpuff1"
         },
-        {
-            "name":"bgpuff2",
+
+        {   "name":"bgpuff2",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
@@ -274,10 +272,10 @@
             },
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
             "size": [64,64],
-			"image":"bgpuff2"
+			      "image":"bgpuff2"
         },
-        {
-            "name":"jkpuff",
+
+        {   "name":"jkpuff",
             "description":"A rude being.",
             "maxHP":160,
             "baseAttack":28,
@@ -287,10 +285,10 @@
             },
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
             "size": [64,64],
-			"image":"jkpuff"
+			      "image":"jkpuff"
         },
-        {
-            "name":"ghost",
+
+        {   "name":"ghost",
             "description":"Who knew they were real?",
             "maxHP":110,
             "baseAttack":20,
@@ -300,10 +298,10 @@
             },
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
-			"image":"ghost"
+			      "image":"ghost"
         },
-        {
-            "name":"stand1",
+
+        {   "name":"stand1",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
@@ -313,10 +311,9 @@
             },
             "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
             "size": [32,32],
-			"image":"stand1"
+			      "image":"stand1"
         },
-        {
-            "name":"stand2",
+        {   "name":"stand2",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
@@ -326,10 +323,9 @@
             },
             "sprite":"assets/sprites/enemies/stand2/stand2-Sheet.png",
             "size": [32,32],
-			"image":"stand2"
+			      "image":"stand2"
         },
-        {
-            "name":"boss",
+        {   "name":"boss",
             "description":"Worse news",
             "maxHP":200,
             "baseAttack":45,
@@ -339,7 +335,7 @@
             },
             "sprite":"assets/sprites/enemies/boss/boss-Sheet.png",
             "size": [32,64],
-			"image":"boss"
+			      "image":"boss"
         }
     ]
 }
