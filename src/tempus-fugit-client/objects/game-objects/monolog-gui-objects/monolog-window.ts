@@ -19,6 +19,7 @@ export class MonologWindow {
     private displayAll = false;
     private typing = true;
     private done = false;
+    private skipcont: Phaser.GameObjects.Text;
 
     public clicks:number = 0;
 
@@ -45,8 +46,8 @@ export class MonologWindow {
         let text = "Skip";
         if (gameOver) text = "Return to Map"
 
-        this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text,
-            this.fontStyle).setOrigin(1,1)
+        this.skipcont = this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text, this.fontStyle);
+        this.skipcont.setOrigin(1,1)
             .setInteractive({useHandCursor:true})
             .on('pointerdown', function () {
                 this.switchToMissionScene();
@@ -62,7 +63,7 @@ export class MonologWindow {
 
         // space key events
         this.scene.input.keyboard.on("keydown", e => {
-                console.log(e.key);
+                //console.log(e.key);
                 if (e.key != " ") return;
 
                 if (!this.typing) this.clicks = 2;
@@ -78,11 +79,12 @@ export class MonologWindow {
                     case 1:
                         this.displayAll = true;
                         this.clicks++;
+                        this.skipcont.text = "Continue";
                         break;
 
                     // go to next scene
                     default:
-                        this.switchToMissionScene();
+                        //this.switchToMissionScene();
                 }
 
             }, this);
@@ -138,6 +140,7 @@ export class MonologWindow {
                 self.text.setText(displayedText + message[index++] + '|');
                 setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
             } else {
+                self.skipcont.text = "Continue";
                 self.typing = false;
                 setTimeout(() => pipeAnim(), self.interval)
             }

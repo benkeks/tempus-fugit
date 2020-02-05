@@ -18,7 +18,7 @@ export class Stack {
      * @param card
      */
     addCard(card: Card) {
-        console.log('added card to stack');
+        //console.log('added card to stack');
         this.cards.push(card);
     }
 
