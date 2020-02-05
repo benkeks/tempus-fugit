@@ -259,20 +259,20 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async effectPhase(game: Mission) {
-        console.log("effect Phase");
+        //console.log("effect Phase");
     }
 
     async enemyPhase(game: Mission) {
-        console.log("enemyPhase");
+        //console.log("enemyPhase");
         this.iteratePhases(4, 500);
     }
 
     async energyPhase(game: Mission) {
-        console.log("energy Phase");
+        //console.log("energy Phase");
     }
 
     async playPhase(game: Mission) {
-        console.log("play Phase");
+        //console.log("play Phase");
     }
 
     async iteratePhases(phase: number, delay: number) {
@@ -287,7 +287,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async standPhase(game: Mission) {
-        console.log("stand Phase");
+        //console.log("stand Phase");
         this.iteratePhases(3, 500);
     }
 

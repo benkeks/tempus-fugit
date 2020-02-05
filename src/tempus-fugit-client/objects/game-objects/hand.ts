@@ -43,14 +43,14 @@ export class Hand {
      * @author Florian
      */
     public addCard(card: Card) {
-        console.log('added card to queue', this.cardQueue);
+        //console.log('added card to queue', this.cardQueue);
         this.cardQueue.push(card);
         this.playNextCard();
     }
 
     public playNextCard() {
         if (this.cardQueue.length == 0) {
-            console.log('no more cards to play, going to next phase')
+            //console.log('no more cards to play, going to next phase')
             if (this.missionScene.tfgame.curPhase == Mission.DRAW_PHASE) {
                 this.missionScene.callNextPhase();
             }
@@ -58,19 +58,19 @@ export class Hand {
         }
         else {
             if (this.isFull() && this.discardGUIStarted) {
-                console.log('hand is full and discardgui already started');
+                //console.log('hand is full and discardgui already started');
                 return;
             }
 
             let card = this.cardQueue.shift();
             if (this.isFull() && !this.discardGUIStarted) {
-                console.log('starting discard gui since hand if ful')
+                //console.log('starting discard gui since hand if ful')
                 this.discardGUIStarted = true;
                 for (let i in this.listener) {
                     this.listener[i].discardCard(card);
                 }
             } else {
-                console.log('added card to non full hand', this.cardQueue);
+                //console.log('added card to non full hand', this.cardQueue);
                 this.addCardToGUI(card);
             }
         }
