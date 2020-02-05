@@ -46,7 +46,7 @@
                 {
                     "triggerFunctionString":"return mission.waveCounter==1;",
                     "blocking":"true",
-                    "text": [["slime 3","PLEASE MAKE IT STOP. WE DON'T WANT TO HURT ANYONE."], ["player", "This is outrageous, the slimes are normally peaceful creatures. Who is responsible for this?"]]
+                    "text": [["slime3","PLEASE MAKE IT STOP. WE DON'T WANT TO HURT ANYONE."], ["player", "This is outrageous, the slimes are normally peaceful creatures. Who is responsible for this?"]]
                 },
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
