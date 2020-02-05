@@ -78,8 +78,8 @@ export class GameState {
             let c:Card = object as Card;
             return this.evaluate(c.getFormula());
         } else {
-            console.log(object.constructor.name)
-            console.log(Formula.constructor.name)
+            //console.log(object.constructor.name)
+            //console.log(Formula.constructor.name)
             throw new TypeError("Evaluate expects object of type Formula or Card!");
         }
     }
@@ -128,9 +128,9 @@ export class GameState {
             if (local) offset = this.activeState
 
             if (v===undefined || start===undefined || end === undefined) {
-                console.log(v + "  " + start + "  " + end + "  " + value)
-                console.log(interval);
-                console.warn("Properties are not set correctly for setAllVariableValues() !!!");
+                //console.log(v + "  " + start + "  " + end + "  " + value)
+                //console.log(interval);
+                //console.warn("Properties are not set correctly for setAllVariableValues() !!!");
                 continue;
             }
 

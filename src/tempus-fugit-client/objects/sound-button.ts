@@ -25,7 +25,7 @@ export class SoundButton {
             height: height,
             //@ts-ignore
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, GUI_FILL).setStrokeStyle(3, GUI_BORDER),
-            icon: this.scene.add.sprite(0, 0, 'questionMark').setScale(3),
+            icon: this.scene.add.sprite(0, 0, 'volume').setScale(3),
             space: {
                 left: 10,
                 right: 10,

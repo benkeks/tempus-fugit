@@ -136,7 +136,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
      * adds animations for cards if immediate is false ( by dafault )
      */
     arrangeCards(immediate: boolean = false): void {
-        console.log('arrangecards');
+        //console.log('arrangecards');
 
         // used static values since we only have a max of 5 cards
         let angles = [-4, -2, 0, 2, 4];
@@ -231,7 +231,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     async removeCard(card: Card) {
         for (let pos in this.cardGUIs) {
             if (this.cardGUIs[pos].card === card) {
-                console.log('removing card');
+                //console.log('removing card');
                 this.stack.addCard(this.cardGUIs[pos].card);
                 this.cardGUIs[pos].cross.destroy;
                 this.cardGUIs[pos].destroy();
