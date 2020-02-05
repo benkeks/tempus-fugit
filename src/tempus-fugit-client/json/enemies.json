@@ -207,7 +207,7 @@
                 "formula":"n",
                 "attack": "return;"
             },
-            "sprite":"assets/sprites/enemies/darude_sandworm/darude_sandworm-Sheet.png",
+            "sprite":"assets/sprites/enemies/darude_sandworm/darude-Sheet.png",
             "size": [64,64],
 			"image":"darude_sandworm"
         },
@@ -234,7 +234,7 @@
                 "attack": "return;"
             },
             "sprite":"assets/sprites/enemies/mummy/mummy-Sheet.png",
-            "size": [32,64],
+            "size": [32,32],
 			"image":"mummy"
         },
         {
