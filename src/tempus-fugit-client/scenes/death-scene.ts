@@ -15,7 +15,7 @@ export class DeathScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("skull", "assets/sprites/skull.png");
+
     }
 
     create(data) {
