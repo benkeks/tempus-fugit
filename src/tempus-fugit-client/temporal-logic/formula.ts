@@ -277,9 +277,9 @@ export class Formula extends Proposition {
         }
 
         if (outputQueue.length > 1) {
-            console.log("Operators that could not be parsed: ");
+            //console.log("Operators that could not be parsed: ");
             for (let o of outputQueue) { // print outputqueue
-                console.log(o.representation);
+                //console.log(o.representation);
             }
             let fs:string = Array.from(formula, e => (e as Proposition).representation).join("");
             throw new SyntaxError("There are operators without operands in the String. Formula:" + fs);

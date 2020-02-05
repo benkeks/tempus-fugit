@@ -132,7 +132,7 @@ export class NavigationScene extends Phaser.Scene {
 
         let cards: string = NavigationScene.loadFile("json/cards.json");
         Card.createFromJSON(cards);
-        console.log(Card.cards);
+        //console.log(Card.cards);
 
         let missions: string = NavigationScene.loadFile("json/mission.json");
         Mission.createFromJSON(missions);
@@ -414,7 +414,7 @@ export class NavigationScene extends Phaser.Scene {
 
         if (data.tutorial) {
             let s = this.scene;
-            s.run('TutorialScene', {backScene:s.key, guided:true});
+            s.run('TutorialScene', {backScene:s.key, guided:false});
             //this.scene.run("NewCardScene", {final:true});
         }
 
