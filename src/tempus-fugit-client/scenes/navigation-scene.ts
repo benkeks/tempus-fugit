@@ -182,7 +182,7 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset, -yOffset, b.getBounds().width + 2 * xOffset, b.getBounds().height + 2 * yOffset);
 
             b.on("pointerdown", pointer => {
-                if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
+                if (this.missionKeys[i] in Deck.Decks) this.deck = Deck.Decks[this.missionKeys[i]];
                 
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
@@ -407,7 +407,7 @@ export class NavigationScene extends Phaser.Scene {
             let final = false;
             if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
 
-            this.deck.addCardType(loot);
+            this.player.addCardType(loot);
             this.scene.run("NewCardScene", { loot: loot, final:final});
             this.scene.pause("NavigationScene");
         }
@@ -419,7 +419,13 @@ export class NavigationScene extends Phaser.Scene {
         }
 
         Deck.Decks["custom"] = Deck.Decks["tutorial"]
+<<<<<<< Updated upstream
         new DeckBuilder(this);
+=======
+        // TODO: make deck to list
+        //this.player.addCardType(Deck.Decks["custom"].deck)
+        new DeckBuilder(this, this.player);
+>>>>>>> Stashed changes
     }
 
     public initGame() {
