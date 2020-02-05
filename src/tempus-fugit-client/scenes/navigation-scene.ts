@@ -419,7 +419,7 @@ export class NavigationScene extends Phaser.Scene {
         }
 
         Deck.Decks["custom"] = Deck.Decks["tutorial"]
-        new DeckBuilder(this);
+        //new DeckBuilder(this);
     }
 
     public initGame() {
