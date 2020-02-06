@@ -101,7 +101,7 @@ export class HelpWindow {
                 title: false
             }
         })
-        // .setDraggable()
+            // .setDraggable()
             .layout()
             .popUp(300);
 
@@ -289,23 +289,28 @@ export class HelpWindow {
     }
 
     public createTextArea(scene, text) {
-        let textArea = scene.rexUI.add.textArea({
-            height: 80,
-            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-                .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER)
-                .setDepth(90),
-            text: scene.add.text(0, 0, text, {
-                fontSize: '14px',
-                color: 'brown',
-                fontFamily: "pressStart",
-                wordWrap: {
-                    // width: 900
-                },
-                scroller: false
-            }).setDepth(91)
+        let sizer = scene.rexUI.add.sizer({
+            orientation: 'v',
+            space: {
+                top: 10,
+                bottom: 10
+            }
+        }).addBackground(scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA).setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER).setDepth(90))
+
+        let text = scene.add.text(0, 0, text, {
+            fontSize: '16px',
+            fontStyle: 'bold',
+            fontFamily: 'pressStart',
+            color: '#915b4a'
+        }).setWordWrapWidth(HELP_WIDTH - 100, true).setDepth(91);
+        sizer.add(text, 0, "center", {
+            top: 5,
+            bottom: 5,
+            left: 5,
+            right: 5
         });
-        textArea.setText(text);
-        return textArea;
+        sizer.layout();
+        return sizer;
     }
 
     public createFormula(scene, formulaString) {
