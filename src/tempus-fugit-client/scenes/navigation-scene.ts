@@ -459,14 +459,7 @@ export class NavigationScene extends Phaser.Scene {
             cc.setScale(scale);
         }
 
-
         this.levelText = new MissionNameGui(this, GameInfo.width / 2, GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
-
-
-        //TODO remove
-        this.add.sprite(100, 100 , 'fairy').setInteractive().on('pointerdown', ()=>{
-            this.scene.start('Credits');
-        });
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
@@ -478,9 +471,9 @@ export class NavigationScene extends Phaser.Scene {
             let loot = data.mission.loot;
             let final = false;
             if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
-
             this.player.addCardType(loot);
             this.scene.run("NewCardScene", { loot: loot, final:final});
+            if (final) this.scene.run("Credits", {key: "NewCardScene"});
             this.scene.pause("NavigationScene");
         }
 

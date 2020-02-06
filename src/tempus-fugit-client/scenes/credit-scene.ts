@@ -17,7 +17,7 @@ export class CreditScene extends Phaser.Scene {
     }
 
     create(data) {
-        this.prevScene = data.key ? data.key : 'StartingScene';
+        this.prevScene = data.key;
         this.scene.pause(this.prevScene);
         this.speed = this.slowSpeed;
         //@ts-ignore
@@ -28,10 +28,10 @@ export class CreditScene extends Phaser.Scene {
             color: '#ff3333'
         }).setInteractive().on('pointerdown', this.endCredits, this);
         this.input.keyboard.on('keydown', e => {
-            this.speed = this.slowSpeed;
+            this.speed = this.fastSpeed;
         });
         this.input.keyboard.on('keyup', e => {
-            this.speed = this.fastSpeed;
+            this.speed = this.slowSpeed;
         });
     }
 
@@ -46,7 +46,6 @@ export class CreditScene extends Phaser.Scene {
     }
 
     endCredits() {
-        console.log(this.prevScene);
         this.scene.run(this.prevScene);
         this.scene.stop(this.scene.key);
     }
