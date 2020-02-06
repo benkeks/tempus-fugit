@@ -172,8 +172,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         }
         
         // disable left and right button
-        this.leftButton.disableInteractive();
-        this.rightButton.disableInteractive();
+        //this.leftButton.disableInteractive();
+        //this.rightButton.disableInteractive();
 
         sprite.setVisible(true);
         background.setVisible(true);
@@ -185,8 +185,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             repeat: 0,
             yoyo: false,
             onComplete: function() {
-                this.leftButton.setInteractive();
-                this.rightButton.setInteractive();
+                //this.leftButton.setInteractive();
+                //this.rightButton.setInteractive();
             },
             onCompleteScope: this
         });
