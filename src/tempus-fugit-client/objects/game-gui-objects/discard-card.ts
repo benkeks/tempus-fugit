@@ -37,8 +37,8 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         let height = 260;
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
-        let font1: Object = { fontSize: '18px', fontFamily: 'pressStart', color: '#000000' }
-        let font2: Object = { fontSize: '16px', fontFamily: 'pressStart', color: '#000000' }
+        let font1: Object = { fontSize: '24px', fontFamily: 'pressStart', color: '#000000' }
+        let font2: Object = { fontSize: '24px', fontFamily: 'pressStart', color: '#000000' }
         this.setSize(width, height);
 
         // outline
@@ -90,13 +90,19 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         title.setOrigin(0.5, 0);
         title.setPosition(0, padding - height / 2);
 
-
         // formula text
         let string = card.getFormula().generateRepresentation(true, true);
         let margin = 2;
-        let formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
-        this.add(formulaGUI);
-        formulaGUI.setPosition(-8 * string.length, padding + 48 - height / 2);
+        let formulaGUI;
+        if (string.length > 8) {
+            formulaGUI = new FormulaGUI(this.scene, string, 0, 0, 0, false).setScale(0.8);
+            this.add(formulaGUI);
+            formulaGUI.setPosition(-6 * string.length, padding + 48 - height / 2);
+        } else {
+            formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
+            this.add(formulaGUI);
+            formulaGUI.setPosition(-8 * string.length, padding + 48 - height / 2);
+        }
 
         // effect text
         let effektText = this.scene.add.text(0, 0, card.getDescription(), font2);
@@ -113,6 +119,13 @@ export class DiscardCard extends Phaser.GameObjects.Container {
         image.setOrigin(0.5, 0);
         image.setPosition(0, 80 - height / 2);
         this.cardImage = image;
+
+        // resize texts if too big
+        while (effektText.height > 90)
+            effektText.setFontSize(Number(effektText.style.fontSize.substring(0, 2)) - 1)
+
+        while (title.height > 75)
+            title.setFontSize(Number(title.style.fontSize.substring(0, 2)) - 1)
     }
 
 }
