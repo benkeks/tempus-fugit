@@ -16,7 +16,7 @@ export class NewCardsScene extends Scene {
         this.newCardsGui.flush(data.loot);
 
         this.newCardsGui.on("destroy", function() {
-            this.scene.run("NavigationScene");
+            this.scene.resume("NavigationScene");
             this.scene.stop("NewCardScene");
         }, this);
     }

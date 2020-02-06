@@ -34,17 +34,7 @@ export class StartingScene extends Phaser.Scene {
 
     create(data) {
 
-        /*let f = new Formula("(#O#On)&#F(l&t)&s");
-        console.log(f.generateRepresentation(true, true));
-        console.log(f.generateRepresentation(true, false));
-        let gs = new GameState();
-        gs.setVariableValues({"l": {0:false, 1:true, 2:false},
-                                "t":{0:true, 1:false, 2:true},
-                                "n":{0:true, 1:false, 2:false},
-                                "s":{0:false, 1:false, 2:true}});
-        gs.activeState = 2;
-        console.log(gs.evaluate(f));*/
-        let startSong="navigationscene";
+        let startSong=MusicScene.instance.musicKeys[0];
         if (!this.musicStarted) {
             this.scene.run("MusicScene", {startSong:startSong});
             this.musicStarted = true;

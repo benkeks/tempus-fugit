@@ -8,7 +8,7 @@ export class Deck {
     public static MIN_CARDS_IN_DECK = 4;
     
     public cards: Card[]; // List of cards contained in the deck
-    public deck:Set<Card> = new Set();
+    public deck:{[name:string]:Card} = {};
     public listener:DeckListener[]; // List of objects listening to events happening in the deck
 
     /**
@@ -68,11 +68,12 @@ export class Deck {
 
     public setUpDeck():void {
         this.cards = [];
-        this.deck.forEach(c => {
+        for (let c_ind in this.deck) {
+            let c = this.deck[c_ind];
             for (let i=0; i < c.maxCardsInDeck; i++) {
                 this.cards.push(c.copy());
             }
-        });
+        }
     }
     
     public shuffle(): void {
