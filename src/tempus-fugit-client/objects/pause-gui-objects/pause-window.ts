@@ -90,7 +90,7 @@ export class PauseWindow {
 
             function navigation() {
                 scene.scene.stop(PauseButton.currPauseParent);
-                scene.scene.start('NavigationScene');
+                scene.scene.start('NavigationScene', {tutorial:false});
             }
 
             let indexToFn = [retry, navigation, quit];

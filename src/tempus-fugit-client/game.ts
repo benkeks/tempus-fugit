@@ -12,6 +12,8 @@ import { NewCardsScene } from "./scenes/new-cards-scene";
 import { BTextBoxScene } from "./scenes/blocking-textbox-scene";
 import { TutorialScene } from "./scenes/tutorial-scene";
 import { MusicScene } from "./scenes/music-scene";
+import { DialogScene } from "./scenes/dialog-scene";
+import { DeckBuilderScene } from "./scenes/deck-builder-scene";
 
 
 export abstract class GameInfo {
@@ -58,7 +60,7 @@ const config = {
             start: true
         }]
     },
-    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene, NewCardsScene, BTextBoxScene, TutorialScene, MusicScene]
+    scene: [StartingScene, NavigationScene, MissionScene, HelpScene, PauseScene, MonologScene, DeathScene, NewCardsScene, BTextBoxScene, TutorialScene, MusicScene, DialogScene, DeckBuilderScene]
 };
 
 export class Game extends Phaser.Game {
