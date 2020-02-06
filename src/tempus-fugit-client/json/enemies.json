@@ -48,7 +48,7 @@
     	      "description":"The mother of all slimes!",
       			"specialAttackDescription":"The player takes 20 damage.",
             "maxHP":60,
-            "baseAttack":7,
+            "baseAttack":5,
             "specialAttack":{
                 "formula":"!(n|l|s)",
                 "action": "mission.player.takeHit(20);",
@@ -62,8 +62,8 @@
         {   "name":"goblin1",
             "description":"A GAAAAAAAAWBLIN!",
       			"specialAttackDescription":"The player takes 10 damage.",
-            "maxHP":35,
-            "baseAttack":5,
+            "maxHP":25,
+            "baseAttack":3,
             "specialAttack":{
                 "formula":"#O(l&t)",
                 "action": "mission.player.takeHit(10);"
