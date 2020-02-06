@@ -187,7 +187,7 @@ export class DeckBuilder {
             expand:{content:true}
         });
         this.mainPanel.setOrigin(0);
-        this.mainPanel.setInteractive().layout();
+        this.mainPanel.layout();
         this.backgroundPanel.layout();
 
         this.deckName = "custom";
