@@ -230,7 +230,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.events.on('resume', function () {
             this.tfgame.active = true;
-            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
+            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex, tutorial:false });
         }, this);
     }
 
