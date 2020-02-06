@@ -23,6 +23,7 @@ export class ToolTip extends ListGUI {
         super(scene, x, y);
         this.gameObject = gameObject;
         scene.add.existing(this);
+        this.disableInteractive();
 
         gameObject.setInteractive().on('pointerover',function(pointer){
             if (!this._enabled) return;

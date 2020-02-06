@@ -196,7 +196,7 @@ export class Card {
                 isStandCard = false;
             }
 
-            if (c.cardKind != Card.RANDOM && c.cardKind != Card.OTHER && c.cardKind != Card.GLOBAL && c.cardKind != Card.DIRECTED) {
+            if (c.cardKind != Card.RANDOM && c.cardKind != Card.OTHER && c.cardKind != Card.GLOBAL && c.cardKind != Card.DIRECTED && c.cardKind != Card.PLAYER) {
                 console.warn("Card Type of card " + this.name + " is wrong!");
             }
 

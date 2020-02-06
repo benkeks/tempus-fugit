@@ -4,6 +4,7 @@ import { Formula } from "../temporal-logic/formula";
 import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
 import { MissionScene } from "./mission-scene";
+import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -84,6 +85,5 @@ export class StartingScene extends Phaser.Scene {
             playText.setColor('#402539');
 
         });
-
     }
 }
