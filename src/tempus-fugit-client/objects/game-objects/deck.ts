@@ -4,6 +4,8 @@ import { PlayerListener } from "./player";
 export class Deck {
     
     public static Decks:{[mission:string]:Deck} = {};
+
+    public static MIN_CARDS_IN_DECK = 4;
     
     public cards: Card[]; // List of cards contained in the deck
     public deck:Set<Card> = new Set();
