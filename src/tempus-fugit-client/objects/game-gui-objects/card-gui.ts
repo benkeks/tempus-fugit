@@ -53,8 +53,8 @@ export class CardGUI extends Phaser.GameObjects.Container {
         // outline and background
         let rectBackgroundColor = 0x999999;
         let rectOutlineColor = 0xe5e5e5;
-        let font1: Object = { fontSize: '18px', fontFamily: 'pressStart', color: '#000000' }
-        let font2: Object = { fontSize: '16px', fontFamily: 'pressStart', color: '#000000' }
+        let font1: Object = { fontSize: '24px', fontFamily: 'pressStart', color: '#000000' }
+        let font2: Object = { fontSize: '24px', fontFamily: 'pressStart', color: '#000000' }
         this.setSize(width, height);
 
         // outline
@@ -92,11 +92,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         formulaLine3.setOrigin(0, 0);
         formulaLine3.setPosition(-(width / 2), 0);
 
-
-
         // texts
-        // let padding = 10;
-        // let maxTextWidth = width - 4 * padding;
         let padding = 5;
         let maxTextWidth = width;
 
@@ -109,13 +105,19 @@ export class CardGUI extends Phaser.GameObjects.Container {
         title.setOrigin(0.5, 0);
         title.setPosition(0, padding - height / 2);
 
-
         // formula text
         let string = this.card.getFormulaGuiString();
         let margin = 2;
-        let formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
-        this.add(formulaGUI);
-        formulaGUI.setPosition(-8 * string.length, padding + 48 - height / 2);
+        let formulaGUI;
+        if (string.length > 8) {
+            formulaGUI = new FormulaGUI(this.scene, string, 0, 0, 0, false).setScale(0.8);
+            this.add(formulaGUI);
+            formulaGUI.setPosition(-6 * string.length, padding + 48 - height / 2);
+        } else {
+            formulaGUI = new FormulaGUI(this.scene, string, 0, 0, margin, false);
+            this.add(formulaGUI);
+            formulaGUI.setPosition(-8 * string.length, padding + 48 - height / 2);
+        }
 
         // effect text
         let effektText = this.scene.add.text(0, 0, card.getDescription(), font2);
@@ -139,7 +141,12 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this.add(this.cross);
         this.setPlayable();
 
-        //disable dragging
+        // resize texts if too big
+        while (effektText.height > 90)
+            effektText.setFontSize(Number(effektText.style.fontSize.substring(0, 2)) - 1)
+
+        while (title.height > 75)
+            title.setFontSize(Number(title.style.fontSize.substring(0, 2)) - 1)
     }
 
 
@@ -217,7 +224,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
     }
     public fadeOutAnimation(duration = 200) {
         if (this.fadeTween) this.fadeTween.stop(1);
-        
+
         this.setAlpha(1);
         this.fadeTween = this.scene.add.tween({ // fade out
             targets: this,
