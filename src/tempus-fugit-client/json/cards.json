@@ -13,7 +13,7 @@
 		{"name":"Fireball",
 		"description":"Deals 8 damage to a foe, also sets strength two rounds from now",
 		"image":"fireball",
-		"formula":"(l|n)&s",
+		"formula":"s&(l|n)",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"5",
