@@ -18,7 +18,7 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
     ) {
         super(scene);
 
-        console.log('discardCard');
+        //console.log('discardCard');
 
         // change boxes
         scene.deckGUI.description.setVisible(false);

@@ -184,7 +184,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * displays card information
      */
     showInfo(): void {
-        console.log(this.card.getDescription());
+        //console.log(this.card.getDescription());
     }
 
     /**

@@ -60,7 +60,7 @@ export class Consequence extends TwoParamOperator {
 
             throw new Error("Consequence is not open nor close, but has to be one of them!");
         } else {
-            console.log(typeof(consequence));
+            //console.log(typeof(consequence));
             throw new TypeError("Consequence has to be of type Consequence or String");
         }
     }

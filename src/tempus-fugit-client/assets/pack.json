@@ -249,10 +249,31 @@
                 "type": "image",
                 "key": "cardIcon",
                 "url": "assets/sprites/text-box/user.png"
-            }, {
+            }, 
+            {
                 "type": "image",
                 "key": "nextPage",
                 "url": "assets/sprites/text-box/arrow-down-left.png"
+            },
+            {
+                "type": "image",
+                "key": "questionmark",
+                "url": "assets/sprites/questionmark.png"
+            },
+            {
+                "type": "image",
+                "key": "volume",
+                "url": "assets/sprites/volume.png"
+            },
+            {
+                "type": "image",
+                "key": "skull",
+                "url": "assets/sprites/skull.png"
+            },
+            {
+                "type": "image",
+                "key": "deck_builder",
+                "url": "assets/sprites/deck_builder.png"
             }
         ]
     }

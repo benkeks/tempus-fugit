@@ -1,6 +1,6 @@
 {
     "missions": [{
-            "name": "A slimey surprise",
+            "name": "A slimy surprise",
             "key": "tutorial",
             "background":"forest_bg1",
             "enemies": [
@@ -10,14 +10,19 @@
                 "0": "Hey.... Listen.... Once upon a time, on an island, far away from anything you could imagine, evil forces have started to corrupt all living creatures and beings. A young wizard and I, his loyal fairy, take it upon ourselves to defeat these evil forces that have corrupted the Islands of Tempus Fugit. Our story begins when someday, out of nowhere, slimes started to attack. Watch out!",
                 "1": "Congratulations! You won!"
             },
-            "dialogue": [{
-                "triggerFunctionString": "return true;",
-                "blocking":"true",
-                "text": [
-                    ["slime2", "Please end our misery. WE ARE IN PAIN. OUR HEADS ARE HURTING."],
-                    ["player", "Wait, what is going on here? Why are you in pain?"]
-                ]
-            }],
+            "dialogue": [
+                {
+                    "triggerFunctionString": "return true;",
+                    "blocking":"true",
+                    "text": [
+                        ["slime2", "Please end our misery. WE ARE IN PAIN. OUR HEADS ARE HURTING."],
+                        ["player", "Wait, what is going on here? Why are you in pain?"]
+                    ]
+                }
+            ],
+            "music":{
+				"0":"battle_theme"
+			},
             "loot": ["Root pierce", "Natural heal", "Guiding Light"],
             "deck": ["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
         },
@@ -41,7 +46,7 @@
                 {
                     "triggerFunctionString":"return mission.waveCounter==1;",
                     "blocking":"true",
-                    "text": [["slime 3","PLEASE MAKE IT STOP. WE DON'T WANT TO HURT ANYONE."], ["player", "This is outrageous, the slimes are normally peaceful creatures. Who is responsible for this?"]]
+                    "text": [["slime3","PLEASE MAKE IT STOP. WE DON'T WANT TO HURT ANYONE."], ["player", "This is outrageous, the slimes are normally peaceful creatures. Who is responsible for this?"]]
                 },
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
@@ -50,7 +55,8 @@
                 }
             ],
 			"music":{
-				"1":"pacman"
+                "0":"battle_theme",
+                "2":"boss_theme"
 			},
 			"loot":["Light stand", "Unnatural heal"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
@@ -87,6 +93,10 @@
                     "text": [["moleg","Hello there young wizard. I heard you were wreaking havoc around these forest and killing the slimes. For that you must feel the wrath of Moleg"], ["player", "Please wait. I can explain. Can't you see that lately the creatures have been aggressive?"], ["moleg", "Nonsense! I am going to crush you!"]]
                 }
             ],
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
 			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
             "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
@@ -122,8 +132,12 @@
                     "text": [["goblin_general1","Wizard, we finally meet. I have orders to eliminate you. My man and I are here to take you down on behalf of the liberator."],["player", "The liberator? What are you talking about? Is he responsible for the creatures going mad? Anyways. Stop harming innocent people or I will have to end you."]]
                 }
             ],
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
 			"loot":["Lightning stand", "Lightning rain", "Vase of Desire"],
-            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Fireball", "Lightning Strike", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Cacti Party",
@@ -147,9 +161,12 @@
                     "text": [["kingtus","WHO DARES TO DISTURB ME WHILE WORKING OUT? I AM KINGTUS AND I RULE THESE LANDS"], ["player", "Your highness, I am not here to cause you any harm. I am here on a quest to save the creatures from my homeland that have gotten mad."],["kingtus","HOHO, WELL THEN YOU HAVE TO PROVE IT BY BEATING ME"], ["player","Heavens, here we go again. Bring it then."]]
                 }
             ],
-			"loot":["Incinerate", "Dark beam"],
-        "deck":["Fireball", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
-
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
+			"loot":["Strength", "Dark beam"],
+            "deck":["Fireball", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"What Worm is this?",
@@ -178,8 +195,12 @@
                     "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Please don't eat me."]]
                 }
             ],
-			"loot":["Obliterate", "Strength"],
-        "deck":["Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
+			"loot":["Obliterate", "Incinerate"],
+            "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Club Pyramid",
@@ -201,8 +222,12 @@
                     "text": [["pharaoh_yeah","Who dares to barge in here and disturb this party?"], ["player", "I am here to find out who is cursing these creatures? Please tell me how to stop dancing and who is behind all this mess."]]
                 }
             ],
-			"loot":["Aura of Weakness"],
-        "deck":["Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "music":{
+                "0":"battle_theme",
+                "1":"boss_theme"
+			},
+			"loot":["Aura of Weakness", "Higher heal stand"],
+            "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"King Janpuff live in concert",
@@ -236,8 +261,12 @@
                     "text": [["jkpuff","You insolent brat. You killed all of the audience. I will make you pay for that"], ["player", "King Janpuff, I am here to stop this mess. Please let me pass through."], ["jkpuff", "NEVER. NOW REST IN PEACE."]]
                 }
             ],
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         },
         {
             "name":"The final act",
@@ -266,8 +295,12 @@
                     "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but it is obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like they did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
                 }
             ],
+            "music":{
+                "0":"battle_theme",
+                "2":"boss_theme"
+			},
 			"loot":["Strength"],
-        "deck":["Aura of Weakness", "Obliterate", "Strength", "Fireball", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         }
 
     ]
