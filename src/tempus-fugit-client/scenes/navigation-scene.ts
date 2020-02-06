@@ -23,6 +23,20 @@ import { Sound } from "phaser";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilderButton } from "../objects/navigation-scene-objects/deck-builder-button";
+import { HelpWindow } from "../objects/help-gui-objects/help-window";
+import { op_and,
+    op_or,
+    op_not,
+    op_impl,
+    op_biImpl,
+    op_evPast,
+    op_evFuture,
+    op_glPast,
+    op_glFuture,
+    op_nextPast,
+    op_nextFuture,
+    op_until,
+    op_klammer } from "../objects/help-gui-objects/help-data";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -99,6 +113,19 @@ export class NavigationScene extends Phaser.Scene {
                 return Card.cards[key];
             });
             scene.player.addCardType(cards);
+            HelpWindow.help_data = [op_and,
+                op_or,
+                op_not,
+                op_impl,
+                op_biImpl,
+                op_evPast,
+                op_evFuture,
+                op_glPast,
+                op_glFuture,
+                op_nextPast,
+                op_nextFuture,
+                op_until,
+                op_klammer]
             scene.scene.start("NavigationScene", {tutorial:false});
         }
     }
@@ -456,8 +483,6 @@ export class NavigationScene extends Phaser.Scene {
             s.run('TutorialScene', {backScene:s.key, guided:false});
             //this.scene.run("NewCardScene", {final:true});
         }
-
-        // TODO: make deck to list
         
         //this.scene.run('DeckBuilderScene', {parent:this.scene.key, player:this.player});
     }

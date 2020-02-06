@@ -82,6 +82,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         this.setUpExit();
 
         this.fadeIn();
+
+        this.setSlide(this.activeIndex);
     }
 
     public initSprites(sprites:string[], rect:Phaser.Geom.Rectangle) {
@@ -108,40 +110,58 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             this.spriteBackgrounds.push(backgroundSprite);
             this.sprites.push(sprite);
 
-            if (i != this.activeIndex) {
-                sprite.setVisible(false);
-                backgroundSprite.setVisible(false);
-            }
-
-
+            sprite.setVisible(false);
+            sprite.setAlpha(0);
+            backgroundSprite.setVisible(false);
+            backgroundSprite.setAlpha(0);
         }
     }
 
     public setSlide(next:number=this.activeIndex+1):boolean {
-        if (next >= this.sprites.length) return false;
-        else if (next < 0) return false;
+        if (next >= this.sprites.length) {
+            this.rightButton.setTint(0x333333);
+            return false;
+        }
+        else if (next < 0) {
+            this.leftButton.setTint(0x333333);
+            return false;
+        }
+
+        if (next == 0) {
+            this.leftButton.setTint(0x333333);
+            this.rightButton.clearTint();
+        } else if (next == this.sprites.length-1) {
+            this.rightButton.setTint(0x333333);
+            this.leftButton.clearTint();
+        } else {
+            this.leftButton.clearTint();
+            this.rightButton.clearTint();
+        }
+
 
         if (this.guided && next == this.sprites.length-1 && !this.exitText.visible) this.fadeIn([this.exitBackground, this.exitText]);
 
         let sprite = this.sprites[next];
-        let old_sprite = this.sprites[this.activeIndex];
         let background = this.spriteBackgrounds[next];
-        let old_background = this.spriteBackgrounds[this.activeIndex];
-
         let duration = 500;
-        this.scene.add.tween({ // fade out
-            targets: [old_sprite, old_background],
-            alpha: 0,
-            ease: "Linear",
-            duration: duration,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-                old_sprite.setVisible(false);
-                old_background.setVisible(false);
-            },
-            onCompleteScope: this
-        });
+
+        if (this.activeIndex != next && this.activeIndex >= 0 && this.activeIndex < this.sprites.length) {
+            let old_background = this.spriteBackgrounds[this.activeIndex];
+            let old_sprite = this.sprites[this.activeIndex];
+            this.scene.add.tween({ // fade out
+                targets: [old_sprite, old_background],
+                alpha: 0,
+                ease: "Linear",
+                duration: duration,
+                repeat: 0,
+                yoyo: false,
+                onComplete: function () {
+                    old_sprite.setVisible(false);
+                    old_background.setVisible(false);
+                },
+                onCompleteScope: this
+            });
+        }
         
         // disable left and right button
         this.leftButton.disableInteractive();
