@@ -95,7 +95,7 @@ export class DeckBuilder {
         bottom:5}).setDepth(100))
 
         toolbar.push(this.createButton("X", function(pointer) {
-            if (Deck.Decks[this.deckName].deck.size < Deck.MIN_CARDS_IN_DECK) {
+            if (Object.keys(Deck.Decks[this.deckName].deck).length < Deck.MIN_CARDS_IN_DECK) {
                 this.showNotEnoughCards()
                 return;
             }
@@ -167,6 +167,8 @@ export class DeckBuilder {
                 this.showTutorial();
            }
         }, this);
+
+        console.log(Deck.Decks["custom"].deck);
     }
 
     public showTutorial() {
@@ -333,9 +335,10 @@ export class DeckBuilder {
         this.backgroundPanel.add(this.deckSlider, 1, "center", {top:15}, true);
 
         if (this.deckName in Deck.Decks) {
-            Deck.Decks[this.deckName].deck.forEach(c => {
+            for (let c_ind in Deck.Decks[this.deckName].deck) {
+                let c = Deck.Decks[this.deckName].deck[c_ind];
                 this.addCardToDeck(c, false);
-            });
+            }
         }
     }
 
@@ -412,9 +415,10 @@ export class DeckBuilder {
 
         this.backgroundPanel.add(this.cardsSlider, 0, "center", {right:this.middlePadding, top:15}, true);
 
-        this.player.cardTypes.forEach(c => {
-            if (!Deck.Decks[this.deckName].deck.has(c)) this.addCardToCardsViewer(c);
-        });
+        for (let c_ind in this.player.cardTypes) {
+            let c = this.player.cardTypes[c_ind];
+            if (!(c.name in Deck.Decks[this.deckName].deck)) this.addCardToCardsViewer(c);
+        }
     }
 
     public addCardToCardsViewer(card:Card) {
@@ -428,7 +432,6 @@ export class DeckBuilder {
 
     public removeCardFromCardsViewer(card:Card) {
         let elem = this.cardsViewer.getElement(card.name);
-        console.log(elem);
         if (elem) {
             this.cardsViewer.remove(elem);
             elem.setVisible(false);
@@ -436,7 +439,7 @@ export class DeckBuilder {
             this.cardsViewer.layout();
             this.cardsSlider.layout();
         } else {
-            this.player.cardTypes.add(card);
+            this.player.cardTypes[card.name] = card;
         }
     }
 
@@ -515,7 +518,7 @@ export class DeckBuilder {
     }
 
     public updateDeckTitleText() {
-        this.deckSliderTitle.setText("Deck - " + Deck.Decks[this.deckName].deck.size);
+        this.deckSliderTitle.setText("Deck - " + Object.keys(Deck.Decks[this.deckName].deck).length);
         this.deckSliderDialog.layout();
     }
 
@@ -541,7 +544,7 @@ export class DeckBuilder {
 
     public addCardToDeck(card:Card, checkIfAlreadyInside:boolean=true) {
         if (checkIfAlreadyInside) {
-            if (Deck.Decks[this.deckName].deck.has(card)) {
+            if (card.name in Deck.Decks[this.deckName].deck) {
                 return;
             }
         }
@@ -578,17 +581,17 @@ export class DeckBuilder {
         this.deckViewer.setItemSpacing(x_pad);
 
         this.deckViewer.add(cardgui, {}, card.name);
-        Deck.Decks[this.deckName].deck.add(card);
+        Deck.Decks[this.deckName].deck[card.name] = (card);
         this.updateDeckTitleText();
         this.update();
     }
 
     public removeCardFromDeck(card:Card) {
-        if (!(Deck.Decks[this.deckName].deck.has(card))) return;
+        if (!(card.name in Deck.Decks[this.deckName].deck)) return;
 
         let elem = this.deckViewer.getElement("items").find(function(c){return c.card.name==card.name})
         this.deckViewer.remove(elem);
-        Deck.Decks[this.deckName].deck.delete(card);
+        delete Deck.Decks[this.deckName].deck[card.name];
         this.updateDeckTitleText();
         this.update();
         elem.destroy(true);
