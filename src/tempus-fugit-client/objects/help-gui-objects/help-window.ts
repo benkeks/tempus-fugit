@@ -315,13 +315,14 @@ export class HelpWindow {
 
     public createFormula(scene, formulaString) {
         let sizer = scene.rexUI.add.sizer({
-            orientation: 'x'
+            orientation: 'x',
         });
-
+        // for the tab no background
+        if (formulaString !=='()') sizer.addBackground(scene.rexUI.add.roundRectangle(0, 0, 30, 30, 10, GUI_LABEL_BG).setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_BORDER));
         formulaString.split('').reduce(function (sizer, character) {
             let icon_info = HelpWindow.toFormulaSprite[character];
             let icon = scene.add.sprite(0, 0, icon_info.type, icon_info.frame);
-            return sizer.add(icon, 1, 'center', 2, false);
+            return sizer.add(icon, 1, 'center', 10, false);
         }, sizer);
 
         sizer.setDepth(100);
