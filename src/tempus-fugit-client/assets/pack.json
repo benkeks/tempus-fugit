@@ -269,6 +269,11 @@
                 "type": "image",
                 "key": "skull",
                 "url": "assets/sprites/skull.png"
+            },
+            {
+                "type": "image",
+                "key": "deck_builder",
+                "url": "assets/sprites/deck_builder.png"
             }
         ]
     }

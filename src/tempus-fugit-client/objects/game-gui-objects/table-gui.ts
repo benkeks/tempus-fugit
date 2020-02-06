@@ -220,14 +220,14 @@ export class TableGUI implements GameStateListener {
                             left: 30
                         }
                     });
-/*
-                    let text = variable;
-                    if (variable == "l") text = "light";
-                    if (variable == "t") text = "transform";
-                    if (variable == "n") text = "nature";
-                    if (variable == "s") text = "strength";
-                    let tooltip:ToolTip = new ToolTip(this.scene, variableNameTable.x+30, variableNameTable.y+20*i);
-                    tooltip.addText(text);*/
+                    /*
+                                        let text = variable;
+                                        if (variable == "l") text = "light";
+                                        if (variable == "t") text = "transform";
+                                        if (variable == "n") text = "nature";
+                                        if (variable == "s") text = "strength";
+                                        let tooltip:ToolTip = new ToolTip(this.scene, variableNameTable.x+30, variableNameTable.y+20*i);
+                                        tooltip.addText(text);*/
 
                     return label;
                 }
@@ -235,7 +235,7 @@ export class TableGUI implements GameStateListener {
             .layout();
 
         // add items to table
-        let tooltips:ListGUI[] = [];
+        let tooltips: ListGUI[] = [];
         let items = [];
         for (let i = 0; i < numVar; i++) {
             let key = Object.keys(this.variables).find(key => this.variables[key] === i)
@@ -243,13 +243,13 @@ export class TableGUI implements GameStateListener {
                 id: i,
                 variable: key
             });
-            
+
             let text = "";
             if (key == "l") text = "light";
             if (key == "t") text = "transform";
             if (key == "n") text = "nature";
             if (key == "s") text = "strength";
-            let tooltip:ListGUI = new ListGUI(this.scene, 475, 250);
+            let tooltip: ListGUI = new ListGUI(this.scene, 475, 250);
             tooltip.addText(text, ListGUI.ALIGN_CENTRE, { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' });
             tooltip.setVisible(false);
             tooltip.fixedMaxTextWidth = true;
@@ -260,10 +260,10 @@ export class TableGUI implements GameStateListener {
         }
         variableNameTable.setItems(items);
 
-        
-        variableNameTable.on("cell.over", function(cellContainer, cellIndex) {
+
+        variableNameTable.on("cell.over", function (cellContainer, cellIndex) {
             tooltips[cellIndex].fadeIn()
-        }).on("cell.out", function(cellContainer, cellIndex) {
+        }).on("cell.out", function (cellContainer, cellIndex) {
             tooltips[cellIndex].fadeOut()
         })
     }
@@ -396,8 +396,10 @@ export class TableGUI implements GameStateListener {
         this.createEnergyTable(this.gameState.maxEnergy);
 
         // move table to the right if last visible column is reached
-        if (activeRound >= 20)
-            this.scrollTable(true);
+        if ([20, 30, 40, 50, 60].includes(activeRound)) {
+            for (let i = 0; i < 10; i++)
+                this.scrollTable(true);
+        }
     }
 
     addColumns(n: number) {

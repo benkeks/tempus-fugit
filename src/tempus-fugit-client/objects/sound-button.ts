@@ -49,7 +49,7 @@ export class SoundButton {
     }
 
     public createIcon() {
-        let icon = this.scene.add.sprite(0, 0, 'questionMark').setScale(3)
+        let icon = this.scene.add.sprite(0, 0, 'volume').setScale(3)
         return this.scene.add.container(0,0, [icon, this.cross]);
     }
 
