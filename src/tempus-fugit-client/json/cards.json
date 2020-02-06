@@ -50,7 +50,7 @@
 		"cardKind":"global",
 		"isStandCard":"true",
 		"standRounds":"4",
-		"action":"target.takeHit(10, mission);",
+		"action":"target.takeHit(12, mission);",
 		"comment":"",
 		"maxCardsInDeck":"2"},
 
