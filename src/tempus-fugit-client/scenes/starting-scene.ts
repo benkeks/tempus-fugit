@@ -4,6 +4,7 @@ import { Formula } from "../temporal-logic/formula";
 import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
 import { MissionScene } from "./mission-scene";
+import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -85,5 +86,15 @@ export class StartingScene extends Phaser.Scene {
 
         });
 
+        const credits = this.add.text(
+            GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
+            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 95),
+            "Credits",
+            { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 4), fontFamily: "pressStart" }
+        ).setOrigin(0.5).setColor('#402539').setInteractive();
+
+        credits.on('pointerover', () => credits.setColor('#ffffff'))
+            .on('pointerout', () => credits.setColor('#402539'))
+            .on('pointerdown', () => this.scene.launch('Credits', {key: this.scene.key}))
     }
 }
