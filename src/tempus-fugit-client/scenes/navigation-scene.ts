@@ -236,7 +236,7 @@ export class NavigationScene extends Phaser.Scene {
                     b.setTexture("bullet_point_hover_done");
                 }
 
-            
+
             })
 
             b.on("pointerout", pointer => {
@@ -488,7 +488,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public initGame() {
 
-        this.player = new Player("Willy", 500, 5);
+        this.player = new Player("Willy", 125, 2);
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
         let d = new Deck();
         
