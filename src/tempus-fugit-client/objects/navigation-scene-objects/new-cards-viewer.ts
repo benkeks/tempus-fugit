@@ -5,6 +5,13 @@ import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterMana
 import { GameInfo } from "../../game";
 import { CardGUI } from "../game-gui-objects/card-gui";
 
+const BORDER_WIDTH_TEXT_AREA = 4;
+const GUI_TEXT_AREA_BORDER = 0x000000;
+const GUI_TEXT_AREA = 0xf2f1e7;
+
+const CARD_CONTAINER_COLOR = 0x999999;
+
+
 export class NewCardsViewer extends Phaser.GameObjects.Container {
     public active: boolean = true;
 
@@ -72,7 +79,21 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let text = "You unlocked new Cards!";
         if (final) text = "You unlocked a cheat code!";
 
-        this.newCardText = scene.add.text(this.dot.x, this.screenPadding / 2, text, { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
+        //@ts-ignore
+        this.newCardText = this.scene.rexUI.add.buttons({
+            x:GameInfo.width/2, y:this.screenPadding * 1.75,
+            orientation:"v",
+            //@ts-ignore
+            background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, CARD_CONTAINER_COLOR)
+            .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER),
+            //@ts-ignore
+            buttons:[this.scene.rexUI.add.sizer({}).add(
+                this.scene.add.text(0,0,text, { fontSize: '32px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }), 
+                0, "center", {left:200, right:200, bottom:15, top:15}).layout()
+            
+        ],
+        space:100
+        }).layout();//scene.add.text(this.dot.x, this.screenPadding / 2, text, { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
         this.newCardText.setOrigin(0.5, 0);
         this.add(this.newCardText);
 
@@ -97,8 +118,12 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let def_width = 0;
         let def_height = 0;
         if (this.final) { // display cheat code
-            let text = this.scene.add.text(0,300,"up up down down left right left right b a", { fontSize: '26px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' });
+            //@ts-ignore
+            let text = this.scene.add.text(0,180,"UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A", { fontSize: '26px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' })
+            text.setOrigin(0)
             text.setAlpha(0);
+
+            this.add(this.scene.add.text(this.backgroundWidth/2,650,"If you type this on the map, you will unlock everything!", { fontSize: '22px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }).setOrigin(0.5));
 
             this.cardContainer.add(text);
             this.displayingCards.push(text);
