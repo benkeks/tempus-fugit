@@ -3,11 +3,10 @@ import { PlayerListener } from "./player";
 
 export class Deck {
     
-    public static Decks:{[mission:string]:Set<Card>} = {};
+    public static Decks:{[mission:string]:Deck} = {};
     
     public cards: Card[]; // List of cards contained in the deck
     public deck:Set<Card> = new Set();
-    public cardTypes:Set<Card> = new Set();
     public listener:DeckListener[]; // List of objects listening to events happening in the deck
 
     /**
@@ -37,25 +36,11 @@ export class Deck {
      * @author Florian
      */
     public addCard(card: Card, addToType:boolean=false): void {
-        if (addToType) this.addCardType([card]);
-
         this.cards.push(card);
 
         for (let i in this.listener) {
             this.listener[i].numCardsChanged(this.cards.length);
         }
-    }
-
-    public addCardType(card:Card[]) {
-        let n = [];
-        for (let c of card) {
-            if (this.cardTypes.has(c)) {
-                n.push(c);
-                this.cardTypes.add(c);
-            }
-        }
-
-        if (n.length > 0) this.listener.map(l => l.cardTypesChanged(this, n));
     }
 
     /**
@@ -111,5 +96,4 @@ export class Deck {
  */
 export interface DeckListener {
     numCardsChanged(numCards: number): void;
-    cardTypesChanged(deck:Deck, newCards:Card[]);
 }

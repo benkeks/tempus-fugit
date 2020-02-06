@@ -47,7 +47,15 @@ export class Player {
     public listener: PlayerListener[] = []; // List of objects listening to player events
     public _active: boolean;
 
+    public cardTypes:Set<Card> = new Set<Card>(); // card types owned by the player
+
     public missionStates: boolean[] = [false, false, false, false, false, false, false, false, false];
+
+    public addCardType(cards) {
+        cards.forEach(c => {
+            this.cardTypes.add(c);
+        })
+    }
 
     /**
      * Setter for the player's hit points
@@ -62,6 +70,7 @@ export class Player {
     public copy(): Player {
         let p: Player = new Player(this.name, this.maxHP, this.baseAttack);
         p.missionStates = [...this.missionStates];
+        p.cardTypes = new Set(this.cardTypes);
 
         return p;
     }
