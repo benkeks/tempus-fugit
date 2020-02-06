@@ -120,30 +120,22 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
     public setSlide(next:number=this.activeIndex+1):boolean {
         if (next >= this.sprites.length) {
             this.rightButton.setTint(0x333333);
-            this.rightButton.disableInteractive();
             return false;
         }
         else if (next < 0) {
             this.leftButton.setTint(0x333333);
-            this.leftButton.disableInteractive();
             return false;
         }
 
         if (next == 0) {
             this.leftButton.setTint(0x333333);
-            this.leftButton.disableInteractive();
             this.rightButton.clearTint();
-            this.rightButton.setInteractive();
         } else if (next == this.sprites.length-1) {
             this.rightButton.setTint(0x333333);
-            this.rightButton.disableInteractive();
             this.leftButton.clearTint();
-            this.leftButton.setInteractive();
         } else {
             this.leftButton.clearTint();
-            this.leftButton.setInteractive();
             this.rightButton.clearTint();
-            this.rightButton.setInteractive();
         }
 
 
@@ -172,8 +164,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         }
         
         // disable left and right button
-        //this.leftButton.disableInteractive();
-        //this.rightButton.disableInteractive();
+        this.leftButton.disableInteractive();
+        this.rightButton.disableInteractive();
 
         sprite.setVisible(true);
         background.setVisible(true);
@@ -185,8 +177,14 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             repeat: 0,
             yoyo: false,
             onComplete: function() {
-                //this.leftButton.setInteractive();
-                //this.rightButton.setInteractive();
+                if (next == 0) {
+                    this.rightButton.setInteractive();
+                } else if (next == this.sprites.length-1) {
+                    this.leftButton.setInteractive();
+                } else {
+                    this.leftButton.setInteractive();
+                    this.rightButton.setInteractive();
+                }
             },
             onCompleteScope: this
         });
