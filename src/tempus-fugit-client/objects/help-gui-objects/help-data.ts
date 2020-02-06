@@ -22,7 +22,7 @@ export const op_and = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -76,7 +76,7 @@ export const op_or = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -131,7 +131,7 @@ export const op_impl = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -186,7 +186,7 @@ export const op_biImpl = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -240,7 +240,7 @@ export const op_not = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -294,7 +294,7 @@ export const op_evPast = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -348,7 +348,7 @@ export const op_evFuture = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -402,7 +402,7 @@ export const op_glPast = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -456,7 +456,7 @@ export const op_glFuture = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -510,7 +510,7 @@ export const op_nextPast = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -564,7 +564,7 @@ export const op_nextFuture = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {
@@ -619,7 +619,7 @@ export const op_until = {
         },
         {
             type: 'label',
-            text: 'Basic Example',
+            text: ' Basic Example',
             color: GUI_LABEL_BG
         },
         {

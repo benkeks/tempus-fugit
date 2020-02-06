@@ -48,7 +48,7 @@ const BORDER_WIDTH_TAB = 3;
 const BORDER_WIDTH_PANEL = 4;
 const BORDER_WIDTH_TEXT_AREA = 2;
 const TITLE_SPACE = '                                   ';
-const LABEL_SPACE = '';
+const LABEL_SPACE = '                                    ';
 
 
 export class HelpWindow {
@@ -172,7 +172,7 @@ export class HelpWindow {
                         elements.push(this.createTextArea(scene, data.text));
                         break;
                     case 'label':
-                        elements.push(this.createLabel(scene, 10, data.text, data.color));
+                        elements.push(this.createLabel(scene, 10, LABEL_SPACE + data.text, data.color));
                         break;
                     case 'table':
                         elements.push(this.createTable(scene, data.table));
