@@ -17,6 +17,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public toolTip:ToolTip;
     public toolTipText:Text;
     public formula:FormulaGUI;
+    private properX: number;
+    private properY: number;
 
     public scene:MissionScene;
 
@@ -31,6 +33,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.scene = scene;
         this.enemy = enemy;
         this.enemy.listener.push(this);
+        this.properX = x;
+        this.properY = y;
 
         if (!texture) texture = enemy.image;
 
@@ -122,6 +126,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
     public updateTint(gameState:GameState) {
         if (this.formula) this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+    }
+
+    public reposition() {
+        this.x = this.properX;
+        this.y = this.properY;
     }
 
     /**

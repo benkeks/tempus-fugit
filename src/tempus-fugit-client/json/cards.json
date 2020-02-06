@@ -39,7 +39,7 @@
 		"cardKind":"global",
 		"isStandCard":"false",
 		"standRounds":"4",
-		"action":"target.baseAttack-=3;",
+		"action":"target.reduceBaseAttack();",
 		"comment":"",
 		"maxCardsInDeck":"1"},
 
