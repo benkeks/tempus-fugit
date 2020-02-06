@@ -121,14 +121,14 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Natural heal",
-		"description":"Heals you by 50 HP and sets the next two nature",
+		"description":"Heals you by 40 HP and sets the next two nature",
 		"image":"slight_heal",
 		"formula":"n&#On",
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.heal(50);mission.gameState.setVariableValues({'n':{1:true, 2:true}});",
-		"comment":"eals player by 15 HP, also -> OOn&On",
+		"action":"mission.player.heal(40);mission.gameState.setVariableValues({'n':{1:true, 2:true}});",
+		"comment":"eals player by 40 HP, also -> OOn&On",
 		"maxCardsInDeck":"2"},
 
 		{"name":"Vase of Desire",
