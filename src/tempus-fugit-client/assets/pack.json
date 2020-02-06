@@ -264,6 +264,16 @@
                 "type": "image",
                 "key": "volume",
                 "url": "assets/sprites/volume.png"
+            },
+            {
+                "type": "image",
+                "key": "skull",
+                "url": "assets/sprites/skull.png"
+            },
+            {
+                "type": "image",
+                "key": "deck_builder",
+                "url": "assets/sprites/deck_builder.png"
             }
         ]
     }

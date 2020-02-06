@@ -90,13 +90,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             deck: data.deck.copy()
         };
 
-
-        this.input.keyboard.on("keydown", e => {
-            if (e.key == "b") {
-                this.tfgame.nextWave(this.tfgame._enemies.length);
-            }
-        });
-
         this.tfgame.deck.setUpDeck();
         this.tfgame.deck.shuffle();
 
@@ -230,7 +223,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.events.on('resume', function () {
             this.tfgame.active = true;
-            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
+            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex, tutorial:false });
         }, this);
     }
 

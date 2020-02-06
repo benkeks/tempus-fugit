@@ -4,6 +4,7 @@ import { Formula } from "../temporal-logic/formula";
 import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
 import { MissionScene } from "./mission-scene";
+import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -24,9 +25,9 @@ export class StartingScene extends Phaser.Scene {
         });
         MusicScene.instance.musicKeys = ["navigationscene", "battle_theme", "boss_theme"]
 
-        this.load.audio(MusicScene.instance.musicKeys[0], "assets/songs/navigationscene.wav")
-        this.load.audio(MusicScene.instance.musicKeys[1], "assets/songs/battle_theme.wav")
-        this.load.audio(MusicScene.instance.musicKeys[2], "assets/songs/boss_theme.wav")
+        this.load.audio(MusicScene.instance.musicKeys[0], "assets/songs/navigationscene.mp3")
+        this.load.audio(MusicScene.instance.musicKeys[1], "assets/songs/battle_theme.mp3")
+        this.load.audio(MusicScene.instance.musicKeys[2], "assets/songs/boss_theme.mp3")
 
         this.load.spritesheet("gamelogo", "assets/title_screen/TempusFugit-Sheet.png", { frameWidth: 105, frameHeight: 78 });
     }
@@ -84,6 +85,5 @@ export class StartingScene extends Phaser.Scene {
             playText.setColor('#402539');
 
         });
-
     }
 }

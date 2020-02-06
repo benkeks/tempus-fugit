@@ -21,6 +21,8 @@ import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 import { Sound } from "phaser";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
+import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
+import { DeckBuilderButton } from "../objects/navigation-scene-objects/deck-builder-button";
 
 export class NavigationScene extends Phaser.Scene {
 
@@ -42,11 +44,14 @@ export class NavigationScene extends Phaser.Scene {
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
     public soundButton: SoundButton;
+    public deckBuilderButton: DeckBuilderButton;
+
+    public activeDialog;
 
     public static instance:NavigationScene;
 
     public cheats = [
-        [["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels]
+        [["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels, this]
     ];
 
     public cloudDependency: { [index: number]: number[] } = {
@@ -89,6 +94,11 @@ export class NavigationScene extends Phaser.Scene {
 
         if (!allTrue) {
             scene.player.missionStates = [true, true, true, true, true, true, true, true, true];
+
+            let cards = Object.keys(Card.cards).map(function(key){
+                return Card.cards[key];
+            });
+            scene.player.addCardType(cards);
             scene.scene.start("NavigationScene", {tutorial:false});
         }
     }
@@ -185,14 +195,7 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset, -yOffset, b.getBounds().width + 2 * xOffset, b.getBounds().height + 2 * yOffset);
 
             b.on("pointerdown", pointer => {
-                if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
-                
-                this.scene.start("MissionScene", {
-                    key: this.missionKeys[i],
-                    index: i,
-                    player: this.player.copy(),
-                    deck: this.deck.copy()
-                });
+                this.createDialog(i);
             });
 
             b.on("pointerover", pointer => {
@@ -224,6 +227,29 @@ export class NavigationScene extends Phaser.Scene {
 
     public getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    public startMission(index:number, deckName:string) {
+        this.scene.start("MissionScene", {
+            key: this.missionKeys[index],
+            index: index,
+            player: this.player.copy(),
+            deck: Deck.Decks[deckName].copy()
+        });
+    }
+
+    public createDialog(index:number) {
+        let actions = [["default", function () {
+            this.activeDialog.returnToScene = false;
+            this.activeDialog.hide();
+            this.startMission(index, this.missionKeys[index]);
+        }, this], ["custom", function() {
+            this.activeDialog.returnToScene = false;
+            this.activeDialog.hide();
+            this.startMission(index, "custom");
+        }, this]];
+        this.scene.run("DialogScene", {scene:this, parent:"NavigationScene", description:"You can customise the custom deck in the Deck builder on the top right corner on the map. The default deck is predefined for each level.",
+        buttons:actions, title:"Choose Your Deck"});
     }
 
     public createCloudContainer(x: number, y: number, width: number, height: number, index: number): Container {
@@ -318,6 +344,7 @@ export class NavigationScene extends Phaser.Scene {
             if (data.mission.isGameWon() && !this.player.missionStates[data.index]) {
                 this.player.missionStates[data.index] = true;
                 this.player.maxHP += 25;
+                this.player.baseAttack += 1;
                 this.player.currentHP = this.player.maxHP;
                 gamewon = true;
             }
@@ -410,15 +437,16 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.tutorialButton = new TutorialButton(this, 1690, 50);
-        this.soundButton = new SoundButton(this, 1780, 50);
+        this.deckBuilderButton = new DeckBuilderButton(this, 1780, 50, this.player);
+        this.soundButton = new SoundButton(this, 1690, 50);
+        this.tutorialButton = new TutorialButton(this, 1600, 50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {
             let loot = data.mission.loot;
             let final = false;
             if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
 
-            this.deck.addCardType(loot);
+            this.player.addCardType(loot);
             this.scene.run("NewCardScene", { loot: loot, final:final});
             this.scene.pause("NavigationScene");
         }
@@ -429,14 +457,20 @@ export class NavigationScene extends Phaser.Scene {
             //this.scene.run("NewCardScene", {final:true});
         }
 
-        Deck.Decks["custom"] = Deck.Decks["tutorial"]
-        //new DeckBuilder(this);
+        // TODO: make deck to list
+        
+        //this.scene.run('DeckBuilderScene', {parent:this.scene.key, player:this.player});
     }
 
     public initGame() {
 
         this.player = new Player("Willy", 500, 5);
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
+        let d = new Deck();
+        
+        Deck.Decks[this.missionKeys[0]].deck.forEach(c=> {d.deck.add(c)});
+        Deck.Decks["custom"] = d;
+        this.player.addCardType(Deck.Decks["custom"].deck);
 
         this.deck = new Deck();
     }
