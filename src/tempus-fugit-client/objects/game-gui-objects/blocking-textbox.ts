@@ -23,6 +23,7 @@ export class BTextBox {
     private handGUI: HandGUI;
     private mission: Mission;
     private blocking: boolean;
+    private icon: Phaser.GameObjects.Image;
 
     /**
      * Create a new textbox that appears on the right side of the screen.
@@ -114,8 +115,6 @@ export class BTextBox {
         const fixedWidth = this.GetValue(config, 'fixedWidth', 0);
         const fixedHeight = this.GetValue(config, 'fixedHeight', 0);
 
-        // create textbox
-        let icon = scene.add.image(0, 0, firstIcon).setScale(GameInfo.scale).setDepth(100);
         // @ts-ignore
         const textBox = scene.rexUI.add.textBox({
             x: x,
@@ -123,15 +122,13 @@ export class BTextBox {
             // @ts-ignore
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, this.COLOR_PRIMARY)
                 .setStrokeStyle(2, this.COLOR_LIGHT),
-            icon: icon,
             text: this.getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
             action: scene.add.image(0, 0, 'nextPage').setTint(this.COLOR_LIGHT).setVisible(false),
             space: {
-                left: 20,
+                left: 180,
                 right: 20,
                 top: 20,
                 bottom: 20,
-                icon: 0,
                 text: 10,
             }
         })
@@ -147,9 +144,13 @@ export class BTextBox {
             duration: 1000,
         });
 
+        // create textbox
+        this.icon = scene.add.image(100, 100, firstIcon).setDepth(100);
+        this.icon.setPosition(textBox.x + 90, textBox.y + textBox.height / 2 - this.icon.height / 2)
+        let scale = 160 / this.icon.width;
+        this.icon.setDisplaySize(scale * this.icon.width, scale * this.icon.height);
 
         // handle events for clicking; displaying new lines from content array
-        //this.setInteractionEvents(scene, textBox, content, icons);
         this.setInteractionEvents(scene, textBox, content, icons);
 
         return textBox;
@@ -186,7 +187,12 @@ export class BTextBox {
                     showNewLine = false;
                     //change speaker icon
                     let nextIcon = icons.shift();
-                    textBox.getElement('icon').setTexture(nextIcon);
+                    this.icon.destroy();
+                    this.icon = scene.add.image(100, 100, nextIcon).setDepth(100);
+                    this.icon.setPosition(textBox.x + 90, textBox.y + textBox.height / 2 - this.icon.height / 2)
+                    let scale = 160 / this.icon.width;
+                    this.icon.setDisplaySize(scale * this.icon.width, scale * this.icon.height);
+
                 } else {
                     if (textBox.isTyping) {
                         textBox.stop(true);
