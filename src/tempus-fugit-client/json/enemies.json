@@ -122,7 +122,7 @@
             "description":"Checking my description won't save you",
       			"specialAttackDescription":"You take 50 damage.",
             "maxHP":300,
-            "baseAttack":30,
+            "baseAttack":20,
             "specialAttack":{
                 "formula":"n&s&t",
                 "attack": "return;",
@@ -137,10 +137,10 @@
             "description":"A golem with a mustache!",
       			"specialAttackDescription":"The player takes 25 damage.",
             "maxHP":90,
-            "baseAttack":15,
+            "baseAttack":12,
             "specialAttack":{
                 "formula":"n&t&l",
-                "attack": "return;"
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/moleg/moleg-Sheet.png",
             "size": [64,64],
@@ -148,12 +148,13 @@
         },
 
         {   "name":"cactus1",
+            "specialAttackDescription":"The player takes 15 damage.",
             "description":"Ouch, spiky!",
             "maxHP":45,
             "baseAttack":10,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"G(!s)",
+                "attack": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/cactus1/cactus1-Sheet.png",
             "size": [32,64],
@@ -161,12 +162,13 @@
         },
 
         {   "name":"cactus2",
+            "specialAttackDescription":"The player takes 15 damage.",
             "description":"Y'all even reading these?",
             "maxHP":50,
             "baseAttack":11,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"n&l",
+                "attack": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/cactus2/cactus2-Sheet.png",
             "size": [32,64],
@@ -174,12 +176,13 @@
         },
 
         {   "name":"kingtus",
+            "specialAttackDescription":"The player takes 28 damage.",
             "description":"Yeah he works out",
             "maxHP":120,
             "baseAttack":20,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"n&l&F(s&l)",
+                "attack": "mission.player.takeHit(28);"
             },
             "sprite":"assets/sprites/enemies/kingtus/kingtus-Sheet.png",
             "size": [64,64],
@@ -187,12 +190,13 @@
         },
 
         {   "name":"wormling",
+            "specialAttackDescription":"The player takes 15 damage.",
             "description":"A wriggly worm",
             "maxHP":55,
-            "baseAttack":12,
+            "baseAttack":10,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#Ot&!n",
+                "attack": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
             "size": [32,32],
@@ -200,12 +204,13 @@
         },
 
         {   "name":"darude_sandworm",
+            "specialAttackDescription":"The player takes 25 damage.",
             "description":"What's this thing's name again?",
             "maxHP":130,
-            "baseAttack":23,
+            "baseAttack":18,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"!#Ot&!(s|n)",
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/darude_sandworm/darude-Sheet.png",
             "size": [64,64],
@@ -213,24 +218,26 @@
         },
 
         {   "name":"snake",
+            "specialAttackDescription":"The player takes 17 damage.",
             "description":"Jones has left the Lobby",
             "maxHP":50,
-            "baseAttack":15,
+            "baseAttack":12,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"!t&!n",
+                "attack": "mission.player.takeHit(17);"
             },
             "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
             "size": [32,32],
 			      "image":"snake"
         },
         {   "name":"mummy",
+            "specialAttackDescription":"The player takes 20 damage.",
             "description":"Dead but alive",
             "maxHP":70,
-            "baseAttack":18,
+            "baseAttack":16,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"F(t&s)",
+                "attack": "mission.player.takeHit(20);"
             },
             "sprite":"assets/sprites/enemies/mummy/mummy-Sheet.png",
             "size": [32,32],
@@ -238,12 +245,13 @@
         },
 
         {   "name":"pharaoh_yeah",
+            "specialAttackDescription":"The player takes 30 damage.",
             "description":"The woke one",
-            "maxHP":150,
-            "baseAttack":25,
+            "maxHP":130,
+            "baseAttack":22,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#G(!(s|t|n|l))",
+                "attack": "mission.player.takeHit(30);"
             },
             "sprite":"assets/sprites/enemies/pharaoh_yeah/pharaoh_yeah-Sheet.png",
             "size": [64,64],
@@ -251,12 +259,13 @@
         },
 
         {   "name":"bgpuff1",
+            "specialAttackDescription":"The player takes 25 damage.",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#G(s->l)",
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
             "size": [64,64],
@@ -264,12 +273,13 @@
         },
 
         {   "name":"bgpuff2",
+            "specialAttackDescription":"The player takes 25 damage.",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"t&#F(l&t&s)",
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
             "size": [64,64],
@@ -277,12 +287,13 @@
         },
 
         {   "name":"jkpuff",
+            "specialAttackDescription":"The player takes 25 damage.",
             "description":"A rude being.",
             "maxHP":160,
-            "baseAttack":28,
+            "baseAttack":20,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"!(n&s&l)",
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
             "size": [64,64],
@@ -290,12 +301,13 @@
         },
 
         {   "name":"ghost",
+            "specialAttackDescription":"The player takes 25 damage.",
             "description":"Who knew they were real?",
             "maxHP":110,
             "baseAttack":20,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#Ot&t",
+                "attack": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
@@ -303,36 +315,39 @@
         },
 
         {   "name":"stand1",
+            "specialAttackDescription":"The player takes 35 damage.",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#O(n&t)&t",
+                "attack": "mission.player.takeHit(35);"
             },
             "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
             "size": [32,32],
 			      "image":"stand1"
         },
         {   "name":"stand2",
+            "specialAttackDescription":"The player takes 35 damage.",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#O(l&s)&",
+                "attack": "mission.player.takeHit(35);"
             },
             "sprite":"assets/sprites/enemies/stand2/stand2-Sheet.png",
             "size": [32,32],
 			      "image":"stand2"
         },
         {   "name":"boss",
+            "specialAttackDescription":"The player takes 50 damage.",
             "description":"Worse news",
             "maxHP":200,
-            "baseAttack":45,
+            "baseAttack":40,
             "specialAttack":{
-                "formula":"n",
-                "attack": "return;"
+                "formula":"#O(#Os&s)&s&t",
+                "attack": "mission.player.takeHit(50);"
             },
             "sprite":"assets/sprites/enemies/boss/boss-Sheet.png",
             "size": [32,64],
