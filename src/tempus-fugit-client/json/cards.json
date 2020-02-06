@@ -44,7 +44,7 @@
 		"maxCardsInDeck":"1"},
 
 		{"name":"Higher nature stand",
-		"description":"Deals 12 dmg to all enemies!",
+		"description":"Deals 15 dmg to all enemies!",
 		"image":"nature_stand",
 		"formula":"#On&(n|s)",
 		"cardKind":"global",
@@ -55,7 +55,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Light stand",
-		"description":"Deals 5 dmg to all enemies!",
+		"description":"Deals 8 dmg to all enemies!",
 		"image":"lightning_stand",
 		"formula":"#Ol&l",
 		"cardKind":"global",
@@ -66,7 +66,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Heal stand",
-		"description":"Heals 15 dmg!",
+		"description":"Heals 50 dmg!",
 		"image":"heal_stand",
 		"formula":"n&l&#Ft",
 		"cardKind":"global",
@@ -77,7 +77,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Higher heal stand",
-		"description":"Heals 40 dmg!",
+		"description":"Heals 100 dmg!",
 		"image":"heal_stand",
 		"formula":"#O(l&n)&(n<->!t)",
 		"cardKind":"global",
@@ -88,7 +88,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning stand",
-		"description":"Deals 15 dmg to all enemies!",
+		"description":"Deals 25 dmg to all enemies!",
 		"image":"lightning_stand",
 		"formula":"#Ol&l&#F(s&n)",
 		"cardKind":"global",
@@ -99,14 +99,14 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning Strike",
-		"description":"Deals 10 damage to a foe but un-sets light this round",
+		"description":"Deals 12 damage to a foe but un-sets light this round",
 		"image":"lightning_strike",
 		"formula":"l&(n|t)",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"target.takeHit(10, mission);mission.gameState.setVariableValues({'l':{0:false}});",
-		"comment":"Deals 10 dmg to an enemy, also: ->!l",
+		"action":"target.takeHit(12, mission);mission.gameState.setVariableValues({'l':{0:false}});",
+		"comment":"Deals 12 dmg to an enemy, also: ->!l",
 		"maxCardsInDeck":"4"},
 
 		{"name":"Lightning rain",
@@ -121,7 +121,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Natural heal",
-		"description":"Heals you by 15 HP and sets the next two nature",
+		"description":"Heals you by 50 HP and sets the next two nature",
 		"image":"slight_heal",
 		"formula":"n&#On",
 		"cardKind":"player",
@@ -143,18 +143,18 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Anti-evolution",
-		"description":"Deals 12 damage to a foe but unsets nature",
+		"description":"Deals 16 damage to a foe but unsets nature",
 		"image":"unknown",
 		"formula":"n&t&!l",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"target.takeHit(12, mission);mission.gameState.setVariableValues({'n':{0:false}});",
+		"action":"target.takeHit(16, mission);mission.gameState.setVariableValues({'n':{0:false}});",
 		"comment":"Deals 12 damage, also -> !n",
 		"maxCardsInDeck":"2"},
 
 		{"name":"Dark beam",
-		"description":"Deals 25 damage to a foe but un-sets three light!",
+		"description":"Deals 35 damage to a foe but un-sets three light!",
 		"image":"dark_beam",
 		"formula":"(l|#Ol)<->t&s",
 		"cardKind":"directed",
@@ -187,7 +187,7 @@
 		"maxCardsInDeck":"3"},
 
 		{"name":"Unnatural heal",
-		"description":"Heals you by 50 HP but un-sets all nature from this round on!",
+		"description":"Heals you by 150 HP but un-sets all nature from this round on!",
 		"image":"big_heal",
 		"formula":"#On&!n&t",
 		"cardKind":"player",
@@ -198,13 +198,13 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Guiding Light",
-		"description":"Augments Base attack by 1 and globally light",
+		"description":"Augments Base attack by 2 and globally light",
 		"image":"light_bs",
 		"formula":"#Ol&l&s",
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.baseAttack+=1;mission.gameState.setAllVariableValues([{variable:'l', start:1, end:-1, local:true, value:true}]);",
+		"action":"mission.player.baseAttack+=2;mission.gameState.setAllVariableValues([{variable:'l', start:1, end:25, local:true, value:true}]);",
 		"comment":"Base attack up by 1 and: -> Gl",
 		"maxCardsInDeck":"2"},
 
@@ -220,14 +220,14 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Root pierce",
-		"description":"7 dmg to a foe, sets the next two transmute and next strength",
+		"description":"8 dmg to a foe, sets: Next two transmute, next strength",
 		"image":"tree",
 		"formula":"n&l",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"4",
-		"action":"target.takeHit(7, mission);mission.gameState.setAllVariableValues([{variable:'t', start:1, end:3, local:true, value:true}]);mission.gameState.setVariableValues({'s':{1:true}});",
-		"comment":"deals 7 damage to a random foe",
+		"action":"target.takeHit(8, mission);mission.gameState.setAllVariableValues([{variable:'t', start:1, end:3, local:true, value:true}]);mission.gameState.setVariableValues({'s':{1:true}});",
+		"comment":"deals 8 damage to a foe",
 		"maxCardsInDeck":"3"}
 
 ]}

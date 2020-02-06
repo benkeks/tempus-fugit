@@ -43,7 +43,8 @@
 			      "image":"slime3"
         },
 
-        {   "name":"slime_mother",
+        {   "name":"Mother of Slimes",
+            "key":"slime_mother",
     	      "description":"The mother of all slimes!",
       			"specialAttackDescription":"The player takes 20 damage.",
             "maxHP":60,

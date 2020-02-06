@@ -186,7 +186,7 @@ export class NavigationScene extends Phaser.Scene {
 
             b.on("pointerdown", pointer => {
                 if (this.missionKeys[i] in Deck.Decks) this.deck.deck = Deck.Decks[this.missionKeys[i]];
-                
+
                 this.scene.start("MissionScene", {
                     key: this.missionKeys[i],
                     index: i,
@@ -206,7 +206,7 @@ export class NavigationScene extends Phaser.Scene {
                     b.setTexture("bullet_point_hover_done");
                 }
 
-            
+
             })
 
             b.on("pointerout", pointer => {
@@ -435,7 +435,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public initGame() {
 
-        this.player = new Player("Willy", 500, 5);
+        this.player = new Player("Willy", 125, 2);
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
 
         this.deck = new Deck();
