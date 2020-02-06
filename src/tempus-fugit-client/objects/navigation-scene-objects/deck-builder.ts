@@ -5,6 +5,7 @@ import { Deck } from "../game-objects/deck";
 import { Card } from "../game-objects/card";
 import { Player } from "../game-objects/player";
 import { DescritptionDialog } from "./description-dialog";
+import { NavigationScene } from "../../scenes/navigation-scene";
 
 const BACKGROUND_COLOR_FILL = 0x607d8b
 const BACKGROUND_COLOR_LINE = 0x000
@@ -23,6 +24,10 @@ const BUTTON_BACKGROUND_COLOR = 0x666666;
 const BUTTON_BACKGROUND_LINE = 0x000;
 const BUTTON_BACKGROUND_LINE_HOVER = 0xFFFFFF;
 const RECT_LINE_WIDTH = 3;
+
+const COLOR_PRIMARY = 0x4e342e;
+const COLOR_LIGHT = 0x7b5e57;
+const COLOR_DARK = 0x260e04;
 
 const RED = 0xdd6666;
 
@@ -123,6 +128,41 @@ export class DeckBuilder {
         header.setDepth(100).layout();
 
         //@ts-ignore
+        let radioButton =this.scene.rexUI.add.buttons({
+            x: 200, y: 100,
+            orientation: 'h',
+            //@ts-ignore
+            background: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_TEXT_AREA),
+            buttons: [
+                DeckBuilder.createRadioButton(this.scene, 'custom', undefined),
+                DeckBuilder.createRadioButton(this.scene, 'default', undefined)
+            ],
+
+            type: 'radio',
+            setValueCallback: function (button, value) {
+                button.getElement('icon')
+                    .setFillStyle((value)? COLOR_LIGHT : undefined);
+                if (value) {
+                    if (button.name == "custom") {
+                        NavigationScene.instance.useCustomDeck = true;
+                    } else {
+                        NavigationScene.instance.useCustomDeck = false;
+                    }
+                }
+            },
+            setValueCallbackScope:this,
+            click: {
+                mode: 'pointerup',
+                clickInterval: 100
+            }
+
+        })
+            .setDepth(100).layout();
+        radioButton.emitButtonClick(0);
+        let leftToolBar = [radioButton];
+
+
+        //@ts-ignore
         this.mainPanel = this.scene.rexUI.add.dialog({
             x:this.screenPadding,
             y:this.screenPadding,
@@ -130,6 +170,7 @@ export class DeckBuilder {
             height:this.backgroundHeight,
             content:this.backgroundPanel,
             toolbar:toolbar,
+            leftToolbar:leftToolBar,
             title:header,
             //@ts-ignore
             background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, BACKGROUND_COLOR_FILL)
@@ -139,14 +180,14 @@ export class DeckBuilder {
                 right:this.screenMargin,
                 top:this.screenMargin/2,
                 bottom:this.screenMargin,
-                titleLeft: 105+400,
+                titleLeft: 105+300,
                 titleRight: 70+400,
                 toolbarItem:10
             },
             expand:{content:true}
         });
         this.mainPanel.setOrigin(0);
-        this.mainPanel.layout();
+        this.mainPanel.setInteractive().layout();
         this.backgroundPanel.layout();
 
         this.deckName = "custom";
@@ -167,8 +208,6 @@ export class DeckBuilder {
                 this.showTutorial();
            }
         }, this);
-
-        console.log(Deck.Decks["custom"].deck);
     }
 
     public showTutorial() {
@@ -597,5 +636,26 @@ export class DeckBuilder {
         elem.destroy(true);
 
         this.addCardToCardsViewer(card);
+    }
+
+    public static createRadioButton(scene, text, name) {
+        if (name === undefined) {
+            name = text;
+        }
+        var button = scene.rexUI.add.label({
+            width: 100,
+            height: 40,
+            text: scene.add.text(0, 0, text, { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
+            icon: scene.add.circle(0, 0, 10).setStrokeStyle(1, COLOR_DARK),
+            space: {
+                left: 10,
+                right: 10,
+                icon: 10
+            },
+    
+            name: name
+        });
+    
+        return button;
     }
 }
