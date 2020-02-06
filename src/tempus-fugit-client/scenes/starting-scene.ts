@@ -55,7 +55,7 @@ export class StartingScene extends Phaser.Scene {
 
         const playText = this.add.text(
             GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
-            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 85),
+            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80),
             "Play",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 4), fontFamily: "pressStart" }
         );
@@ -78,7 +78,7 @@ export class StartingScene extends Phaser.Scene {
 
         const credits = this.add.text(
             GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50),
-            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 95),
+            GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 90),
             "Credits",
             { fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 4), fontFamily: "pressStart" }
         ).setOrigin(0.5).setColor('#402539').setInteractive();

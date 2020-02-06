@@ -1,14 +1,13 @@
 export class CreditScene extends Phaser.Scene {
     public prevScene: string;
     public c: Phaser.GameObjects.Text[] = [];
-    public timer: number = 90;
-    public creditIndex: number = 0;
-    public speed: number;
+    public nextDelay: number = 90;  // when this equals credit delay the next line will be displayed
+    public creditIndex: number = 0;             // it gets reset to 0 every credit
+    public speed: number;                       // set it close to credit delay so they start quick
     public slowSpeed: number = 1;
     public fastSpeed: number = 10;
-    public creditDelay: number = 100;
+    public creditDelay: number = 100;   // delay between credits
     public fontSize: number = 36;
-    public skip: Phaser.GameObjects.Text;
 
     constructor() {
         super({
@@ -51,16 +50,16 @@ export class CreditScene extends Phaser.Scene {
     }
 
     update(time: number, delta: number): void {
-        this.timer += this.speed;
+        this.nextDelay += this.speed;
 
-        if (this.timer > this.creditDelay && this.creditIndex < credits.length) {
+        if (this.nextDelay > this.creditDelay && this.creditIndex < credits.length) {
             let text = credits[this.creditIndex];
             this.c.push(this.add.text(1920 / 2, 1080, credits[this.creditIndex], {
                 fontSize: `${this.fontSize}px`,
                 fontFamily: 'pressStart'
             }).setOrigin(0.5));
             this.creditIndex += 1;
-            this.timer = 0;
+            this.nextDelay = 0;
         }
 
         this.moveCredits(this.speed);
