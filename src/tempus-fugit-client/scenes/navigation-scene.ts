@@ -468,7 +468,7 @@ export class NavigationScene extends Phaser.Scene {
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
         let d = new Deck();
         
-        Deck.Decks[this.missionKeys[0]].deck.forEach(c=> {d.deck.add(c)});
+        d.deck = {...Deck.Decks[this.missionKeys[0]].deck};
         Deck.Decks["custom"] = d;
         this.player.addCardType(Deck.Decks["custom"].deck);
 

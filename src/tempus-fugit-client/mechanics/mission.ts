@@ -543,7 +543,7 @@ export class Mission implements EnemyListener, PlayerListener {
                 let d: Deck = new Deck();
                 for (let c of m.deck) {
                     let card = Card.cards[c].copy();
-                    d.deck.add(card);
+                    d.deck[card.name] = card;
                 }
 
                 Deck.Decks[mission.key] = d;
