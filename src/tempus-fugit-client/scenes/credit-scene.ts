@@ -16,6 +16,7 @@ export class CreditScene extends Phaser.Scene {
     }
 
     create(data) {
+        this.sys.canvas.style.cursor = "default";
         this.prevScene = data.key;
         this.scene.pause(this.prevScene);
         this.speed = this.slowSpeed;
