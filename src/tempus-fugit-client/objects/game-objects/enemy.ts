@@ -155,6 +155,11 @@ export class Enemy {
         return this.currentHP > 0;
     }
 
+    public reduceBaseAttack() {
+        this.baseAttack -= 3;
+        if (this.baseAttack < 0) this.baseAttack = 0;
+    }
+
     /**
      * 
      */
