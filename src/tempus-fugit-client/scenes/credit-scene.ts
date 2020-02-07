@@ -76,7 +76,7 @@ const credits = [
     `Tempus Fugit`,
     `Made by ...`,
     `Lead Software Developer.....................................Tobias Loch`,
-    `Software Developer.......................................Mustafa Mohsen`,
+    `Software Developer/Inspiration...........................Mustafa Mohsen`,
     `Software Developer & Mergerequest Manager.................Florian Eyert`,
     `Software Developer, Mergerequest Manager & Artist............Kejni Dema`,
     `Product Owner, Card Designer & Artist............Maximilian Lukas Stamm`,
