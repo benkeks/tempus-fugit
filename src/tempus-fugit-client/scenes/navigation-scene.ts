@@ -222,7 +222,8 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset, -yOffset, b.getBounds().width + 2 * xOffset, b.getBounds().height + 2 * yOffset);
 
             b.on("pointerdown", pointer => {
-                this.createDialog(i);
+                console.log(this.useCustomDeck);
+                this.startMission(i, (this.useCustomDeck) ? "custom" : this.missionKeys[i]);
             });
 
             b.on("pointerover", pointer => {

@@ -71,6 +71,8 @@ export class DeckBuilder {
 
     public notEnoughCards;
 
+    public activeButton;
+
     constructor(scene: Scene, player:Player) {
         this.scene = scene;
         this.player = player;
@@ -127,40 +129,6 @@ export class DeckBuilder {
         });
         header.setDepth(100).layout();
 
-        //@ts-ignore
-        let radioButton =this.scene.rexUI.add.buttons({
-            x: 200, y: 100,
-            orientation: 'h',
-            //@ts-ignore
-            background: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_TEXT_AREA),
-            buttons: [
-                DeckBuilder.createRadioButton(this.scene, 'custom', undefined),
-                DeckBuilder.createRadioButton(this.scene, 'default', undefined)
-            ],
-
-            type: 'radio',
-            setValueCallback: function (button, value) {
-                button.getElement('icon')
-                    .setFillStyle((value)? COLOR_LIGHT : undefined);
-                if (value) {
-                    if (button.name == "custom") {
-                        NavigationScene.instance.useCustomDeck = true;
-                    } else {
-                        NavigationScene.instance.useCustomDeck = false;
-                    }
-                }
-            },
-            setValueCallbackScope:this,
-            click: {
-                mode: 'pointerup',
-                clickInterval: 100
-            }
-
-        })
-            .setDepth(100).layout();
-        radioButton.emitButtonClick(0);
-        let leftToolBar = [radioButton];
-
 
         //@ts-ignore
         this.mainPanel = this.scene.rexUI.add.dialog({
@@ -170,7 +138,6 @@ export class DeckBuilder {
             height:this.backgroundHeight,
             content:this.backgroundPanel,
             toolbar:toolbar,
-            leftToolbar:leftToolBar,
             title:header,
             //@ts-ignore
             background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, BACKGROUND_COLOR_FILL)
@@ -312,7 +279,7 @@ export class DeckBuilder {
 
         //@ts-ignore
         let background = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER);
+        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER).setOrigin(0);
 
         let padding = this.middlePadding;
         //@ts-ignore
@@ -396,7 +363,7 @@ export class DeckBuilder {
 
         //@ts-ignore
         let background = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
-        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER);
+        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER).setOrigin(0);
 
         let padding = this.middlePadding;
         //@ts-ignore
@@ -422,13 +389,12 @@ export class DeckBuilder {
                 bottom:10
             },
             expand:{title:false}
-        });
+        }); 
         header.layout();
 
         //@ts-ignore
         this.cardsSlider = this.scene.rexUI.add.scrollablePanel({
             width:this.middle,
-            height:this.backgroundHeight-2*this.screenMargin,
             panel:{child:this.cardsViewer,
                     mask:{padding:5}},
             scrollMode:"v",
@@ -452,7 +418,66 @@ export class DeckBuilder {
         });
         this.cardsSlider.setOrigin(0);
 
-        this.backgroundPanel.add(this.cardsSlider, 0, "center", {right:this.middlePadding, top:15}, true);
+        //@ts-ignore
+        let leftPanel = this.scene.rexUI.add.sizer({
+            orientation:"v"
+        });
+
+        //@ts-ignore
+        let buttonPanelBackground = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
+        .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER);
+        //@ts-ignore
+        let radioButton =this.scene.rexUI.add.buttons({
+            //x: 200, y: 100,
+            orientation: 'h',
+            //@ts-ignore
+            //background: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_TEXT_AREA),
+            buttons: [
+                this.createRadioButton(this.scene, 'Custom', undefined),
+                this.createRadioButton(this.scene, 'Default', undefined)
+            ],
+        })
+            .setDepth(9).layout();
+        radioButton.emitButtonClick(0);
+
+        //@ts-ignore
+        let buttonHeader = this.scene.rexUI.add.dialog({
+            //@ts-ignore
+            background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
+            .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER),
+            title:this.scene.add.text(0,0,"Active Deck", { fontSize: '16px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
+            space: {
+                top:10,
+                bottom:10
+            },
+            expand:{title:false}
+        }).setDepth(8);
+        buttonHeader.layout();
+
+        //@ts-ignore
+        let rButtonDialog = this.scene.rexUI.add.scrollablePanel({
+            height:100,
+            background:buttonPanelBackground,
+            panel:{child:radioButton,
+                mask:{padding:20}},
+            header:buttonHeader,
+            //expand:{actions:true, title:true},
+            space: {
+                left: 15,
+                right: 15,
+                top: 15,
+                bottom: 10,
+                panel: {left:100}
+            }
+        });
+        rButtonDialog.layout();
+        rButtonDialog.setScrollerEnable(false);
+        
+        leftPanel.add(this.cardsSlider, 1, "center", {}, true);
+        leftPanel.add(rButtonDialog, 0, "center", {top:this.middlePadding}, true);
+        leftPanel.layout();
+
+        this.backgroundPanel.add(leftPanel, 0, "center", {right:this.middlePadding, top:15}, true);
 
         for (let c_ind in this.player.cardTypes) {
             let c = this.player.cardTypes[c_ind];
@@ -514,9 +539,11 @@ export class DeckBuilder {
     expandTextHeight: false
         });
         label.layout();
-        label.setDepth(10)
 
         label.setInteractive().on("pointerover", function(pointer) {
+            let obj = this.cardsSlider.getElement("background")
+            if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
+            , pointer.x, pointer.y)) return;
             if (this.dragging) return;
 
             let drag = this.getDragCard(card);
@@ -529,6 +556,9 @@ export class DeckBuilder {
             let drag = this.getDragCard(card);
             drag.setVisible(false);
         },this).on("drag", function(pointer) {
+            let obj = this.cardsSlider.getElement("background")
+            if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
+            , pointer.x, pointer.y)) return;
             this.dragging = true;
             this.cardsSlider.setScrollerEnable(false);
             this.deckSlider.setScrollerEnable(false);
@@ -538,6 +568,7 @@ export class DeckBuilder {
             drag.label.setVisible(false);
             drag.setPosition(pointer.x, pointer.y);
         },this).on("dragend", function(pointer) {
+            if (!this.dragging) return;
             this.cardsSlider.setScrollerEnable(true);
             this.deckSlider.setScrollerEnable(true);
             let drag = this.getDragCard(card);
@@ -557,12 +588,12 @@ export class DeckBuilder {
     }
 
     public updateDeckTitleText() {
-        this.deckSliderTitle.setText("Deck - " + Object.keys(Deck.Decks[this.deckName].deck).length + " Cards");
+        this.deckSliderTitle.setText("Custom Deck - " + Object.keys(Deck.Decks[this.deckName].deck).length + " Cards");
         this.deckSliderDialog.layout();
     }
 
     public createCard(card:Card):CardGUI {
-        let c:CardGUI = new CardGUI(this.scene,0,0,card).setScale(2)
+        let c:CardGUI = new CardGUI(this.scene,0,0,card).setScale(1.75)
         c.cross.destroy(true);
         c.setDepth(100);
 
@@ -592,6 +623,9 @@ export class DeckBuilder {
 
         let cardgui = this.createCard(card);
         cardgui.on("drag", function(pointer) {
+            let obj = this.deckSlider.getElement("background");
+            if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
+            , pointer.x, pointer.y)) return;
             this.dragging = true;
             this.cardsSlider.setScrollerEnable(false);
             this.deckSlider.setScrollerEnable(false);
@@ -602,6 +636,8 @@ export class DeckBuilder {
 
             drag.setPosition(pointer.x, pointer.y);
         },this).on("dragend", function(pointer) {
+            if (!this.dragging) return;
+
             this.cardsSlider.setScrollerEnable(true);
             this.deckSlider.setScrollerEnable(true);
             let drag = this.getDragCard(card);
@@ -638,7 +674,7 @@ export class DeckBuilder {
         this.addCardToCardsViewer(card);
     }
 
-    public static createRadioButton(scene, text, name) {
+    public createRadioButton(scene, text, name, config?) {
         if (name === undefined) {
             name = text;
         }
@@ -646,16 +682,44 @@ export class DeckBuilder {
             width: 100,
             height: 40,
             text: scene.add.text(0, 0, text, { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
-            icon: scene.add.circle(0, 0, 10).setStrokeStyle(1, COLOR_DARK),
+            icon: scene.add.circle(0, 0, 10).setStrokeStyle(3, COLOR_DARK),
             space: {
-                left: 10,
-                right: 10,
-                icon: 10
+                left: (config && config.left) ? config.left : 75,
+                right: (config && config.right) ? config.right : 75,
+                icon: (config && config.icon) ? config.icon : 10,
+                top:(config && config.top) ? config.top : 15
             },
     
             name: name
-        });
-    
+        }).layout().setDepth(10).setInteractive({useHandCursor:true});
+
+        button.on("pointerdown", function(pointer) {
+            if (this.activeButton) {
+                this.activeButton.getElement('icon')
+                .setFillStyle(undefined)
+            }
+
+            button.getElement('icon')
+                    .setFillStyle(COLOR_LIGHT);
+            if (button.name == "Custom") {
+                NavigationScene.instance.useCustomDeck = true;
+            } else {
+                NavigationScene.instance.useCustomDeck = false;
+            }
+            this.activeButton = button;
+        },this)
+
+        if (NavigationScene.instance.useCustomDeck && name == "Custom") {
+            this.activeButton = button;
+            button.getElement('icon')
+                    .setFillStyle(COLOR_LIGHT);
+        }
+        if (!NavigationScene.instance.useCustomDeck && name == "Default") {
+            this.activeButton = button;
+            button.getElement('icon')
+                    .setFillStyle(COLOR_LIGHT);
+        }
+   
         return button;
     }
 }

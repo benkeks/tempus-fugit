@@ -1,4 +1,3 @@
-import { Dialog } from 'phaser3-rex-plugins/templates/ui/ui-components.js';
 import { Scene } from 'phaser';
 import { GameInfo } from '../../game';
 
