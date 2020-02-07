@@ -40,7 +40,6 @@ import { op_and,
 
 export class NavigationScene extends Phaser.Scene {
 
-
     public backgroundTexture: TileSprite;
     public bulletPoint: Sprite[] = [];
     public overworld: Sprite;
@@ -63,6 +62,7 @@ export class NavigationScene extends Phaser.Scene {
     public activeDialog;
 
     public static instance:NavigationScene;
+    public useCustomDeck:boolean = false;
 
     public cheats = [
         [["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"], 0, this.enableAllLevels, this]
@@ -222,7 +222,7 @@ export class NavigationScene extends Phaser.Scene {
             b.input.hitArea.setTo(-xOffset, -yOffset, b.getBounds().width + 2 * xOffset, b.getBounds().height + 2 * yOffset);
 
             b.on("pointerdown", pointer => {
-                this.createDialog(i);
+                this.startMission(i, (this.useCustomDeck) ? "custom" : this.missionKeys[i]);
             });
 
             b.on("pointerover", pointer => {
@@ -236,7 +236,7 @@ export class NavigationScene extends Phaser.Scene {
                     b.setTexture("bullet_point_hover_done");
                 }
 
-
+            
             })
 
             b.on("pointerout", pointer => {
@@ -459,6 +459,7 @@ export class NavigationScene extends Phaser.Scene {
             cc.setScale(scale);
         }
 
+
         this.levelText = new MissionNameGui(this, GameInfo.width / 2, GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
 
         this.helpButton = new HelpButton(this, false);
@@ -471,9 +472,9 @@ export class NavigationScene extends Phaser.Scene {
             let loot = data.mission.loot;
             let final = false;
             if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
+
             this.player.addCardType(loot);
             this.scene.run("NewCardScene", { loot: loot, final:final});
-            if (final) this.scene.run("Credits", {key: "NewCardScene"});
             this.scene.pause("NavigationScene");
         }
 
@@ -488,7 +489,7 @@ export class NavigationScene extends Phaser.Scene {
 
     public initGame() {
 
-        this.player = new Player("Willy", 125, 2);
+        this.player = new Player("Willy", 500, 5);
         this.player.missionStates = [false, false, false, false, false, false, false, false, false];
         let d = new Deck();
         

@@ -16,6 +16,7 @@ export class CreditScene extends Phaser.Scene {
     }
 
     create(data) {
+        this.sys.canvas.style.cursor = "default";
         this.creditIndex = 0;
         this.nextDelay = 90;
         this.onScreen = [];
