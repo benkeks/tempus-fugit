@@ -199,8 +199,8 @@
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Obliterate", "Incinerate"],
-            "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+			"loot":["Incinerate"],
+            "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Club Pyramid",
@@ -227,7 +227,7 @@
                 "1":"boss_theme"
 			},
 			"loot":["Aura of Weakness", "Higher heal stand"],
-            "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"King Janpuff live in concert",
@@ -265,8 +265,8 @@
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Strength"],
-            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
+			"loot":["Obliterate"],
+            "deck":["Aura of Weakness", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         },
         {
             "name":"The final act",
@@ -299,8 +299,8 @@
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Strength"],
-            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
+			"loot":["Tempus Fugit"],
+            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         }
 
     ]
