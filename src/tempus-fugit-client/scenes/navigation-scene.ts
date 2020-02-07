@@ -112,6 +112,9 @@ export class NavigationScene extends Phaser.Scene {
             let cards = Object.keys(Card.cards).map(function(key){
                 return Card.cards[key];
             });
+            this.player.currentHP = 125 + 25*Object.keys(this.missionKeys).length;
+            this.player.maxHP = this.player.currentHP;
+            this.player.baseAttack = 2+Object.keys(this.missionKeys).length;
             scene.player.addCardType(cards);
             HelpWindow.help_data = [op_and,
                 op_or,
