@@ -212,7 +212,7 @@ export class DeckBuilder {
 
     public showTutorial() {
         this.scene.scene.run("DialogScene", {parent:"DeckBuilderScene", 
-                description:"This is the DeckBuilder. Here you can design a custom deck by dragging objects from left to right and reverse. You can only have 4 to 16 cards of a differend kind in your deck. You can use this deck by simply click on a mission and selecting custom deck."});
+                description:"This is the DeckBuilder. Here you can design a custom deck by dragging objects from left to right and reverse. You need at least 4 cards in your deck.\n\nYou can choose to play with your custom deck or a premade (default) deck."});
 
     }
 
@@ -557,7 +557,7 @@ export class DeckBuilder {
     }
 
     public updateDeckTitleText() {
-        this.deckSliderTitle.setText("Deck - " + Object.keys(Deck.Decks[this.deckName].deck).length);
+        this.deckSliderTitle.setText("Deck - " + Object.keys(Deck.Decks[this.deckName].deck).length + " Cards");
         this.deckSliderDialog.layout();
     }
 
