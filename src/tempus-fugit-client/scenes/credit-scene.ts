@@ -1,13 +1,13 @@
 export class CreditScene extends Phaser.Scene {
     public prevScene: string;
-    public c: Phaser.GameObjects.Text[] = [];
+    public onScreen: Phaser.GameObjects.Text[] = [];
     public nextDelay: number = 90;  // when this equals credit delay the next line will be displayed
     public creditIndex: number = 0;             // it gets reset to 0 every credit
     public speed: number;                       // set it close to credit delay so they start quick
     public slowSpeed: number = 1;
     public fastSpeed: number = 10;
     public creditDelay: number = 100;   // delay between credits
-    public fontSize: number = 36;
+    public fontSize: number = 24;
 
     constructor() {
         super({
@@ -17,6 +17,9 @@ export class CreditScene extends Phaser.Scene {
 
     create(data) {
         this.sys.canvas.style.cursor = "default";
+        this.creditIndex = 0;
+        this.nextDelay = 90;
+        this.onScreen = [];
         this.prevScene = data.key;
         this.scene.pause(this.prevScene);
         this.speed = this.slowSpeed;
@@ -36,11 +39,11 @@ export class CreditScene extends Phaser.Scene {
     }
 
     moveCredits(speed) {
-        this.c.map((credit, index) => {
+        this.onScreen.map((credit, index) => {
             credit.setPosition(credit.x, credit.y - speed);
             if (credit.y < -100) {  // off screen
                 credit.destroy();
-                this.c.splice(index, 1);    // remove reference from array
+                this.onScreen.splice(index, 1);    // remove reference from array
             }
         })
     }
@@ -55,7 +58,7 @@ export class CreditScene extends Phaser.Scene {
 
         if (this.nextDelay > this.creditDelay && this.creditIndex < credits.length) {
             let text = credits[this.creditIndex];
-            this.c.push(this.add.text(1920 / 2, 1080, credits[this.creditIndex], {
+            this.onScreen.push(this.add.text(1920 / 2, 1080, credits[this.creditIndex], {
                 fontSize: `${this.fontSize}px`,
                 fontFamily: 'pressStart'
             }).setOrigin(0.5));
@@ -65,37 +68,24 @@ export class CreditScene extends Phaser.Scene {
 
         this.moveCredits(this.speed);
 
-        if (this.creditIndex >= credits.length && this.c.length === 0) this.endCredits();
+        if (this.creditIndex >= credits.length && this.onScreen.length === 0) this.endCredits();
     }
 }
 
 const credits = [
-    `Placeholder Credits`,
-    `For helping kejni pass`,
-    `Everyone, you guys are the best <3`,
-    `For being a vampire`,
-    `Mustafa`,
-    `For being MVP and finishing game`,
-    `Tobi`,
-    `For not letting me do assets (not thanking)`,
-    `Alessio`,
-    'For sick spriting and design',
-    `Alessio and Max`,
-    `For cleanest code`,
-    `Florian`,
-    `For getting food`,
-    `Max`,
-    `AND LAST BUT NOT LEAST`,
-    `FOR KEEPING THE DREAM TEAM GOING`,
-    `THE VERY MOTIVATIONAL TUNES OF`,
+    `Tempus Fugit`,
+    `Made by ...`,
+    `Lead Software Developer................................Tobias Loch`,
+    `Software Developer.....................................Mustafa Mohsen`,
+    `Software Developer & Mergerequest Manager..............Florian Eyert`,
+    `Software Developer, Mergerequest Manager & Artist......Kejni Dema`,
+    `Product Owner, Card Designer & Artist............Maximilian Lukas Stamm`,
+    `Scrum Master, DevOP & Artist.......................Alessio Nicolo Perna`,
     `...............`,
+    `Music by ...`,
+    `Malek El-Tannir`,
     `...............`,
-    `...............`,
-    `...............`,
-    `...............`,
-    `...............`,
-    `...............`,
-    `PIANO MAN BY ANDY SALAD`,
-    `(thanks Mustafa)`
+    `Special Thanks to ...`,
+    `Willy Cai`
 ];
 

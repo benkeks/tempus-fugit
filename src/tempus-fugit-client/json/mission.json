@@ -71,7 +71,7 @@
                 ["goblin1", "moleg", "goblin1"]
             ],
             "monologue":{
-				"0": "Defeating the mother of all slimes sure left you scarred. Hopeing to find out who did this to them, you follow the road. Until ...",
+				"0": "Defeating the mother of all slimes sure left you scarred. Hoping to find out who did this to them, you follow the road. Until ...",
                 "1": "That didn't seem to be all of them. More are coming and they seem more aggressive. Watch out!",
                 "2": "The warning about this golem called Moleg sure sounded scary. Wait... Why does this rock have a mustache?",
                 "3": "Congratulations! You won!"
@@ -192,15 +192,15 @@
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
                     "blocking":"true",
-                    "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Please don't eat me."]]
+                    "text": [["darude_sandworm","Tonight we dine on wizard meat boys."], ["player", "Dear God! Please don't eat me. I just want to pass through"]]
                 }
             ],
             "music":{
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Obliterate", "Incinerate"],
-            "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+			"loot":["Incinerate"],
+            "deck":["Fireball", "Strength", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Club Pyramid",
@@ -227,7 +227,7 @@
                 "1":"boss_theme"
 			},
 			"loot":["Aura of Weakness", "Higher heal stand"],
-            "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"King Janpuff live in concert",
@@ -239,8 +239,8 @@
                 ["bgpuff1", "jkpuff", "bgpuff2"]
             ],
             "monologue":{
-				"0": "Even around these Icy lands goblins are around. These seem much fiercer though, than the ones at home",
-                "1": "A concert? In the middle of nowhere when it is freezing? How awful. Suddenly more goblins start to appear.",
+				"0": "Even around these Icy lands goblins are around. They seem much fiercer though than the ones at home",
+                "1": "A concert of King Janpuff?! In the middle of nowhere when it is freezing? How awful. Suddenly more goblins start to appear.",
                 "2": "That was some interesting information about this so called liberator. Who is he? Onwards you hear someone singing weird songs that makes you want to rest. What is going on?",
                 "3": "Congratulations! You won!"
             },
@@ -265,8 +265,8 @@
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Strength"],
-            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
+			"loot":["Obliterate"],
+            "deck":["Aura of Weakness", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Natural heal", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         },
         {
             "name":"The final act",
@@ -292,15 +292,15 @@
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
                     "blocking":"true",
-                    "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but it is obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like they did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
+                    "text": [["boss", "So you finally came."], ["player", "How... How can this be?"], ["boss","I knew it would come down to this. I don't want to explain myself but 'tis obvious that I am thou and thou art I."], ["player","How did it come down to this? How could you do this to the land you - NO - WE SWORE TO PROTECT?"], ["boss", "It doesn't matter anymore. My plan is almost complete. I will liberate my past self just like THEY did with me."], ["player","They? Stop speaking in riddles old man."], ["player", "(I need to finish this, before he can curse me.)"]]
                 }
             ],
             "music":{
                 "0":"battle_theme",
                 "2":"boss_theme"
 			},
-			"loot":["Strength"],
-            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Root pierce", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
+			"loot":["Tempus Fugit"],
+            "deck":["Aura of Weakness", "Obliterate", "Strength", "Incinerate", "Dark beam", "Vase of Desire", "Lightning stand", "Lightning rain", "Anti-evolution", "Guiding Light", "Unnatural heal", "Higher nature stand", "Sun flare", "Higher heal stand"]
         }
 
     ]

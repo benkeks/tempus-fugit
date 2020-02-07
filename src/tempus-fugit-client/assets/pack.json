@@ -17,6 +17,11 @@
             },
             {
                 "type": "image",
+                "key": "tempus_fugit",
+                "url": "assets/sprites/cards/tempus_fugit.png"
+            },
+            {
+                "type": "image",
                 "key": "dark_beam",
                 "url": "assets/sprites/cards/dark_beam1.png"
             },
@@ -249,7 +254,7 @@
                 "type": "image",
                 "key": "cardIcon",
                 "url": "assets/sprites/text-box/user.png"
-            }, 
+            },
             {
                 "type": "image",
                 "key": "nextPage",
