@@ -48,6 +48,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
        });
 
         this.sprite.anims.play(texture);
+        this.sprite.setDepth(100);
         this.sprite.setScale(GameInfo.scale);
 
         this.addText("");
@@ -61,12 +62,14 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         }
 
         this.setInteractive();
+    }
 
-        this.toolTip = new ToolTip(scene, 0, -GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30), this.sprite);
-        this.toolTip.addText(enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
-        this.toolTipText = this.toolTip.addText(enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
+    public initTooltips() {
+        this.toolTip = new ToolTip(this.scene, 0, -GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30), this.sprite);
+        this.toolTip.addText(this.enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
+        this.toolTipText = this.toolTip.addText(this.enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
         this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
-        this.toolTip.addText(enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+        this.toolTip.addText(this.enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
@@ -101,28 +104,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public updateEnemyAttributes():void {
         this.setText(0, "\u2694 " + this.enemy.baseAttack + "   \u2764 " + this.enemy.currentHP);
     }
-
-    /*
-    public popText(text:string):void {
-        //this.damageText.setText(text);
-        this.setVisible(true);
-
-        this.posY = this.y;
-        this.scene.add.tween({
-            targets: this,
-            alpha:{from: 0.2, to: 1},
-            y:{from: this.y, to:this.y-50},
-            ease: "Linear",
-            duration: 100,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-                this.setVisible(false);
-                this.setPosition(this.x, this.posY);
-            },
-            onCompleteScope: this
-        });
-    }*/
 
     public updateTint(gameState:GameState) {
         if (this.formula) this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));

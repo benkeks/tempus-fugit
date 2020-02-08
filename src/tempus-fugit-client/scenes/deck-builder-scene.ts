@@ -18,7 +18,7 @@ export class DeckBuilderScene extends Scene {
     create(data) {
         this.sys.canvas.style.cursor = "default";
         this.parentScene = data.parent;
-        this.window = new DeckBuilder(this, data.player);
+        this.window = new DeckBuilder(this, data.player, data.newCards);
         this.scene.pause(this.parentScene);
 
         this.window.mainPanel.on("destroy", function() {

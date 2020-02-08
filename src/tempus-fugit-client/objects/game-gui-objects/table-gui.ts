@@ -350,6 +350,7 @@ export class TableGUI implements GameStateListener {
      */
     private toggleRune(visible: boolean, column: number, row: number): void {
         let index = column * Object.keys(this.variables).length + row;
+        while (this.tableItems.length <= index) this.addColumns(1);
         this.tableItems[index].iconAlpha = Number(visible);
         this.variableTable.getElement('table').updateTable(true);
     }

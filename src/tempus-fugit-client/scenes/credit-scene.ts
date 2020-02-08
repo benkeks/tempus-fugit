@@ -8,6 +8,7 @@ export class CreditScene extends Phaser.Scene {
     public fastSpeed: number = 10;
     public creditDelay: number = 100;   // delay between credits
     public fontSize: number = 24;
+    public returnConfig;
 
     constructor() {
         super({
@@ -21,6 +22,7 @@ export class CreditScene extends Phaser.Scene {
         this.nextDelay = 90;
         this.onScreen = [];
         this.prevScene = data.key;
+        this.returnConfig = data.config;
         this.scene.pause(this.prevScene);
         this.speed = this.slowSpeed;
         //@ts-ignore
@@ -28,8 +30,8 @@ export class CreditScene extends Phaser.Scene {
         this.add.text(1700, 1000, 'Skip', {
             fontSize: '36px',
             fontFamily: 'pressStart',
-            color: '#ff3333'
-        }).setInteractive().on('pointerdown', this.endCredits, this);
+            color: '#FFFFFF'
+        }).setInteractive({useHandCursor:true}).on('pointerdown', this.endCredits, this);
         this.input.keyboard.on('keydown', e => {
             this.speed = this.fastSpeed;
         });
@@ -49,7 +51,8 @@ export class CreditScene extends Phaser.Scene {
     }
 
     endCredits() {
-        this.scene.run(this.prevScene);
+        if (this.returnConfig) this.scene.run(this.prevScene, this.returnConfig);
+        else this.scene.run(this.prevScene);
         this.scene.stop(this.scene.key);
     }
 

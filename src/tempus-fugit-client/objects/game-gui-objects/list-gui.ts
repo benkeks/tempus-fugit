@@ -73,6 +73,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
             let w: number = this.maxTextWidth + 2 * this.xPadding;
             line.setTo(0, 0, w, 0);
             line.setPosition(-w / 2, y);
+            line.setDepth(this.depth);
+            element.setDepth(this.depth);
 
             let height: number = element.getBounds().height + (2 * this.yPadding);
             //rect.setDisplaySize(this.maxTextWidth + 2*this.xPadding, height);
@@ -98,6 +100,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
         //this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight
         this.backgroundGraphics.fillRoundedRect(0, 0, this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight);
         this.backgroundGraphics.strokeRoundedRect(0, 0, this.maxTextWidth + strokeWidth + 2 * this.xPadding, y + strokeWidth * 2 - dHeight);
+        this.backgroundGraphics.setDepth(this.depth);
+        //this.sprite.setDepth(this.depth)
 
         this.add(this.backgroundGraphics);
         this.sendToBack(this.backgroundGraphics);

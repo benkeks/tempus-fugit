@@ -34,6 +34,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     public backgroundHeight;
 
     public newCardText: Phaser.GameObjects.Text;
+    public newCardTextBackground: Phaser.GameObjects.Graphics;
 
     public box:Phaser.GameObjects.Graphics;
     public text:Phaser.GameObjects.Text;
@@ -79,22 +80,24 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let text = "You unlocked new Cards!";
         if (final) text = "You unlocked a cheat code!";
 
-        //@ts-ignore
-        this.newCardText = this.scene.rexUI.add.buttons({
-            x:GameInfo.width/2, y:this.screenPadding * 1.75,
-            orientation:"v",
-            //@ts-ignore
-            background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, CARD_CONTAINER_COLOR)
-            .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER),
-            //@ts-ignore
-            buttons:[this.scene.rexUI.add.sizer({}).add(
-                this.scene.add.text(0,0,text, { fontSize: '32px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }), 
-                0, "center", {left:200, right:200, bottom:15, top:15}).layout()
+        let b_x = (GameInfo.width/2)-this.screenPadding
+        let b_y = this.screenPadding/2;
+        let b_width = 1000;
+        let b_height = 50;
+        this.newCardTextBackground = scene.add.graphics({
+            x: b_x-b_width/2,
+            y: b_y-b_height/2,
+            fillStyle: { color: 0xFFFFFF },
+            lineStyle: { color: 0x000, width: 3 }
+        });
+        //GameInfo.width-2*this.screenPadding, GameInfo.height-2*this.screenPadding
+        this.newCardTextBackground.fillRoundedRect(0, 0, b_width, b_height);
+        this.newCardTextBackground.strokeRoundedRect(0, 0, b_width, b_height);
+        this.add(this.newCardTextBackground);
+
+        this.newCardText = this.scene.add.text(b_x, b_y,text,{ fontSize: '32px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' });
             
-        ],
-        space:100
-        }).layout();//scene.add.text(this.dot.x, this.screenPadding / 2, text, { fontSize: '32px', fontFamily: 'pressStart', color: '#000000' });
-        this.newCardText.setOrigin(0.5, 0);
+        this.newCardText.setOrigin(0.5);
         this.add(this.newCardText);
 
         this.add(this.dot);

@@ -65,6 +65,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public phaseWheel: WheelGUI;
 
     public delay:number = 1250;
+    public showCredits:boolean = false;
 
     constructor() {
         super({
@@ -81,6 +82,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.missionIndex = data.index;
         this.tfgame.player = data.player;
         this.tfgame.deck = data.deck;
+        this.showCredits = data.showCredits;
         this.tfgame.listener.push(this);
 
         MissionScene.latestData = {
@@ -100,6 +102,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         // this.background.setScale(scale).setScrollFactor(0)
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
             .setScale(1);
+
+        this.input.keyboard.on("keydown", e => {
+            if (e.key == "b") {
+                this.tfgame.nextWave(this.tfgame.enemies.length);
+            }
+        },this)
 
 
         //Menun Layout
@@ -223,7 +231,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.events.on('resume', function () {
             this.tfgame.active = true;
-            if (this.tfgame.isGameWon()) this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex, tutorial:false });
+            if (this.tfgame.isGameWon()) {
+                if (this.showCredits) {
+                    this.scene.start("Credits", {key:"NavigationScene", config:{ mission: this.tfgame, index: this.missionIndex, tutorial:false }});
+                } else {
+                    this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex, tutorial:false });
+                }
+            }
         }, this);
     }
 
