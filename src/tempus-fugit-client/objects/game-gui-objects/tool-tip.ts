@@ -37,7 +37,7 @@ export class ToolTip extends ListGUI {
            if (this.faderTimer) this.faderTimer.destroy();
            this.fadeOut();
         }, this);
-        this.setDepth(10);
+        this.setDepth(1000);
 
         this.setVisible(false);
     }

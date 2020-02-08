@@ -29,8 +29,8 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
                 [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 60)]],
 
             3: [[GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 65), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 58)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 77), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 58)],
-                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 90), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 58)]],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 78), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 58)],
+                [GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 91), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 58)]],
         };
 
         this.mission = mission;
@@ -50,10 +50,16 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
         });
     }
 
+    public initTooltips() {
+        for (let enemy of this.enemies) {
+            enemy.initTooltips();
+        }
+    }
+
     public setEnemies(enemies:Enemy[], fadeIn:boolean=false, gameState:GameState=undefined) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
-            enemy.disableListeners();
+            enemy.die();
             this.remove(enemy);
         }
 
@@ -79,6 +85,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
 
             if (fadeIn) this.fadeIn(enemyGUI, x+this.fadeInOffset, x);
         }
+        this.initTooltips();
     }
 
     public reposition() {

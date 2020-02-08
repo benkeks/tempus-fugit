@@ -198,13 +198,13 @@
 		"maxCardsInDeck":"3"},
 
 		{"name":"Unnatural heal",
-		"description":"Heals you by 150 HP but un-sets all nature from this round on!",
+		"description":"Heals you by 100 HP but un-sets all nature from this round on!",
 		"image":"big_heal",
 		"formula":"#On&!n&t",
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.heal(50);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:-1, local:true, value:false}]);",
+		"action":"mission.player.heal(100);mission.gameState.setAllVariableValues([{variable:'n', start:0, end:-1, local:true, value:false}]);",
 		"comment":"heals player by 50 and: -> !Fn",
 		"maxCardsInDeck":"2"},
 

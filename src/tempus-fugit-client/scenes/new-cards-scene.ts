@@ -12,6 +12,7 @@ export class NewCardsScene extends Scene {
     }
 
     create(data?) {
+        this.scene.pause("NavigationScene")
         this.newCardsGui = new NewCardsViewer(this, data.final);
         this.newCardsGui.flush(data.loot);
 

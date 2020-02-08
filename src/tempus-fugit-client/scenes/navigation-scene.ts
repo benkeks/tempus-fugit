@@ -85,17 +85,17 @@ export class NavigationScene extends Phaser.Scene {
         8: [7]
     };
 
-    public missionKeys: { [index: number]: string } = {
-        0: "tutorial",
-        1: "mission1",
-        2: "mission2",
-        3: "mission3",
-        4: "mission4",
-        5: "mission5",
-        6: "mission6",
-        7: "mission7",
-        8: "mission8"
-    };
+    public missionKeys: string[] = [
+        "tutorial",
+        "mission1",
+        "mission2",
+        "mission3",
+        "mission4",
+        "mission5",
+        "mission6",
+        "mission7",
+        "mission8"
+    ];
 
     public enableAllLevels(scene: NavigationScene): void {
         let allTrue = true;
@@ -115,6 +115,7 @@ export class NavigationScene extends Phaser.Scene {
             scene.player.currentHP = 125 + 25*Object.keys(scene.missionKeys).length;
             scene.player.maxHP = scene.player.currentHP;
             scene.player.baseAttack = 2+Object.keys(scene.missionKeys).length;
+            cards.forEach(c => DeckBuilderButton.newCards.add(c.name));
             scene.player.addCardType(cards);
             HelpWindow.help_data = [op_and,
                 op_or,
@@ -130,6 +131,7 @@ export class NavigationScene extends Phaser.Scene {
                 op_until,
                 op_klammer]
             scene.scene.start("NavigationScene", {tutorial:false});
+            HelpButton.newInfo = true;
         }
     }
 
@@ -264,7 +266,8 @@ export class NavigationScene extends Phaser.Scene {
             key: this.missionKeys[index],
             index: index,
             player: this.player.copy(),
-            deck: Deck.Decks[deckName].copy()
+            deck: Deck.Decks[deckName].copy(),
+            showCredits:this.missionKeys.length-1==index
         });
     }
 
@@ -475,10 +478,14 @@ export class NavigationScene extends Phaser.Scene {
             let loot = data.mission.loot;
             let final = false;
             if (this.player.missionStates[this.player.missionStates.length-1]) final = true;
+            loot.forEach(e => {
+                DeckBuilderButton.newCards.add(e.name);
+            });
 
             this.player.addCardType(loot);
             this.scene.run("NewCardScene", { loot: loot, final:final});
-            this.scene.pause("NavigationScene");
+
+            this.deckBuilderButton.createNotification();
         }
 
         if (data.tutorial) {

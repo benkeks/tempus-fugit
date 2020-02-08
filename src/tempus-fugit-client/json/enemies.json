@@ -51,8 +51,7 @@
             "baseAttack":5,
             "specialAttack":{
                 "formula":"!(n|l|s)",
-                "action": "mission.player.takeHit(20);",
-                "attack": "return;"
+                "action": "mission.player.takeHit(20);"
             },
             "sprite":"assets/sprites/enemies/slime_mother/mama-Sheet.png",
             "size": [64,64],
@@ -80,7 +79,6 @@
             "baseAttack":6,
             "specialAttack":{
                 "formula":"#O(l&t)",
-                "attack": "return;",
                 "action": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
@@ -95,7 +93,6 @@
             "baseAttack":8,
             "specialAttack":{
                 "formula":"#O(l&t)",
-                "attack": "return;",
                 "action": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/goblin2/goblin2-Sheet.png",
@@ -110,7 +107,6 @@
             "baseAttack":13,
             "specialAttack":{
                 "formula":"!(s|t)",
-                "attack": "return;",
                 "action": "mission.player.takeHit(20);"
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
@@ -125,7 +121,6 @@
             "baseAttack":20,
             "specialAttack":{
                 "formula":"n&s&t",
-                "attack": "return;",
                 "action": "mission.player.takeHit(50);"
             },
             "sprite":"assets/sprites/enemies/general_goblin/general_goblin-Sheet.png",
@@ -140,7 +135,7 @@
             "baseAttack":12,
             "specialAttack":{
                 "formula":"n&t&l",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/moleg/moleg-Sheet.png",
             "size": [64,64],
@@ -154,7 +149,7 @@
             "baseAttack":10,
             "specialAttack":{
                 "formula":"G(!s)",
-                "attack": "mission.player.takeHit(15);"
+                "action": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/cactus1/cactus1-Sheet.png",
             "size": [32,64],
@@ -168,7 +163,7 @@
             "baseAttack":11,
             "specialAttack":{
                 "formula":"n&l",
-                "attack": "mission.player.takeHit(15);"
+                "action": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/cactus2/cactus2-Sheet.png",
             "size": [32,64],
@@ -182,7 +177,7 @@
             "baseAttack":20,
             "specialAttack":{
                 "formula":"n&l&F(s&l)",
-                "attack": "mission.player.takeHit(28);"
+                "action": "mission.player.takeHit(28);"
             },
             "sprite":"assets/sprites/enemies/kingtus/kingtus-Sheet.png",
             "size": [64,64],
@@ -196,7 +191,7 @@
             "baseAttack":10,
             "specialAttack":{
                 "formula":"#Ot&!n",
-                "attack": "mission.player.takeHit(15);"
+                "action": "mission.player.takeHit(15);"
             },
             "sprite":"assets/sprites/enemies/wormling/wormling-Sheet.png",
             "size": [32,32],
@@ -210,7 +205,7 @@
             "baseAttack":18,
             "specialAttack":{
                 "formula":"!#Ot&!(s|n)",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/darude_sandworm/darude-Sheet.png",
             "size": [64,64],
@@ -224,7 +219,7 @@
             "baseAttack":12,
             "specialAttack":{
                 "formula":"!t&!n",
-                "attack": "mission.player.takeHit(17);"
+                "action": "mission.player.takeHit(17);"
             },
             "sprite":"assets/sprites/enemies/snake/snake-Sheet.png",
             "size": [32,32],
@@ -237,7 +232,7 @@
             "baseAttack":16,
             "specialAttack":{
                 "formula":"F(t&s)",
-                "attack": "mission.player.takeHit(20);"
+                "action": "mission.player.takeHit(20);"
             },
             "sprite":"assets/sprites/enemies/mummy/mummy-Sheet.png",
             "size": [32,32],
@@ -251,7 +246,7 @@
             "baseAttack":22,
             "specialAttack":{
                 "formula":"#G(!(s|t|n|l))",
-                "attack": "mission.player.takeHit(30);"
+                "action": "mission.player.takeHit(30);"
             },
             "sprite":"assets/sprites/enemies/pharaoh_yeah/pharaoh_yeah-Sheet.png",
             "size": [64,64],
@@ -265,7 +260,7 @@
             "baseAttack":17,
             "specialAttack":{
                 "formula":"#G(s->l)",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/bgpuff1/bgpuff1-Sheet.png",
             "size": [64,64],
@@ -279,7 +274,7 @@
             "baseAttack":17,
             "specialAttack":{
                 "formula":"t&#F(l&t&s)",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/bgpuff2/bgpuff2-Sheet.png",
             "size": [64,64],
@@ -293,7 +288,7 @@
             "baseAttack":20,
             "specialAttack":{
                 "formula":"!(n&s&l)",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/jkpuff/janpuff-Sheet.png",
             "size": [64,64],
@@ -307,7 +302,7 @@
             "baseAttack":20,
             "specialAttack":{
                 "formula":"#Ot&t",
-                "attack": "mission.player.takeHit(25);"
+                "action": "mission.player.takeHit(25);"
             },
             "sprite":"assets/sprites/enemies/ghost/ghost-Sheet.png",
             "size": [32,32],
@@ -321,7 +316,7 @@
             "baseAttack":33,
             "specialAttack":{
                 "formula":"#O(n&t)&t",
-                "attack": "mission.player.takeHit(35);"
+                "action": "mission.player.takeHit(35);"
             },
             "sprite":"assets/sprites/enemies/stand1/stand1-Sheet.png",
             "size": [32,32],
@@ -333,8 +328,8 @@
             "maxHP":160,
             "baseAttack":33,
             "specialAttack":{
-                "formula":"#O(l&s)&",
-                "attack": "mission.player.takeHit(35);"
+                "formula":"#O(l&s)&n",
+                "action": "mission.player.takeHit(35);"
             },
             "sprite":"assets/sprites/enemies/stand2/stand2-Sheet.png",
             "size": [32,32],
@@ -347,7 +342,7 @@
             "baseAttack":40,
             "specialAttack":{
                 "formula":"#O(#Os&s)&s&t",
-                "attack": "mission.player.takeHit(50);"
+                "action": "mission.player.takeHit(50);"
             },
             "sprite":"assets/sprites/enemies/boss/boss-Sheet.png",
             "size": [32,64],

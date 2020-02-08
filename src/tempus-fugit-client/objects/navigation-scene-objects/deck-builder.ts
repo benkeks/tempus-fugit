@@ -14,7 +14,7 @@ const BORDER_WIDTH_TEXT_AREA = 4;
 const GUI_TEXT_AREA_BORDER = 0x000000;
 const GUI_TEXT_AREA = 0xf2f1e7;
 
-const GUI_FILL = 0xa96851;
+const GUI_FILL = 0xbf9486;
 const GUI_FILL_DARK = 0x5c4d4d;
 const GUI_SLIDER = 0x915b4a;
 
@@ -73,10 +73,14 @@ export class DeckBuilder {
 
     public activeButton;
 
-    constructor(scene: Scene, player:Player) {
+    public newCards:Set<string>;
+
+    constructor(scene: Scene, player:Player, newCards?:Set<string>) {
         this.scene = scene;
         this.player = player;
         this.screenMargin = this.screenPadding/2;
+        if (newCards) this.newCards = newCards;
+        else this.newCards = new Set<string>();
 
         this.backgroundWidth = GameInfo.width - 2 * this.screenPadding;
         this.backgroundHeight = GameInfo.height - 2 * this.screenPadding;
@@ -505,6 +509,7 @@ export class DeckBuilder {
         } else {
             this.player.cardTypes[card.name] = card;
         }
+        this.newCards.delete(card.name);
     }
 
     public createCardContainer(card:Card) {
@@ -514,11 +519,20 @@ export class DeckBuilder {
         let background = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, CARD_CONTAINER_COLOR)
         .setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER);
 
-        let sprite = this.scene.add.sprite(0,0, card.image);
+        let sprite = this.scene.add.sprite(0,0, card.image).setOrigin(0.5);
         let scale = maxWidth/sprite.displayWidth;
         sprite.setScale(scale);
 
+        //@ts-ignore
+        let nameSizer = this.scene.rexUI.add.sizer({});
         let name = this.scene.add.text(0,0, card.name, { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' })
+        nameSizer.add(name, 0, "left");
+
+        let action = undefined;
+        if (this.newCards.has(card.name)) {
+            this.newCards.delete(card.name);
+            action = this.scene.add.sprite(sprite.displayWidth/4, sprite.displayHeight/2, 'notification').setScale(2).setOrigin(0.5);
+        }
 
         //@ts-ignore
         let label = this.scene.rexUI.add.label({
@@ -527,15 +541,14 @@ export class DeckBuilder {
             background:background,
             orientation:"h",
             icon:sprite,
-            text:name,
+            text:nameSizer,
+            action:action,
             space: {
                 left:5,
                 right:5,
-                icon:5,
-                text:5
+                icon:10,
             },
-            
-    expandTextWidth: false,
+    expandTextWidth: true,
     expandTextHeight: false
         });
         label.layout();
@@ -558,11 +571,13 @@ export class DeckBuilder {
         },this).on("drag", function(pointer) {
             let obj = this.cardsSlider.getElement("background")
             if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
-            , pointer.x, pointer.y)) return;
+            , pointer.x, pointer.y) && !this.dragging) return;
             this.dragging = true;
             this.cardsSlider.setScrollerEnable(false);
             this.deckSlider.setScrollerEnable(false);
             let drag = this.getDragCard(card);
+
+            if (!drag.label) return;
 
             drag.setVisible(true);
             drag.label.setVisible(false);
@@ -573,6 +588,7 @@ export class DeckBuilder {
             this.deckSlider.setScrollerEnable(true);
             let drag = this.getDragCard(card);
             this.dragging = false;
+            if (!drag.label) return
 
             drag.setVisible(false);
             drag.label.setVisible(true);
@@ -593,7 +609,7 @@ export class DeckBuilder {
     }
 
     public createCard(card:Card):CardGUI {
-        let c:CardGUI = new CardGUI(this.scene,0,0,card).setScale(1.75)
+        let c:CardGUI = new CardGUI(this.scene,0,0,card).setScale(2)
         c.cross.destroy(true);
         c.setDepth(100);
 
@@ -625,7 +641,7 @@ export class DeckBuilder {
         cardgui.on("drag", function(pointer) {
             let obj = this.deckSlider.getElement("background");
             if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
-            , pointer.x, pointer.y)) return;
+            , pointer.x, pointer.y) && !this.dragging) return;
             this.dragging = true;
             this.cardsSlider.setScrollerEnable(false);
             this.deckSlider.setScrollerEnable(false);
@@ -684,8 +700,8 @@ export class DeckBuilder {
             text: scene.add.text(0, 0, text, { fontSize: '14px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
             icon: scene.add.circle(0, 0, 10).setStrokeStyle(3, COLOR_DARK),
             space: {
-                left: (config && config.left) ? config.left : 75,
-                right: (config && config.right) ? config.right : 75,
+                left: (config && config.left) ? config.left : 62,
+                right: (config && config.right) ? config.right : 62,
                 icon: (config && config.icon) ? config.icon : 10,
                 top:(config && config.top) ? config.top : 15
             },

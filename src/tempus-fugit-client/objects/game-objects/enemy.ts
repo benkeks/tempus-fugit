@@ -19,7 +19,6 @@ export class Enemy {
     public image:string;
 
     public specialAttack: Card; // The enemy's base attack strength
-    public reactAttacks: Card[]; // List of react effects
 
     public listener:EnemyListener[] = []; // A list of objects listening to events happening in the enemy
     public sprite:string;
@@ -47,7 +46,7 @@ export class Enemy {
     }
 
     public copy():Enemy {
-       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.reactAttacks, this.sprite, this.size);
+       let new_enemy:Enemy = new Enemy(this.name, this.maxHP, this.baseAttack, this.specialAttack, this.sprite, this.size);
        new_enemy.key = this.key;
        new_enemy.description = this.description;
        new_enemy.image = this.image;
@@ -65,7 +64,7 @@ export class Enemy {
      * @example someEnemy = new Enemy("Mr. Enemy", 40, 10, ["Fire attack", "Magic attack"]);
      * @author Florian
      */
-    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, reactAttacks: Card[], sprite:string, size:number[]) {
+    constructor(name: string, hp: number, baseAttack: number, specialAttack: Card, sprite:string, size:number[]) {
         this.listener = [];this.name = name;
         this.key = this.name;
         this.maxHP = hp;
@@ -73,7 +72,6 @@ export class Enemy {
         this.baseAttack = baseAttack;
         if (specialAttack) this.specialAttack = specialAttack;
         else this.specialAttack = undefined;
-        this.reactAttacks = reactAttacks;
         this.sprite = sprite;
         this.size = size;
 
@@ -116,6 +114,7 @@ export class Enemy {
     }
 
     public performTurn(mission:Mission):void {
+        let val = !this.applyCard(this.specialAttack, mission)
         if (!this.applyCard(this.specialAttack, mission)){
             mission.player.takeHit(this.baseAttack);
         }
@@ -135,14 +134,6 @@ export class Enemy {
         this.currentHP -= hitPower;
 
         this.listener.map(l => l.enemyHpChanged(this, before, this.currentHP));
-
-        // Flip-Effect: Attacks player when attacked and if formula is fulfilled
-        for (var reactAttack of this.reactAttacks) {
-            if (mission.gameState.evaluate(reactAttack.getFormula())) {
-                reactAttack.action(mission, mission.player);
-            }
-        }
-
     }
 
     /**
@@ -175,15 +166,6 @@ export class Enemy {
                 console.warn( e.name+ " does not have a texture given or its size is not in the right pattern. Nothing will be loaded.");
             }
 
-            let arr = [];
-            if (e.reactAttack) {
-                for (let i in e.reactAttack) {
-                    let att = e.reactAttack[i];
-                    arr.push(new Card(e.name + "_react_attack_" + i, "", "", att.formula,
-                        Card.DIRECTED, false, 0,  att.action));
-                }
-            }
-
             let special = undefined;
             if (e.specialAttack) {
                 special = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
@@ -196,7 +178,6 @@ export class Enemy {
                 e.maxHP,
                 e.baseAttack,
                 special,
-                arr,
                 e.sprite,
                 e.size
             );
