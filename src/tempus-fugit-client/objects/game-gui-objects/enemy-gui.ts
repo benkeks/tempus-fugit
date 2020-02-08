@@ -81,6 +81,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public die():void {
+        if (this.isDestroyed) return;
+
         this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },

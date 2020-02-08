@@ -103,11 +103,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
             .setScale(1);
 
-        this.input.keyboard.on("keydown", e => {
+        /*this.input.keyboard.on("keydown", e => {
             if (e.key == "b") {
                 this.tfgame.nextWave(this.tfgame.enemies.length);
+            } else if (e.key == "v"){
+                this.tfgame.nextWave(this.tfgame.enemies.length-1);
+                this.tfgame.player.currentHP = 1000;
             }
-        },this)
+        },this);*/
 
 
         //Menun Layout
@@ -232,10 +235,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.events.on('resume', function () {
             this.tfgame.active = true;
             if (this.tfgame.isGameWon()) {
+                let config = { mission: this.tfgame, index: this.missionIndex, tutorial:false };
+                console.log(this.showCredits);
                 if (this.showCredits) {
-                    this.scene.start("Credits", {key:"NavigationScene", config:{ mission: this.tfgame, index: this.missionIndex, tutorial:false }});
+                    this.scene.start("Credits", {key:"NavigationScene", config:config});
                 } else {
-                    this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex, tutorial:false });
+                    this.scene.start("NavigationScene", config);
                 }
             }
         }, this);

@@ -59,7 +59,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public setEnemies(enemies:Enemy[], fadeIn:boolean=false, gameState:GameState=undefined) {
         while (this.enemies.length > 0) { // remove old elements
             let enemy:EnemyGUI = this.enemies.pop();
-            enemy.disableListeners();
+            enemy.die();
             this.remove(enemy);
         }
 
