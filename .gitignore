@@ -1,6 +1,5 @@
 # Node JS
 node_modules/
-package-lock.json
 .yo-rc.json
 .idea/
 .devbox/
