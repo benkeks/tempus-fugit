@@ -60,33 +60,26 @@ module.exports = {
 
             chunks: 'async',
             minChunks: 1,
-            minSize: 30000,
-            name: true
+            minSize: 30000
         }
     },
 
     devServer: {
         open: true,
-        contentBase: path.resolve(__dirname, './dist/'),
+        static: path.resolve(__dirname, './dist/'),
     },
 
     resolve: {
         extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
-        new CopyPlugin([{
-                from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'),
-                to: 'assets'
-            },
-            {
-                from: path.resolve(__dirname, 'src/tempus-fugit-client/json'),
-                to: 'json'
-            },
-            {
-                from: path.resolve(__dirname, 'index.html'),
-                to: 'index.html'
-            },
-        ]),
+        new CopyPlugin({
+            patterns: [
+                { from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'), to: 'assets' },
+                { from: path.resolve(__dirname, 'src/tempus-fugit-client/json'), to: 'json' },
+                { from: path.resolve(__dirname, 'index.html'), to: 'index.html' },
+            ],
+        }),
     ],
     watchOptions: {
         poll: true

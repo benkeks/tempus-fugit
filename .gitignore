@@ -1,8 +1,12 @@
 # Node JS
 node_modules/
-package-lock.json
 .yo-rc.json
 .idea/
+.devbox/
+.cursor/
+
+devbox.json
+devbox.lock
 
 # Webpack
 dist/

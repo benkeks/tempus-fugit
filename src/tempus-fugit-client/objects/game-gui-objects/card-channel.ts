@@ -3,7 +3,7 @@ import Graphics = Phaser.GameObjects.Graphics;
 import { GameInfo } from "../../game";
 import { DecisionArrow } from "./decision-arrow";
 import { MissionScene } from "../../scenes/mission-scene";
-import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import { CardGUI } from "./card-gui";
 import { Card } from "../game-objects/card";
 import { EnemyGUI } from "./enemy-gui";
@@ -17,7 +17,7 @@ export class CardChannel extends Container {
 
     public book: Phaser.GameObjects.Sprite;
     // public dot: Graphics;
-    public dotParticles: ParticleEmitterManager;
+    public dotParticles: ParticleEmitter;
 
     public fadeOutDuration: number = 500;
     public fadeOutParticles = undefined;
@@ -33,11 +33,8 @@ export class CardChannel extends Container {
 
         this.book = scene.add.sprite(0, 0, 'book').setScale(3);
 
-        this.dotParticles = scene.add.particles("runes");
-        this.dotParticles.createEmitter({
-            frame: { frames: [0, 1, 2, 3] },
-            x: 0,
-            y: 0,
+        this.dotParticles = scene.add.particles(0, 0, "runes", {
+            frame: [0, 1, 2, 3],
             speed: 100,
             lifespan: { min: 300, max: 400 },
             blendMode: 'ADD',
@@ -91,8 +88,8 @@ export class CardChannel extends Container {
                         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
                         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
 
-                        this.emitter.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
-                        this.emitter.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
+                        this.emitter.ops.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
+                        this.emitter.ops.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
                     }
 
                     gameObject.setPosition(pointer.x, pointer.y); // dragging cards
@@ -176,12 +173,11 @@ export class CardChannel extends Container {
 
         this.dotParticles.setVisible(true);
         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
-        this.fadeOutParticles = this.missionScene.add.particles("runes");
 
         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
-        this.emitter = this.fadeOutParticles.createEmitter({
-            frame: { frames: [0, 1, 2, 3], cyle: true },
+        this.fadeOutParticles = this.missionScene.add.particles(0, 0, "runes", {
+            frame: [0, 1, 2, 3],
             x: {
                 min: x,
                 max: x + gameObject.displayWidth
@@ -203,6 +199,7 @@ export class CardChannel extends Container {
             },
             deathCallbackScope: this
         });
+        this.emitter = this.fadeOutParticles;
 
         this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
             this.emitter.setQuantity(0);
@@ -220,14 +217,11 @@ export class CardChannel extends Container {
         });
 
         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
-        this.fadeOutParticles = this.missionScene.add.particles("runes");
 
         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
-        this.emitter = this.fadeOutParticles.createEmitter({
-            frame: { frames: [0, 1, 2, 3], cyle: true },
-            x: this.x,
-            y: this.y,
+        this.fadeOutParticles = this.missionScene.add.particles(this.x, this.y, "runes", {
+            frame: [0, 1, 2, 3],
             speed: 400,
             lifespan: 500,
             blendMode: 'ADD',
@@ -241,6 +235,7 @@ export class CardChannel extends Container {
             },
             deathCallbackScope: this,
         });
+        this.emitter = this.fadeOutParticles;
 
         this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
             this.emitter.setQuantity(0);

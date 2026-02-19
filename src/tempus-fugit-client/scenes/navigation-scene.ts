@@ -222,10 +222,6 @@ export class NavigationScene extends Phaser.Scene {
 
             b.setInteractive({ useHandCursor: true });
 
-            let xOffset = 5;
-            let yOffset = 5;
-            b.input.hitArea.setTo(-xOffset, -yOffset, b.getBounds().width + 2 * xOffset, b.getBounds().height + 2 * yOffset);
-
             b.on("pointerdown", pointer => {
                 this.startMission(i, (this.useCustomDeck) ? "custom" : this.missionKeys[i]);
             });
@@ -326,7 +322,7 @@ export class NavigationScene extends Phaser.Scene {
                     onComplete: function () {
                         c.setVisible(false)
                     },
-                    onCompleteScope: this
+                    callbackScope: this
                 });
             }
         } else {
@@ -433,16 +429,17 @@ export class NavigationScene extends Phaser.Scene {
 
             if (b.texture.key == "bullet_point") {
                 let offset = 7;
-                let arr = this.add.sprite(coordinates[i][0], coordinates[i][1] - offset, "bullet_arrow");
+                let arrowBaseY = coordinates[i][1] - offset;
+                let arr = this.add.sprite(coordinates[i][0], arrowBaseY, "bullet_arrow");
                 arr.setScale(0.2);
                 arr.setOrigin(0, 0.5);
                 arr.setRotation(-Math.PI / 2)
 
-                this.add.tween({
+                this.tweens.add({
                     targets: arr,
-                    y: "-=1",
-                    ease: "Quadratic",
-                    duration: 300,
+                    y: { from: arrowBaseY - 2, to: arrowBaseY + 2 },
+                    ease: "Sine.InOut",
+                    duration: 800,
                     repeat: -1,
                     yoyo: true
                 });

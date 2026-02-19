@@ -1,7 +1,7 @@
 import { DeckListener, Deck } from "../game-objects/deck";
 import { Card } from "../game-objects/card";
 import { Scene } from "phaser";
-import ParticleEmitterManager = Phaser.GameObjects.Particles.ParticleEmitterManager;
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import { GameInfo } from "../../game";
 import { CardGUI } from "../game-gui-objects/card-gui";
 
@@ -21,7 +21,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     public scene: Scene;
 
     public dot: Phaser.GameObjects.Sprite;
-    public dotParticles: ParticleEmitterManager;
+    public dotParticles: ParticleEmitter;
 
     public fadeOutDuration: number = 1000;
     public fadeOutParticles;
@@ -36,13 +36,13 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     public newCardText: Phaser.GameObjects.Text;
     public newCardTextBackground: Phaser.GameObjects.Graphics;
 
-    public box:Phaser.GameObjects.Graphics;
-    public text:Phaser.GameObjects.Text;
-    public hoverBox:Phaser.GameObjects.Graphics;
+    public box: Phaser.GameObjects.Graphics;
+    public text: Phaser.GameObjects.Text;
+    public hoverBox: Phaser.GameObjects.Graphics;
 
-    public final:boolean;
+    public final: boolean;
 
-    constructor(scene: Scene, final:boolean=false) {
+    constructor(scene: Scene, final: boolean = false) {
         super(scene);
         scene.add.existing(this);
         this.scene = scene;
@@ -66,11 +66,8 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.dot.setScale(2.5);
         this.dot.setOrigin(0.5, 0.5);
 
-        this.dotParticles = scene.add.particles("runes");
-        this.dotParticles.createEmitter({
-            frame: { frames: [0, 1, 2, 3] },
-            x: this.dot.x,
-            y: this.dot.y,
+        this.dotParticles = scene.add.particles(this.dot.x, this.dot.y, "runes", {
+            frame: [0, 1, 2, 3],
             speed: 100,
             lifespan: { min: 300, max: 400 },
             blendMode: 'ADD',
@@ -80,13 +77,13 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let text = "You unlocked new Cards!";
         if (final) text = "You unlocked a cheat code!";
 
-        let b_x = (GameInfo.width/2)-this.screenPadding
-        let b_y = this.screenPadding/2;
+        let b_x = (GameInfo.width / 2) - this.screenPadding
+        let b_y = this.screenPadding / 2;
         let b_width = 1000;
         let b_height = 50;
         this.newCardTextBackground = scene.add.graphics({
-            x: b_x-b_width/2,
-            y: b_y-b_height/2,
+            x: b_x - b_width / 2,
+            y: b_y - b_height / 2,
             fillStyle: { color: 0xFFFFFF },
             lineStyle: { color: 0x000, width: 3 }
         });
@@ -95,8 +92,8 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.newCardTextBackground.strokeRoundedRect(0, 0, b_width, b_height);
         this.add(this.newCardTextBackground);
 
-        this.newCardText = this.scene.add.text(b_x, b_y,text,{ fontSize: '32px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' });
-            
+        this.newCardText = this.scene.add.text(b_x, b_y, text, { fontSize: '32px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' });
+
         this.newCardText.setOrigin(0.5);
         this.add(this.newCardText);
 
@@ -114,7 +111,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
     public async flush(cards?: Card[]) {
         if (!this.active) return;
         if (!cards && !this.final) return;
-        
+
         this.cardContainer = this.scene.add.container(0, 0);
         this.displayingCards = [];
 
@@ -122,11 +119,11 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let def_height = 0;
         if (this.final) { // display cheat code
             //@ts-ignore
-            let text = this.scene.add.text(0,180,"UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A", { fontSize: '26px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' })
+            let text = this.scene.add.text(0, 180, "UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A", { fontSize: '26px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FFFFFF' })
             text.setOrigin(0)
             text.setAlpha(0);
 
-            this.add(this.scene.add.text(this.backgroundWidth/2,650,"If you type this on the map, you will unlock everything!", { fontSize: '22px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }).setOrigin(0.5));
+            this.add(this.scene.add.text(this.backgroundWidth / 2, 650, "If you type this on the map, you will unlock everything!", { fontSize: '22px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }).setOrigin(0.5));
 
             this.cardContainer.add(text);
             this.displayingCards.push(text);
@@ -163,7 +160,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             onComplete: function (tween) {
                 this.displayCards();
             },
-            onCompleteScope: this
+            callbackScope: this
         });
         this.setVisible(true);
     }
@@ -180,7 +177,7 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
                 this.dot.setVisible(false);
                 this.dotParticles.setVisible(false);
             },
-            onCompleteScope: this
+            callbackScope: this
         });
 
         this.scene.add.tween({ // fade out
@@ -196,20 +193,22 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
 
     private createButton(x: number, y: number, width: number = undefined, height: number = undefined) {
         this.box = this.scene.add.graphics({
-            x:x-width/2,
-            y:y-height/2,
-            fillStyle: {color:0x666666},
-            lineStyle:{color:0x000, width:3}});
-        this.box.fillRoundedRect(0,0,width, height);
-        this.box.strokeRoundedRect(0,0,width,height);
+            x: x - width / 2,
+            y: y - height / 2,
+            fillStyle: { color: 0x666666 },
+            lineStyle: { color: 0x000, width: 3 }
+        });
+        this.box.fillRoundedRect(0, 0, width, height);
+        this.box.strokeRoundedRect(0, 0, width, height);
         this.hoverBox = this.scene.add.graphics({
-            x:x-width/2,
-            y:y-height/2,
-            lineStyle:{color:0xFFFFFF, width:3}});
-        this.hoverBox.strokeRoundedRect(0,0,width, height);
+            x: x - width / 2,
+            y: y - height / 2,
+            lineStyle: { color: 0xFFFFFF, width: 3 }
+        });
+        this.hoverBox.strokeRoundedRect(0, 0, width, height);
         this.hoverBox.setVisible(false);
 
-        this.text = this.scene.add.text(x,y, "Return to Map",{
+        this.text = this.scene.add.text(x, y, "Return to Map", {
             fontSize: 26,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
@@ -220,26 +219,26 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         this.sendToBack(this.box);
 
         let hitArea = new Phaser.Geom.Rectangle(0, 0, width, height);
-        this.box.setInteractive({ useHandCursor: true, hitArea:hitArea, hitAreaCallback:Phaser.Geom.Rectangle.Contains})
-        this.box.on( 'pointerdown', function(pointer, localX, localY, event){
-        this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: 0,
-            ease: "Linear",
-            duration: this.fadeOutDuration,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-                this.setVisible(false);
-                this.destroy(true);
-            },
-            onCompleteScope: this
-        });
-     }, this). on("pointerover", function () {
-         this.hoverBox.setVisible(true);
-     },this). on("pointerout", function() {
-        this.hoverBox.setVisible(false);
-     }, this);
+        this.box.setInteractive({ useHandCursor: true, hitArea: hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains })
+        this.box.on('pointerdown', function (pointer, localX, localY, event) {
+            this.scene.add.tween({ // fade out
+                targets: this,
+                alpha: 0,
+                ease: "Linear",
+                duration: this.fadeOutDuration,
+                repeat: 0,
+                yoyo: false,
+                onComplete: function () {
+                    this.setVisible(false);
+                    this.destroy(true);
+                },
+                callbackScope: this
+            });
+        }, this).on("pointerover", function () {
+            this.hoverBox.setVisible(true);
+        }, this).on("pointerout", function () {
+            this.hoverBox.setVisible(false);
+        }, this);
 
         this.add(this.box);
         this.add(this.hoverBox);
@@ -267,31 +266,33 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
             onComplete: function () {
                 this.displayCards();
             },
-            onCompleteScope: this
+            callbackScope: this
         });
 
         if (this.fadeOutParticles) this.fadeOutParticles.destroy(true);
-        this.fadeOutParticles = this.scene.add.particles("runes");
-        this.add(this.fadeOutParticles);
 
         let x: number = this.cardContainer.x + gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = this.cardContainer.y + gameObject.y - gameObject.displayHeight * gameObject.originY;
 
-        this.emitter = this.fadeOutParticles.createEmitter({
-            frame: { frames: [0, 1, 2, 3], cyle: true },
-            x: this.dot.x,
-            y: this.dot.y,
+        let sourceX = this.x + this.dot.x;
+        let sourceY = this.y + this.dot.y;
+        let targetOffsetX = this.x + x - sourceX;
+        let targetOffsetY = this.y + y - sourceY;
+
+        this.fadeOutParticles = this.scene.add.particles(sourceX, sourceY, "runes", {
+            frame: [0, 1, 2, 3],
             speed: 400,
             lifespan: 500,
             blendMode: 'ADD',
             moveToX: {
-                min: x,
-                max: x + gameObject.displayWidth
+                min: targetOffsetX,
+                max: targetOffsetX + gameObject.displayWidth
             },
             moveToY: {
-                min: y,
-                max: y + gameObject.displayHeight
+                min: targetOffsetY,
+                max: targetOffsetY + gameObject.displayHeight
             }
         });
+        this.emitter = this.fadeOutParticles;
     }
 }

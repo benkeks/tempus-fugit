@@ -21,7 +21,6 @@ export class HelpButton {
             frameRate: 20,
             repeat: -1,
         });
-        this.sprite.anims.load('fairy-fly');
         this.sprite.setInteractive({useHandCursor:true});
         this.sprite.on('pointerdown', this.displayHelp, this);
         this.sprite.on('pointerover', () => {

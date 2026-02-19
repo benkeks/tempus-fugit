@@ -159,7 +159,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
                     old_sprite.setVisible(false);
                     old_background.setVisible(false);
                 },
-                onCompleteScope: this
+                callbackScope: this
             });
         }
         
@@ -186,7 +186,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
                     this.rightButton.setInteractive();
                 }
             },
-            onCompleteScope: this
+            callbackScope: this
         });
 
         this.activeIndex = next;
@@ -282,7 +282,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             onComplete: function () {
                 go.map(g => g.destroy(true));
             },
-            onCompleteScope: this
+            callbackScope: this
         });
     }
 

@@ -49,7 +49,7 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
 
         this.dZone = new DeathZone(this.triangle);
 
-        this.particleContainer = this.scene.add.particles("blue");
+        this.particleContainer = this.scene.add.particles(0, 0, "blue");
         /*this.emitter = this.particleContainer.createEmitter({
             x:{min:-25, max:25},
             y:{min:10, max:-10},

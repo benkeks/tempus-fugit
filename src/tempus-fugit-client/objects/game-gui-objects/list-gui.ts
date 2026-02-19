@@ -169,7 +169,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
     }
 
     public fadeIn(duration = 200, scale:boolean=false) {
-        if (this.tween) this.tween.stop(0);
+        if (this.tween) this.tween.stop();
 
         this.setAlpha(0);
         
@@ -186,7 +186,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.setVisible(true);
     }
     public fadeOut(duration = 200) {
-        if (this.tween) this.tween.stop(1);
+        if (this.tween) this.tween.stop();
 
         this.setAlpha(1);
         this.tween = this.scene.add.tween({ // fade out
@@ -199,7 +199,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
             onComplete: function () {
                 this.setVisible(false)
             },
-            onCompleteScope: this
+            callbackScope: this
         });
     }
 }

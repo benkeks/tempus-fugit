@@ -120,13 +120,13 @@ export class CardGUI extends Phaser.GameObjects.Container {
         }
 
         // effect text
-        let effektText = this.scene.add.text(0, 0, card.getDescription(), font2);
-        this.add(effektText);
-        effektText.setScale(0.6);
-        effektText.setLineSpacing(5);
-        effektText.style.setWordWrapWidth(maxTextWidth + 100, true);
-        effektText.setOrigin(0.5, 0);
-        effektText.setPosition(0, padding + 200 - height / 2);
+        let effectText = this.scene.add.text(0, 0, card.getDescription(), font2);
+        this.add(effectText);
+        effectText.setScale(0.6);
+        effectText.setLineSpacing(5);
+        effectText.style.setWordWrapWidth(maxTextWidth + 100, true);
+        effectText.setOrigin(0.5, 0);
+        effectText.setPosition(0, padding + 200 - height / 2);
 
         // image
         let image = this.scene.add.image(0, 0, card.getImage());
@@ -142,11 +142,11 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this.setPlayable();
 
         // resize texts if too big
-        while (effektText.height > 90)
-            effektText.setFontSize(Number(effektText.style.fontSize.substring(0, 2)) - 1)
+        while (effectText.height > 90)
+            effectText.setFontSize(Number(String(effectText.style.fontSize).substring(0, 2)) - 1)
 
         while (title.height > 75)
-            title.setFontSize(Number(title.style.fontSize.substring(0, 2)) - 1)
+            title.setFontSize(Number(String(title.style.fontSize).substring(0, 2)) - 1)
     }
 
 
@@ -209,7 +209,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
     }
 
     public fadeInAnimation(duration = 200) {
-        if (this.fadeTween) this.fadeTween.stop(0);
+        if (this.fadeTween) this.fadeTween.stop();
 
         this.setAlpha(0);
         this.fadeTween = this.scene.add.tween({ // fade out
@@ -223,7 +223,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this.setVisible(true);
     }
     public fadeOutAnimation(duration = 200) {
-        if (this.fadeTween) this.fadeTween.stop(1);
+        if (this.fadeTween) this.fadeTween.stop();
 
         this.setAlpha(1);
         this.fadeTween = this.scene.add.tween({ // fade out
@@ -236,7 +236,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
             onComplete: function () {
                 this.setVisible(false)
             },
-            onCompleteScope: this
+            callbackScope: this
         });
     }
 
