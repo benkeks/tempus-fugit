@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  bbuild-and-start:
+  build:
     runs-on: ubuntu-latest # Base Image
     steps:
       - uses: actions/checkout@v3 # Get code from repo
