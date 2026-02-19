@@ -274,21 +274,25 @@ export class NewCardsViewer extends Phaser.GameObjects.Container {
         let x: number = this.cardContainer.x + gameObject.x - gameObject.displayWidth * gameObject.originX;
         let y: number = this.cardContainer.y + gameObject.y - gameObject.displayHeight * gameObject.originY;
 
-        this.fadeOutParticles = this.scene.add.particles(this.dot.x, this.dot.y, "runes", {
+        let sourceX = this.x + this.dot.x;
+        let sourceY = this.y + this.dot.y;
+        let targetOffsetX = this.x + x - sourceX;
+        let targetOffsetY = this.y + y - sourceY;
+
+        this.fadeOutParticles = this.scene.add.particles(sourceX, sourceY, "runes", {
             frame: [0, 1, 2, 3],
             speed: 400,
             lifespan: 500,
             blendMode: 'ADD',
             moveToX: {
-                min: x,
-                max: x + gameObject.displayWidth
+                min: targetOffsetX,
+                max: targetOffsetX + gameObject.displayWidth
             },
             moveToY: {
-                min: y,
-                max: y + gameObject.displayHeight
+                min: targetOffsetY,
+                max: targetOffsetY + gameObject.displayHeight
             }
         });
         this.emitter = this.fadeOutParticles;
-        this.add(this.fadeOutParticles);
     }
 }
