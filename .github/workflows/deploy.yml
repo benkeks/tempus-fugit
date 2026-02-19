@@ -1,0 +1,18 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  bbuild-and-start:
+    runs-on: ubuntu-latest # Base Image
+    steps:
+      - uses: actions/checkout@v3 # Get code from repo
+      - uses: actions/setup-node@v3 # Install Node.JS
+        with:
+          node-version: 20.x # Use any major version 20
+      - run: npm install # Install dependencies
+      - run: npm run dev # Start the server
