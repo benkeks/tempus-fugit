@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: 20.x # Use any major version 20
       - run: npm install # Install dependencies
-      - run: npm run dev # Start the server
+      - run: npm run build # Compile Code
