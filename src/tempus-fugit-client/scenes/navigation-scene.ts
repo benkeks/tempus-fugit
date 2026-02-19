@@ -326,7 +326,7 @@ export class NavigationScene extends Phaser.Scene {
                     onComplete: function () {
                         c.setVisible(false)
                     },
-                    onCompleteScope: this
+                    callbackScope: this
                 });
             }
         } else {

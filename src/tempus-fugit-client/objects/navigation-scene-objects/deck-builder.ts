@@ -193,7 +193,7 @@ export class DeckBuilder {
     }
 
     public fadeIn(duration = 200, callback?, callbackScope?) {
-        if (this.tween) this.tween.stop(0);
+        if (this.tween) this.tween.stop();
 
         this.mainPanel.setAlpha(0);
         this.tween = this.scene.add.tween({ // fade out
@@ -204,12 +204,12 @@ export class DeckBuilder {
             repeat: 0,
             yoyo: false,
             onComplete:callback,
-            onCompleteScope:callbackScope
+            callbackScope:callbackScope
         });
         this.mainPanel.setVisible(true);
     }
     public fadeOut(duration = 200, destroy:boolean = false) {
-        if (this.tween) this.tween.stop(1);
+        if (this.tween) this.tween.stop();
 
         this.mainPanel.setAlpha(1);
         this.tween = this.scene.add.tween({ // fade out
@@ -223,7 +223,7 @@ export class DeckBuilder {
                 this.mainPanel.setVisible(false)
                 if (destroy) this.mainPanel.destroy(true);
             },
-            onCompleteScope: this
+            callbackScope: this
         });
     }
 

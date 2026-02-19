@@ -122,10 +122,10 @@ export class DiscardCard extends Phaser.GameObjects.Container {
 
         // resize texts if too big
         while (effektText.height > 90)
-            effektText.setFontSize(Number(effektText.style.fontSize.substring(0, 2)) - 1)
+            effektText.setFontSize(Number(String(effektText.style.fontSize).substring(0, 2)) - 1)
 
         while (title.height > 75)
-            title.setFontSize(Number(title.style.fontSize.substring(0, 2)) - 1)
+            title.setFontSize(Number(String(title.style.fontSize).substring(0, 2)) - 1)
     }
 
 }

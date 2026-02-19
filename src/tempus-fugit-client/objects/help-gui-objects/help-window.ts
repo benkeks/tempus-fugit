@@ -297,13 +297,13 @@ export class HelpWindow {
             }
         }).addBackground(scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA).setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER).setDepth(90))
 
-        let text = scene.add.text(0, 0, text, {
+        let textObj = scene.add.text(0, 0, text, {
             fontSize: '16px',
             fontStyle: 'bold',
             fontFamily: 'pressStart',
             color: '#915b4a'
         }).setWordWrapWidth(HELP_WIDTH - 100, true).setDepth(91);
-        sizer.add(text, 0, "center", {
+        sizer.add(textObj, 0, "center", {
             top: 5,
             bottom: 5,
             left: 5,

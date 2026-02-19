@@ -143,10 +143,10 @@ export class CardGUI extends Phaser.GameObjects.Container {
 
         // resize texts if too big
         while (effektText.height > 90)
-            effektText.setFontSize(Number(effektText.style.fontSize.substring(0, 2)) - 1)
+            effektText.setFontSize(Number(String(effektText.style.fontSize).substring(0, 2)) - 1)
 
         while (title.height > 75)
-            title.setFontSize(Number(title.style.fontSize.substring(0, 2)) - 1)
+            title.setFontSize(Number(String(title.style.fontSize).substring(0, 2)) - 1)
     }
 
 
@@ -209,7 +209,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
     }
 
     public fadeInAnimation(duration = 200) {
-        if (this.fadeTween) this.fadeTween.stop(0);
+        if (this.fadeTween) this.fadeTween.stop();
 
         this.setAlpha(0);
         this.fadeTween = this.scene.add.tween({ // fade out
@@ -223,7 +223,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
         this.setVisible(true);
     }
     public fadeOutAnimation(duration = 200) {
-        if (this.fadeTween) this.fadeTween.stop(1);
+        if (this.fadeTween) this.fadeTween.stop();
 
         this.setAlpha(1);
         this.fadeTween = this.scene.add.tween({ // fade out
@@ -236,7 +236,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
             onComplete: function () {
                 this.setVisible(false)
             },
-            onCompleteScope: this
+            callbackScope: this
         });
     }
 

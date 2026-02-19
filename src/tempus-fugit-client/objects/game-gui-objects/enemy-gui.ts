@@ -95,7 +95,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                 this.destroy(true);
                 this.toolTip.destroy(true);
             },
-            onCompleteScope: this
+            callbackScope: this
         });
         this.disableInteractive();
         this.toolTip.enabled = false;
