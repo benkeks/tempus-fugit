@@ -12,10 +12,19 @@ interface ProgressDataV1 {
     newCardNames: string[];
     tutorialShown: boolean;
     deckBuilderTutorialShown: boolean;
+    lastPlayedLevelIndex: number;
 }
 
 export class ProgressStore {
     private static readonly STORAGE_KEY = "tempus-fugit.progress.v1";
+
+    public static getLastPlayedLevelIndex(missionCount: number): number | undefined {
+        let loaded = this.load(missionCount);
+        if (!loaded) return undefined;
+        if (typeof loaded.lastPlayedLevelIndex !== "number") return undefined;
+
+        return loaded.lastPlayedLevelIndex;
+    }
 
     public static getTutorialFlags(missionCount: number): { tutorialShown: boolean, deckBuilderTutorialShown: boolean } {
         let loaded = this.load(missionCount);
@@ -52,7 +61,8 @@ export class ProgressStore {
             playerBaseAttack: 2,
             newCardNames: [],
             tutorialShown: false,
-            deckBuilderTutorialShown: false
+            deckBuilderTutorialShown: false,
+            lastPlayedLevelIndex: -1
         };
     }
 
@@ -76,7 +86,8 @@ export class ProgressStore {
                 playerBaseAttack: typeof parsed.playerBaseAttack === "number" ? parsed.playerBaseAttack : defaults.playerBaseAttack,
                 newCardNames: Array.isArray(parsed.newCardNames) ? parsed.newCardNames : defaults.newCardNames,
                 tutorialShown: typeof parsed.tutorialShown === "boolean" ? parsed.tutorialShown : defaults.tutorialShown,
-                deckBuilderTutorialShown: typeof parsed.deckBuilderTutorialShown === "boolean" ? parsed.deckBuilderTutorialShown : defaults.deckBuilderTutorialShown
+                deckBuilderTutorialShown: typeof parsed.deckBuilderTutorialShown === "boolean" ? parsed.deckBuilderTutorialShown : defaults.deckBuilderTutorialShown,
+                lastPlayedLevelIndex: typeof parsed.lastPlayedLevelIndex === "number" ? parsed.lastPlayedLevelIndex : defaults.lastPlayedLevelIndex
             };
         } catch (e) {
             return undefined;
@@ -84,7 +95,7 @@ export class ProgressStore {
     }
 
     public static save(player: Player, customDeck: Deck, newCardNames: Set<string>, missionCount: number,
-                       options?: { tutorialShown?: boolean, deckBuilderTutorialShown?: boolean }): void {
+                       options?: { tutorialShown?: boolean, deckBuilderTutorialShown?: boolean, lastPlayedLevelIndex?: number }): void {
         if (typeof window === "undefined" || !window.localStorage) return;
 
         let existing = this.load(missionCount);
@@ -112,7 +123,10 @@ export class ProgressStore {
                 : (existing ? existing.tutorialShown : false),
             deckBuilderTutorialShown: options && options.deckBuilderTutorialShown !== undefined
                 ? options.deckBuilderTutorialShown
-                : (existing ? existing.deckBuilderTutorialShown : false)
+                : (existing ? existing.deckBuilderTutorialShown : false),
+            lastPlayedLevelIndex: options && options.lastPlayedLevelIndex !== undefined
+                ? options.lastPlayedLevelIndex
+                : (existing ? existing.lastPlayedLevelIndex : -1)
         };
 
         try {

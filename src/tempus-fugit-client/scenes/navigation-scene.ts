@@ -48,6 +48,10 @@ export class NavigationScene extends Phaser.Scene {
     public levelText: MissionNameGui;
 
     public cloudContainer: Container[] = [];
+    public levelCoordinates:number[][] = [];
+    public mage: Sprite;
+    public currentMageLevelIndex:number = 0;
+    public missionTransitionInProgress:boolean = false;
 
     public player: Player;
     public deck: Deck;
@@ -260,13 +264,88 @@ export class NavigationScene extends Phaser.Scene {
     }
 
     public startMission(index:number, deckName:string) {
-        this.scene.start("MissionScene", {
-            key: this.missionKeys[index],
-            index: index,
-            player: this.player.copy(),
-            deck: Deck.Decks[deckName].copy(),
-            showCredits:this.missionKeys.length-1==index
+        if (this.missionTransitionInProgress) return;
+
+        let startScene = () => {
+            this.currentMageLevelIndex = index;
+            ProgressStore.save(this.player, Deck.Decks["custom"], DeckBuilderButton.newCards, this.missionKeys.length,
+                { lastPlayedLevelIndex: index });
+
+            this.scene.start("MissionScene", {
+                key: this.missionKeys[index],
+                index: index,
+                player: this.player.copy(),
+                deck: Deck.Decks[deckName].copy(),
+                showCredits:this.missionKeys.length-1==index
+            });
+        }
+
+        if (!this.mage || this.currentMageLevelIndex === index) {
+            this.currentMageLevelIndex = index;
+            startScene();
+            return;
+        }
+
+        this.missionTransitionInProgress = true;
+        this.animateMageToLevel(index, () => {
+            this.missionTransitionInProgress = false;
+            startScene();
         });
+    }
+
+    public getInitialMageLevelIndex(): number {
+        let lastPlayedLevelIndex = ProgressStore.getLastPlayedLevelIndex(this.missionKeys.length);
+        if (lastPlayedLevelIndex === undefined || lastPlayedLevelIndex < 0) return -1;
+
+        return Math.min(lastPlayedLevelIndex, this.missionKeys.length - 1);
+    }
+
+    public getMagePositionForLevel(levelIndex:number): {x:number, y:number} {
+        if (levelIndex < 0) {
+            return {
+                x: 35,
+                y: 145
+            };
+        }
+
+        return {
+            x: this.levelCoordinates[levelIndex][0],
+            y: this.levelCoordinates[levelIndex][1] - 10
+        };
+    }
+
+    public animateMageToLevel(targetIndex:number, onComplete:() => void): void {
+        if (!this.mage || this.currentMageLevelIndex === targetIndex) {
+            onComplete();
+            return;
+        }
+
+        let step = targetIndex > this.currentMageLevelIndex ? 1 : -1;
+        let path:number[] = [];
+
+        for (let i = this.currentMageLevelIndex + step; ; i += step) {
+            path.push(i);
+            if (i === targetIndex) break;
+        }
+
+        let move = (pathIndex:number) => {
+            if (pathIndex >= path.length) {
+                onComplete();
+                return;
+            }
+
+            let pos = this.getMagePositionForLevel(path[pathIndex]);
+            this.tweens.add({
+                targets: this.mage,
+                x: pos.x,
+                y: pos.y,
+                ease: "Sine.Out",
+                duration: 220,
+                onComplete: () => move(pathIndex + 1)
+            });
+        }
+
+        move(0);
     }
 
     public createDialog(index:number) {
@@ -429,7 +508,7 @@ export class NavigationScene extends Phaser.Scene {
         this.worldContainer.add(this.overworld);
 
         this.bulletPoint = [];
-        let coordinates = [[52, 151],
+        this.levelCoordinates = [[52, 151],
         [83, 176],
         [125, 167],
         [153, 170],
@@ -439,16 +518,16 @@ export class NavigationScene extends Phaser.Scene {
         [174, 71],
         [121, 75]];
 
-        for (let i = 0; i < coordinates.length; i++) {
-            let b = this.createBulletPoint(coordinates[i][0], coordinates[i][1], i);
+        for (let i = 0; i < this.levelCoordinates.length; i++) {
+            let b = this.createBulletPoint(this.levelCoordinates[i][0], this.levelCoordinates[i][1], i);
             b.setOrigin(0.5);
             this.bulletPoint.push(b);
             this.worldContainer.add(b);
 
             if (b.texture.key == "bullet_point") {
                 let offset = 7;
-                let arrowBaseY = coordinates[i][1] - offset;
-                let arr = this.add.sprite(coordinates[i][0], arrowBaseY, "bullet_arrow");
+                let arrowBaseY = this.levelCoordinates[i][1] - offset;
+                let arr = this.add.sprite(this.levelCoordinates[i][0], arrowBaseY, "bullet_arrow");
                 arr.setScale(0.2);
                 arr.setOrigin(0, 0.5);
                 arr.setRotation(-Math.PI / 2)
@@ -465,6 +544,19 @@ export class NavigationScene extends Phaser.Scene {
                 this.worldContainer.add(arr);
             }
         }
+
+        this.currentMageLevelIndex = this.getInitialMageLevelIndex();
+        let initialMagePosition = this.getMagePositionForLevel(this.currentMageLevelIndex);
+
+        this.mage = this.add.sprite(
+            initialMagePosition.x,
+            initialMagePosition.y,
+            "player",
+            0
+        );
+        this.mage.setScale(0.3);
+        this.mage.setDepth(4);
+        this.worldContainer.add(this.mage);
 
         // clouds
         let cloudCoordinates = [[200, 80, 330, 150],
