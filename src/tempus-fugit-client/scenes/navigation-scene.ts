@@ -293,6 +293,21 @@ export class NavigationScene extends Phaser.Scene {
             let cloud = this.add.sprite(p.x, p.y, "clouds", this.getRandomInt(5));
             cloud.setOrigin(0.5);
             c.add(cloud);
+
+            let baseX = cloud.x;
+            let baseY = cloud.y;
+            let driftX = this.getRandomInt(11) - 5;
+            let driftY = this.getRandomInt(5) - 2;
+
+            this.tweens.add({
+                targets: cloud,
+                x: { from: baseX - driftX, to: baseX + driftX },
+                y: { from: baseY - driftY, to: baseY + driftY },
+                ease: "Sine.InOut",
+                duration: 6000 + this.getRandomInt(5000),
+                repeat: -1,
+                yoyo: true
+            });
         }
 
         let fadeOut = false;
