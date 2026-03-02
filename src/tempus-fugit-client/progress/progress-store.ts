@@ -10,10 +10,27 @@ interface ProgressDataV1 {
     playerMaxHP: number;
     playerBaseAttack: number;
     newCardNames: string[];
+    tutorialShown: boolean;
+    deckBuilderTutorialShown: boolean;
 }
 
 export class ProgressStore {
     private static readonly STORAGE_KEY = "tempus-fugit.progress.v1";
+
+    public static getTutorialFlags(missionCount: number): { tutorialShown: boolean, deckBuilderTutorialShown: boolean } {
+        let loaded = this.load(missionCount);
+        if (!loaded) {
+            return {
+                tutorialShown: false,
+                deckBuilderTutorialShown: false
+            };
+        }
+
+        return {
+            tutorialShown: loaded.tutorialShown,
+            deckBuilderTutorialShown: loaded.deckBuilderTutorialShown
+        };
+    }
 
     public static clear(): void {
         if (typeof window === "undefined" || !window.localStorage) return;
@@ -33,7 +50,9 @@ export class ProgressStore {
             customDeckCardKeys: [],
             playerMaxHP: 125,
             playerBaseAttack: 2,
-            newCardNames: []
+            newCardNames: [],
+            tutorialShown: false,
+            deckBuilderTutorialShown: false
         };
     }
 
@@ -55,15 +74,20 @@ export class ProgressStore {
                 customDeckCardKeys: Array.isArray(parsed.customDeckCardKeys) ? parsed.customDeckCardKeys : defaults.customDeckCardKeys,
                 playerMaxHP: typeof parsed.playerMaxHP === "number" ? parsed.playerMaxHP : defaults.playerMaxHP,
                 playerBaseAttack: typeof parsed.playerBaseAttack === "number" ? parsed.playerBaseAttack : defaults.playerBaseAttack,
-                newCardNames: Array.isArray(parsed.newCardNames) ? parsed.newCardNames : defaults.newCardNames
+                newCardNames: Array.isArray(parsed.newCardNames) ? parsed.newCardNames : defaults.newCardNames,
+                tutorialShown: typeof parsed.tutorialShown === "boolean" ? parsed.tutorialShown : defaults.tutorialShown,
+                deckBuilderTutorialShown: typeof parsed.deckBuilderTutorialShown === "boolean" ? parsed.deckBuilderTutorialShown : defaults.deckBuilderTutorialShown
             };
         } catch (e) {
             return undefined;
         }
     }
 
-    public static save(player: Player, customDeck: Deck, newCardNames: Set<string>, missionCount: number): void {
+    public static save(player: Player, customDeck: Deck, newCardNames: Set<string>, missionCount: number,
+                       options?: { tutorialShown?: boolean, deckBuilderTutorialShown?: boolean }): void {
         if (typeof window === "undefined" || !window.localStorage) return;
+
+        let existing = this.load(missionCount);
 
         let unlockedCardKeys = Object.keys(player.cardTypes)
             .map(cardName => player.cardTypes[cardName])
@@ -82,7 +106,13 @@ export class ProgressStore {
             customDeckCardKeys: [...new Set(customDeckCardKeys)],
             playerMaxHP: player.maxHP,
             playerBaseAttack: player.baseAttack,
-            newCardNames: [...newCardNames]
+            newCardNames: [...newCardNames],
+            tutorialShown: options && options.tutorialShown !== undefined
+                ? options.tutorialShown
+                : (existing ? existing.tutorialShown : false),
+            deckBuilderTutorialShown: options && options.deckBuilderTutorialShown !== undefined
+                ? options.deckBuilderTutorialShown
+                : (existing ? existing.deckBuilderTutorialShown : false)
         };
 
         try {

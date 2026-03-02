@@ -492,9 +492,13 @@ export class NavigationScene extends Phaser.Scene {
         if (progressUpdated) this.persistProgress();
 
         if (data.tutorial) {
-            let s = this.scene;
-            s.run('TutorialScene', {backScene:s.key, guided:false});
-            //this.scene.run("NewCardScene", {final:true});
+            let tutorialFlags = ProgressStore.getTutorialFlags(this.missionKeys.length);
+            if (!tutorialFlags.tutorialShown) {
+                let s = this.scene;
+                s.run('TutorialScene', {backScene:s.key, guided:false});
+                ProgressStore.save(this.player, Deck.Decks["custom"], DeckBuilderButton.newCards, this.missionKeys.length,
+                    { tutorialShown: true });
+            }
         }
         
         //this.scene.run('DeckBuilderScene', {parent:this.scene.key, player:this.player});
