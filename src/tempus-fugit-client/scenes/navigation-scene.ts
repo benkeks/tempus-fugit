@@ -24,6 +24,7 @@ import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilderButton } from "../objects/navigation-scene-objects/deck-builder-button";
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
+import { ProgressStore } from "../progress/progress-store";
 import { op_and,
     op_or,
     op_not,
@@ -117,6 +118,7 @@ export class NavigationScene extends Phaser.Scene {
             scene.player.baseAttack = 2+Object.keys(scene.missionKeys).length;
             cards.forEach(c => DeckBuilderButton.newCards.add(c.name));
             scene.player.addCardType(cards);
+            scene.persistProgress();
             HelpWindow.help_data = [op_and,
                 op_or,
                 op_not,
@@ -369,6 +371,7 @@ export class NavigationScene extends Phaser.Scene {
 
         // create new cards viewer
         let gamewon = false;
+        let progressUpdated = false;
         if (data.mission !== undefined && data.index !== undefined) {
             if (data.mission.isGameWon() && !this.player.missionStates[data.index]) {
                 this.player.missionStates[data.index] = true;
@@ -376,13 +379,13 @@ export class NavigationScene extends Phaser.Scene {
                 this.player.baseAttack += 1;
                 this.player.currentHP = this.player.maxHP;
                 gamewon = true;
+                progressUpdated = true;
             }
         }
 
-        if (DeathScene.deathQuit || PauseWindow.pauseQuit) {    // Start from beginning if quit
+        if (DeathScene.deathQuit || PauseWindow.pauseQuit) {
             DeathScene.deathQuit = false;
             PauseWindow.pauseQuit = false;
-            this.player.missionStates.map(state => state = false);
         }
 
         this.anims.create({
@@ -483,7 +486,10 @@ export class NavigationScene extends Phaser.Scene {
             this.scene.run("NewCardScene", { loot: loot, final:final});
 
             this.deckBuilderButton.createNotification();
+            progressUpdated = true;
         }
+
+        if (progressUpdated) this.persistProgress();
 
         if (data.tutorial) {
             let s = this.scene;
@@ -504,6 +510,20 @@ export class NavigationScene extends Phaser.Scene {
         Deck.Decks["custom"] = d;
         this.player.addCardType(Deck.Decks["custom"].deck);
 
+        DeckBuilderButton.newCards = ProgressStore.applyToPlayerAndDeck(this.player, Deck.Decks["custom"], this.missionKeys.length);
+
+        if (Object.keys(this.player.cardTypes).length === 0) {
+            this.player.addCardType(Deck.Decks["custom"].deck);
+        }
+
+        if (Object.keys(Deck.Decks["custom"].deck).length === 0) {
+            Deck.Decks["custom"].deck = {...Deck.Decks[this.missionKeys[0]].deck};
+        }
+
         this.deck = new Deck();
+    }
+
+    public persistProgress(): void {
+        ProgressStore.save(this.player, Deck.Decks["custom"], DeckBuilderButton.newCards, this.missionKeys.length);
     }
 }
