@@ -15,6 +15,16 @@ interface ProgressDataV1 {
 export class ProgressStore {
     private static readonly STORAGE_KEY = "tempus-fugit.progress.v1";
 
+    public static clear(): void {
+        if (typeof window === "undefined" || !window.localStorage) return;
+
+        try {
+            window.localStorage.removeItem(this.STORAGE_KEY);
+        } catch (e) {
+            return;
+        }
+    }
+
     private static defaultData(missionCount: number): ProgressDataV1 {
         return {
             version: 1,
