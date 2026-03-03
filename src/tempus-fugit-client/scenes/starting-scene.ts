@@ -5,6 +5,7 @@ import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
 import { MissionScene } from "./mission-scene";
 import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
+import { ProgressStore } from "../progress/progress-store";
 
 export class StartingScene extends Phaser.Scene {
 
@@ -39,7 +40,7 @@ export class StartingScene extends Phaser.Scene {
             this.scene.run("MusicScene", {startSong:startSong});
             this.musicStarted = true;
         } else MusicScene.instance.play(startSong)
-        MusicScene.instance.muted = false;
+        MusicScene.instance.muted = ProgressStore.getMusicMuted();
 
         this.cameras.main.setBackgroundColor('#89CFF0')
 

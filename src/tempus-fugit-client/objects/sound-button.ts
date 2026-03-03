@@ -1,5 +1,6 @@
 import { Sound } from "phaser";
 import { MusicScene } from "../scenes/music-scene";
+import { ProgressStore } from "../progress/progress-store";
 
 // GUI Colors
 const GUI_BORDER = 0x37474F;
@@ -55,6 +56,7 @@ export class SoundButton {
 
     public click(): void {
         MusicScene.instance.muted = !MusicScene.instance.muted;
+        ProgressStore.setMusicMuted(MusicScene.instance.muted);
 
         this.cross.setVisible(MusicScene.instance.muted);
     }

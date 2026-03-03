@@ -13,10 +13,31 @@ interface ProgressDataV1 {
     tutorialShown: boolean;
     deckBuilderTutorialShown: boolean;
     lastPlayedLevelIndex: number;
+    musicMuted: boolean;
 }
 
 export class ProgressStore {
     private static readonly STORAGE_KEY = "tempus-fugit.progress.v1";
+
+    public static getMusicMuted(missionCount: number = 9): boolean {
+        let loaded = this.load(missionCount);
+        if (!loaded) return false;
+        return loaded.musicMuted;
+    }
+
+    public static setMusicMuted(muted: boolean, missionCount: number = 9): void {
+        if (typeof window === "undefined" || !window.localStorage) return;
+
+        let existing = this.load(missionCount);
+        let progress: ProgressDataV1 = existing ? { ...existing } : this.defaultData(missionCount);
+        progress.musicMuted = muted;
+
+        try {
+            window.localStorage.setItem(this.STORAGE_KEY, JSON.stringify(progress));
+        } catch (e) {
+            return;
+        }
+    }
 
     public static getLastPlayedLevelIndex(missionCount: number): number | undefined {
         let loaded = this.load(missionCount);
@@ -62,7 +83,8 @@ export class ProgressStore {
             newCardNames: [],
             tutorialShown: false,
             deckBuilderTutorialShown: false,
-            lastPlayedLevelIndex: -1
+            lastPlayedLevelIndex: -1,
+            musicMuted: false
         };
     }
 
@@ -87,7 +109,8 @@ export class ProgressStore {
                 newCardNames: Array.isArray(parsed.newCardNames) ? parsed.newCardNames : defaults.newCardNames,
                 tutorialShown: typeof parsed.tutorialShown === "boolean" ? parsed.tutorialShown : defaults.tutorialShown,
                 deckBuilderTutorialShown: typeof parsed.deckBuilderTutorialShown === "boolean" ? parsed.deckBuilderTutorialShown : defaults.deckBuilderTutorialShown,
-                lastPlayedLevelIndex: typeof parsed.lastPlayedLevelIndex === "number" ? parsed.lastPlayedLevelIndex : defaults.lastPlayedLevelIndex
+                lastPlayedLevelIndex: typeof parsed.lastPlayedLevelIndex === "number" ? parsed.lastPlayedLevelIndex : defaults.lastPlayedLevelIndex,
+                musicMuted: typeof parsed.musicMuted === "boolean" ? parsed.musicMuted : defaults.musicMuted
             };
         } catch (e) {
             return undefined;
@@ -95,7 +118,7 @@ export class ProgressStore {
     }
 
     public static save(player: Player, customDeck: Deck, newCardNames: Set<string>, missionCount: number,
-                       options?: { tutorialShown?: boolean, deckBuilderTutorialShown?: boolean, lastPlayedLevelIndex?: number }): void {
+                       options?: { tutorialShown?: boolean, deckBuilderTutorialShown?: boolean, lastPlayedLevelIndex?: number, musicMuted?: boolean }): void {
         if (typeof window === "undefined" || !window.localStorage) return;
 
         let existing = this.load(missionCount);
@@ -126,7 +149,10 @@ export class ProgressStore {
                 : (existing ? existing.deckBuilderTutorialShown : false),
             lastPlayedLevelIndex: options && options.lastPlayedLevelIndex !== undefined
                 ? options.lastPlayedLevelIndex
-                : (existing ? existing.lastPlayedLevelIndex : -1)
+                : (existing ? existing.lastPlayedLevelIndex : -1),
+            musicMuted: options && options.musicMuted !== undefined
+                ? options.musicMuted
+                : (existing ? existing.musicMuted : false)
         };
 
         try {
