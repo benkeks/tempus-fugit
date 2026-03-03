@@ -224,8 +224,13 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         }else this.updateEnemyAttributes();
     }
 
-    async Attacking(enemy: Enemy) {
-        this.scene.createAttackAnimation(this.scene, this, "-");
+    async Attacking(enemy: Enemy, specialAttackActive: boolean) {
+        const first = this.scene.createAttackAnimation(this.scene, this, "-");
+        if (specialAttackActive) {
+            first.once('complete', () => {
+                this.scene.createAttackAnimation(this.scene, this, "-");
+            });
+        }
     }
 
     async baseAttackChanged(enemy:Enemy) {

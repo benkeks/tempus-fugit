@@ -116,12 +116,13 @@ export class Enemy {
     }
 
     public performTurn(mission:Mission):void {
-        let val = !this.applyCard(this.specialAttack, mission)
-        if (!this.applyCard(this.specialAttack, mission)){
+        const specialAttackActive = this.specialAttack !== undefined && this.applyCard(this.specialAttack, mission);
+
+        if (!specialAttackActive){
             mission.player.takeHit(this.baseAttack);
         }
 
-        this.listener.map(l => l.Attacking(this));
+        this.listener.map(l => l.Attacking(this, specialAttackActive));
     }
 
     /**
@@ -209,6 +210,6 @@ export class Enemy {
  */
 export interface EnemyListener {
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
-    Attacking(enemy:Enemy);
+    Attacking(enemy:Enemy, specialAttackActive:boolean);
     baseAttackChanged(enemy:Enemy);
 }
