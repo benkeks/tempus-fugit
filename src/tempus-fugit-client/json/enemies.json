@@ -7,6 +7,7 @@
             "baseAttack": 2,
             "specialAttack": {
                 "description": "The player takes 5 {atk}.",
+                "shortDescription": "5{atk}",
                 "formula": "!(n|l)",
                 "action": "mission.player.takeHit(5);"
             },
@@ -25,6 +26,7 @@
             "baseAttack": 3,
             "specialAttack": {
                 "description": "The player takes 10 {atk}.",
+                "shortDescription": "10{atk}",
                 "formula": "l&t",
                 "action": "mission.player.takeHit(10);"
             },
@@ -42,6 +44,7 @@
             "baseAttack": 4,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "!n&s&t",
                 "action": "mission.player.takeHit(15);"
             },
@@ -60,6 +63,7 @@
             "baseAttack": 5,
             "specialAttack": {
                 "description": "The player takes 20 {atk}.",
+                "shortDescription": "20{atk}",
                 "formula": "!(n|l|s)",
                 "action": "mission.player.takeHit(20);"
             },
@@ -77,6 +81,7 @@
             "baseAttack": 3,
             "specialAttack": {
                 "description": "The player takes 10 {atk}.",
+                "shortDescription": "10{atk}",
                 "formula": "#O(l&t)",
                 "action": "mission.player.takeHit(10);"
             },
@@ -94,6 +99,7 @@
             "baseAttack": 6,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "#O(l&t)",
                 "action": "mission.player.takeHit(15);"
             },
@@ -111,6 +117,7 @@
             "baseAttack": 8,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "#O(l&t)",
                 "action": "mission.player.takeHit(15);"
             },
@@ -128,6 +135,7 @@
             "baseAttack": 13,
             "specialAttack": {
                 "description": "The player takes 20 {atk}.",
+                "shortDescription": "20{atk}",
                 "formula": "!(s|t)",
                 "action": "mission.player.takeHit(20);"
             },
@@ -145,6 +153,7 @@
             "baseAttack": 20,
             "specialAttack": {
                 "description": "You take 50 {atk}.",
+                "shortDescription": "50{atk}",
                 "formula": "n&s&t",
                 "action": "mission.player.takeHit(50);"
             },
@@ -162,6 +171,7 @@
             "baseAttack": 12,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "n&t&l",
                 "action": "mission.player.takeHit(25);"
             },
@@ -179,6 +189,7 @@
             "baseAttack": 10,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "G(!s)",
                 "action": "mission.player.takeHit(15);"
             },
@@ -196,6 +207,7 @@
             "baseAttack": 11,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "n&l",
                 "action": "mission.player.takeHit(15);"
             },
@@ -213,6 +225,7 @@
             "baseAttack": 20,
             "specialAttack": {
                 "description": "The player takes 28 {atk}.",
+                "shortDescription": "28{atk}",
                 "formula": "n&l&F(s&l)",
                 "action": "mission.player.takeHit(28);"
             },
@@ -230,6 +243,7 @@
             "baseAttack": 10,
             "specialAttack": {
                 "description": "The player takes 15 {atk}.",
+                "shortDescription": "15{atk}",
                 "formula": "#Ot&!n",
                 "action": "mission.player.takeHit(15);"
             },
@@ -247,6 +261,7 @@
             "baseAttack": 18,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "!#Ot&!(s|n)",
                 "action": "mission.player.takeHit(25);"
             },
@@ -264,6 +279,7 @@
             "baseAttack": 12,
             "specialAttack": {
                 "description": "The player takes 17 {atk}.",
+                "shortDescription": "17{atk}",
                 "formula": "!t&!n",
                 "action": "mission.player.takeHit(17);"
             },
@@ -281,6 +297,7 @@
             "baseAttack": 16,
             "specialAttack": {
                 "description": "The player takes 20 {atk}.",
+                "shortDescription": "20{atk}",
                 "formula": "F(t&s)",
                 "action": "mission.player.takeHit(20);"
             },
@@ -298,6 +315,7 @@
             "baseAttack": 22,
             "specialAttack": {
                 "description": "The player takes 30 {atk}.",
+                "shortDescription": "30{atk}",
                 "formula": "#G(!(s|t|n|l))",
                 "action": "mission.player.takeHit(30);"
             },
@@ -315,6 +333,7 @@
             "baseAttack": 17,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "#G(s->l)",
                 "action": "mission.player.takeHit(25);"
             },
@@ -332,6 +351,7 @@
             "baseAttack": 17,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "t&#F(l&t&s)",
                 "action": "mission.player.takeHit(25);"
             },
@@ -349,6 +369,7 @@
             "baseAttack": 20,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "!(n&s&l)",
                 "action": "mission.player.takeHit(25);"
             },
@@ -366,6 +387,7 @@
             "baseAttack": 20,
             "specialAttack": {
                 "description": "The player takes 25 {atk}.",
+                "shortDescription": "25{atk}",
                 "formula": "#Ot&t",
                 "action": "mission.player.takeHit(25);"
             },
@@ -383,6 +405,7 @@
             "baseAttack": 33,
             "specialAttack": {
                 "description": "The player takes 35 {atk}.",
+                "shortDescription": "35{atk}",
                 "formula": "#O(n&t)&t",
                 "action": "mission.player.takeHit(35);"
             },
@@ -400,6 +423,7 @@
             "baseAttack": 33,
             "specialAttack": {
                 "description": "The player takes 35 {atk}.",
+                "shortDescription": "35{atk}",
                 "formula": "#O(l&s)&n",
                 "action": "mission.player.takeHit(35);"
             },
@@ -417,6 +441,7 @@
             "baseAttack": 40,
             "specialAttack": {
                 "description": "The player takes 50 {atk}.",
+                "shortDescription": "50{atk}",
                 "formula": "#O(#Os&s)&s&t",
                 "action": "mission.player.takeHit(50);"
             },

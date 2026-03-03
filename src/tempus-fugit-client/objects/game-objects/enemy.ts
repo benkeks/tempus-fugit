@@ -16,6 +16,7 @@ export class Enemy {
     public _baseAttack: number; // The enemy's base attack strength
     public description:string;
     public specialAttackDescription:string = "";
+    public specialAttackShortDescription:string = "";
     public image:string;
 
     public specialAttack: Card; // The enemy's base attack strength
@@ -51,6 +52,7 @@ export class Enemy {
        new_enemy.description = this.description;
        new_enemy.image = this.image;
        new_enemy.specialAttackDescription = this.specialAttackDescription;
+       new_enemy.specialAttackShortDescription = this.specialAttackShortDescription;
 
        return new_enemy;
     }
@@ -187,6 +189,9 @@ export class Enemy {
                 enemy.specialAttackDescription = e.specialAttack.description;
             else if (e.specialAttackDescription)
                 enemy.specialAttackDescription = e.specialAttackDescription;
+
+            if (e.specialAttack && e.specialAttack.shortDescription)
+                enemy.specialAttackShortDescription = e.specialAttack.shortDescription;
 
             if (e.key) enemy.key = e.key;
 

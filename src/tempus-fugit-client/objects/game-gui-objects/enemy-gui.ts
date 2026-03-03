@@ -18,6 +18,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public toolTip:ToolTip;
     public toolTipText:Text;
     public formula:FormulaGUI;
+    public specialAttackShortText: Phaser.GameObjects.GameObject;
     private properX: number;
     private properY: number;
 
@@ -60,6 +61,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
             this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
             this.add(this.formula);
+
+            this.createSpecialAttackShortDescription();
+            const gameState = this.scene && this.scene.tfgame ? this.scene.tfgame.gameState : undefined;
+            const isActive = gameState ? gameState.evaluate(this.enemy.specialAttack) : false;
+            this.updateSpecialAttackShortDescriptionColor(isActive);
         }
 
         this.setInteractive();
@@ -152,7 +158,38 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public updateTint(gameState:GameState) {
-        if (this.formula) this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+        if (!this.formula) return;
+
+        const isActive = gameState.evaluate(this.enemy.specialAttack);
+        this.formula.tintGraphics.setVisible(!isActive);
+        this.updateSpecialAttackShortDescriptionColor(isActive);
+    }
+
+    private createSpecialAttackShortDescription(): void {
+        if (!this.formula || !this.enemy.specialAttackShortDescription) return;
+
+        const hasBBCode = Boolean((this.scene as any).rexUI && (this.scene as any).rexUI.add && (this.scene as any).rexUI.add.BBCodeText);
+        const formatted = formatEffectDescription(this.scene, this.enemy.specialAttackShortDescription, hasBBCode);
+
+        const rexScene: any = this.scene as any;
+        const shortText: any = hasBBCode
+            ? rexScene.rexUI.add.BBCodeText(0, 0, formatted, { fontFamily: 'pressStart', fontSize: '16px', color: '#777777' })
+            : this.scene.add.text(0, 0, formatted, { fontFamily: 'pressStart', fontSize: '16px', color: '#777777' });
+
+        shortText.setOrigin(1, 0.5);
+        shortText.setPosition(this.formula.x - 28, this.formula.y);
+        this.add(shortText);
+        this.specialAttackShortText = shortText;
+    }
+
+    private updateSpecialAttackShortDescriptionColor(isActive: boolean): void {
+        if (!this.specialAttackShortText) return;
+
+        const color = isActive ? '#FF0000' : '#777777';
+        const shortText: any = this.specialAttackShortText;
+
+        if (typeof shortText.setColor === 'function') shortText.setColor(color);
+        else if (shortText.style && typeof shortText.style.setColor === 'function') shortText.style.setColor(color);
     }
 
     public reposition() {
