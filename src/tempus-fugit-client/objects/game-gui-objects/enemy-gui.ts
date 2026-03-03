@@ -95,6 +95,29 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
         this.add(this.toolTip);
+
+        if (this.formula) {
+            this.bindTooltipToGameObject(this.formula.tintRect ? this.formula.tintRect : this.formula);
+        }
+    }
+
+    private bindTooltipToGameObject(gameObject: Phaser.GameObjects.GameObject): void {
+        if (!gameObject || !this.toolTip) return;
+
+        const interactiveObject: any = gameObject as any;
+        if (typeof interactiveObject.setInteractive !== 'function') return;
+
+        interactiveObject
+            .setInteractive()
+            .on('pointerover', function () {
+                if (!this.toolTip.enabled) return;
+                this.toolTip.faderTimer = this.scene.time.delayedCall(this.toolTip.popUpDelay, this.toolTip.fadeIn, [], this.toolTip);
+            }, this)
+            .on('pointerout', function () {
+                if (!this.toolTip.enabled) return;
+                if (this.toolTip.faderTimer) this.toolTip.faderTimer.destroy();
+                this.toolTip.fadeOut();
+            }, this);
     }
 
     public disableListeners():void {
