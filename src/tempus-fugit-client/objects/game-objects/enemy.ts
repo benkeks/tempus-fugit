@@ -183,7 +183,10 @@ export class Enemy {
             );
             enemy.image = e.image;
 
-            if (e.specialAttackDescription) enemy.specialAttackDescription = e.specialAttackDescription;
+            if (e.specialAttack && e.specialAttack.description)
+                enemy.specialAttackDescription = e.specialAttack.description;
+            else if (e.specialAttackDescription)
+                enemy.specialAttackDescription = e.specialAttackDescription;
 
             if (e.key) enemy.key = e.key;
 
