@@ -61,6 +61,15 @@ export class GameState {
         this.energy = this.maxEnergy;
     }
 
+    public addListener(listener: GameStateListener): () => void {
+        if (!this.listener.includes(listener)) this.listener.push(listener);
+        return () => this.removeListener(listener);
+    }
+
+    public removeListener(listener: GameStateListener): void {
+        this.listener = this.listener.filter(obj => obj !== listener);
+    }
+
     /**
      * applies the assignment of the given formula and evaluates it.
      *

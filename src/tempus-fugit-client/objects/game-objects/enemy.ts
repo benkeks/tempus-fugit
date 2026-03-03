@@ -42,6 +42,11 @@ export class Enemy {
         return this.name;
     }
 
+    public addListener(listener: EnemyListener): () => void {
+        if (!this.listener.includes(listener)) this.listener.push(listener);
+        return () => this.removeListener(listener);
+    }
+
     public removeListener(listener:EnemyListener):void {
         this.listener = this.listener.filter(obj => obj !== listener);
     }

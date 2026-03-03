@@ -19,6 +19,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public toolTipText:Text;
     public formula:FormulaGUI;
     public specialAttackShortText: Phaser.GameObjects.GameObject;
+    private removeEnemyListener: () => void;
+    private removeGameStateListener: () => void;
     private properX: number;
     private properY: number;
 
@@ -34,7 +36,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         super(scene, x, y);
         this.scene = scene;
         this.enemy = enemy;
-        this.enemy.listener.push(this);
+        this.removeEnemyListener = this.enemy.addListener(this);
+        this.removeGameStateListener = this.scene.tfgame.gameState.addListener(this);
         this.properX = x;
         this.properY = y;
 
@@ -127,7 +130,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public disableListeners():void {
-        this.enemy.removeListener(this);
+        if (this.removeEnemyListener) this.removeEnemyListener();
+        if (this.removeGameStateListener) this.removeGameStateListener();
     }
 
     public die():void {
@@ -148,7 +152,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             callbackScope: this
         });
         this.disableInteractive();
-        this.toolTip.enabled = false;
+        if (this.toolTip) this.toolTip.enabled = false;
 
         this.disableListeners();
     }
@@ -158,7 +162,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public updateTint(gameState:GameState) {
-        if (!this.formula) return;
+        if (this.isDestroyed || !this.formula || !(this.formula as any).scene) return;
 
         const isActive = gameState.evaluate(this.enemy.specialAttack);
         this.formula.tintGraphics.setVisible(!isActive);
@@ -188,8 +192,16 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         const color = isActive ? '#FF0000' : '#777777';
         const shortText: any = this.specialAttackShortText;
 
-        if (typeof shortText.setColor === 'function') shortText.setColor(color);
-        else if (shortText.style && typeof shortText.style.setColor === 'function') shortText.style.setColor(color);
+        if (!shortText.active || !shortText.scene) return;
+
+        try {
+            if (typeof shortText.setColor === 'function')
+                shortText.setColor(color);
+            else if (shortText.style && typeof shortText.style.setColor === 'function')
+                shortText.style.setColor(color);
+        } catch (e) {
+            return;
+        }
     }
 
     public reposition() {
