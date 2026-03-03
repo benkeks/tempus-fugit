@@ -56,11 +56,11 @@ export function buildCardVisual(
     if (formulaString.length > 8) {
         formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, 0, false).setScale(0.8);
         container.add(formulaGUI);
-        formulaGUI.setPosition(-6 * formulaString.length, padding + 48 - height / 2);
+        formulaGUI.setPosition(-6 * formulaString.length, padding + 46 - height / 2);
     } else {
         formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, margin, false);
         container.add(formulaGUI);
-        formulaGUI.setPosition(-8 * formulaString.length, padding + 48 - height / 2);
+        formulaGUI.setPosition(-8 * formulaString.length, padding + 46 - height / 2);
     }
 
     const hasBBCode = Boolean((scene as any).rexUI && (scene as any).rexUI.add && (scene as any).rexUI.add.BBCodeText);
