@@ -151,7 +151,7 @@ export function buildCardVisual(
     container.add(roundRect);
     container.sendToBack(roundRect);
 
-    [50, 80, 200].forEach((y) => {
+    [48, 78, 190].forEach((y) => {
         const line = scene.add.line(0, 0, 0, y - height / 2, width, y - height / 2, rectOutlineColor, 1);
         line.setLineWidth(2);
         container.add(line);
@@ -208,16 +208,16 @@ export function buildCardVisual(
     if (typeof effectText.setLineSpacing === 'function') effectText.setLineSpacing(5);
     else effectText.lineSpacing = 5;
     effectText.setOrigin(0.5, 0);
-    effectText.setPosition(0, padding + 200 - height / 2);
+    effectText.setPosition(0, padding + 190 - height / 2);
 
     let image = scene.add.image(0, 0, card.getImage());
-    image.setDisplaySize(140, 120);
+    image.setDisplaySize(140, 115);
     container.add(image);
     image.setOrigin(0.5, 0);
-    image.setPosition(0, 80 - height / 2);
+    image.setPosition(0, 75 - height / 2);
 
     let effectFontSize = 24;
-    while (effectText.height > 90 && effectFontSize > 10) {
+    while (effectText.height > 100 && effectFontSize > 10) {
         effectFontSize -= 1;
         effectText.setFontSize(effectFontSize);
     }
