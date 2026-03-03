@@ -7,6 +7,7 @@ import { MissionScene } from "../../scenes/mission-scene";
 import { FormulaGUI } from "./formula-gui";
 import { GameStateListener, GameState } from "../game-objects/game-state";
 import { GameInfo } from "../../game";
+import { formatEffectDescription } from "./effect-icon-text";
 
 /**
  * @author Mustafa
@@ -69,7 +70,27 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.toolTip.addText(this.enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
         this.toolTipText = this.toolTip.addText(this.enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
         this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
-        this.toolTip.addText(this.enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+
+        const hasBBCode = Boolean((this.scene as any).rexUI && (this.scene as any).rexUI.add && (this.scene as any).rexUI.add.BBCodeText);
+        const specialAttackDescription = formatEffectDescription(this.scene, this.enemy.specialAttackDescription, hasBBCode);
+
+        if (hasBBCode) {
+            // @ts-ignore
+            const iconText = this.scene.rexUI.add.BBCodeText(0, 0, specialAttackDescription, {
+                fontFamily: 'pressStart',
+                fontSize: '16px',
+                color: '#FF0000',
+                wrap: {
+                    mode: 'word',
+                    width: 400
+                }
+            });
+            iconText.setLineSpacing(10);
+            this.toolTip.addContainter(iconText, ListGUI.ALIGN_CENTRE, false);
+        } else {
+            this.toolTip.addText(specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+        }
+
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();

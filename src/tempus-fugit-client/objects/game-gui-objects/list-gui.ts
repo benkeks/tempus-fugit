@@ -134,7 +134,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
 
         return t;
     }
-    public addContainter(cont: Phaser.GameObjects.Container, alignment: string = ListGUI.ALIGN_CENTRE): Phaser.GameObjects.Container {
+    public addContainter(cont: Phaser.GameObjects.Container, alignment: string = ListGUI.ALIGN_CENTRE, lineVisible: boolean = true): Phaser.GameObjects.Container {
         let line: Line = this.scene.add.line(0, 0, 0, 0, 100, 0, this.defaultStrokeColor, 1);
 
         this.separatingLines.push(line);
@@ -146,6 +146,8 @@ export class ListGUI extends Phaser.GameObjects.Container {
         if (this.maxTextWidth < w) this.maxTextWidth = w;
 
         this.revalidate();
+
+        if (!lineVisible) line.setVisible(false);
 
         return cont;
     }

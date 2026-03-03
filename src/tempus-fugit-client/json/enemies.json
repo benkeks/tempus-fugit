@@ -2,7 +2,7 @@
     "enemies":[
         {   "name":"slime1",
             "description":"a suicide slime!",
-            "specialAttackDescription":"The player takes 5 damage.",
+            "specialAttackDescription":"The player takes 5 {atk}.",
             "maxHP":15,
             "baseAttack":2,
             "specialAttack":{
@@ -17,7 +17,7 @@
         {   "name":"slime name test",
             "key":"slime2",
       			"description":"a well-read slime",
-      			"specialAttackDescription":"The player takes 10 damage.",
+      			"specialAttackDescription":"The player takes 10 {atk}.",
             "maxHP":20,
             "baseAttack":3,
             "specialAttack":{
@@ -31,7 +31,7 @@
 
         {   "name":"slime3",
             "description":"Another slime!",
-      			"specialAttackDescription":"The player takes 15 damage.",
+      			"specialAttackDescription":"The player takes 15 {atk}.",
             "maxHP":25,
             "baseAttack":4,
             "specialAttack":{
@@ -46,7 +46,7 @@
         {   "name":"Mother of Slimes",
             "key":"slime_mother",
     	      "description":"The mother of all slimes!",
-      			"specialAttackDescription":"The player takes 20 damage.",
+      			"specialAttackDescription":"The player takes 20 {atk}.",
             "maxHP":60,
             "baseAttack":5,
             "specialAttack":{
@@ -60,7 +60,7 @@
 
         {   "name":"goblin1",
             "description":"A GAAAAAAAAWBLIN!",
-      			"specialAttackDescription":"The player takes 10 damage.",
+      			"specialAttackDescription":"The player takes 10 {atk}.",
             "maxHP":25,
             "baseAttack":3,
             "specialAttack":{
@@ -74,7 +74,7 @@
 
         {   "name":"goblin2",
             "description":"A filthy gaaaaaaaawblin!",
-      			"specialAttackDescription":"The player takes 15 damage.",
+      			"specialAttackDescription":"The player takes 15 {atk}.",
             "maxHP":40,
             "baseAttack":6,
             "specialAttack":{
@@ -88,7 +88,7 @@
 
         {   "name":"goblin3",
             "description":"Ech",
-      			"specialAttackDescription":"The player takes 15 damage.",
+      			"specialAttackDescription":"The player takes 15 {atk}.",
             "maxHP":90,
             "baseAttack":8,
             "specialAttack":{
@@ -102,7 +102,7 @@
 
         {   "name":"goblin_general1",
             "description":"A huge pile of disgusting.",
-      			"specialAttackDescription":"The player takes 20 damage.",
+      			"specialAttackDescription":"The player takes 20 {atk}.",
             "maxHP":100,
             "baseAttack":13,
             "specialAttack":{
@@ -116,7 +116,7 @@
 
         {   "name":"goblin_general2",
             "description":"Checking my description won't save you",
-      			"specialAttackDescription":"You take 50 damage.",
+      			"specialAttackDescription":"You take 50 {atk}.",
             "maxHP":300,
             "baseAttack":20,
             "specialAttack":{
@@ -130,7 +130,7 @@
 
         {   "name":"moleg",
             "description":"A golem with a mustache!",
-      			"specialAttackDescription":"The player takes 25 damage.",
+      			"specialAttackDescription":"The player takes 25 {atk}.",
             "maxHP":90,
             "baseAttack":12,
             "specialAttack":{
@@ -143,7 +143,7 @@
         },
 
         {   "name":"cactus1",
-            "specialAttackDescription":"The player takes 15 damage.",
+            "specialAttackDescription":"The player takes 15 {atk}.",
             "description":"Ouch, spiky!",
             "maxHP":45,
             "baseAttack":10,
@@ -157,7 +157,7 @@
         },
 
         {   "name":"cactus2",
-            "specialAttackDescription":"The player takes 15 damage.",
+            "specialAttackDescription":"The player takes 15 {atk}.",
             "description":"Y'all even reading these?",
             "maxHP":50,
             "baseAttack":11,
@@ -171,7 +171,7 @@
         },
 
         {   "name":"kingtus",
-            "specialAttackDescription":"The player takes 28 damage.",
+            "specialAttackDescription":"The player takes 28 {atk}.",
             "description":"Yeah he works out",
             "maxHP":120,
             "baseAttack":20,
@@ -185,7 +185,7 @@
         },
 
         {   "name":"wormling",
-            "specialAttackDescription":"The player takes 15 damage.",
+            "specialAttackDescription":"The player takes 15 {atk}.",
             "description":"A wriggly worm",
             "maxHP":55,
             "baseAttack":10,
@@ -199,7 +199,7 @@
         },
 
         {   "name":"darude_sandworm",
-            "specialAttackDescription":"The player takes 25 damage.",
+            "specialAttackDescription":"The player takes 25 {atk}.",
             "description":"What's this thing's name again?",
             "maxHP":130,
             "baseAttack":18,
@@ -213,7 +213,7 @@
         },
 
         {   "name":"snake",
-            "specialAttackDescription":"The player takes 17 damage.",
+            "specialAttackDescription":"The player takes 17 {atk}.",
             "description":"Jones has left the Lobby",
             "maxHP":50,
             "baseAttack":12,
@@ -226,7 +226,7 @@
 			      "image":"snake"
         },
         {   "name":"mummy",
-            "specialAttackDescription":"The player takes 20 damage.",
+            "specialAttackDescription":"The player takes 20 {atk}.",
             "description":"Dead but alive",
             "maxHP":70,
             "baseAttack":16,
@@ -240,7 +240,7 @@
         },
 
         {   "name":"pharaoh_yeah",
-            "specialAttackDescription":"The player takes 30 damage.",
+            "specialAttackDescription":"The player takes 30 {atk}.",
             "description":"The woke one",
             "maxHP":130,
             "baseAttack":22,
@@ -254,7 +254,7 @@
         },
 
         {   "name":"bgpuff1",
-            "specialAttackDescription":"The player takes 25 damage.",
+            "specialAttackDescription":"The player takes 25 {atk}.",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
@@ -268,7 +268,7 @@
         },
 
         {   "name":"bgpuff2",
-            "specialAttackDescription":"The player takes 25 damage.",
+            "specialAttackDescription":"The player takes 25 {atk}.",
             "description":"A marshmellow-like being.",
             "maxHP":100,
             "baseAttack":17,
@@ -282,7 +282,7 @@
         },
 
         {   "name":"jkpuff",
-            "specialAttackDescription":"The player takes 25 damage.",
+            "specialAttackDescription":"The player takes 25 {atk}.",
             "description":"A rude being.",
             "maxHP":160,
             "baseAttack":20,
@@ -296,7 +296,7 @@
         },
 
         {   "name":"ghost",
-            "specialAttackDescription":"The player takes 25 damage.",
+            "specialAttackDescription":"The player takes 25 {atk}.",
             "description":"Who knew they were real?",
             "maxHP":110,
             "baseAttack":20,
@@ -310,7 +310,7 @@
         },
 
         {   "name":"stand1",
-            "specialAttackDescription":"The player takes 35 damage.",
+            "specialAttackDescription":"The player takes 35 {atk}.",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
@@ -323,7 +323,7 @@
 			      "image":"stand1"
         },
         {   "name":"stand2",
-            "specialAttackDescription":"The player takes 35 damage.",
+            "specialAttackDescription":"The player takes 35 {atk}.",
             "description":"Bad news",
             "maxHP":160,
             "baseAttack":33,
@@ -336,7 +336,7 @@
 			      "image":"stand2"
         },
         {   "name":"boss",
-            "specialAttackDescription":"The player takes 50 damage.",
+            "specialAttackDescription":"The player takes 50 {atk}.",
             "description":"Worse news",
             "maxHP":200,
             "baseAttack":40,
