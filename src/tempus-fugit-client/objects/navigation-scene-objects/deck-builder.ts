@@ -6,6 +6,7 @@ import { Card } from "../game-objects/card";
 import { Player } from "../game-objects/player";
 import { DescritptionDialog } from "./description-dialog";
 import { NavigationScene } from "../../scenes/navigation-scene";
+import { ProgressStore } from "../../progress/progress-store";
 
 const BACKGROUND_COLOR_FILL = 0x607d8b
 const BACKGROUND_COLOR_LINE = 0x000
@@ -673,6 +674,7 @@ export class DeckBuilder {
 
         this.deckViewer.add(cardgui, {}, card.name);
         Deck.Decks[this.deckName].deck[card.name] = (card);
+        this.persistProgress();
         this.updateDeckTitleText();
         this.update();
     }
@@ -683,6 +685,7 @@ export class DeckBuilder {
         let elem = this.deckViewer.getElement("items").find(function(c){return c.card.name==card.name})
         this.deckViewer.remove(elem);
         delete Deck.Decks[this.deckName].deck[card.name];
+        this.persistProgress();
         this.updateDeckTitleText();
         this.update();
         elem.destroy(true);
@@ -737,5 +740,9 @@ export class DeckBuilder {
         }
    
         return button;
+    }
+
+    private persistProgress() {
+        ProgressStore.save(this.player, Deck.Decks["custom"], this.newCards, NavigationScene.instance.missionKeys.length);
     }
 }

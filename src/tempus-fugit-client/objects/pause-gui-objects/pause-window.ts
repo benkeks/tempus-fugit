@@ -5,6 +5,7 @@ import { HelpButton } from "../help-gui-objects/help-button";
 import { PauseButton } from "./pause-button";
 import { MissionScene } from "../../scenes/mission-scene";
 import { NavigationScene } from "../../scenes/navigation-scene";
+import { ProgressStore } from "../../progress/progress-store";
 
 
 const GUI_TITLE = 0xeceff1;
@@ -29,6 +30,7 @@ export class PauseWindow {
     private scene: Phaser.Scene;
     private isMissionScene: boolean;
     private instanceCounter: number = 0;
+    public activeDialog;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -55,6 +57,7 @@ export class PauseWindow {
                 this.createLabel(scene, 'Retry', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
                 this.createLabel(scene, 'Return to Map', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
                 this.createLabel(scene, 'Quit', GUI_LABEL_BG),
+                this.createLabel(scene, 'Start over', isMissionScene ? GUI_FILL_DARK : GUI_LABEL_BG),
             ],
             align: {
                 title: 'center',
@@ -83,6 +86,32 @@ export class PauseWindow {
                 scene.scene.start('StartingScene');
             }
 
+            function startOver() {
+                scene.scene.run("DialogScene", {
+                    scene: this,
+                    parent: "PauseScene",
+                    title: "Start Over",
+                    description: "This will remove your saved progress from this browser and restart the game. Continue?",
+                    buttons: [
+                        ["Cancel", function() {
+                            this.activeDialog.hide();
+                        }, this],
+                        ["Delete progress", function() {
+                            this.activeDialog.returnToScene = false;
+                            this.activeDialog.hide();
+
+                            ProgressStore.clear();
+                            NavigationScene.instance.initGame();
+                            PauseWindow.pauseQuit = true;
+
+                            scene.scene.stop(PauseButton.currPauseParent);
+                            scene.scene.stop("PauseScene");
+                            scene.scene.start("StartingScene");
+                        }, this]
+                    ]
+                });
+            }
+
             function retry() {
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('MissionScene', MissionScene.latestData);
@@ -93,7 +122,7 @@ export class PauseWindow {
                 scene.scene.start('NavigationScene', {tutorial:false});
             }
 
-            let indexToFn = [retry, navigation, quit];
+            let indexToFn = [retry, navigation, quit, startOver];
 
             switch (groupName) {
                 case 'toolbar':
@@ -106,15 +135,24 @@ export class PauseWindow {
                     break;
                 case 'choices':
                     if (!this.isMissionScene && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
+                    if (this.isMissionScene && index === 3) return; // disable start over button on mission scene
+
+                    if (index === 3) {
+                        indexToFn[index]();
+                        return;
+                    }
+
                     scene.scene.run(PauseButton.currPauseParent);
                     indexToFn[index]();
                     break;
             }
         }, this).on('button.over', function highlightBorder(button, groupname, index) {
             if (!this.isMissionScene && groupname === 'choices' && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
+            if (this.isMissionScene && groupname === 'choices' && index === 3) return; // disable start over button on mission scene
             button.getElement('background').setStrokeStyle(BORDER_WIDTH, GUI_BORDER_HIGHLIGHT);
         }, this).on('button.out', function restoreBorder(button, groupname, index) {
             if (!this.isMissionScene && groupname === 'choices' && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
+            if (this.isMissionScene && groupname === 'choices' && index === 3) return; // disable start over button on mission scene
             button.getElement('background').setStrokeStyle(BORDER_WIDTH, groupname === 'toolbar' ? 0x000000 : GUI_BORDER);
         }, this);
 

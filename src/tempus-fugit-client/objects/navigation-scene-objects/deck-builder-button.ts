@@ -1,5 +1,7 @@
 import { Player } from "../game-objects/player";
 import { Deck } from "../game-objects/deck";
+import { NavigationScene } from "../../scenes/navigation-scene";
+import { ProgressStore } from "../../progress/progress-store";
 
 // GUI Colors
 const GUI_BORDER = 0x37474F;
@@ -70,5 +72,6 @@ export class DeckBuilderButton {
     public destroyNotification() {
         if(this.notification) this.notification.destroy();
         DeckBuilderButton.newCards = new Set<string>();
+        ProgressStore.save(this.player, Deck.Decks["custom"], DeckBuilderButton.newCards, NavigationScene.instance.missionKeys.length);
     }
 }
