@@ -16,6 +16,7 @@ export class Enemy {
     public _baseAttack: number; // The enemy's base attack strength
     public description:string;
     public specialAttackDescription:string = "";
+    public specialAttackShortDescription:string = "";
     public image:string;
 
     public specialAttack: Card; // The enemy's base attack strength
@@ -41,6 +42,11 @@ export class Enemy {
         return this.name;
     }
 
+    public addListener(listener: EnemyListener): () => void {
+        if (!this.listener.includes(listener)) this.listener.push(listener);
+        return () => this.removeListener(listener);
+    }
+
     public removeListener(listener:EnemyListener):void {
         this.listener = this.listener.filter(obj => obj !== listener);
     }
@@ -51,6 +57,7 @@ export class Enemy {
        new_enemy.description = this.description;
        new_enemy.image = this.image;
        new_enemy.specialAttackDescription = this.specialAttackDescription;
+       new_enemy.specialAttackShortDescription = this.specialAttackShortDescription;
 
        return new_enemy;
     }
@@ -114,12 +121,13 @@ export class Enemy {
     }
 
     public performTurn(mission:Mission):void {
-        let val = !this.applyCard(this.specialAttack, mission)
-        if (!this.applyCard(this.specialAttack, mission)){
+        const specialAttackActive = this.specialAttack !== undefined && this.applyCard(this.specialAttack, mission);
+
+        if (!specialAttackActive){
             mission.player.takeHit(this.baseAttack);
         }
 
-        this.listener.map(l => l.Attacking(this));
+        this.listener.map(l => l.Attacking(this, specialAttackActive));
     }
 
     /**
@@ -183,7 +191,13 @@ export class Enemy {
             );
             enemy.image = e.image;
 
-            if (e.specialAttackDescription) enemy.specialAttackDescription = e.specialAttackDescription;
+            if (e.specialAttack && e.specialAttack.description)
+                enemy.specialAttackDescription = e.specialAttack.description;
+            else if (e.specialAttackDescription)
+                enemy.specialAttackDescription = e.specialAttackDescription;
+
+            if (e.specialAttack && e.specialAttack.shortDescription)
+                enemy.specialAttackShortDescription = e.specialAttack.shortDescription;
 
             if (e.key) enemy.key = e.key;
 
@@ -201,6 +215,6 @@ export class Enemy {
  */
 export interface EnemyListener {
     enemyHpChanged(enemy:Enemy, changedFrom:number, changedTo: number): void;
-    Attacking(enemy:Enemy);
+    Attacking(enemy:Enemy, specialAttackActive:boolean);
     baseAttackChanged(enemy:Enemy);
 }

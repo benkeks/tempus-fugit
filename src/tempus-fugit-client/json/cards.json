@@ -11,7 +11,7 @@
 		"maxCardsInDeck":"1"},
 
 		{"name":"Fireball",
-		"description":"Deals 8 damage to a foe, also sets strength two rounds from now",
+		"description":"Deals 8 {atk} to a foe, also sets {strength} two rounds from now",
 		"image":"fireball",
 		"formula":"s&(l|n)",
 		"cardKind":"directed",
@@ -22,7 +22,7 @@
 		"maxCardsInDeck":"4"},
 
 		{"name":"Strength",
-		"description":"Increases base attack by 4, also set the next two strength",
+		"description":"Increases base {atk} by 4, also set the next two {strength}",
 		"image":"sword",
 		"formula":"#OOs&#Os&s",
 		"cardKind":"player",
@@ -44,7 +44,7 @@
 		"maxCardsInDeck":"1"},
 
 		{"name":"Aura of Weakness",
-		"description":"Decreases enemies' atk by 3",
+		"description":"Decreases enemies' {atk} by 3",
 		"image":"weak_aura",
 		"formula":"!s&t&#Ot",
 		"cardKind":"global",
@@ -55,7 +55,7 @@
 		"maxCardsInDeck":"1"},
 
 		{"name":"Higher nature stand",
-		"description":"Deals 15 dmg to all enemies!",
+		"description":"Deals 15 {atk} to all enemies!",
 		"image":"nature_stand",
 		"formula":"#On&(n|s)",
 		"cardKind":"global",
@@ -66,7 +66,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Light stand",
-		"description":"Deals 8 dmg to all enemies!",
+		"description":"Deals 8 {atk} to all enemies!",
 		"image":"lightning_stand",
 		"formula":"#Ol&l",
 		"cardKind":"global",
@@ -77,7 +77,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Heal stand",
-		"description":"Heals 50 dmg!",
+		"description":"Heals 50 {hp}!",
 		"image":"heal_stand",
 		"formula":"n&l&#Ft",
 		"cardKind":"player",
@@ -88,7 +88,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Higher heal stand",
-		"description":"Heals 100 dmg!",
+		"description":"Heals 100 {hp}!",
 		"image":"heal_stand",
 		"formula":"#O(l&n)&(n<->!t)",
 		"cardKind":"player",
@@ -99,7 +99,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning stand",
-		"description":"Deals 25 dmg to all enemies!",
+		"description":"Deals 25 {atk} to all enemies!",
 		"image":"lightning_stand",
 		"formula":"#Ol&l&#F(s&n)",
 		"cardKind":"global",
@@ -110,7 +110,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Lightning Strike",
-		"description":"Deals 12 damage to a foe but un-sets light this round",
+		"description":"Deals 12 {atk} to a foe but un-sets {light} this round",
 		"image":"lightning_strike",
 		"formula":"l&(n|t)",
 		"cardKind":"directed",
@@ -121,7 +121,7 @@
 		"maxCardsInDeck":"4"},
 
 		{"name":"Lightning rain",
-		"description":"Deals 35 damage to all enemies and sets light from now on",
+		"description":"Deals 35 {atk} to all enemies and sets {light} from now on",
 		"image":"lightning_rain",
 		"formula":"(#O#On)&#F(l&t)&s",
 		"cardKind":"global",
@@ -132,7 +132,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Natural heal",
-		"description":"Heals you by 40 HP and sets the next two nature",
+		"description":"Heals you by 40 {hp} and sets the next two {nature}",
 		"image":"slight_heal",
 		"formula":"n&#On",
 		"cardKind":"player",
@@ -154,7 +154,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Anti-evolution",
-		"description":"Deals 16 damage to a foe but unsets nature",
+		"description":"Deals 16 {atk} to a foe but unsets {nature}",
 		"image":"unknown",
 		"formula":"n&t&!l",
 		"cardKind":"directed",
@@ -165,7 +165,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Dark beam",
-		"description":"Deals 50 damage to a foe but un-sets three light!",
+		"description":"Deals 50 {atk} to a foe but un-sets three {light}!",
 		"image":"dark_beam",
 		"formula":"(l|#Ol)<->t&s",
 		"cardKind":"directed",
@@ -176,7 +176,7 @@
 		"maxCardsInDeckt":"2"},
 
 		{"name":"Sun flare",
-		"description":"Deals 20 damage to all enemies, sets three strength & light",
+		"description":"Deals 20 {atk} to all enemies, sets three {strength} & {light}",
 		"image":"sun",
 		"formula":"#G(l|n)&s",
 		"cardKind":"global",
@@ -187,7 +187,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Incinerate",
-		"description":"Deals 100 dmg to a foe, unsets all nature but sets 3 strength",
+		"description":"Deals 100 {atk} to a foe, unsets all {nature} but sets 3 {strength}",
 		"image":"light_lens",
 		"formula":"!n&#O#F(l&t)",
 		"cardKind":"directed",
@@ -198,7 +198,7 @@
 		"maxCardsInDeck":"3"},
 
 		{"name":"Unnatural heal",
-		"description":"Heals you by 100 HP but un-sets all nature from this round on!",
+		"description":"Heals you by 100 {hp} but un-sets all {nature} from this round on!",
 		"image":"big_heal",
 		"formula":"#On&!n&t",
 		"cardKind":"player",
@@ -209,7 +209,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Guiding Light",
-		"description":"Augments Base attack by 2 and globally light",
+		"description":"Augments Base {atk} by 2 and globally {light}",
 		"image":"light_bs",
 		"formula":"#Ol&l&s",
 		"cardKind":"player",
@@ -220,7 +220,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Lower woodland stand",
-		"description":"this stand deals 3 damage to all enemies!",
+		"description":"This stand deals 3 {atk} to all enemies!",
 		"image":"nature_stand",
 		"formula":"n",
 		"cardKind":"global",
@@ -231,7 +231,7 @@
 		"maxCardsInDeck":"2"},
 
 		{"name":"Root pierce",
-		"description":"8 dmg to a foe, sets: Next two transmute, next strength",
+		"description":"Deals 8 {atk} to a foe, sets: Next two {transform}, next {strength}",
 		"image":"tree",
 		"formula":"n&l",
 		"cardKind":"directed",

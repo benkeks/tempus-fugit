@@ -7,6 +7,7 @@ import { MissionScene } from "../../scenes/mission-scene";
 import { FormulaGUI } from "./formula-gui";
 import { GameStateListener, GameState } from "../game-objects/game-state";
 import { GameInfo } from "../../game";
+import { formatEffectDescription } from "./effect-icon-text";
 
 /**
  * @author Mustafa
@@ -17,6 +18,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public toolTip:ToolTip;
     public toolTipText:Text;
     public formula:FormulaGUI;
+    public specialAttackShortText: Phaser.GameObjects.GameObject;
+    private removeEnemyListener: () => void;
+    private removeGameStateListener: () => void;
     private properX: number;
     private properY: number;
 
@@ -32,7 +36,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         super(scene, x, y);
         this.scene = scene;
         this.enemy = enemy;
-        this.enemy.listener.push(this);
+        this.removeEnemyListener = this.enemy.addListener(this);
+        this.removeGameStateListener = this.scene.tfgame.gameState.addListener(this);
         this.properX = x;
         this.properY = y;
 
@@ -59,6 +64,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             this.formula = new FormulaGUI(scene, enemy.specialAttack.getFormulaGuiString(), 0, this.getBounds().height, 2, true, false);
             this.formula.setPosition(-this.formula.getBounds().width/2, this.maxY + this.yPadding*2);
             this.add(this.formula);
+
+            this.createSpecialAttackShortDescription();
+            const gameState = this.scene && this.scene.tfgame ? this.scene.tfgame.gameState : undefined;
+            const isActive = gameState ? gameState.evaluate(this.enemy.specialAttack) : false;
+            this.updateSpecialAttackShortDescriptionColor(isActive);
         }
 
         this.setInteractive();
@@ -69,15 +79,59 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.toolTip.addText(this.enemy.name, ListGUI.ALIGN_CENTRE, { fontSize: "22px", fontFamily: 'pressStart' });
         this.toolTipText = this.toolTip.addText(this.enemy.description, ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' }, true, 10);
         this.toolTip.addText("Special Attack", ListGUI.ALIGN_CENTRE, { fontSize: "16px", fontFamily: 'pressStart' });
-        this.toolTip.addText(this.enemy.specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+
+        const hasBBCode = Boolean((this.scene as any).rexUI && (this.scene as any).rexUI.add && (this.scene as any).rexUI.add.BBCodeText);
+        const specialAttackDescription = formatEffectDescription(this.scene, this.enemy.specialAttackDescription, hasBBCode);
+
+        if (hasBBCode) {
+            // @ts-ignore
+            const iconText = this.scene.rexUI.add.BBCodeText(0, 0, specialAttackDescription, {
+                fontFamily: 'pressStart',
+                fontSize: '16px',
+                color: '#FF0000',
+                wrap: {
+                    mode: 'word',
+                    width: 400
+                }
+            });
+            iconText.setLineSpacing(10);
+            this.toolTip.addContainter(iconText, ListGUI.ALIGN_CENTRE, false);
+        } else {
+            this.toolTip.addText(specialAttackDescription, ListGUI.ALIGN_CENTRE, { fontSize: '16px', fontFamily: 'pressStart', color: '#FF0000' }, false, 10);
+        }
+
         this.toolTip.fixedMaxTextWidth = true;
         this.toolTip.maxTextWidth = 400;
         this.toolTip.revalidate();
         this.add(this.toolTip);
+
+        if (this.formula) {
+            this.bindTooltipToGameObject(this.formula.tintRect ? this.formula.tintRect : this.formula);
+        }
+    }
+
+    private bindTooltipToGameObject(gameObject: Phaser.GameObjects.GameObject): void {
+        if (!gameObject || !this.toolTip) return;
+
+        const interactiveObject: any = gameObject as any;
+        if (typeof interactiveObject.setInteractive !== 'function') return;
+
+        interactiveObject
+            .setInteractive()
+            .on('pointerover', function () {
+                if (!this.toolTip.enabled) return;
+                this.toolTip.faderTimer = this.scene.time.delayedCall(this.toolTip.popUpDelay, this.toolTip.fadeIn, [], this.toolTip);
+            }, this)
+            .on('pointerout', function () {
+                if (!this.toolTip.enabled) return;
+                if (this.toolTip.faderTimer) this.toolTip.faderTimer.destroy();
+                this.toolTip.fadeOut();
+            }, this);
     }
 
     public disableListeners():void {
-        this.enemy.removeListener(this);
+        if (this.removeEnemyListener) this.removeEnemyListener();
+        if (this.removeGameStateListener) this.removeGameStateListener();
     }
 
     public die():void {
@@ -98,7 +152,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             callbackScope: this
         });
         this.disableInteractive();
-        this.toolTip.enabled = false;
+        if (this.toolTip) this.toolTip.enabled = false;
 
         this.disableListeners();
     }
@@ -108,7 +162,46 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public updateTint(gameState:GameState) {
-        if (this.formula) this.formula.tintGraphics.setVisible(!gameState.evaluate(this.enemy.specialAttack));
+        if (this.isDestroyed || !this.formula || !(this.formula as any).scene) return;
+
+        const isActive = gameState.evaluate(this.enemy.specialAttack);
+        this.formula.tintGraphics.setVisible(!isActive);
+        this.updateSpecialAttackShortDescriptionColor(isActive);
+    }
+
+    private createSpecialAttackShortDescription(): void {
+        if (!this.formula || !this.enemy.specialAttackShortDescription) return;
+
+        const hasBBCode = Boolean((this.scene as any).rexUI && (this.scene as any).rexUI.add && (this.scene as any).rexUI.add.BBCodeText);
+        const formatted = formatEffectDescription(this.scene, this.enemy.specialAttackShortDescription, hasBBCode);
+
+        const rexScene: any = this.scene as any;
+        const shortText: any = hasBBCode
+            ? rexScene.rexUI.add.BBCodeText(0, 0, formatted, { fontFamily: 'pressStart', fontSize: '16px', color: '#777777' })
+            : this.scene.add.text(0, 0, formatted, { fontFamily: 'pressStart', fontSize: '16px', color: '#777777' });
+
+        shortText.setOrigin(1, 0.5);
+        shortText.setPosition(this.formula.x - 28, this.formula.y);
+        this.add(shortText);
+        this.specialAttackShortText = shortText;
+    }
+
+    private updateSpecialAttackShortDescriptionColor(isActive: boolean): void {
+        if (!this.specialAttackShortText) return;
+
+        const color = isActive ? '#FF0000' : '#777777';
+        const shortText: any = this.specialAttackShortText;
+
+        if (!shortText.active || !shortText.scene) return;
+
+        try {
+            if (typeof shortText.setColor === 'function')
+                shortText.setColor(color);
+            else if (shortText.style && typeof shortText.style.setColor === 'function')
+                shortText.style.setColor(color);
+        } catch (e) {
+            return;
+        }
     }
 
     public reposition() {
@@ -143,8 +236,13 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         }else this.updateEnemyAttributes();
     }
 
-    async Attacking(enemy: Enemy) {
-        this.scene.createAttackAnimation(this.scene, this, "-");
+    async Attacking(enemy: Enemy, specialAttackActive: boolean) {
+        const first = this.scene.createAttackAnimation(this.scene, this, "-");
+        if (specialAttackActive) {
+            first.once('complete', () => {
+                this.scene.createAttackAnimation(this.scene, this, "-");
+            });
+        }
     }
 
     async baseAttackChanged(enemy:Enemy) {

@@ -50,6 +50,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         this.reps[")"] = { type: "operators", frame: 14 };
         let pos = 0;
         this.elementList = [];
+        const formulaWidth = (16 + margin) * (formulaString.length + 1);
         for (let char of formulaString) {
             this.elementList.push(this.scene.add.sprite(pos, 0, this.reps[char].type, this.reps[char].frame));
             pos += (16 + margin);
@@ -57,11 +58,16 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         if (withRectangle) {
             this.graphics = this.scene.add.graphics();
             this.graphics.lineStyle(4, 0xFFFFFF, 0.6);
-            this.bounds = new Phaser.Geom.Rectangle(-20,22,(16 + margin) * (formulaString.length + 1), 44);
-            let outline = this.graphics.strokeRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.bounds = new Phaser.Geom.Rectangle(-20, -22, formulaWidth, 44);
+            this.graphics.strokeRoundedRect(-20, -22, formulaWidth, 44, 10);
             this.graphics.fillStyle(0xFFFFFF, 1);
-            let roundRect = this.graphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.graphics.fillRoundedRect(-20, -22, formulaWidth, 44, 10);
             this.add(this.graphics);
+
+            this.tintRect = this.scene.add.rectangle(-20, -22, formulaWidth, 44, 0x000000, 0).setOrigin(0, 0);
+            this.add(this.tintRect);
+            this.sendToBack(this.tintRect);
+            this.tintRect.setInteractive();
         }
 
         for (let el of this.elementList) {
@@ -74,7 +80,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         if (withRectangle) {
             this.tintGraphics = this.scene.add.graphics();
             this.tintGraphics.fillStyle(0x333333, 0.5);
-            let tint = this.tintGraphics.fillRoundedRect(-20, -22, (16 + margin) * (formulaString.length + 1), 44, 10);
+            this.tintGraphics.fillRoundedRect(-20, -22, formulaWidth, 44, 10);
             this.tintGraphics.setVisible(true);
             this.add(this.tintGraphics);
         }
