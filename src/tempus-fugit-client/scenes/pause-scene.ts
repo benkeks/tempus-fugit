@@ -19,9 +19,10 @@ export class PauseScene extends Phaser.Scene {
         this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
         this.scene.pause(PauseButton.currPauseParent);
 
-        this.events.on('wake', function () {
-            this.scene.pause(PauseButton.currPauseParent);
-            this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
-        }, this);
+        // this.events.on('wake', function () {
+            
+        //     this.scene.pause(PauseButton.currPauseParent);
+        //     this.pauseWindow.createPauseWindow(PauseButton.currPauseParent === 'MissionScene');
+        // }, this);
     }
 }

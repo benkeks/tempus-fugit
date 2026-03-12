@@ -110,7 +110,7 @@ export class HelpWindow {
             this.helpGUI.scaleDownDestroy(300);
             setTimeout(() => {
                 scene.scene.run(HelpButton.currHelpParent);
-                scene.scene.sleep('HelpScene');
+                scene.scene.stop('HelpScene');
             }, 300);
         }, this).on('button.over', function (button) {
             button.getElement('background').setStrokeStyle(BORDER_WIDTH_TAB, GUI_BORDER_HIGHLIGHT);
