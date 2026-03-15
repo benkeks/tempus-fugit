@@ -22,12 +22,5 @@ export class HelpScene extends Phaser.Scene {
         this.helpWindow = new HelpWindow(this);
         this.helpWindow.createWindow();
         this.scene.pause(HelpButton.currHelpParent);
-
-        // this.events.on('wake', function () {
-        //     debugPrint(this, "hello", "hi");
-        //     this.scene.pause(HelpButton.currHelpParent);
-        //     this.helpWindow = new HelpWindow(this);
-        //     this.helpWindow.createWindow();
-        // }, this);
     }
 }
