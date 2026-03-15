@@ -130,7 +130,7 @@ export class PauseWindow {
                     this.window.scaleDownDestroy(300);
                     setTimeout(() => {
                         scene.scene.run(PauseButton.currPauseParent);
-                        scene.scene.sleep('PauseScene');
+                        scene.scene.stop('PauseScene');
                     }, 300);
                     break;
                 case 'choices':
