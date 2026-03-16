@@ -42,34 +42,9 @@ export class DecisionArrow extends Phaser.GameObjects.Container {
         this.triangle = scene.add.triangle(0,400, 0, 0, 2, 0, 1, 3, this.color, 1);
         this.triangle.setScale(15,15);
 
-        //this.dot = scene.add.graphics({x:0, y:0});
-        //this.dot.fillStyle(this.color, 0);
-        //this.dot.lineStyle(3, this.color, 1);
-        //this.dot.fillCircle(0, 0, 40);
-
         this.dZone = new DeathZone(this.triangle);
 
-        this.particleContainer = this.scene.add.particles(0, 0, "blue");
-        /*this.emitter = this.particleContainer.createEmitter({
-            x:{min:-25, max:25},
-            y:{min:10, max:-10},
-            speed: 1000,
-            lifespan: 500,
-            blendMode: 'ADD',
-            scaleX: 0.3,
-            scaleY: 0.3,
-            moveToY: 100,
-            moveToX:0,
-            quantity: 5,
-            deathZone: {
-                      type: 'onEnter',  // 'onEnter', or 'onLeave'
-                      source: this.dZone     // Geom like Circle or Rect that supports a 'contains' function
-                }
-        });
-
-        this.add(this.particleContainer);*/
         this.add(this.triangle);
-        //this.add(this.dot);
     }
 
     public dragend(pointer:Phaser.Input.Pointer, gameObject:CardGUI) {
