@@ -24,7 +24,6 @@ import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
 import { HelpButton } from "../objects/help-gui-objects/help-button";
 import { Stack } from "../objects/game-objects/stack";
-import { BaseAttackGUI } from "../objects/game-gui-objects/base-attack-gui";
 
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
 
@@ -38,7 +37,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     static latestData: Object;
 
     public playerGUI: PlayerGUI;
-    public gameStateGUI: TableGUI;
+    public gameStateGUI: TableGUI; // variable table at the top
     public handGUI: HandGUI;
     public deckGUI: DeckGUI;
     public enemyGUI: EnemyGuiLayout;
@@ -49,8 +48,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public pauseButton: PauseButton;
     public tutorialButton: TutorialButton;
     public soundButton:SoundButton;
-
-    public baseAttack: BaseAttackGUI;
 
     public tfgame: Mission;
     public missionIndex: number;
@@ -168,17 +165,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.fillStyle(color3, 1);
         this.lowerMenu.fillRoundedRect(GameInfo.width * 0.25 + margin, innerTop, GameInfo.width * 0.5 - margin, GameInfo.height * 0.27, 30);
 
-        //Base attack box
-        this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
-        this.lowerMenu.fillStyle(0x666666, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
-
         //Cards left box
         this.lowerMenu.lineStyle(6, color1, 1);
-        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop + GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+        this.lowerMenu.strokeRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
         this.lowerMenu.fillStyle(color3, 1);
-        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop + GameInfo.height * 0.145, GameInfo.width * 0.1 - margin, GameInfo.height * 0.125, 30);
+        this.lowerMenu.fillRoundedRect(GameInfo.width * 0.75 + margin, innerTop, GameInfo.width * 0.1 - margin, GameInfo.height * 0.27, 30);
 
         //Phase box
         this.lowerMenu.lineStyle(6, color1, 1);
@@ -217,7 +208,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.gameState.listener.push(this.standGUI);
         this.tfgame.standListener.push(this.standGUI);
 
-        this.baseAttack = new BaseAttackGUI(this, this.tfgame, GameInfo.width * 0.8, GameInfo.height * 0.8);
         this.phaseWheel = new WheelGUI(this, this.tfgame);
 
         this.tfgame.player.takeCard(this.tfgame.deck);

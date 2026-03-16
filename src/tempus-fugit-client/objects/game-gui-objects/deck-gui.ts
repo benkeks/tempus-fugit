@@ -16,7 +16,7 @@ export class DeckGUI extends Phaser.GameObjects.Container implements DeckListene
         scene: Phaser.Scene,
         deck: Deck,
         x: number = 1545,
-        y: number = 920
+        y: number = 842
     ) {
         super(scene, x, y);
         scene.add.existing(this);
