@@ -25,7 +25,7 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         margin: number,
         withRectangle: boolean,
         downscale:boolean=true,
-        maxWidth:number=0
+        splitAfter:number=-1
     ) {
         super(scene, x, y);
         this.scene = scene;
@@ -55,11 +55,12 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         const rowHeight = 26;
         this.elementList = [];
         const formulaWidth = (16 + margin) * (formulaString.length + 1);
-        for (let char of formulaString) {
-            if (maxWidth > 0 && pos + 16 > maxWidth) {
+        for (let i = 0; i < formulaString.length; i++) {
+            if (splitAfter >= 0 && i === splitAfter) {
                 pos = 0;
                 row++;
             }
+            const char = formulaString[i];
             this.elementList.push(this.scene.add.sprite(pos, row * rowHeight, this.reps[char].type, this.reps[char].frame));
             pos += step;
         }

@@ -8,6 +8,17 @@ export type CardVisualBuildResult = {
     image: Phaser.GameObjects.Image;
 };
 
+function findTopLevelAndSplit(guiStr: string): number {
+    let depth = 0;
+    for (let i = 0; i < guiStr.length; i++) {
+        if (guiStr[i] === '(') depth++;
+        else if (guiStr[i] === ')') depth--;
+        else if (guiStr[i] === '&' && depth === 0)
+            return i;
+    }
+    return -1;
+}
+
 export function buildCardVisual(
     container: Phaser.GameObjects.Container,
     card: Card,
@@ -53,13 +64,13 @@ export function buildCardVisual(
 
     let margin = 2;
     let formulaString = card.getFormulaGuiString();
-    let formulaGUI;
+    const splitAfter = longFormula ? findTopLevelAndSplit(formulaString) : -1;
+    let formulaGUI: FormulaGUI;
     if (formulaString.length > 8) {
-        const maxWidth = Math.ceil(width / 0.8);
-        formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, 0, false, true, maxWidth).setScale(0.8);
+        formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, 0, false, true, splitAfter).setScale(0.8) as FormulaGUI;
         container.add(formulaGUI);
-        const charsPerRow = Math.floor(Math.ceil(width / 0.8) / 16);
-        formulaGUI.setPosition(-6.4 * Math.min(formulaString.length, charsPerRow), padding + 46 - height / 2);
+        const row1Len = splitAfter >= 0 ? splitAfter : formulaString.length;
+        formulaGUI.setPosition(-6.4 * row1Len, padding + 46 - height / 2);
     } else {
         formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, margin, false);
         container.add(formulaGUI);
