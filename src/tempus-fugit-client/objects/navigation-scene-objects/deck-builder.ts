@@ -329,13 +329,18 @@ export class DeckBuilder {
                 track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, GUI_SLIDER),
                 //@ts-ignore
                 thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL)
-            },space: {
+            },
+            mouseWheelScroller: {
+                focus: 2,
+                speed: 0.3
+            },
+            space: {
                 left: 15,
                 right: 15,
                 top: 15,
                 bottom: 10,
                 header:20,
-        
+
                 panel: 10,
             },
             header:this.deckSliderDialog,
@@ -410,13 +415,18 @@ export class DeckBuilder {
                 track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, GUI_SLIDER),
                 //@ts-ignore
                 thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL)
-            },space: {
+            },
+            mouseWheelScroller: {
+                focus: 2,
+                speed: 0.3
+            },
+            space: {
                 left: 15,
                 right: 15,
                 top: 15,
                 bottom: 10,
                 header:20,
-        
+
                 panel: 10,
             },
             header:header,draggable:false
