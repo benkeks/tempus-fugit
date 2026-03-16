@@ -331,7 +331,7 @@ export class DeckBuilder {
                 thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL)
             },
             mouseWheelScroller: {
-                focus: true,
+                focus: 2,
                 speed: 0.3
             },
             space: {
@@ -417,7 +417,7 @@ export class DeckBuilder {
                 thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL)
             },
             mouseWheelScroller: {
-                focus: true,
+                focus: 2,
                 speed: 0.3
             },
             space: {
