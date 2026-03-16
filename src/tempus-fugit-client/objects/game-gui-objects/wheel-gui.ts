@@ -9,13 +9,18 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     public scene: Phaser.Scene;
     public wheel: Phaser.GameObjects.Sprite;
     public box: Phaser.GameObjects.Rectangle;
+
+
+    // this is the done text that changes if baseAttack is possible
     public text: Phaser.GameObjects.Text;
+    public plusText: Phaser.GameObjects.Text;
+    public baseAttackIcon: Phaser.GameObjects.Sprite;
 
     public size: number;
 
     public game: Mission;
 
-    private baseAttackAllowed: Boolean = true;
+    private baseAttackAllowed: boolean = true;
 
     constructor(scene: Scene,
         game: Mission,
@@ -86,13 +91,25 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.box = this.scene.add.rectangle(x, y, width, height, 0x666666);
         this.box.setOrigin(1);
 
-        this.text = this.scene.add.text(x-width/2, y-height/2, "Done", {
+        this.text = this.scene.add.text(0, 0, "Done", {
             fontSize: 20,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
             color: '#FFFFFF'
         });
         this.text.setOrigin(0.5);
+
+        this.plusText = this.scene.add.text(25, 0, "+", {
+            fontSize: 20,
+            fontStyle: 'bold',
+            fontFamily: 'pressStart',
+            color: '#FFFFFF'
+        });
+        this.plusText.setOrigin(0.5);
+
+        this.baseAttackIcon = this.scene.add.sprite(55, 0, "baseAttack").setScale(1);
+
+        const container = this.scene.add.container(x-width/2, y-height/2, [this.text, this.plusText, this.baseAttackIcon])
 
         this.sendToBack(this.box);
 
@@ -111,7 +128,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             }, this);
 
         this.add(this.box);
-        this.add(this.text);
+        this.add(container);
     }
 
     async drawPhase(game: Mission) {
@@ -141,9 +158,24 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     async Activated(game: Mission, active: boolean) {
         if (!active) this.box.disableInteractive();
         else this.box.setInteractive();
+        this.setBaseAttackAllowed(active);
     }
     async baseAttackPossible(game: Mission, active: boolean) {
-        this.baseAttackAllowed = active;
+        this.setBaseAttackAllowed(active);
+    }
+
+    public setBaseAttackAllowed(allowed: boolean) {
+        this.baseAttackAllowed = allowed;
+
+        if (this.baseAttackAllowed) {
+            this.text.setPosition(-30,0);
+            this.plusText.setVisible(true);
+            this.baseAttackIcon.setVisible(true);
+        } else {
+            this.text.setPosition(0,0);
+            this.plusText.setVisible(false);
+            this.baseAttackIcon.setVisible(false);
+        }
     }
 
 }
