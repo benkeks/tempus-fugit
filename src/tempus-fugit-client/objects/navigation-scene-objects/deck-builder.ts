@@ -660,6 +660,7 @@ export class DeckBuilder {
         this.removeCardFromCardsViewer(card);
 
         let cardgui = this.createCard(card);
+        cardgui.setScale(1.75);
         cardgui.on("drag", function(pointer) {
             let obj = this.deckSlider.getElement("background");
             if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
