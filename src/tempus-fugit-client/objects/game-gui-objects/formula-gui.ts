@@ -24,7 +24,8 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         y: number,
         margin: number,
         withRectangle: boolean,
-        downscale:boolean=true
+        downscale:boolean=true,
+        maxWidth:number=0
     ) {
         super(scene, x, y);
         this.scene = scene;
@@ -49,11 +50,18 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         this.reps["("] = { type: "operators", frame: 13 };
         this.reps[")"] = { type: "operators", frame: 14 };
         let pos = 0;
+        let row = 0;
+        const step = 16 + margin;
+        const rowHeight = 26;
         this.elementList = [];
         const formulaWidth = (16 + margin) * (formulaString.length + 1);
         for (let char of formulaString) {
-            this.elementList.push(this.scene.add.sprite(pos, 0, this.reps[char].type, this.reps[char].frame));
-            pos += (16 + margin);
+            if (maxWidth > 0 && pos + 16 > maxWidth) {
+                pos = 0;
+                row++;
+            }
+            this.elementList.push(this.scene.add.sprite(pos, row * rowHeight, this.reps[char].type, this.reps[char].frame));
+            pos += step;
         }
         if (withRectangle) {
             this.graphics = this.scene.add.graphics();
