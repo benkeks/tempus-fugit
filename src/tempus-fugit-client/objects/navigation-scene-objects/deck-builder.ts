@@ -687,10 +687,10 @@ export class DeckBuilder {
         delete Deck.Decks[this.deckName].deck[card.name];
         this.persistProgress();
         this.updateDeckTitleText();
-        this.update();
         elem.destroy(true);
 
         this.addCardToCardsViewer(card);
+        this.update();
     }
 
     public createRadioButton(scene, text, name, config?) {
