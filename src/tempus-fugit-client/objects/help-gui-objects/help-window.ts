@@ -257,6 +257,10 @@ export class HelpWindow {
                 track: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, GUI_SLIDER).setDepth(21),
                 thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, GUI_FILL).setDepth(22)
             },
+            mouseWheelScroller: {
+                focus: true,
+                speed: 0.3
+            },
             space: {
                 left: 5,
                 right: 10,
