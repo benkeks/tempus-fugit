@@ -15,6 +15,8 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
     public game: Mission;
 
+    private baseAttackAllowed: Boolean = true;
+
     constructor(scene: Scene,
         game: Mission,
         x: number = undefined,
@@ -97,7 +99,15 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.box
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
-                this.game.nextPhase(Mission.STAND_PHASE);
+                if (this.baseAttackAllowed) {
+                    this.game.player.attackWithBaseAttack(this.game);
+                    this.scene.time.delayedCall(500, () => {
+                        this.game.player.takeCard(this.game.deck);
+                        this.game.nextPhase(Mission.STAND_PHASE);
+                    }, [], this)
+                } else {
+                    this.game.nextPhase(Mission.STAND_PHASE);
+                }
             }, this);
 
         this.add(this.box);
@@ -133,6 +143,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         else this.box.setInteractive();
     }
     async baseAttackPossible(game: Mission, active: boolean) {
+        this.baseAttackAllowed = active;
     }
 
 }
