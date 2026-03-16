@@ -12,9 +12,12 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
 
     // this is the done text that changes if baseAttack is possible
+    // It pulsates if base attack is true
+    public endRoundTextContainer: Phaser.GameObjects.Container;
     public text: Phaser.GameObjects.Text;
     public plusText: Phaser.GameObjects.Text;
     public baseAttackIcon: Phaser.GameObjects.Sprite;
+    public animationTween: Phaser.Tweens.Tween;
 
     public size: number;
 
@@ -109,7 +112,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
         this.baseAttackIcon = this.scene.add.sprite(55, 0, "baseAttack").setScale(1);
 
-        const container = this.scene.add.container(x-width/2, y-height/2, [this.text, this.plusText, this.baseAttackIcon])
+        this.endRoundTextContainer = this.scene.add.container(x-width/2, y-height/2, [this.text, this.plusText, this.baseAttackIcon])
 
         this.sendToBack(this.box);
 
@@ -128,7 +131,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             }, this);
 
         this.add(this.box);
-        this.add(container);
+        this.add(this.endRoundTextContainer);
     }
 
     async drawPhase(game: Mission) {
@@ -164,6 +167,22 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.setBaseAttackAllowed(active);
     }
 
+    toggleEasingAnimationOfEndRoundButton(active: boolean) {
+        if (active) {
+            if (this.animationTween) this.animationTween.stop();
+            this.animationTween = this.scene.tweens.add({
+                targets: this.endRoundTextContainer,
+                scale: 1.1,
+                duration: 600,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        } else if (this.animationTween) {
+            this.animationTween.stop();
+        }
+    }
+
     public setBaseAttackAllowed(allowed: boolean) {
         this.baseAttackAllowed = allowed;
 
@@ -171,10 +190,12 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             this.text.setPosition(-30,0);
             this.plusText.setVisible(true);
             this.baseAttackIcon.setVisible(true);
+            this.toggleEasingAnimationOfEndRoundButton(false);
         } else {
             this.text.setPosition(0,0);
             this.plusText.setVisible(false);
             this.baseAttackIcon.setVisible(false);
+            this.toggleEasingAnimationOfEndRoundButton(true);
         }
     }
 
