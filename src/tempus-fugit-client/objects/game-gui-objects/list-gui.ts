@@ -116,7 +116,7 @@ export class ListGUI extends Phaser.GameObjects.Container {
         this.add(this.sprite);
     }
 
-    public addText(text: string, alignment: string = ListGUI.ALIGN_CENTRE, font: Object = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FF0000' }, lineVisible: boolean = true, lineSpacing: number = 0): Text {
+    public addText(text: string, alignment: string = ListGUI.ALIGN_CENTRE, font: Phaser.Types.GameObjects.Text.TextStyle = { fontSize: '18px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#FF0000' }, lineVisible: boolean = true, lineSpacing: number = 0): Text {
         let line: Line = this.scene.add.line(0, 0, 0, 0, 100, 0, this.defaultStrokeColor, 1);
         let t: Text = this.scene.add.text(0, 0, text, font).setLineSpacing(lineSpacing);
         t.style.align = alignment;
