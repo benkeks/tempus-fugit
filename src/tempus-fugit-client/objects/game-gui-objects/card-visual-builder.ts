@@ -8,6 +8,17 @@ export type CardVisualBuildResult = {
     image: Phaser.GameObjects.Image;
 };
 
+function findTopLevelAndSplit(guiStr: string): number {
+    let depth = 0;
+    for (let i = 0; i < guiStr.length; i++) {
+        if (guiStr[i] === '(') depth++;
+        else if (guiStr[i] === ')') depth--;
+        else if (guiStr[i] === '&' && depth === 0)
+            return i;
+    }
+    return -1;
+}
+
 export function buildCardVisual(
     container: Phaser.GameObjects.Container,
     card: Card,
@@ -31,7 +42,8 @@ export function buildCardVisual(
     container.add(roundRect);
     container.sendToBack(roundRect);
 
-    [48, 78, 190].forEach((y) => {
+    const longFormula = card.getFormulaGuiString().length > 12;
+    (longFormula ? [48, 100, 210] : [48, 78, 190]).forEach((y) => {
         const line = scene.add.line(0, 0, 0, y - height / 2, width, y - height / 2, rectOutlineColor, 1);
         line.setLineWidth(2);
         container.add(line);
@@ -52,11 +64,13 @@ export function buildCardVisual(
 
     let margin = 2;
     let formulaString = card.getFormulaGuiString();
-    let formulaGUI;
+    const splitAfter = longFormula ? findTopLevelAndSplit(formulaString) : -1;
+    let formulaGUI: FormulaGUI;
     if (formulaString.length > 8) {
-        formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, 0, false).setScale(0.8);
+        formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, 0, false, true, splitAfter).setScale(0.8) as FormulaGUI;
         container.add(formulaGUI);
-        formulaGUI.setPosition(-6 * formulaString.length, padding + 46 - height / 2);
+        const row1Len = splitAfter >= 0 ? splitAfter : formulaString.length;
+        formulaGUI.setPosition(-6.4 * row1Len, padding + 46 - height / 2);
     } else {
         formulaGUI = new FormulaGUI(scene, formulaString, 0, 0, margin, false);
         container.add(formulaGUI);
@@ -88,13 +102,13 @@ export function buildCardVisual(
     if (typeof effectText.setLineSpacing === 'function') effectText.setLineSpacing(5);
     else effectText.lineSpacing = 5;
     effectText.setOrigin(0.5, 0);
-    effectText.setPosition(0, padding + 190 - height / 2);
+    effectText.setPosition(0, padding + (longFormula ? 210 : 190) - height / 2);
 
     let image = scene.add.image(0, 0, card.getImage());
     image.setDisplaySize(140, 115);
     container.add(image);
     image.setOrigin(0.5, 0);
-    image.setPosition(0, 75 - height / 2);
+    image.setPosition(0, (longFormula ? 97 : 75) - height / 2);
 
     let effectFontSize = 24;
     while (effectText.height > 100 && effectFontSize > 10) {
