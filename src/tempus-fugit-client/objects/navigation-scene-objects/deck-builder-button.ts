@@ -18,9 +18,9 @@ export class DeckBuilderButton {
     public player:Player;
     public notification;
 
-    constructor(scene: Phaser.Scene, x:number, y:number, player:Player) {
+    constructor(scene: Phaser.Scene, x:number, y:number, player:Player, action?: () => void) {
         this.scene = scene;
-        this.player = player;
+        this.player = player; 
         //@ts-ignore
         this.button = scene.rexUI.add.label({
             x: x,
@@ -39,7 +39,11 @@ export class DeckBuilderButton {
         }).layout();
 
         this.button.setInteractive({useHandCursor:true});
-        this.button.on('pointerdown', this.click, this);
+        if (action) {
+            this.button.on('pointerdown', action);
+        } else {
+            this.button.on('pointerdown', this.click, this);
+        }
         this.button.on('pointerover', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);
         });

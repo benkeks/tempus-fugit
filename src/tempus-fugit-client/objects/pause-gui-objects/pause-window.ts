@@ -6,6 +6,7 @@ import { PauseButton } from "./pause-button";
 import { MissionScene } from "../../scenes/mission-scene";
 import { NavigationScene } from "../../scenes/navigation-scene";
 import { ProgressStore } from "../../progress/progress-store";
+import { DeckBuilderButton } from "../navigation-scene-objects/deck-builder-button";
 
 
 const GUI_TITLE = 0xeceff1;
@@ -78,10 +79,16 @@ export class PauseWindow {
             .popUp(200);
 
         pause.on('button.click', function (button, groupName, index) {
+            const grandparentScene =
+                PauseButton.currPauseParent === 'BTextBoxScene' ? 'MissionScene' :
+                PauseButton.currPauseParent === 'DeckBuilderScene' ? 'NavigationScene' :
+                null;
+
             function quit() {
                 NavigationScene.instance.initGame();
 
                 PauseWindow.pauseQuit = true;
+                if (grandparentScene) scene.scene.stop(grandparentScene);
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('StartingScene');
             }
@@ -104,6 +111,7 @@ export class PauseWindow {
                             NavigationScene.instance.initGame();
                             PauseWindow.pauseQuit = true;
 
+                            if (grandparentScene) scene.scene.stop(grandparentScene);
                             scene.scene.stop(PauseButton.currPauseParent);
                             scene.scene.stop("PauseScene");
                             scene.scene.start("StartingScene");
@@ -118,6 +126,7 @@ export class PauseWindow {
             }
 
             function navigation() {
+                if (grandparentScene) scene.scene.stop(grandparentScene);
                 scene.scene.stop(PauseButton.currPauseParent);
                 scene.scene.start('NavigationScene', {tutorial:false});
             }
@@ -157,6 +166,16 @@ export class PauseWindow {
         }, this);
 
         this.window = pause;
+    }
+
+    public close(): void {
+        this.instanceCounter -= 1;
+        this.window.scaleDownDestroy(300);
+        const scene = this.scene;
+        setTimeout(() => {
+            scene.scene.run(PauseButton.currPauseParent);
+            scene.scene.stop('PauseScene');
+        }, 300);
     }
 
     public createLabel(scene, text, color, borderColor = GUI_BORDER, txtColor = 'brown') {
