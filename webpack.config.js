@@ -75,7 +75,13 @@ module.exports = {
     plugins: [
         new CopyPlugin({
             patterns: [
-                { from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'), to: 'assets' },
+                {
+                    from: path.resolve(__dirname, 'src/tempus-fugit-client/assets'),
+                    to: 'assets',
+                    globOptions: {
+                        ignore: ['**/*.wav']
+                    }
+                },
                 { from: path.resolve(__dirname, 'src/tempus-fugit-client/json'), to: 'json' },
                 { from: path.resolve(__dirname, 'index.html'), to: 'index.html' },
             ],
