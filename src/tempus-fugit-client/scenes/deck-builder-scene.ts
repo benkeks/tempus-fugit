@@ -22,6 +22,7 @@ export class DeckBuilderScene extends Scene {
     }
 
     create(data) {
+        this.closing = false;
         this.sys.canvas.style.cursor = "default";
         this.add.rectangle(960, 540, 1920, 1080, 0x000000, 0.5);
         this.parentScene = data.parent;
