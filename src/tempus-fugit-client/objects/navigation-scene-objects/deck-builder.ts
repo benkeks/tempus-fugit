@@ -564,16 +564,27 @@ export class DeckBuilder {
         });
         label.layout();
 
-        label.setInteractive().on("pointerover", function(pointer) {
-            let obj = this.cardsSlider.getElement("background")
+        label.setInteractive().on("pointermove", function(pointer) {
+            if (this.dragging) return;
+            let obj = this.cardsSlider.getElement("background");
             if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)
             , pointer.x, pointer.y)) return;
-            if (this.dragging) return;
-
             let drag = this.getDragCard(card);
-            drag.label = label;
-            drag.setPosition(pointer.x, pointer.y)
-            drag.setVisible(true);
+            const spriteBounds = sprite.getBounds();
+            const nameBounds = name.getBounds();
+            const hoverZone = new Phaser.Geom.Rectangle(
+                spriteBounds.left,
+                label.getBounds().top,
+                nameBounds.right - spriteBounds.left,
+                label.getBounds().height
+            );
+            if (hoverZone.contains(pointer.x, pointer.y)) {
+                drag.label = label;
+                drag.setPosition(pointer.x + 200, pointer.y);
+                drag.setVisible(true);
+            } else {
+                drag.setVisible(false);
+            }
         },this).on("pointerout", function(pointer) {
             if (this.dragging) return;
 
@@ -649,6 +660,7 @@ export class DeckBuilder {
         this.removeCardFromCardsViewer(card);
 
         let cardgui = this.createCard(card);
+        cardgui.setScale(1.75);
         cardgui.on("drag", function(pointer) {
             let obj = this.deckSlider.getElement("background");
             if (!Phaser.Geom.Rectangle.Contains(new Phaser.Geom.Rectangle(obj.x,obj.y,obj.width,obj.height)

@@ -3,17 +3,32 @@ import { GameInfo } from "../../game";
 import { Mission, MissionListener } from "../../mechanics/mission";
 import { Enemy } from "../game-objects/enemy";
 import { StoryDialog } from "../../mechanics/story-dialog";
+import { ToolTip } from "./tool-tip";
+import { ListGUI } from "./list-gui";
 
 export class WheelGUI extends Phaser.GameObjects.Container implements MissionListener {
 
     public scene: Phaser.Scene;
     public wheel: Phaser.GameObjects.Sprite;
     public box: Phaser.GameObjects.Rectangle;
+
+
+    // this is the done text that changes if baseAttack is possible
+    // It pulsates if base attack is true
+    public endRoundTextContainer: Phaser.GameObjects.Container;
     public text: Phaser.GameObjects.Text;
+    public plusText: Phaser.GameObjects.Text;
+    public baseAttackIcon: Phaser.GameObjects.Sprite;
+    public animationTween: Phaser.Tweens.Tween;
+    // done button tooltips
+    public doneButtonTooltip: ToolTip;
+
 
     public size: number;
 
     public game: Mission;
+
+    private baseAttackAllowed: boolean = true;
 
     constructor(scene: Scene,
         game: Mission,
@@ -84,7 +99,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         this.box = this.scene.add.rectangle(x, y, width, height, 0x666666);
         this.box.setOrigin(1);
 
-        this.text = this.scene.add.text(x-width/2, y-height/2, "Done", {
+        this.text = this.scene.add.text(0, 0, "Done", {
             fontSize: 20,
             fontStyle: 'bold',
             fontFamily: 'pressStart',
@@ -92,32 +107,89 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         });
         this.text.setOrigin(0.5);
 
+        this.plusText = this.scene.add.text(25, 0, "+", {
+            fontSize: 20,
+            fontStyle: 'bold',
+            fontFamily: 'pressStart',
+            color: '#FFFFFF'
+        });
+        this.plusText.setOrigin(0.5);
+
+        this.baseAttackIcon = this.scene.add.sprite(55, 0, "baseAttack").setScale(1);
+
+        this.endRoundTextContainer = this.scene.add.container(x-width/2, y-height/2, [this.text, this.plusText, this.baseAttackIcon])
+
         this.sendToBack(this.box);
 
         this.box
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
-                this.game.nextPhase(Mission.STAND_PHASE);
+                if (this.baseAttackAllowed) {
+                    this.game.player.attackWithBaseAttack(this.game);
+                    this.scene.time.delayedCall(500, () => {
+                        this.game.player.takeCard(this.game.deck);
+                        this.game.nextPhase(Mission.STAND_PHASE);
+                    }, [], this)
+                } else {
+                    this.game.nextPhase(Mission.STAND_PHASE);
+                }
             }, this);
 
+        this.doneButtonTooltip = new ToolTip(this.scene, -width/2 - 20, -240, this.box);
+        this.doneButtonTooltip.yPadding = 5;
+        this.doneButtonTooltip.xPadding = 10;
+        this.doneButtonTooltip.popUpDelay = 300
+        this.doneButtonTooltip.maxTextWidth = width + 10;
+        const sprite = this.scene.add.sprite(0, 15, 'questionMark', 0);
+        sprite.setScale(1.5).setOrigin(0.5);
+        const spriteContainer = this.scene.add.container(0,0, [sprite])
+        this.doneButtonTooltip.addContainter(spriteContainer, ListGUI.ALIGN_CENTRE, false);
+        this.doneButtonTooltip.addText(
+            "", 
+            ListGUI.ALIGN_CENTRE, 
+            { 
+                fontSize: '12px', 
+                fontStyle: 'bold', 
+                fontFamily: 'pressStart',
+                color: '#FFFFFF',
+                align: 'center',
+                wordWrap: { 
+                    width: width
+                } 
+            },
+            false
+        )
+
         this.add(this.box);
-        this.add(this.text);
+        this.add(this.doneButtonTooltip);
+        this.add(this.endRoundTextContainer);
     }
 
     async drawPhase(game: Mission) {
+        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.doneButtonTooltip.setVisible(false);
     }
     async energyPhase(game: Mission) {
         this.wheel.play("wheel_enemy_to_play");
+        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.doneButtonTooltip.setVisible(false);
     }
     async playPhase(game: Mission) {
+        this.toggleEasingAnimationOfEndRoundButton(false);
     }
     async standPhase(game: Mission) {
         this.wheel.play("wheel_play_to_stand");
+        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.doneButtonTooltip.setVisible(false);
     }
     async enemyPhase(game: Mission) {
         this.wheel.play("wheel_stand_to_enemy");
+        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.doneButtonTooltip.setVisible(false);
     }
     async effectPhase(game: Mission) {
+        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.doneButtonTooltip.setVisible(false);
     }
     async storyDialog(game: Mission, dialog: StoryDialog) {
     }
@@ -131,8 +203,45 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     async Activated(game: Mission, active: boolean) {
         if (!active) this.box.disableInteractive();
         else this.box.setInteractive();
+        this.setBaseAttackAllowed(active);
     }
     async baseAttackPossible(game: Mission, active: boolean) {
+        this.setBaseAttackAllowed(active);
+    }
+
+    toggleEasingAnimationOfEndRoundButton(active: boolean) {
+        if (active) {
+            if (this.animationTween) this.animationTween.stop();
+            this.animationTween = this.scene.tweens.add({
+                targets: this.endRoundTextContainer,
+                scale: 1.1,
+                duration: 600,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        } else if (this.animationTween) {
+            this.animationTween.stop();
+            this.endRoundTextContainer.setScale(1)
+        }
+    }
+
+    public setBaseAttackAllowed(allowed: boolean) {
+        this.baseAttackAllowed = allowed;
+
+        if (this.baseAttackAllowed) {
+            this.text.setPosition(-30, 0);
+            this.plusText.setVisible(true);
+            this.baseAttackIcon.setVisible(true);
+            this.toggleEasingAnimationOfEndRoundButton(false);
+            this.doneButtonTooltip.setText(1, "End your turn, attack all enemies with base attack and draw an additional card.")
+        } else {
+            this.text.setPosition(0, 0);
+            this.plusText.setVisible(false);
+            this.baseAttackIcon.setVisible(false);
+            this.toggleEasingAnimationOfEndRoundButton(true);
+            this.doneButtonTooltip.setText(1, "End your turn.")
+        }
     }
 
 }

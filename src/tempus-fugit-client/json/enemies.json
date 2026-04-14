@@ -1,7 +1,8 @@
 {
     "enemies": [
         {
-            "name": "slime1",
+            "name": "Slime",
+            "key": "slime1",
             "description": "a suicide slime!",
             "maxHP": 15,
             "baseAttack": 2,
@@ -19,7 +20,7 @@
             "image": "slime1"
         },
         {
-            "name": "slime name test",
+            "name": "Bookworm Slime",
             "key": "slime2",
             "description": "a well-read slime",
             "maxHP": 20,
@@ -38,7 +39,8 @@
             "image": "slime2"
         },
         {
-            "name": "slime3",
+            "name": "Lava Slime",
+            "key": "slime3",
             "description": "Another slime!",
             "maxHP": 25,
             "baseAttack": 4,
@@ -75,7 +77,8 @@
             "image": "slime_mother"
         },
         {
-            "name": "goblin1",
+            "name": "Goblin",
+            "key": "goblin1",
             "description": "A GAAAAAAAAWBLIN!",
             "maxHP": 25,
             "baseAttack": 3,
@@ -93,7 +96,8 @@
             "image": "goblin1"
         },
         {
-            "name": "goblin2",
+            "name": "Filthy Goblin",
+            "key": "goblin2",
             "description": "A filthy gaaaaaaaawblin!",
             "maxHP": 40,
             "baseAttack": 6,
@@ -111,7 +115,8 @@
             "image": "goblin2"
         },
         {
-            "name": "goblin3",
+            "name": "Elite Goblin",
+            "key": "goblin3",
             "description": "Ech",
             "maxHP": 90,
             "baseAttack": 8,
@@ -129,7 +134,8 @@
             "image": "goblin3"
         },
         {
-            "name": "goblin_general1",
+            "name": "Goblin General",
+            "key": "goblin_general1",
             "description": "A huge pile of disgusting.",
             "maxHP": 100,
             "baseAttack": 13,
@@ -147,7 +153,8 @@
             "image": "goblin_general1"
         },
         {
-            "name": "goblin_general2",
+            "name": "Goblin Warlord",
+            "key": "goblin_general2",
             "description": "Checking my description won't save you",
             "maxHP": 300,
             "baseAttack": 20,
@@ -165,7 +172,8 @@
             "image": "goblin_general2"
         },
         {
-            "name": "moleg",
+            "name": "Golem",
+            "key": "moleg",
             "description": "A golem with a mustache!",
             "maxHP": 90,
             "baseAttack": 12,
@@ -183,7 +191,8 @@
             "image": "moleg"
         },
         {
-            "name": "cactus1",
+            "name": "Cactus",
+            "key": "cactus1",
             "description": "Ouch, spiky!",
             "maxHP": 45,
             "baseAttack": 10,
@@ -201,7 +210,8 @@
             "image": "cactus1"
         },
         {
-            "name": "cactus2",
+            "name": "Prickly Cactus",
+            "key": "cactus2",
             "description": "Y'all even reading these?",
             "maxHP": 50,
             "baseAttack": 11,
@@ -219,7 +229,8 @@
             "image": "cactus2"
         },
         {
-            "name": "kingtus",
+            "name": "King Cactus",
+            "key": "kingtus",
             "description": "Yeah he works out",
             "maxHP": 120,
             "baseAttack": 20,
@@ -237,7 +248,8 @@
             "image": "kingtus"
         },
         {
-            "name": "wormling",
+            "name": "Wormling",
+            "key": "wormling",
             "description": "A wriggly worm",
             "maxHP": 55,
             "baseAttack": 10,
@@ -255,7 +267,8 @@
             "image": "wormling"
         },
         {
-            "name": "darude_sandworm",
+            "name": "Darude Sandworm",
+            "key": "darude_sandworm",
             "description": "What's this thing's name again?",
             "maxHP": 130,
             "baseAttack": 18,
@@ -273,7 +286,8 @@
             "image": "darude_sandworm"
         },
         {
-            "name": "snake",
+            "name": "Snake",
+            "key": "snake",
             "description": "Jones has left the Lobby",
             "maxHP": 50,
             "baseAttack": 12,
@@ -291,7 +305,8 @@
             "image": "snake"
         },
         {
-            "name": "mummy",
+            "name": "Mummy",
+            "key": "mummy",
             "description": "Dead but alive",
             "maxHP": 70,
             "baseAttack": 16,
@@ -309,7 +324,8 @@
             "image": "mummy"
         },
         {
-            "name": "pharaoh_yeah",
+            "name": "Pharaoh",
+            "key": "pharaoh_yeah",
             "description": "The woke one",
             "maxHP": 130,
             "baseAttack": 22,
@@ -327,7 +343,8 @@
             "image": "pharaoh_yeah"
         },
         {
-            "name": "bgpuff1",
+            "name": "Marshmallow",
+            "key": "bgpuff1",
             "description": "A marshmellow-like being.",
             "maxHP": 100,
             "baseAttack": 17,
@@ -345,7 +362,8 @@
             "image": "bgpuff1"
         },
         {
-            "name": "bgpuff2",
+            "name": "Marshmallow",
+            "key": "bgpuff2",
             "description": "A marshmellow-like being.",
             "maxHP": 100,
             "baseAttack": 17,
@@ -363,7 +381,8 @@
             "image": "bgpuff2"
         },
         {
-            "name": "jkpuff",
+            "name": "Rude Puff",
+            "key": "jkpuff",
             "description": "A rude being.",
             "maxHP": 160,
             "baseAttack": 20,
@@ -381,7 +400,8 @@
             "image": "jkpuff"
         },
         {
-            "name": "ghost",
+            "name": "Ghost",
+            "key": "ghost",
             "description": "Who knew they were real?",
             "maxHP": 110,
             "baseAttack": 20,
@@ -399,7 +419,8 @@
             "image": "ghost"
         },
         {
-            "name": "stand1",
+            "name": "Stand",
+            "key": "stand1",
             "description": "Bad news",
             "maxHP": 160,
             "baseAttack": 33,
@@ -417,7 +438,8 @@
             "image": "stand1"
         },
         {
-            "name": "stand2",
+            "name": "Stand",
+            "key": "stand2",
             "description": "Bad news",
             "maxHP": 160,
             "baseAttack": 33,
@@ -435,7 +457,8 @@
             "image": "stand2"
         },
         {
-            "name": "boss",
+            "name": "Boss",
+            "key": "boss",
             "description": "Worse news",
             "maxHP": 200,
             "baseAttack": 40,
