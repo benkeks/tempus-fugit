@@ -8,7 +8,7 @@ export class PauseButton {
     private button;
     static currPauseParent: string;
 
-    constructor(scene: Phaser.Scene, isMissionScene: boolean) {
+    constructor(scene: Phaser.Scene, isMissionScene: boolean, action?: () => void) {
         this.scene = scene;
         //@ts-ignore
         this.button = scene.rexUI.add.label({
@@ -28,7 +28,11 @@ export class PauseButton {
         }).layout();
 
         this.button.setInteractive({useHandCursor:true});
-        this.button.on('pointerdown', this.displayPause, this);
+        if (action) {
+            this.button.on('pointerdown', action);
+        } else {
+            this.button.on('pointerdown', this.displayPause, this);
+        }
         this.button.on('pointerover', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);
         });

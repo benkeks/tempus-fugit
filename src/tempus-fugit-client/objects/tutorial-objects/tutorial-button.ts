@@ -8,7 +8,7 @@ export class TutorialButton {
     private button;
     public static pauseParent:string;
 
-    constructor(scene: Phaser.Scene, x:number, y:number) {
+    constructor(scene: Phaser.Scene, x:number, y:number, action?: () => void) {
         this.scene = scene;
         //@ts-ignore
         this.button = scene.rexUI.add.label({
@@ -28,7 +28,11 @@ export class TutorialButton {
         }).layout();
 
         this.button.setInteractive({useHandCursor:true});
-        this.button.on('pointerdown', this.displayTutorial, this);
+        if (action) {
+            this.button.on('pointerdown', action);
+        } else {
+            this.button.on('pointerdown', this.displayTutorial, this);
+        }
         this.button.on('pointerover', () => {
             this.button.getElement('background').setStrokeStyle(3, GUI_BORDER_HIGHLIGHT);
         });

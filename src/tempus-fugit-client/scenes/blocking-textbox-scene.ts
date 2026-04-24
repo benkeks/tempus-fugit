@@ -2,6 +2,8 @@ import { StoryDialog } from "../mechanics/story-dialog";
 import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { Mission } from "../mechanics/mission";
 import { BTextBox } from "../objects/game-gui-objects/blocking-textbox";
+import { PauseButton } from "../objects/pause-gui-objects/pause-button";
+import { SoundButton } from "../objects/sound-button";
 
 /**
  * @author Mustafa
@@ -25,9 +27,12 @@ export class BTextBoxScene extends Phaser.Scene {
     }
 
     create(data: { dialog: StoryDialog, handGUI: HandGUI, mission: Mission }) {
+        this.add.rectangle(960, 540, 1920, 1080, 0x000000, 0.5);
         this.blockingTextBox = new BTextBox(this, data.handGUI, data.mission);
         this.blockingTextBox.addStoryDialog(data.dialog);
         this.scene.pause('MissionScene');
+        new PauseButton(this, true);
+        new SoundButton(this, 1780, 310);
 
         if (this.scene.isActive("MonologScene")) {
             this.scene.bringToTop("MonologScene");

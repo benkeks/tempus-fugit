@@ -8,7 +8,7 @@ export class HelpButton {
     private isMissionScene: boolean;
     static currHelpParent: string;
 
-    constructor(scene: Phaser.Scene, isMissionScene: boolean) {
+    constructor(scene: Phaser.Scene, isMissionScene: boolean, action?: () => void) {
         this.isMissionScene = isMissionScene;
         this.scene = scene;
         this.sprite = scene.add.sprite(isMissionScene ? 335 : 1850, isMissionScene ? 1015 : 1020, 'fairy', 1).setScale(1.5);
@@ -22,7 +22,11 @@ export class HelpButton {
             repeat: -1,
         });
         this.sprite.setInteractive({useHandCursor:true});
-        this.sprite.on('pointerdown', this.displayHelp, this);
+        if (action) {
+            this.sprite.on('pointerdown', action);
+        } else {
+            this.sprite.on('pointerdown', this.displayHelp, this);
+        }
         this.sprite.on('pointerover', () => {
             this.sprite.anims.play('fairy-fly');
         });

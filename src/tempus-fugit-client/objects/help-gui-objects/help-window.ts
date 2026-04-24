@@ -39,7 +39,7 @@ const TABLE_DOT = 0x9e0b00;
 
 // Format constants
 const HELP_WIDTH = 1500;
-const HELP_HEIGHT = 800;
+const HELP_HEIGHT = 750;
 const CELL_WIDTH = 150;
 const CELL_HEIGHT = 40;
 const BORDER_WIDTH = 2;
