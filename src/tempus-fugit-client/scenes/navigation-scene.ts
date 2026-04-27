@@ -624,6 +624,8 @@ export class NavigationScene extends Phaser.Scene {
 
         DeckBuilderButton.newCards = ProgressStore.applyToPlayerAndDeck(this.player, Deck.Decks["custom"], this.missionKeys.length);
 
+        HelpWindow.restoreFromMissionStates(this.player.missionStates);
+
         if (Object.keys(this.player.cardTypes).length === 0) {
             this.player.addCardType(Deck.Decks["custom"].deck);
         }
