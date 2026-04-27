@@ -55,6 +55,8 @@ export function buildCardVisual(
     let maxTextWidth = width;
 
     let title = scene.add.text(0, 0, card.getName(), fontStyle);
+    title.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    title.setResolution(2);
     title.setLineSpacing(5);
     title.setScale(0.6);
     container.add(title);
@@ -103,6 +105,7 @@ export function buildCardVisual(
     else effectText.lineSpacing = 5;
     effectText.setOrigin(0.5, 0);
     effectText.setPosition(0, padding + (longFormula ? 210 : 190) - height / 2);
+    effectText.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
 
     let image = scene.add.image(0, 0, card.getImage());
     image.setDisplaySize(140, 115);
