@@ -109,7 +109,7 @@ export class GameState {
             let values = variableValues[v];
             
             let changes = {};
-            let oldVariable = undefined;
+            let oldVariable: Variable = new Variable(v);
             if (v in this.variables) oldVariable = this.getVariable(v).copy()
             for (let index in values) {
                 let val = values[index];
@@ -123,7 +123,12 @@ export class GameState {
     }
 
     public setAllVariableValues(variableIntervals):void {
-        for (let interval of variableIntervals) {
+        if (variableIntervals === undefined || variableIntervals === null) return;
+
+        let intervals = variableIntervals;
+        if (!Array.isArray(variableIntervals)) intervals = [variableIntervals];
+
+        for (let interval of intervals) {
             let start = interval.start;
             let v = interval.variable;
             let end = interval.end;
@@ -131,7 +136,7 @@ export class GameState {
             let value = interval.value;
             let local = interval.local;
 
-            if (variableIntervals.direction) direction = parseInt(variableIntervals.direction);
+            if (interval.direction !== undefined) direction = parseInt(interval.direction);
 
             let offset = 0;
             if (local) offset = this.activeState
@@ -143,7 +148,8 @@ export class GameState {
                 continue;
             }
 
-            if (end < 0) end = this.variables[v].values.length;
+            const openEnded = end < 0;
+            if (openEnded) end = this.variables[v].values.length;
 
             let changes = {};
             let oldVariable = this.getVariable(v).copy();
@@ -151,6 +157,9 @@ export class GameState {
                 this.setVariable(v, value, offset+i, false, false);
                 changes[offset+i] = value;
             }
+            // When end is open-ended (-1), also update the default for all truly future
+            // (not yet explicitly tracked) states so they carry the intended value.
+            if (openEnded) this.getVariable(v).defaultValueFuture = value;
 
             this.listener.map(obj => obj.variableChanged(this, oldVariable, this.getVariable(v), changes));
         }
