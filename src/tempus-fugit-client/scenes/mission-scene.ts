@@ -272,6 +272,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         // this.background.setScale(scale).setScrollFactor(0)
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
             .setScale(1);
+        this.background.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
 
         //Menun Layout
         //5C4D4D, 915B4A, A96851

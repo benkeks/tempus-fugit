@@ -173,7 +173,8 @@
             {
                 "type": "image",
                 "key": "swordFont",
-                "url": "assets/font/fontletter/overlay/sword.png"
+                "url": "assets/font/fontletter/overlay/sword.png",
+                "filter": "LINEAR"
             },
 	    {
 		"type": "image",
@@ -183,12 +184,14 @@
             {
                 "type": "image",
                 "key": "heartFont",
-                "url": "assets/font/fontletter/overlay/heart.png"
+                "url": "assets/font/fontletter/overlay/heart.png",
+                "filter": "LINEAR"
             },
             {
                 "type": "image",
                 "key": "energyFont",
-                "url": "assets/font/fontletter/overlay/energy.png"
+                "url": "assets/font/fontletter/overlay/energy.png",
+                "filter": "LINEAR"
             },
             {
                 "type": "image",

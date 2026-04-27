@@ -463,11 +463,19 @@ export class TableGUI implements GameStateListener {
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
-        for (let key in valueChanges) {
-            let row = parseInt(key);
-            let column = this.variables[variable.representation];
-            let newValue = valueChanges[key];
-            this.toggleRune(newValue, row, column);
+        const column = this.variables[variable.representation];
+        if (oldVariable.defaultValueFuture !== variable.defaultValueFuture) {
+            // defaultValueFuture changed: repaint every visible cell so the
+            // whole trace reflects the new open-ended value.
+            for (let row = 0; row < this.tableColumnCount; row++) {
+                this.toggleRune(variable.getValue(row), row, column);
+            }
+        } else {
+            for (let key in valueChanges) {
+                let row = parseInt(key);
+                let newValue = valueChanges[key];
+                this.toggleRune(newValue, row, column);
+            }
         }
     }
 

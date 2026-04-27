@@ -48,7 +48,10 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: "#000",
-    pixelArt: true,
+    pixelArt: false,
+    antialias: true,
+    antialiasGL: true,
+    roundPixels: false,
     plugins: {
         scene: [{
             key: 'rexUI',
@@ -67,6 +70,20 @@ const config = {
 export class Game extends Phaser.Game {
     constructor(config: Phaser.Types.Core.GameConfig) {
         super(config);
+
+        // Keep dynamic text smooth (canvas textures) while forcing pixel-art filtering on sprite textures.
+        this.textures.on(Phaser.Textures.Events.ADD, (_key: string, texture: Phaser.Textures.Texture) => {
+            const source = texture.source && texture.source[0] as any;
+            const image = source && source.image;
+            const isCanvasTexture = Boolean(source && (
+                source.isCanvas ||
+                (typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement)
+            ));
+
+            if (!isCanvasTexture) {
+                texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+            }
+        });
     }
 }
 

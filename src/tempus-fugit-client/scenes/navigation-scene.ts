@@ -165,7 +165,7 @@ export class NavigationScene extends Phaser.Scene {
         this.load.image("overworld", "assets/navigation_scene/overworld/islands/navigation_scene.png");
         this.load.spritesheet("clouds", "assets/navigation_scene/overworld/islands/clouds-Sheet.png", { frameWidth: 64, frameHeight: 32 });
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", { frameWidth: 16, frameHeight: 32 });
-        this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", { frameWidth: 16, frameHeight: 32 });
+        this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", { frameWidth: 18, frameHeight: 34 });
 
         this.load.spritesheet("wheel", "assets/sprites/board/Wheel-Sheet.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("fairy", "assets/sprites/fairy/fairy-spritesheet.png", { frameWidth: 80, frameHeight: 80 });
@@ -496,8 +496,9 @@ export class NavigationScene extends Phaser.Scene {
         });
 
         this.backgroundTexture = this.add.tileSprite(GameInfo.width / 2, GameInfo.height / 2, GameInfo.width, GameInfo.height, "water_background");
+        this.backgroundTexture.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
         this.backgroundTexture.setDepth(0);
-        this.backgroundTexture.setScale(scale);
+        //this.backgroundTexture.setScale(scale * .125);
 
         this.worldContainer = this.add.container(0, 0);
         this.worldContainer.setScale(scale);
