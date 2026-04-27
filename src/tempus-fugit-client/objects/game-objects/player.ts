@@ -45,7 +45,7 @@ export class Player {
     public states: string[]; // List of player's states, such as "burning", "healing" etc.
     hand: Hand; // Hand containing the player's cards
     public listener: PlayerListener[] = []; // List of objects listening to player events
-    public _active: boolean;
+    public _active: boolean = true;
 
     public cardTypes:{[name:string]:Card} = {}; // card types owned by the player
 
@@ -133,49 +133,49 @@ export class Player {
      * @return Does not have a return value
      * @author Florian
      */
-    public applyCard(card: Card, enemy: Enemy, mission: Mission): void {
+    public applyCard(card: Card, enemy: Enemy | undefined, mission: Mission): void {
         let val: boolean = mission.gameState.evaluate(card.getFormula());
         //console.log("valid: " + val);
+        if (!val) return;
+
         this.hand.removeCard(card);
-        if (val) {
-            if (card.stand()) {
-                mission.pushStand(card);
-                card.spawnStand(enemy, mission);
-            } else {
+        if (card.stand()) {
+            mission.pushStand(card);
+            card.spawnStand(enemy, mission);
+        } else {
 
-                switch (card.getKind()) {
+            switch (card.getKind()) {
 
-                    case Card.OTHER:
-                        card.action(mission, null);
-                        break;
-                    case Card.PLAYER:
-                        card.action(mission, mission.player);
-                        break;
-                    case Card.GLOBAL:
-                        for (let e of mission.getEnemies()) {
-                            card.action(mission, e);
-                        }
+                case Card.OTHER:
+                    card.action(mission, null);
+                    break;
+                case Card.PLAYER:
+                    card.action(mission, mission.player);
+                    break;
+                case Card.GLOBAL:
+                    for (let e of mission.getEnemies()) {
+                        card.action(mission, e);
+                    }
 
-                        this.listener.map(l => l.Attacking(this, enemy));
-                        break;
-                    case Card.RANDOM:
-                        var enemies = mission.getEnemies();
-                        var target = enemies[Math.floor(Math.random() * enemies.length)];
-                        card.action(mission, target);
+                    this.listener.map(l => l.Attacking(this, enemy));
+                    break;
+                case Card.RANDOM:
+                    var enemies = mission.getEnemies();
+                    var target = enemies[Math.floor(Math.random() * enemies.length)];
+                    card.action(mission, target);
 
 
-                        this.listener.map(l => l.Attacking(this, enemy));
-                        break;
-                    case Card.DIRECTED:
-                        card.action(mission, enemy);
+                    this.listener.map(l => l.Attacking(this, enemy));
+                    break;
+                case Card.DIRECTED:
+                    card.action(mission, enemy);
 
-                        this.listener.map(l => l.Attacking(this, enemy));
-                        break;
-                }
+                    this.listener.map(l => l.Attacking(this, enemy));
+                    break;
             }
-
-            this.listener.map(l => l.cardPlayed(this, card));
         }
+
+        this.listener.map(l => l.cardPlayed(this, card));
     }
 
 
@@ -244,6 +244,6 @@ export interface PlayerListener {
     playerHpChanged(changedTo: number, changedBy: number): void;
     stateValuesChanged(player: Player): void;
     Activated(player: Player, active: boolean);
-    Attacking(player: Player, target: Enemy);
+    Attacking(player: Player, target?: Enemy);
     cardPlayed(player: Player, card: Card);
 }

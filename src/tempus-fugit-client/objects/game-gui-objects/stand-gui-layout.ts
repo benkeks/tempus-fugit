@@ -1,9 +1,6 @@
 
-
-import GameObject = Phaser.GameObjects.GameObject;
 import { Card } from "../game-objects/card";
 import { StandListener } from "../../mechanics/mission";
-import { CardGUI } from "./card-gui";
 import { StandDescriptionGUI } from "./stand-description-gui";
 import { MissionScene } from "../../scenes/mission-scene";
 import { GameStateListener, GameState } from "../game-objects/game-state";
@@ -14,12 +11,11 @@ import { GameStateListener, GameState } from "../game-objects/game-state";
  */
 export class StandGUILayout extends Phaser.GameObjects.Container implements StandListener, GameStateListener {
 
-    private elementList: Phaser.GameObjects.Sprite[];
-    private hoverElementList:StandDescriptionGUI[];
-    private roundList: Phaser.GameObjects.Text[];
-    private cardsList: CardGUI[];
+    private readonly elementList: Array<Phaser.GameObjects.Sprite | null>;
+    private readonly hoverElementList: Array<StandDescriptionGUI | null>;
+    private readonly roundList: Array<Phaser.GameObjects.Text | null>;
     public scene: MissionScene;
-    private stands: [Card, Card];
+    private stands: [Card | null, Card | null];
 
     constructor(
         scene: MissionScene,
@@ -30,55 +26,78 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         super(scene, x, y);
         this.scene = scene;
         this.stands = [null, null];
-        this.elementList = [];
-        this.roundList = [];
-        this.cardsList = [];
+        this.elementList = [null, null];
+        this.hoverElementList = [null, null];
+        this.roundList = [null, null];
 
         this.scene.add.existing(this);
     }
 
-    updateStandGUI(stands: [Card, Card]) {
-        let font1: Object = { fontSize: '40px', fontFamily: 'pressStart', color: '#FFFFFF' }
-        for (let el of this.elementList) {
-            el.destroy();
-        }
+    private destroySlot(index: number): void {
+        this.elementList[index]?.destroy();
+        this.hoverElementList[index]?.destroy();
+        this.roundList[index]?.destroy();
 
-        for (let el of this.roundList) {
-            el.destroy();
-        }
+        this.elementList[index] = null;
+        this.hoverElementList[index] = null;
+        this.roundList[index] = null;
+    }
+
+    private createSlot(index: number, stand: Card): void {
+        const font = { fontSize: '40px', fontFamily: 'pressStart', color: '#FFFFFF' };
+        const x = 200 * index;
+        const standImage = this.scene.add.sprite(x, 0, stand.getImage(), 0).setScale(4, 4);
+        const desc = new StandDescriptionGUI(this.scene, x, 0, stand);
+        desc.depth = 1000;
+        desc.setScale(2);
+        desc.setVisible(false);
+        this.scene.add.existing(desc);
+
+        standImage.setInteractive();
+        standImage.on("pointerover", () => {
+            desc.fadeInAnimation();
+        }, this);
+
+        desc.setInteractive().on("pointerout", () => {
+            desc.fadeOutAnimation();
+        }, this);
+
+        this.scene.tweens.add({
+            targets: standImage,
+            duration: 400,
+            y: standImage.y - 5,
+            ease: "Linear",
+            yoyo: true,
+            repeat: -1,
+            delay: 0,
+            loopDelay: 0,
+        });
+
+        const text = this.scene.add.text(x, 70, stand.getRoundsRemaining().toString(), font);
+
+        this.elementList[index] = standImage;
+        this.hoverElementList[index] = desc;
+        this.roundList[index] = text;
+
+        this.add(standImage);
+        this.add(text);
+        this.add(desc);
+    }
+
+    updateStandGUI(stands: [Card | null, Card | null]) {
         this.stands = stands;
-        this.elementList = [];
-        this.hoverElementList = [];
-        this.roundList = [];
-        this.cardsList = [];
+
         for (let i of [0, 1]) {
             let stand = this.stands[i];
-            if (stand != null) {
-                let standImage = this.scene.add.sprite(200*i, 0, stand.getImage(), 0).setScale(4, 4);
-                let desc = new StandDescriptionGUI(this.scene, 200*i, 0, stand);
-                desc.depth = 1000;
-                desc.setScale(2);
-                this.scene.add.existing(desc);
-                
-                standImage.setInteractive();
-                standImage.on("pointerover", function(pointer){
-                    desc.fadeInAnimation();
-                }, this);
-                    
-                desc.setInteractive().on("pointerout", function(pointer){
-                    desc.fadeOutAnimation();
-                }, this);
-                let tw = this.scene.tweens.add({targets: standImage,duration: 400, y: standImage.y-5, ease: "Linear", yoyo: true, repeat: -1, delay: 0, loopDelay: 0});
-                let text = this.scene.add.text(200*i, 70, stand.getRoundsRemaining().toString(), font1);
+            if (stand == null) {
+                this.destroySlot(i);
+                continue;
+            }
 
-                desc.setVisible(false);
-                this.hoverElementList.push(desc);
-                this.elementList.push(standImage);
-                this.roundList.push(text);
-
-                this.add(standImage);
-                this.add(text);
-                this.add(desc);
+            if (this.elementList[i] == null) {
+                this.createSlot(i, stand);
+            } else {
+                this.roundList[i]?.setText(stand.getRoundsRemaining().toString());
             }
         }
 
@@ -90,22 +109,23 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     Attacking(stand: Card, index: number) {
         for (let i of [0, 1]) {
             if (this.stands[i] === stand) {
-                if (i == 1 && this.stands[0] == null) i = 0;
-                this.scene.createAttackAnimation(this.scene, this.elementList[i], "+");
+                if (this.elementList[i]) {
+                    this.scene.createAttackAnimation(this.scene, this.elementList[i], "+");
+                }
                 break;
             }
         }
     }
 
     public updateTint(gameState: GameState) {
-        let elementIndex = 0;
         for (let i of [0, 1]) {
-            if (this.stands[i] == null) continue;
+            if (this.stands[i] == null || this.elementList[i] == null) continue;
 
             if (!gameState.evaluate(this.stands[i])) {
-                this.elementList[elementIndex].setTint(0x333333);
-            } else this.elementList[elementIndex].clearTint()
-            elementIndex++;
+                this.elementList[i]?.setTint(0x333333);
+            } else {
+                this.elementList[i]?.clearTint();
+            }
         }
     }
 
