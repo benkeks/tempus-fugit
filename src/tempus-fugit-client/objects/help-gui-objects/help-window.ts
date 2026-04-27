@@ -12,7 +12,6 @@ import {
     op_glFuture,
     op_nextPast,
     op_nextFuture,
-    op_until,
     op_klammer
 } from "./help-data"
 
@@ -459,9 +458,8 @@ export class HelpWindow {
             tabs: []
         },
         {
-            once: true,
-            index: 12,
-            tabs: [op_until]
+            once: false,
+            tabs: []
         },
         {
             once: false,
