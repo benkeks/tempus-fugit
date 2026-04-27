@@ -167,7 +167,7 @@
 		{"name":"Dark beam",
 		"description":"Deals 50 {atk} to a foe but un-sets three {light}!",
 		"image":"dark_beam",
-		"formula":"(l|#Ol)<->t&s",
+		"formula":"G(l|n)&#Fs",
 		"cardKind":"directed",
 		"isStandCard":"false",
 		"standRounds":"3",
@@ -215,7 +215,7 @@
 		"cardKind":"player",
 		"isStandCard":"false",
 		"standRounds":"3",
-		"action":"mission.player.baseAttack+=2;mission.gameState.setAllVariableValues([{variable:'l', start:1, end:25, local:true, value:true}]);",
+		"action":"mission.player.baseAttack+=2;mission.gameState.setAllVariableValues([{variable:'l', start:1, end:-1, local:true, value:true}]);",
 		"comment":"Base attack up by 1 and: -> Gl",
 		"maxCardsInDeck":"2"},
 
