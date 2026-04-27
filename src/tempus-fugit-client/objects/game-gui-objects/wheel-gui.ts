@@ -125,8 +125,13 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', function (pointer, localX, localY, event) {
                 if (this.baseAttackAllowed) {
+                    const currentWave = this.game.waveCounter;
                     this.game.player.attackWithBaseAttack(this.game);
                     this.scene.time.delayedCall(500, () => {
+                        if (this.game.waveCounter !== currentWave) return;
+                        if (this.game.paused) return;
+                        if (this.game.curPhase !== Mission.ENERGY_PHASE && this.game.curPhase !== Mission.PLAY_PHASE) return;
+
                         this.game.player.takeCard(this.game.deck);
                         this.game.nextPhase(Mission.STAND_PHASE);
                     }, [], this)

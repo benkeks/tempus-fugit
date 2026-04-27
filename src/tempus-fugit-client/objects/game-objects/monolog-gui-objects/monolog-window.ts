@@ -5,7 +5,7 @@ const BACKGROUND_COLOR = 0X000000;
 export class MonologWindow {
     private scene: Phaser.Scene;
     private instanceCounter: number = 0;
-    private text: Phaser.GameObjects.Text;
+    private text!: Phaser.GameObjects.Text;
     private wrapWidth = 1000;
     private height = GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 50) - this.wrapWidth / 2;
     private width = GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 30);
@@ -19,8 +19,8 @@ export class MonologWindow {
     private displayAll = false;
     private typing = true;
     private done = false;
-    private skipcont: Phaser.GameObjects.Text;
-    private gameOver: boolean;
+    private skipcont!: Phaser.GameObjects.Text;
+    private gameOver!: boolean;
 
     public clicks:number = 0;
 
@@ -51,12 +51,12 @@ export class MonologWindow {
         this.skipcont = this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text, this.fontStyle);
         this.skipcont.setOrigin(1,1)
             .setInteractive({useHandCursor:true})
-            .on('pointerdown', function () {
+            .on('pointerdown', () => {
                 this.switchToMissionScene();
-            }, this).on('pointerover', function () {
+            }, this).on('pointerover', function (this: Phaser.GameObjects.Text) {
             // color red
             this.setTint(0xff0000);
-        }).on('pointerout', function () {
+        }).on('pointerout', function (this: Phaser.GameObjects.Text) {
             // color white
             this.clearTint();
         })
@@ -64,7 +64,8 @@ export class MonologWindow {
         //.setOrigin(1, 0);
 
         // space key events
-        this.scene.input.keyboard.on("keydown", e => {
+        const keyboard = this.scene.input.keyboard;
+        if (keyboard) keyboard.on("keydown", e => {
                 //console.log(e.key);
                 if (e.key != " ") return;
 
@@ -98,6 +99,10 @@ export class MonologWindow {
         if (this.scene.scene.isPaused("BTextBoxScene")) {
             this.scene.scene.resume("BTextBoxScene");
         } else {
+            const missionScene: any = this.scene.scene.get('MissionScene');
+            if (missionScene && missionScene.tfgame) {
+                missionScene.tfgame.setPaused(false);
+            }
             this.scene.scene.resume('MissionScene');
         }
         this.scene.scene.stop('MonologScene');

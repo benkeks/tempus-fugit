@@ -66,8 +66,13 @@ export class Hand {
             if (this.isFull() && !this.discardGUIStarted) {
                 //console.log('starting discard gui since hand if ful')
                 this.discardGUIStarted = true;
-                for (let i in this.listener) {
-                    this.listener[i].discardCard(card);
+                if (this.missionScene.tfgame.curPhase == Mission.DRAW_PHASE) {
+                    this.missionScene.queueTurnStartDiscard(card);
+                    this.missionScene.callNextPhase();
+                } else {
+                    for (let i in this.listener) {
+                        this.listener[i].discardCard(card);
+                    }
                 }
             } else {
                 //console.log('added card to non full hand', this.cardQueue);
