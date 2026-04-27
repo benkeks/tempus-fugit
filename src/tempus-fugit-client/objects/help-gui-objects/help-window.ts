@@ -12,7 +12,6 @@ import {
     op_glFuture,
     op_nextPast,
     op_nextFuture,
-    op_until,
     op_klammer
 } from "./help-data"
 
@@ -391,6 +390,19 @@ export class HelpWindow {
         this.helpGUI.popUp(duration);
     }
 
+    /**
+     * Restores help tab progress based on completed mission states.
+     */
+    public static restoreFromMissionStates(missionStates: boolean[]): void {
+        missionStates.forEach((completed, index) => {
+            let data = HelpWindow.order[index];
+            if (completed && data && data.once) {
+                (<Array<any>>data.tabs).forEach(t => HelpWindow.help_data.push(t));
+                data.once = false;
+            }
+        });
+    }
+
     static toFormulaSprite = {
         ["n"]: {type: "runes", frame: 0},
         ["s"]: {type: "runes", frame: 1},
@@ -446,9 +458,8 @@ export class HelpWindow {
             tabs: []
         },
         {
-            once: true,
-            index: 12,
-            tabs: [op_until]
+            once: false,
+            tabs: []
         },
         {
             once: false,
