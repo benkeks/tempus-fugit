@@ -19,7 +19,7 @@ export class HelpScene extends Phaser.Scene {
 
     preload() {
         // this.load.pack("preload", "assets/pack.json", "preload");
-        this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet("runes", "assets/font/fontletter/runes/runes-Sheet.png", {frameWidth: 18, frameHeight: 34});
         this.load.spritesheet("operators", "assets/font/fontletter/operators/operator-Sheet.png", {frameWidth: 16, frameHeight: 32});
     }
 

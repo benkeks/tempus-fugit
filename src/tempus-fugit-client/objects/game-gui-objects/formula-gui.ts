@@ -80,9 +80,13 @@ export class FormulaGUI extends Phaser.GameObjects.Container {
         }
 
         for (let el of this.elementList) {
-            if (downscale) el.setScale(0.75);
-            if (withRectangle) el.setOrigin(0.5);
-            else el.setOrigin(0);
+            el.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            if (downscale)
+                el.setScale(0.75);
+            if (withRectangle)
+                el.setOrigin(0.5);
+            else
+                el.setOrigin(0);
             this.add(el);
         }
 
