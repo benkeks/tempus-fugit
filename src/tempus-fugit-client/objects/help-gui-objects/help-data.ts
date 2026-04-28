@@ -107,7 +107,7 @@ export const op_or = {
         },
         {
             type: 'text-area',
-            text: 'Here we have to combinations, wither of which can be valid (or both) for the whole to be valid. The first is valid if nature is not evoked or if both nature und transformation are evoked. For the second both light and strength must be evoked or not evoked at the same time. Here nature and transform are both evoked to make the formula valid.'
+            text: 'Here we have to combinations, wither of which can be valid (or both) for the whole to be valid. The first is valid if nature {nature} is not evoked or if both nature {nature} und transformation {transform} are evoked. For the second both light {light} and strength {strength} must be evoked or not evoked at the same time. Here nature {nature} and transform {transform} are both evoked to make the formula valid.'
         },
         {
             type: 'table',
@@ -140,7 +140,7 @@ export const op_impl = {
         },
         {
             type: 'text-area',
-            text: 'In this case the combination is always valid if light is not active, otherwise the two runes need to be evoked at the same time.'
+            text: 'In this case the combination is always valid if light {light} is not active, otherwise the two runes need to be evoked at the same time.'
         },
         {
             type: 'table',
@@ -162,7 +162,7 @@ export const op_impl = {
         },
         {
             type: 'text-area',
-            text: 'In this case this is valid if the first formula isn\'t or if both are valid. So either nature and transform are not evoked or they both are which implies light and strength are not. Here we have the former situation.'
+            text: 'In this case this is valid if the first formula isn\'t or if both are valid. So either nature {nature} and transform {transform} are not evoked or they both are which implies light {light} and strength {strength} are not. Here we have the former situation.'
         },
         {
             type: 'table',
@@ -217,7 +217,7 @@ export const op_biImpl = {
         },
         {
             type: 'text-area',
-            text: 'Here if nature or strength are evoked then transform must have been evoked the whole time for the spell to be castable'
+            text: 'Here if nature {nature} or strength {strength} are evoked then transform {transform} must have been evoked the whole time for the spell to be castable'
         },
         {
             type: 'table',
@@ -271,7 +271,7 @@ export const op_not = {
         },
         {
             type: 'text-area',
-            text: 'The whole expression means that light and transform can not be equally active at the same time in the future'
+            text: 'The whole expression means that light {light} and transform {transform} can not be equally active at the same time in the future'
         },
         {
             type: 'table',
@@ -325,7 +325,7 @@ export const op_evPast = {
         },
         {
             type: 'text-area',
-            text: 'This formula says that at some point in the past light must have been evoked with nature or strength (or both). Here both apply'
+            text: 'This formula says that at some point in the past light {light} must have been evoked with nature {nature} or strength {strength} (or both). Here both apply'
         },
         {
             type: 'table',
@@ -379,7 +379,7 @@ export const op_evFuture = {
         },
         {
             type: 'text-area',
-            text: 'This says that in some point in the future either light was not evoked or if it was a nature was evoked immediately before it. Here either of the conditions would be fulfilled'
+            text: 'This says that in some point in the future either light {light} was not evoked or if it was a nature {nature} was evoked immediately before it. Here either of the conditions would be fulfilled'
         },
         {
             type: 'table',
@@ -465,7 +465,7 @@ export const op_glFuture = {
         },
         {
             type: 'text-area',
-            text: 'In all future time states the formula must be valid, what this example means is that strength and transformation can not be active at the same time'
+            text: 'In all future time states the formula must be valid, what this example means is that strength {strength} and transformation {transform} can not be active at the same time'
         },
         {
             type: 'table',
@@ -487,7 +487,7 @@ export const op_glFuture = {
         },
         {
             type: 'text-area',
-            text: 'All future states must have either a strength and transformation rune or a nature without a light'
+            text: 'All future states must have either a strength {strength} and transformation {transform} rune or a nature {nature} without a light {light}'
         },
         {
             type: 'table',
@@ -519,7 +519,7 @@ export const op_nextPast = {
         },
         {
             type: 'text-area',
-            text: 'One time step in the past either light or nature should be active for this combination to be valid in the present.'
+            text: 'One time step in the past either light {light} or nature {nature} should be active for this combination to be valid in the present.'
         },
         {
             type: 'table',
@@ -541,7 +541,7 @@ export const op_nextPast = {
         },
         {
             type: 'text-area',
-            text: 'The previous step either had a light, strength and nature or no light.'
+            text: 'The previous step either had a light {light}, strength {strength} and nature {nature} or no light {light}.'
         },
         {
             type: 'table',
@@ -573,7 +573,7 @@ export const op_nextFuture = {
         },
         {
             type: 'text-area',
-            text: 'The next time step must have both strength and light evoked (this can be done with cards)'
+            text: 'The next time step must have both strength {strength} and light {light} evoked (this can be done with cards)'
         },
         {
             type: 'table',
@@ -595,7 +595,7 @@ export const op_nextFuture = {
         },
         {
             type: 'text-area',
-            text: 'In the next time step if nature and strength are both active then light must not be'
+            text: 'In the next time step if nature {nature} and strength {strength} are both active then light {light} must not be'
         },
         {
             type: 'table',
@@ -628,7 +628,7 @@ export const op_until = {
         },
         {
             type: 'text-area',
-            text: 'Nature must have been evoked at least until light and transform are evoked together, it can however remain invoked and the runic combination is still fulfilled'
+            text: 'Nature {nature} must have been evoked at least until light {light} and transform {transform} are evoked together, it can however remain invoked and the runic combination is still fulfilled'
         },
         {
             type: 'table',
@@ -650,7 +650,7 @@ export const op_until = {
         },
         {
             type: 'text-area',
-            text: 'Light or nature must be evoked at least until the point where strength and nature are first evoked together (they may remain evoked afterwards).'
+            text: 'Light {light} or nature {nature} must be evoked at least until the point where strength {strength} and nature {nature} are first evoked together (they may remain evoked afterwards).'
         },
         {
             type: 'table',

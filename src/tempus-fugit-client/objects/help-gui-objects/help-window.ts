@@ -14,6 +14,7 @@ import {
     op_nextFuture,
     op_klammer
 } from "./help-data"
+import { formatEffectDescription } from "../game-gui-objects/effect-icon-text";
 
 // GUI Colors
 const GUI_BORDER = 0x5d4037;
@@ -300,12 +301,25 @@ export class HelpWindow {
             }
         }).addBackground(scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA).setStrokeStyle(BORDER_WIDTH_TEXT_AREA, GUI_TEXT_AREA_BORDER).setDepth(90))
 
-        let textObj = scene.add.text(0, 0, text, {
-            fontSize: '16px',
-            fontStyle: 'bold',
-            fontFamily: 'pressStart',
-            color: '#915b4a'
-        }).setWordWrapWidth(HELP_WIDTH - 100, true).setDepth(91);
+        const hasBBCode = Boolean((scene as any).rexUI && (scene as any).rexUI.add && (scene as any).rexUI.add.BBCodeText);
+        const formattedText = formatEffectDescription(scene, text, hasBBCode);
+        let textObj = hasBBCode
+            ? (scene as any).rexUI.add.BBCodeText(0, 0, formattedText, {
+                fontSize: '16px',
+                fontStyle: 'bold',
+                fontFamily: 'pressStart',
+                color: '#915b4a',
+                wrap: {
+                    mode: 'word',
+                    width: HELP_WIDTH - 100
+                }
+            }).setDepth(91)
+            : scene.add.text(0, 0, formattedText, {
+                fontSize: '16px',
+                fontStyle: 'bold',
+                fontFamily: 'pressStart',
+                color: '#915b4a'
+            }).setWordWrapWidth(HELP_WIDTH - 100, true).setDepth(91);
         sizer.add(textObj, 0, "center", {
             top: 5,
             bottom: 5,
