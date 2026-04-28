@@ -22,7 +22,8 @@ export class Global extends OneParamOperator {
         status.successful = false;
         status.maxStatus = operandStatus.maxStatus;
         status.minStatus = operandStatus.minStatus;
-        while (i<=status.maxStatus && status.value && i>= status.minStatus && operandStatus.successful) {
+        const upperBound = direction > 0 ? status.maxStatus : condition;
+        while (i<=upperBound && status.value && i>= status.minStatus && operandStatus.successful) {
             status.value = operandStatus.value;
             status.successful = true;
 
