@@ -131,6 +131,7 @@ export class Mission implements EnemyListener, PlayerListener {
     public paused: boolean = false;
     private pendingContinuations: PendingMissionContinuation[] = [];
     private pendingWaveTransition: ReturnType<typeof setTimeout> | null = null;
+    private pendingWaveAdvance: number | null = null;
     private aliveEnemiesCount = -1;
     // TODO: effect list
 
@@ -152,10 +153,11 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private cancelPendingWaveTransition(): void {
-        if (this.pendingWaveTransition === null) return;
-
-        clearTimeout(this.pendingWaveTransition);
-        this.pendingWaveTransition = null;
+        if (this.pendingWaveTransition !== null) {
+            clearTimeout(this.pendingWaveTransition);
+            this.pendingWaveTransition = null;
+        }
+        this.pendingWaveAdvance = null;
     }
 
     private beginWave(): void {
@@ -200,6 +202,12 @@ export class Mission implements EnemyListener, PlayerListener {
                 return;
             }
 
+            if (this.paused) {
+                this.debugFlow("nextWave:deferred", { toWave: next, reason: "paused" });
+                this.pendingWaveAdvance = next;
+                return;
+            }
+
             this.nextWave(next);
         }, 350);
     }
@@ -216,6 +224,14 @@ export class Mission implements EnemyListener, PlayerListener {
 
         if (this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE) {
             this.active = true;
+        }
+
+        if (this.pendingWaveAdvance !== null) {
+            const next = this.pendingWaveAdvance;
+            this.pendingWaveAdvance = null;
+            this.debugFlow("nextWave:resumedFromPause", { toWave: next });
+            this.nextWave(next);
+            return;
         }
 
         this.flushPendingContinuations();
@@ -409,6 +425,10 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public nextWave(next: number = this.waveCounter + 1): void {
         this.debugFlow("nextWave:start", { fromWave: this.waveCounter, toWave: next });
+        // Discard any phase/player continuations queued for the old wave: when called
+        // while unpaused the queue is already empty; when called on resume after a
+        // deferred wave advance (pendingWaveAdvance) those continuations are stale.
+        this.pendingContinuations = [];
         this.waveCounter = next;
 
         if (this.checkGameOver()) return;
