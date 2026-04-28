@@ -236,7 +236,7 @@ export const op_not = {
     panel: [
         {
             type: 'text-area',
-            text: 'The runic combination must not be invoked otherwise the spell will implode if the sorcerer attempts to cast it.'
+            text: 'The runic combination must not be invoked.'
         },
         {
             type: 'label',
@@ -271,7 +271,7 @@ export const op_not = {
         },
         {
             type: 'text-area',
-            text: 'The whole expression means that light and transform can not be active at the same time in the future'
+            text: 'The whole expression means that light and transform can not be equally active at the same time in the future'
         },
         {
             type: 'table',
@@ -303,7 +303,7 @@ export const op_evPast = {
         },
         {
             type: 'text-area',
-            text: 'The runes are fulfilled on the second time step, therefore the runic combination is fulfilled in the present'
+            text: 'The runes are fulfilled on the first time step, therefore the runic combination is fulfilled in the present'
         },
         {
             type: 'table',
