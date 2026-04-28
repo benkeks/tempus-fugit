@@ -18,9 +18,9 @@ export class Next extends OneParamOperator {
         // this is heuristically, because O#O (next applied on reverse next) is not cancelling itself out,
         // but since this is only needed to bound computation time
         // this was sufficient enough
-        if (direction > 0) {
+        if (direction > 0 && !status.finiteStatesPast) {
             status.minStatus--;
-        } else {
+        } else if (!status.finiteStatesFuture) {
             status.maxStatus++;
         }
 

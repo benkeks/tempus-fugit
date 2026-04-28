@@ -102,5 +102,8 @@
         public minStatus:number = 0; // propositions can be evaluated in range [minStatus,maxStatus]
         public maxStatus:number = 0;
 
+        public finiteStatesFuture:boolean = false;
+        public finiteStatesPast:boolean = true;
+
         public successful: boolean = false;
     }

@@ -33,7 +33,7 @@ export class Variable extends Proposition {
     public defaultValueFuture:boolean = false;
     public defaultValuePast:boolean = false;
     public finiteStatesFuture:boolean = false;
-    public finiteStatesPast:boolean = false;
+    public finiteStatesPast:boolean = true;
 
     public setDefaultValue(value:boolean) {
         this.defaultValuePast = value;
@@ -46,6 +46,8 @@ export class Variable extends Proposition {
         pstat.successful = true;
         pstat.valuesLength = this._values.length;
         pstat.value = this.getValue(condition);
+        pstat.finiteStatesPast = this.finiteStatesPast;
+        pstat.finiteStatesFuture = this.finiteStatesFuture;
         if (this.finiteStatesFuture) {
             pstat.maxStatus = this.firstValue + this._values.length-1;
         } else {
