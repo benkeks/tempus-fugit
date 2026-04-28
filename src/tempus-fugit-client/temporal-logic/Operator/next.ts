@@ -15,6 +15,12 @@ export class Next extends OneParamOperator {
     evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
         let status:PropositionStatus = this.operand.evaluateInternal(condition+direction, Proposition.DEFAULT_DIRECTION);
 
+        if (direction > 0) {
+            status.minStatus--;
+        } else {
+            status.maxStatus++;
+        }
+
         return status;
     }
 

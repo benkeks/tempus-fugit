@@ -32,8 +32,8 @@ export class Variable extends Proposition {
     public static varCount:number = 0;
     public defaultValueFuture:boolean = false;
     public defaultValuePast:boolean = false;
-    public finiteStatesFuture:boolean = true;
-    public finiteStatesPast:boolean = true;
+    public finiteStatesFuture:boolean = false;
+    public finiteStatesPast:boolean = false;
 
     public setDefaultValue(value:boolean) {
         this.defaultValuePast = value;
