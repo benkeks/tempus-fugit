@@ -329,10 +329,10 @@ export class Mission implements EnemyListener, PlayerListener {
             mission.dialogue.push(d.copy());
         }
 
-        mission.stands = [null, null];
-        for (let s of this.stands) {
-            if (s != null) mission.stands.push(s.copy());
-        }
+        mission.stands = [
+            this.stands[0] != null ? this.stands[0].copy() : null,
+            this.stands[1] != null ? this.stands[1].copy() : null,
+        ];
 
         for (let c of this.loot) {
             mission.loot.push(c.copy());

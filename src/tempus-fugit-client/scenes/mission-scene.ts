@@ -87,7 +87,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     private updateMissionInteractivity(): void {
-        this.tfgame.active = !this.tfgame.paused && this.isPlayerInteractionPhase();
+        const interactive = !this.tfgame.paused && this.isPlayerInteractionPhase();
+        this.tfgame.player.active = interactive;
+        this.tfgame.gameState.active = interactive && this.tfgame.curPhase !== Mission.PLAY_PHASE;
     }
 
     private async withMissionPresentation<T>(
@@ -95,20 +97,28 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         options: { blocking: boolean; suspendPlayerOnly?: boolean },
         present: () => T,
     ): Promise<void> {
+        const restorePlayerInteractivity = !options.blocking && !!options.suspendPlayerOnly;
+
         if (options.blocking) {
             game.setPaused(true);
-        } else if (options.suspendPlayerOnly) {
+        } else if (restorePlayerInteractivity) {
             game.active = false;
         }
 
-        present();
+        try {
+            present();
 
-        if (options.blocking) {
-            await this.waitForSceneResume();
-            return;
+            if (options.blocking) {
+                await this.waitForSceneResume();
+                return;
+            }
+
+            await this.wait(0);
+        } finally {
+            if (restorePlayerInteractivity) {
+                this.updateMissionInteractivity();
+            }
         }
-
-        await this.wait(0);
     }
 
     private async presentWinMonologIfNeeded(game: Mission): Promise<void> {
