@@ -57,6 +57,7 @@ export class PauseWindow {
             choices: [
                 this.createLabel(scene, 'Retry', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
                 this.createLabel(scene, 'Return to Map', isMissionScene ? GUI_LABEL_BG : GUI_FILL_DARK),
+                this.createLabel(scene, 'Fullscreen', GUI_LABEL_BG),
                 this.createLabel(scene, 'Quit', GUI_LABEL_BG),
                 this.createLabel(scene, 'Start over', isMissionScene ? GUI_FILL_DARK : GUI_LABEL_BG),
             ],
@@ -131,7 +132,42 @@ export class PauseWindow {
                 scene.scene.start('NavigationScene', {tutorial:false});
             }
 
-            let indexToFn = [retry, navigation, quit, startOver];
+            async function lockLandscapeOnMobile() {
+                const isMobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent);
+                const orientation = screen.orientation as any;
+
+                if (!isMobile || !orientation || typeof orientation.lock !== 'function') return;
+
+                try {
+                    await orientation.lock('landscape');
+                } catch (_e) {
+                    // Some mobile browsers block orientation lock even in fullscreen.
+                }
+            }
+
+            function unlockOrientation() {
+                const orientation = screen.orientation as any;
+                if (!orientation || typeof orientation.unlock !== 'function') return;
+
+                try {
+                    orientation.unlock();
+                } catch (_e) {
+                    // Ignore unlock failures on browsers without full orientation control.
+                }
+            }
+
+            function toggleFullscreen() {
+                if (scene.scale.isFullscreen) {
+                    scene.scale.stopFullscreen();
+                    unlockOrientation();
+                    return;
+                }
+
+                scene.scale.startFullscreen();
+                void lockLandscapeOnMobile();
+            }
+
+            let indexToFn = [retry, navigation, toggleFullscreen, quit, startOver];
 
             switch (groupName) {
                 case 'toolbar':
@@ -144,9 +180,14 @@ export class PauseWindow {
                     break;
                 case 'choices':
                     if (!this.isMissionScene && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
-                    if (this.isMissionScene && index === 3) return; // disable start over button on mission scene
+                    if (this.isMissionScene && index === 4) return; // disable start over button on mission scene
 
-                    if (index === 3) {
+                    if (index === 2) {
+                        indexToFn[index]();
+                        return;
+                    }
+
+                    if (index === 4) {
                         indexToFn[index]();
                         return;
                     }
@@ -161,7 +202,7 @@ export class PauseWindow {
             button.getElement('background').setStrokeStyle(BORDER_WIDTH, GUI_BORDER_HIGHLIGHT);
         }, this).on('button.out', function restoreBorder(button, groupname, index) {
             if (!this.isMissionScene && groupname === 'choices' && (index === 0 || index === 1)) return; // disable first two buttons on navigation scene
-            if (this.isMissionScene && groupname === 'choices' && index === 3) return; // disable start over button on mission scene
+            if (this.isMissionScene && groupname === 'choices' && index === 4) return; // disable start over button on mission scene
             button.getElement('background').setStrokeStyle(BORDER_WIDTH, groupname === 'toolbar' ? 0x000000 : GUI_BORDER);
         }, this);
 

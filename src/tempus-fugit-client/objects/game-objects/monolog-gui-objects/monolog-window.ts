@@ -21,6 +21,8 @@ export class MonologWindow {
     private done = false;
     private skipcont!: Phaser.GameObjects.Text;
     private gameOver!: boolean;
+    private holdStartTimer: ReturnType<typeof setTimeout> | undefined;
+    private holdRepeatTimer: ReturnType<typeof setInterval> | undefined;
 
     public clicks:number = 0;
 
@@ -44,6 +46,23 @@ export class MonologWindow {
         this.text.setLineSpacing(20);
         this.displayMonologue(monolog);
 
+        // full-screen interactive area used to emulate keyboard hold on touch/mouse devices
+        const holdArea = this.scene.add.zone(0, 0, GameInfo.width, GameInfo.height).setOrigin(0).setInteractive();
+        holdArea.on('pointerdown', () => {
+            this.startPointerHold();
+        });
+        holdArea.on('pointerup', () => {
+            this.stopPointerHold();
+        });
+        holdArea.on('pointerout', () => {
+            this.stopPointerHold();
+        });
+        this.scene.input.on('pointerup', this.stopPointerHold, this);
+        this.scene.events.once('shutdown', () => {
+            this.stopPointerHold();
+            this.scene.input.off('pointerup', this.stopPointerHold, this);
+        });
+
         // skip button
         let text = "Skip";
         if (gameOver) text = "Return to Map"
@@ -52,50 +71,74 @@ export class MonologWindow {
         this.skipcont.setOrigin(1,1)
             .setInteractive({useHandCursor:true})
             .on('pointerdown', () => {
+                this.stopPointerHold();
                 this.switchToMissionScene();
-            }, this).on('pointerover', function (this: Phaser.GameObjects.Text) {
+            }).on('pointerover', () => {
             // color red
-            this.setTint(0xff0000);
-        }).on('pointerout', function (this: Phaser.GameObjects.Text) {
+            this.skipcont.setTint(0xff0000);
+        }).on('pointerout', () => {
             // color white
-            this.clearTint();
+            this.skipcont.clearTint();
         })
 
         //.setOrigin(1, 0);
 
         // space key events
-        const keyboard = this.scene.input.keyboard;
-        if (keyboard) keyboard.on("keydown", e => {
-                //console.log(e.key);
-                if (e.key != " ") return;
+        this.scene.input.keyboard?.on("keydown", e => {
+            if (e.key != " ") return;
+            this.advanceMonologInput();
+        }, this);
 
-                if (!this.typing) this.clicks = 2;
+    }
 
-                switch (this.clicks) {
-                    // faster pace if space is pressed once and typing not done
-                    case 0:
-                        this.interval = 25;
-                        this.clicks++;
-                        break;
+    private advanceMonologInput(): void {
+        if (!this.typing) this.clicks = 2;
 
-                    // display all text if space if pressed twice and typing not done
-                    case 1:
-                        this.displayAll = true;
-                        this.clicks++;
-                        if (!this.gameOver) this.skipcont.text = "Continue";
-                        break;
+        switch (this.clicks) {
+            // faster pace if dialog is being typed
+            case 0:
+                this.interval = 25;
+                this.clicks++;
+                break;
 
-                    // go to next scene
-                    default:
-                        //this.switchToMissionScene();
-                }
+            // display all remaining text on next step
+            case 1:
+                this.displayAll = true;
+                this.clicks++;
+                if (!this.gameOver) this.skipcont.text = "Continue";
+                break;
 
-            }, this);
+            default:
+                break;
+        }
+    }
 
+    private startPointerHold(): void {
+        this.stopPointerHold();
+        this.advanceMonologInput();
+
+        this.holdStartTimer = setTimeout(() => {
+            this.holdRepeatTimer = setInterval(() => {
+                this.advanceMonologInput();
+            }, 120);
+        }, 220);
+    }
+
+    private stopPointerHold(): void {
+        if (this.holdStartTimer) {
+            clearTimeout(this.holdStartTimer);
+            this.holdStartTimer = undefined;
+        }
+
+        if (this.holdRepeatTimer) {
+            clearInterval(this.holdRepeatTimer);
+            this.holdRepeatTimer = undefined;
+        }
     }
 
     private switchToMissionScene(): void {
         this.done = true;
+        this.stopPointerHold();
         if (this.scene.scene.isPaused("BTextBoxScene")) {
             this.scene.scene.resume("BTextBoxScene");
         } else {

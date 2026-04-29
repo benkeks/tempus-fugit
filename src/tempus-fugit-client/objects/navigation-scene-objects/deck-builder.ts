@@ -79,6 +79,8 @@ export class DeckBuilder {
     constructor(scene: Scene, player:Player, newCards?:Set<string>) {
         this.scene = scene;
         this.player = player;
+        this.scene.input.dragDistanceThreshold = 12;
+        this.scene.input.dragTimeThreshold = 80;
         this.screenMargin = this.screenPadding/2;
         if (newCards) this.newCards = newCards;
         else this.newCards = new Set<string>();
@@ -620,7 +622,7 @@ export class DeckBuilder {
             }
         },this);
 
-        label.input.draggable = true;
+        this.scene.input.setDraggable(label, true);
 
         return label;
     }
