@@ -304,6 +304,22 @@ export class TableGUI implements GameStateListener {
         }).on("cell.out", function (cellContainer, cellIndex) {
             tooltips[cellIndex].fadeOut()
         })
+
+        this.paddVariableStates(this.tableColumnCount-1)
+    }
+
+    paddVariableStates(n: number) {
+        const variableValues:any = {}
+        for (let key in this.gameState.variables) {
+            const values = this.gameState.variables[key].values
+            if (n >= values.length) {
+                variableValues[key] = { [ n ]: false };
+            }
+        }
+
+        this.gameState.setVariableValues(
+            variableValues, false
+        )
     }
 
     /**
@@ -424,8 +440,8 @@ export class TableGUI implements GameStateListener {
 
     async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {
         // add 30 more columns if end of table is reached
-        if (activeRound >= this.tableColumnCount - 1) {
-            this.addColumns(30);
+        if (activeRound >= this.tableColumnCount - 3) {
+            this.addColumns(3);
         }
 
         // change color of coloumn
@@ -440,10 +456,7 @@ export class TableGUI implements GameStateListener {
         this.createEnergyTable(this.gameState.maxEnergy);
 
         // move table to the right if last visible column is reached
-        if ([20, 30, 40, 50, 60].includes(activeRound)) {
-            for (let i = 0; i < 10; i++)
-                this.scrollTable(true);
-        }
+        this.scrollTable(true)
     }
 
     addColumns(n: number) {
@@ -460,6 +473,7 @@ export class TableGUI implements GameStateListener {
         }
         this.tableColumnCount += n;
         this.variableTable.setItems(this.tableItems);
+        this.paddVariableStates(this.tableColumnCount-1);
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
