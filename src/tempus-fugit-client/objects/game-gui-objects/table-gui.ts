@@ -304,6 +304,19 @@ export class TableGUI implements GameStateListener {
         }).on("cell.out", function (cellContainer, cellIndex) {
             tooltips[cellIndex].fadeOut()
         })
+
+        this.paddVariableStates(this.tableColumnCount-1)
+    }
+
+    paddVariableStates(n: number) {
+        const variableValues:any = {}
+        for (let key in this.gameState.variables) {
+            variableValues[key] = { [ n ]: false };
+        }
+
+        this.gameState.setVariableValues(
+            variableValues, false
+        )
     }
 
     /**
@@ -460,6 +473,7 @@ export class TableGUI implements GameStateListener {
         }
         this.tableColumnCount += n;
         this.variableTable.setItems(this.tableItems);
+        this.paddVariableStates(n);
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
