@@ -84,7 +84,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
     toggleHovering(card: CardGUI, unhover: Boolean): void {
 
 
-        if (!this.cardGUIs.includes(card))
+        if (!this.canHoverCard(card))
             return;
 
         let allTweensDone = true;
@@ -98,6 +98,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         if (!allTweensDone) {
             new Promise(resolve => setTimeout(resolve, 100))
                 .then(() => {
+                    if (!this.canHoverCard(card)) return;
                     self.unhoverAll();
                     if (!unhover)
                         card.hover()
@@ -107,8 +108,16 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             this.unhoverAll();
 
             if (!unhover)
-                card.hover();
+                if (this.canHoverCard(card))
+                    card.hover();
         }
+    }
+
+    private canHoverCard(card: CardGUI): boolean {
+        return this.cardGUIs.includes(card)
+            && card.active
+            && !!card.scene
+            && !!card.scene.tweens;
     }
 
     /**
@@ -233,7 +242,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             if (this.cardGUIs[pos].card === card) {
                 //console.log('removing card');
                 this.stack.addCard(this.cardGUIs[pos].card);
-                this.cardGUIs[pos].cross.destroy;
+                this.cardGUIs[pos].cross.destroy();
                 this.cardGUIs[pos].destroy();
                 this.cardGUIs.splice(parseInt(pos), 1);
                 this.arrangeCards(true);

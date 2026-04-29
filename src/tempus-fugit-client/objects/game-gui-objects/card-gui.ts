@@ -65,6 +65,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
        * don't call hover method of cardGUI objects; user this moethod implemented in handGUI
        */
     public hover(): void {
+        if (!this.active || !this.scene || !this.scene.tweens) return;
         this.setDepth(999);
 
         this.hoverTween = this.scene.tweens.add({
@@ -84,6 +85,7 @@ export class CardGUI extends Phaser.GameObjects.Container {
      * don't call unhover method of cardGUI objects; user this moethod implemented in handGUI
      */
     unhover(): void {
+        if (!this.active || !this.scene || !this.scene.tweens) return;
         this.setDepth(this.cardOriginZ);
         this.unhoverTween = this.scene.tweens.add({
             targets: this,
