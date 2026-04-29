@@ -88,8 +88,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     private updateMissionInteractivity(): void {
         const interactive = !this.tfgame.paused && this.isPlayerInteractionPhase();
-        this.tfgame.player.active = interactive;
-        this.tfgame.gameState.active = interactive && this.tfgame.curPhase !== Mission.PLAY_PHASE;
+        this.tfgame.active = interactive;
+        // In PLAY_PHASE, gameState (variable table) must remain inactive
+        // even when player interaction is re-enabled after a dialog/discard.
+        if (interactive && this.tfgame.curPhase === Mission.PLAY_PHASE) {
+            this.tfgame.gameState.active = false;
+        }
     }
 
     private async withMissionPresentation<T>(
