@@ -437,8 +437,8 @@ export class TableGUI implements GameStateListener {
 
     async roundChanged(gameSate: GameState, lastRound: number, activeRound: number) {
         // add 30 more columns if end of table is reached
-        if (activeRound >= this.tableColumnCount - 1) {
-            this.addColumns(30);
+        if (activeRound >= this.tableColumnCount - 3) {
+            this.addColumns(3);
         }
 
         // change color of coloumn
@@ -453,10 +453,7 @@ export class TableGUI implements GameStateListener {
         this.createEnergyTable(this.gameState.maxEnergy);
 
         // move table to the right if last visible column is reached
-        if ([20, 30, 40, 50, 60].includes(activeRound)) {
-            for (let i = 0; i < 10; i++)
-                this.scrollTable(true);
-        }
+        this.scrollTable(true)
     }
 
     addColumns(n: number) {
