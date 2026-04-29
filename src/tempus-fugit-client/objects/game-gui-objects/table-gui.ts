@@ -473,7 +473,7 @@ export class TableGUI implements GameStateListener {
         }
         this.tableColumnCount += n;
         this.variableTable.setItems(this.tableItems);
-        this.paddVariableStates(n);
+        this.paddVariableStates(this.tableColumnCount-1);
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
