@@ -18,7 +18,7 @@ export const op_and = {
     panel: [
         {
             type: 'text-area',
-            text: 'The spell is composed of two runes or runic combination. The sorcerer must evoke both simultaneously to cast the spell.'
+            text: 'The spell is composed of two runes or runic combinations. The sorcerer must evoke both simultaneously to cast the spell.'
         },
         {
             type: 'label',
@@ -31,7 +31,7 @@ export const op_and = {
         },
         {
             type: 'text-area',
-            text: 'For this example all of the runes need to be activated for the spell to be castable'
+            text: 'In this example, all runes must be active for the spell to be cast.'
         },
         {
             type: 'table',
@@ -53,7 +53,7 @@ export const op_and = {
         },
         {
             type: 'text-area',
-            text: 'In this case both of the sub formulas need to be fulfilled'
+            text: 'In this case, both sub-formulas must be satisfied.'
         },
         {
             type: 'table',
@@ -72,7 +72,7 @@ export const op_or = {
     panel: [
         {
             type: 'text-area',
-            text: 'Some spells can be performed with different runes for the same result. In this case it is enough to evoke at least one of the runes or runic combinations.'
+            text: 'Some spells can be performed in different ways while producing the same result. In this case, it is enough to evoke at least one of the runes or runic combinations.'
         },
         {
             type: 'label',
@@ -85,7 +85,7 @@ export const op_or = {
         },
         {
             type: 'text-area',
-            text: 'This formula is very easy to fulfill. Either one of the runes can be active or even both'
+            text: 'This formula is easy to satisfy: Either rune can be active, or even both.'
         },
         {
             type: 'table',
@@ -107,7 +107,7 @@ export const op_or = {
         },
         {
             type: 'text-area',
-            text: 'Here we have to combinations, wither of which can be valid (or both) for the whole to be valid. The first is valid if nature is not evoked or if both nature und transformation are evoked. For the second both light and strength must be evoked or not evoked at the same time. Here nature and transform are both evoked to make the formula valid.'
+            text: 'Here we have two combinations, and either one can be valid, or both. The first is valid if nature {nature} is not evoked, or if both nature {nature} and transform {transform} are evoked. In the second, light {light} and strength {strength} must either both be evoked or both be inactive. Here, nature {nature} and transform {transform} are both evoked, so the formula is valid.'
         },
         {
             type: 'table',
@@ -127,7 +127,7 @@ export const op_impl = {
     panel: [
         {
             type: 'text-area',
-            text: 'The two runic combinations are bound in such a way that if the first one has not been evoked the spell may be evoked, however if the first one has been evoked then the second one must also be evoked for the sorcerer to cast the spell. '
+            text: 'The two runic combinations are linked in such a way that if the first is not evoked, the spell may still be cast. If the first is evoked, however, the second must also be evoked.'
         },
         {
             type: 'label',
@@ -140,7 +140,7 @@ export const op_impl = {
         },
         {
             type: 'text-area',
-            text: 'In this case the combination is always valid if light is not active, otherwise the two runes need to be evoked at the same time.'
+            text: 'In this case, the combination is always valid if light {light} is not active. Otherwise, the two runes must be evoked at the same time.'
         },
         {
             type: 'table',
@@ -162,7 +162,7 @@ export const op_impl = {
         },
         {
             type: 'text-area',
-            text: 'In this case this is valid if the first formula isn\'t or if both are valid. So either nature and transform are not evoked or they both are which implies light and strength are not. Here we have the former situation.'
+            text: 'This formula is valid if the first sub-formula is not satisfied, or if both sub-formulas are satisfied. So either nature {nature} and transform {transform} are not evoked, or they both are, which implies that light {light} and strength {strength} are not. Here, we have the former situation.'
         },
         {
             type: 'table',
@@ -182,7 +182,7 @@ export const op_biImpl = {
     panel: [
         {
             type: 'text-area',
-            text: 'The two runic combinations are bound to each other. Either both of them or neither of them must be evoked for the sorcerer to be able to cast the spell.'
+            text: 'The two runic combinations are bound to each other. Either both must be evoked, or neither must be evoked, for the sorcerer to cast the spell.'
         },
         {
             type: 'label',
@@ -195,7 +195,7 @@ export const op_biImpl = {
         },
         {
             type: 'text-area',
-            text: 'Both runic combinations must be in the same state, wither both active or both inactive. As such both the highlighted combinations are valid'
+            text: 'Both runic combinations must be in the same state: either both active or both inactive. As a result, both highlighted combinations are valid.'
         },
         {
             type: 'table',
@@ -217,7 +217,7 @@ export const op_biImpl = {
         },
         {
             type: 'text-area',
-            text: 'Here if nature or strength are evoked then transform must have been evoked the whole time for the spell to be castable'
+            text: 'Here, if nature {nature} or strength {strength} is evoked, then transform {transform} must have been evoked the whole time for the spell to be cast.'
         },
         {
             type: 'table',
@@ -236,7 +236,7 @@ export const op_not = {
     panel: [
         {
             type: 'text-area',
-            text: 'The runic combination must not be invoked otherwise the spell will implode if the sorcerer attempts to cast it.'
+            text: 'The runic combination must not be evoked.'
         },
         {
             type: 'label',
@@ -249,7 +249,7 @@ export const op_not = {
         },
         {
             type: 'text-area',
-            text: 'The expression must not be evoked'
+            text: 'The expression must not be evoked.'
         },
         {
             type: 'table',
@@ -271,7 +271,7 @@ export const op_not = {
         },
         {
             type: 'text-area',
-            text: 'The whole expression means that light and transform can not be active at the same time in the future'
+            text: 'This expression means that light {light} and transform {transform} cannot be equally active at the same time in the future.'
         },
         {
             type: 'table',
@@ -290,7 +290,7 @@ export const op_evPast = {
     panel: [
         {
             type: 'text-area',
-            text: 'This spell peeks into the past near and far. If the runic combination was invoked at some point in the past the sorcerer may cast this spell.'
+            text: 'This spell reaches into the past, both near and far. If the runic combination was evoked at some point in the past, the sorcerer may cast this spell.'
         },
         {
             type: 'label',
@@ -303,7 +303,7 @@ export const op_evPast = {
         },
         {
             type: 'text-area',
-            text: 'The runes are fulfilled on the second time step, therefore the runic combination is fulfilled in the present'
+            text: 'The runic combination is already satisfied in the first time step, so it is valid in the present.'
         },
         {
             type: 'table',
@@ -325,7 +325,7 @@ export const op_evPast = {
         },
         {
             type: 'text-area',
-            text: 'This formula says that at some point in the past light must have been evoked with nature or strength (or both). Here both apply'
+            text: 'This formula says that at some point in the past, light {light} must have been evoked together with nature {nature}, strength {strength}, or both. Here, both apply.'
         },
         {
             type: 'table',
@@ -344,7 +344,7 @@ export const op_evFuture = {
     panel: [
         {
             type: 'text-area',
-            text: 'This spell transcends time and looks in the future near and far. The runic combination must be evoked at some point in the future for the sorcerer to be able to cast this spell.'
+            text: 'This spell transcends time and looks into the future, both near and far. The runic combination must be evoked at some point in the future for the sorcerer to cast this spell.'
         },
         {
             type: 'label',
@@ -357,7 +357,7 @@ export const op_evFuture = {
         },
         {
             type: 'text-area',
-            text: 'At some point in the future the combination must be fulfilled (this can be done with other spells) so that the spell can be cast in the present. '
+            text: 'At some point in the future, the combination must be satisfied, which can be achieved with other spells, so that this spell can be cast in the present.'
         },
         {
             type: 'table',
@@ -379,7 +379,7 @@ export const op_evFuture = {
         },
         {
             type: 'text-area',
-            text: 'This says that in some point in the future either light was not evoked or if it was a nature was evoked immediately before it. Here either of the conditions would be fulfilled'
+            text: 'This says that at some point in the future, either light {light} is not evoked, or, if it is evoked, nature {nature} was evoked immediately before it. Here, either condition would be enough.'
         },
         {
             type: 'table',
@@ -398,7 +398,7 @@ export const op_glPast = {
     panel: [
         {
             type: 'text-area',
-            text: 'This spell peeks far into the past. The runic combination must have been active until this point for the sorcerer to be able to cast this spell.'
+            text: 'This spell reaches far into the past. The runic combination must have remained active up to this point for the sorcerer to cast this spell.'
         },
         {
             type: 'label',
@@ -433,7 +433,7 @@ export const op_glPast = {
         },
         {
             type: 'text-area',
-            text: 'This means that in no point in the past all three of the runes were evoked at the same time'
+            text: 'This means that at no point in the past were all three runes evoked at the same time.'
         },
         {
             type: 'table',
@@ -452,7 +452,7 @@ export const op_glFuture = {
     panel: [
         {
             type: 'text-area',
-            text: 'The spell requires continues stream of runic energy, the sorcerer must keep the necessary runes evoked from this point on to be able to cast the spell.'
+            text: 'This spell requires a continuous stream of runic energy. The sorcerer must keep the necessary runes evoked from this point on to cast the spell.'
         },
         {
             type: 'label',
@@ -465,7 +465,7 @@ export const op_glFuture = {
         },
         {
             type: 'text-area',
-            text: 'In all future time states the formula must be valid, what this example means is that strength and transformation can not be active at the same time'
+            text: 'The formula must remain valid in all future time states. In this example, that means strength {strength} and transform {transform} cannot be active at the same time.'
         },
         {
             type: 'table',
@@ -487,7 +487,7 @@ export const op_glFuture = {
         },
         {
             type: 'text-area',
-            text: 'All future states must have either a strength and transformation rune or a nature without a light'
+            text: 'All future states must contain either strength {strength} together with transform {transform}, or nature {nature} without light {light}.'
         },
         {
             type: 'table',
@@ -506,7 +506,7 @@ export const op_nextPast = {
     panel: [
         {
             type: 'text-area',
-            text: 'This spell peeks into the near past, if the runic combination was evoked by the sorcerer than the spell can be cast. '
+            text: 'This spell reaches into the near past. If the runic combination was evoked in the previous step, the spell can be cast.'
         },
         {
             type: 'label',
@@ -519,7 +519,7 @@ export const op_nextPast = {
         },
         {
             type: 'text-area',
-            text: 'One time step in the past either light or nature should be active for this combination to be valid in the present.'
+            text: 'One time step in the past either light {light} or nature {nature} should be active for this combination to be valid in the present.'
         },
         {
             type: 'table',
@@ -541,7 +541,7 @@ export const op_nextPast = {
         },
         {
             type: 'text-area',
-            text: 'The previous step either had a light, strength and nature or no light.'
+            text: 'The previous step either had a light {light}, strength {strength} and nature {nature} or no light {light}.'
         },
         {
             type: 'table',
@@ -560,7 +560,7 @@ export const op_nextFuture = {
     panel: [
         {
             type: 'text-area',
-            text: 'This spell transcends time, it requires future evocation of runes. The sorcerer is capable of manipulating time with temporal magic to evoke runes in the future.'
+            text: 'This spell transcends time and requires the future evocation of runes. The sorcerer can manipulate time with temporal magic to evoke runes in the future.'
         },
         {
             type: 'label',
@@ -573,7 +573,7 @@ export const op_nextFuture = {
         },
         {
             type: 'text-area',
-            text: 'The next time step must have both strength and light evoked (this can be done with cards)'
+            text: 'In the next time step, both strength {strength} and light {light} must be evoked. This can be done with cards.'
         },
         {
             type: 'table',
@@ -595,7 +595,7 @@ export const op_nextFuture = {
         },
         {
             type: 'text-area',
-            text: 'In the next time step if nature and strength are both active then light must not be'
+            text: 'In the next time step, if nature {nature} and strength {strength} are both active, then light {light} must not be active.'
         },
         {
             type: 'table',
@@ -615,7 +615,7 @@ export const op_until = {
     panel: [
         {
             type: 'text-area',
-            text: 'The two runic combinations are bound to each other. Either both of them or neither of them must be evoked for the sorcerer to be able to cast the spell.'
+            text: 'The two runic combinations are bound to each other. One must remain valid until the other becomes valid.'
         },
         {
             type: 'label',
@@ -628,7 +628,7 @@ export const op_until = {
         },
         {
             type: 'text-area',
-            text: 'Nature must have been evoked at least until light and transform are evoked together, it can however remain invoked and the runic combination is still fulfilled'
+            text: 'Nature {nature} must remain evoked at least until light {light} and transform {transform} are evoked together. It may remain evoked afterwards and the runic combination will still be satisfied.'
         },
         {
             type: 'table',
@@ -650,7 +650,7 @@ export const op_until = {
         },
         {
             type: 'text-area',
-            text: 'Light or nature must be evoked at least until the point where strength and nature are first evoked together (they may remain evoked afterwards).'
+            text: 'Light {light} or nature {nature} must remain evoked until the point where strength {strength} and nature {nature} are first evoked together. They may remain evoked afterwards.'
         },
         {
             type: 'table',
@@ -669,7 +669,7 @@ export const op_klammer = {
     panel: [
         {
             type: 'text-area',
-            text: 'Parenthesis define a runic combination. They can also be nested in each other to form more complex combinations.'
+            text: 'Parentheses define a runic combination. They can also be nested to form more complex combinations.'
         },
     ]
 };
