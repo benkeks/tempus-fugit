@@ -36,7 +36,6 @@ import { op_and,
     op_glFuture,
     op_nextPast,
     op_nextFuture,
-    op_until,
     op_klammer } from "../objects/help-gui-objects/help-data";
 
 export class NavigationScene extends Phaser.Scene {
@@ -134,7 +133,6 @@ export class NavigationScene extends Phaser.Scene {
                 op_glFuture,
                 op_nextPast,
                 op_nextFuture,
-                op_until,
                 op_klammer]
             scene.scene.start("NavigationScene", {tutorial:false});
             HelpButton.newInfo = true;
@@ -623,6 +621,8 @@ export class NavigationScene extends Phaser.Scene {
         this.player.addCardType(Deck.Decks["custom"].deck);
 
         DeckBuilderButton.newCards = ProgressStore.applyToPlayerAndDeck(this.player, Deck.Decks["custom"], this.missionKeys.length);
+
+        HelpWindow.restoreFromMissionStates(this.player.missionStates);
 
         if (Object.keys(this.player.cardTypes).length === 0) {
             this.player.addCardType(Deck.Decks["custom"].deck);
