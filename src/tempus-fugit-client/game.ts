@@ -43,6 +43,17 @@ const config = {
     type: Phaser.AUTO,
     width: GameInfo.width,
     height: GameInfo.height,
+    input: {
+        activePointers: 3,
+        touch: {
+            capture: true
+        },
+        mouse: {
+            preventDefaultDown: true,
+            preventDefaultMove: true,
+            preventDefaultUp: true
+        }
+    },
     scale: {
         mode: Phaser.Scale.ScaleModes.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -70,6 +81,10 @@ const config = {
 export class Game extends Phaser.Game {
     constructor(config: Phaser.Types.Core.GameConfig) {
         super(config);
+
+        // Prevent browser pan/zoom gestures from stealing touch drag interactions.
+        this.canvas.style.touchAction = 'none';
+        this.canvas.style.userSelect = 'none';
 
         // Keep dynamic text smooth (canvas textures) while forcing pixel-art filtering on sprite textures.
         this.textures.on(Phaser.Textures.Events.ADD, (_key: string, texture: Phaser.Textures.Texture) => {
