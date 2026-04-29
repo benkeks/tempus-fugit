@@ -70,6 +70,8 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
                             hand.playNextCard();
                         }, 250);
                     }
+
+                    scene.onDiscardDialogClosed();
                 });
         }
     }

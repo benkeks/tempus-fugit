@@ -1,9 +1,6 @@
 import { Card } from "../objects/game-objects/card";
 import { Enemy } from "../objects/game-objects/enemy";
-import { CardGUI } from "../objects/game-gui-objects/card-gui";
 import { PlayerGUI } from "../objects/game-gui-objects/player-gui";
-import { Player } from "../objects/game-objects/player";
-import { TechDemoGame } from "../mechanics/tech-demo-game";
 import { TableGUI } from "../objects/game-gui-objects/table-gui";
 import { HandGUI } from "../objects/game-gui-objects/hand-gui";
 import { DeckGUI } from "../objects/game-gui-objects/deck-gui";
@@ -16,9 +13,7 @@ import { Textbox } from "../objects/game-gui-objects/textbox";
 import { GameInfo } from "../game";
 
 import Image = Phaser.GameObjects.Image;
-import { FormulaGUI } from "../objects/game-gui-objects/formula-gui";
 import { StandGUILayout } from "../objects/game-gui-objects/stand-gui-layout";
-import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
 import { WheelGUI } from "../objects/game-gui-objects/wheel-gui";
 import { Scene, GameObjects } from "phaser";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
@@ -31,43 +26,235 @@ import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 
+type PendingWavePresentation = {
+    game: Mission;
+    enemies?: Enemy[];
+    dialogs: StoryDialog[];
+    monolog?: string;
+    music?: string;
+};
+
+type AnimationWaiter = () => void;
 
 
 export class MissionScene extends Phaser.Scene implements MissionListener {
     static latestData: Object;
 
-    public playerGUI: PlayerGUI;
-    public gameStateGUI: TableGUI; // variable table at the top
-    public handGUI: HandGUI;
-    public deckGUI: DeckGUI;
-    public enemyGUI: EnemyGuiLayout;
-    public stack: Stack;
-    public standGUI: StandGUILayout;
-    public textBox: Textbox;
-    public helpButton: HelpButton;
-    public pauseButton: PauseButton;
-    public tutorialButton: TutorialButton;
-    public soundButton:SoundButton;
+    public playerGUI!: PlayerGUI;
+    public gameStateGUI!: TableGUI; // variable table at the top
+    public handGUI!: HandGUI;
+    public deckGUI!: DeckGUI;
+    public enemyGUI!: EnemyGuiLayout;
+    public stack!: Stack;
+    public standGUI!: StandGUILayout;
+    public textBox!: Textbox;
+    public helpButton!: HelpButton;
+    public pauseButton!: PauseButton;
+    public tutorialButton!: TutorialButton;
+    public soundButton!:SoundButton;
 
-    public tfgame: Mission;
-    public missionIndex: number;
-    public cardChannel: CardChannel;
+    public tfgame!: Mission;
+    public missionIndex!: number;
+    public cardChannel!: CardChannel;
 
-    public background: Image;
+    public background!: Image;
 
-    public lowerMenu: Phaser.GameObjects.Graphics;
+    public lowerMenu!: Phaser.GameObjects.Graphics;
 
     public gameOverText;
 
-    public phaseWheel: WheelGUI;
+    public phaseWheel!: WheelGUI;
 
     public delay:number = 1250;
+    private pendingAnimations = 0;
+    private animationWaiters: AnimationWaiter[] = [];
+    private pendingTurnStartDiscard: Card | null = null;
+    private pendingWavePresentation: PendingWavePresentation | null = null;
     public showCredits:boolean = false;
 
     constructor() {
         super({
             key: "MissionScene"
         });
+    }
+
+    private isPlayerInteractionPhase(): boolean {
+        return this.tfgame.curPhase === Mission.ENERGY_PHASE || this.tfgame.curPhase === Mission.PLAY_PHASE;
+    }
+
+    private scheduleSceneCallback(callback: () => void, delay: number = 0): void {
+        this.time.delayedCall(delay, callback, [], this);
+    }
+
+    private updateMissionInteractivity(): void {
+        const interactive = !this.tfgame.paused && this.isPlayerInteractionPhase();
+        this.tfgame.active = interactive;
+        // In PLAY_PHASE, gameState (variable table) must remain inactive
+        // even when player interaction is re-enabled after a dialog/discard.
+        if (interactive && this.tfgame.curPhase === Mission.PLAY_PHASE) {
+            this.tfgame.gameState.active = false;
+        }
+    }
+
+    private async withMissionPresentation<T>(
+        game: Mission,
+        options: { blocking: boolean; suspendPlayerOnly?: boolean },
+        present: () => T,
+    ): Promise<void> {
+        const restorePlayerInteractivity = !options.blocking && !!options.suspendPlayerOnly;
+
+        if (options.blocking) {
+            game.setPaused(true);
+        } else if (restorePlayerInteractivity) {
+            game.active = false;
+        }
+
+        try {
+            present();
+
+            if (options.blocking) {
+                await this.waitForSceneResume();
+                return;
+            }
+
+            await this.wait(0);
+        } finally {
+            if (restorePlayerInteractivity) {
+                this.updateMissionInteractivity();
+            }
+        }
+    }
+
+    private async presentWinMonologIfNeeded(game: Mission): Promise<void> {
+        const winMonolog = game.monologue[game.waveCounter];
+        if (winMonolog && winMonolog.length > 0) {
+            await this.presentMonolog(game, winMonolog);
+        }
+    }
+
+    private scheduleAfterWaveSetup(callback: () => void, delayAfterWave: boolean): void {
+        this.scheduleSceneCallback(callback, delayAfterWave ? this.delay : 0);
+    }
+
+    private captureWaveDialog(game: Mission, dialog: StoryDialog): boolean {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) {
+            return false;
+        }
+
+        this.pendingWavePresentation.dialogs.push(dialog);
+        return true;
+    }
+
+    private captureWaveMonolog(game: Mission, monolog: string): boolean {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) {
+            return false;
+        }
+
+        this.pendingWavePresentation.monolog = monolog;
+        return true;
+    }
+
+    private captureWaveMusic(game: Mission, sound: string): boolean {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) {
+            return false;
+        }
+
+        this.pendingWavePresentation.music = sound;
+        return true;
+    }
+
+    private onWaveChangedPresentation(game: Mission, enemies: Enemy[]): void {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) {
+            this.pendingWavePresentation = { game, dialogs: [] };
+        }
+
+        this.pendingWavePresentation.enemies = enemies;
+    }
+
+    private startWavePresentation(game: Mission): void {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) {
+            return;
+        }
+
+        const start = () => {
+            void this.flushWavePresentation(game);
+        };
+
+        this.scheduleAfterWaveSetup(start, game.waveCounter > 0);
+    }
+
+    private async flushWavePresentation(game: Mission): Promise<void> {
+        if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) return;
+
+        const presentation = this.pendingWavePresentation;
+        this.pendingWavePresentation = null;
+
+        if (presentation.monolog) {
+            await this.presentMonolog(game, presentation.monolog);
+        }
+
+        if (presentation.enemies) {
+            this.enemyGUI.setEnemies(presentation.enemies, game.waveCounter > 0);
+            if (game.waveCounter > 0) {
+                await this.wait(this.enemyGUI.fadeInDuration);
+            }
+        }
+
+        if (presentation.music) {
+            MusicScene.instance.play(presentation.music);
+        }
+
+        for (const dialog of presentation.dialogs) {
+            await this.presentDialog(game, dialog);
+        }
+
+        game.nextPhase(0);
+    }
+
+    private hasPendingTurnStartDiscard(): boolean {
+        return this.pendingTurnStartDiscard !== null;
+    }
+
+    private queuePendingTurnStartDiscard(card: Card): void {
+        this.pendingTurnStartDiscard = card;
+        this.scheduleTurnStartDiscardCheck();
+    }
+
+    private scheduleTurnStartDiscardCheck(): void {
+        this.scheduleSceneCallback(() => {
+            this.tryOpenTurnStartDiscard();
+        });
+    }
+
+    private tryOpenTurnStartDiscard(): void {
+        if (!this.pendingTurnStartDiscard) return;
+        if (this.tfgame.paused || !this.isPlayerInteractionPhase()) return;
+
+        const card = this.pendingTurnStartDiscard;
+        this.pendingTurnStartDiscard = null;
+        this.tfgame.active = false;
+        this.handGUI.discardCard(card);
+    }
+
+    private trackAnimation(tween: Phaser.Tweens.Tween): Phaser.Tweens.Tween {
+        this.pendingAnimations++;
+
+        let settled = false;
+        const finish = () => {
+            if (settled) return;
+            settled = true;
+            this.pendingAnimations--;
+
+            if (this.pendingAnimations === 0) {
+                const waiters = this.animationWaiters;
+                this.animationWaiters = [];
+                waiters.forEach(resolve => resolve());
+            }
+        };
+
+        tween.once("complete", finish);
+        tween.once("stop", finish);
+        return tween;
     }
 
     preload(): void {
@@ -100,16 +287,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.background = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2 - 40, this.tfgame.background)
             .setScale(1);
         this.background.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-
-        /*this.input.keyboard.on("keydown", e => {
-            if (e.key == "b") {
-                this.tfgame.nextWave(this.tfgame.enemies.length);
-            } else if (e.key == "v"){
-                this.tfgame.nextWave(this.tfgame.enemies.length-1);
-                this.tfgame.player.currentHP = 1000;
-            }
-        },this);*/
-
 
         //Menun Layout
         //5C4D4D, 915B4A, A96851
@@ -196,8 +373,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.lowerMenu.lineStyle(20, color1, 1);
         this.lowerMenu.strokeRect(0, 0, GameInfo.width, GameInfo.height)
 
-        //console.log(this.tfgame.deck);
-
         this.textBox = new Textbox(this, this.handGUI, this.tfgame);
 
         this.playerGUI = new PlayerGUI(this, "player", this.tfgame.player);
@@ -211,8 +386,6 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         this.phaseWheel = new WheelGUI(this, this.tfgame);
 
-        this.tfgame.player.takeCard(this.tfgame.deck);
-
         this.handGUI.fadeOut();
 
         this.cardChannel = new CardChannel(this, 50, 62.5);
@@ -223,128 +396,161 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tutorialButton = new TutorialButton(this, 1690, 310);
         this.soundButton = new SoundButton(this, 1780, 310);
 
-        this.events.on('resume', function () {
-            this.tfgame.active = true;
-            if (this.tfgame.isGameWon()) {
-                let config = { mission: this.tfgame, index: this.missionIndex, tutorial:false };
-                console.log(this.showCredits);
-                if (this.showCredits) {
-                    this.scene.start("Credits", {key:"NavigationScene", config:config});
-                } else {
-                    this.scene.start("NavigationScene", config);
-                }
-            }
+        this.events.on('resume', () => {
+            this.updateMissionInteractivity();
+            this.scheduleTurnStartDiscardCheck();
         }, this);
     }
 
-    update(time: number, delta: number): void {
+    private finishWonMission(): void {
+        const config = { mission: this.tfgame, index: this.missionIndex, tutorial:false };
+        if (this.showCredits) {
+            this.scene.start("Credits", {key:"NavigationScene", config:config});
+        } else {
+            this.scene.start("NavigationScene", config);
+        }
+    }
 
+    update(time: number, delta: number): void {
         if (this.cardChannel) {
             this.cardChannel.decisionArrow.update(time, delta);
         }
     }
 
     public enableToolTips(value: boolean) {
-        this.enemyGUI.enemies.map(e => {
+        this.enemyGUI.enemies.forEach(e => {
             e.toolTip.enabled = value;
-        })
+        });
     }
 
-    async drawPhase(game: Mission) {
-    }
+    async drawPhase(game: Mission) { }
 
     /**
      * added so discard gui can call next phase in case the hand is full and the user selects a card to discard
      */
     async callNextPhase() {
         this.tfgame.nextPhase();
-        this.tfgame.player.hand.discardGUIStarted = false;
-    }
-
-    async effectPhase(game: Mission) {
-        //console.log("effect Phase");
+        if (!this.hasPendingTurnStartDiscard()) {
+            this.tfgame.player.hand.discardGUIStarted = false;
+        }
     }
 
     async enemyPhase(game: Mission) {
-        //console.log("enemyPhase");
         this.iteratePhases(4, 500);
     }
 
     async energyPhase(game: Mission) {
         this.playerGUI.reposition();
         this.enemyGUI.reposition();
+        this.scheduleTurnStartDiscardCheck();
     }
 
-    async playPhase(game: Mission) {
-        //console.log("play Phase");
-    }
+    async playPhase(game: Mission) { this.scheduleTurnStartDiscardCheck(); }
 
     async iteratePhases(phase: number, delay: number) {
         if (this.tfgame.curPhase != phase) return;
 
-        this.time.delayedCall(delay, function () {
-            if (this.tfgame.curPhase == phase) {
-                this.tfgame.nextPlayer();
-                this.iteratePhases(phase, delay)
-            }
-        }, [], this);
+        await this.wait(delay);
+
+        if (this.tfgame.curPhase != phase || this.tfgame.paused) return;
+
+        this.tfgame.nextPlayer();
+        await this.waitForActionAnimations();
+
+        if (this.tfgame.curPhase == phase && !this.tfgame.paused) {
+            this.iteratePhases(phase, delay);
+        }
     }
 
     async standPhase(game: Mission) {
-        //console.log("stand Phase");
         this.iteratePhases(3, 500);
     }
 
     storyDialog(game: Mission, dialog: StoryDialog) {
-        game.active = false;
-        
-        if (game.waveCounter > 0) {
-            this.time.delayedCall(this.delay, () => {
-                this.textBox.addStoryDialog(dialog, dialog.blocking);
-            }, [], this);
-        } else {
-            this.textBox.addStoryDialog(dialog, dialog.blocking);
+        if (this.captureWaveDialog(game, dialog)) {
+            return;
         }
+
+        this.scheduleAfterWaveSetup(() => {
+            void this.presentDialog(game, dialog);
+        }, game.waveCounter > 0);
     }
 
     async gameover(game: Mission, gameWon: boolean) {
-        //this.tfgame.destroy();
         if (!gameWon) {
             this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
+        } else {
+            await this.presentWinMonologIfNeeded(game);
+            this.finishWonMission();
         }
         this.updateHelp();
-        // this.scene.start("NavigationScene", { mission: this.tfgame, index: this.missionIndex });
     }
 
     storyMonolog(game: Mission, monolog: string) {
         if (monolog && monolog.length > 0) {
-            game.active = false;
-            if (game.waveCounter > 0) {
-                this.time.delayedCall(this.delay, () => {
-                    this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
-                }, [], this);
-            } else {
-                this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+            if (!this.captureWaveMonolog(game, monolog)) {
+                void this.presentMonolog(game, monolog);
             }
         }
     }
 
     async waveChanged(game: Mission, activeWave: number, enemies: Enemy[]) {
-        if (game.waveCounter > 0) {
-            this.time.delayedCall(this.delay, () => {
-                this.enemyGUI.setEnemies(enemies, true);
-            }, [], this);
-        } else {
-            this.enemyGUI.setEnemies(enemies, true);
-        }
+        this.onWaveChangedPresentation(game, enemies);
     }
 
-    async music(mission:Mission, sound:string) {
-        if (mission.waveCounter > 0) {
-            this.time.delayedCall(this.delay, () => {
-                MusicScene.instance.play(sound);
-            }, [], this);
-        } else {
+    wavePresentationReady(game: Mission): void {
+        this.startWavePresentation(game);
+    }
+
+    private async presentMonolog(game: Mission, monolog: string): Promise<void> {
+        await this.withMissionPresentation(game, { blocking: true }, () => {
+            this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+        });
+    }
+
+    private async presentDialog(game: Mission, dialog: StoryDialog): Promise<void> {
+        await this.withMissionPresentation(
+            game,
+            { blocking: dialog.blocking, suspendPlayerOnly: !dialog.blocking },
+            () => {
+                this.textBox.addStoryDialog(dialog, dialog.blocking);
+            }
+        );
+    }
+
+    public queueTurnStartDiscard(card: Card): void {
+        this.queuePendingTurnStartDiscard(card);
+    }
+
+    public onDiscardDialogClosed(): void {
+        this.updateMissionInteractivity();
+        this.scheduleTurnStartDiscardCheck();
+    }
+
+    private wait(delay: number): Promise<void> {
+        return new Promise(resolve => {
+            this.time.delayedCall(delay, () => resolve(), [], this);
+        });
+    }
+
+    public waitForActionAnimations(): Promise<void> {
+        if (this.pendingAnimations === 0) {
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            this.animationWaiters.push(resolve);
+        });
+    }
+
+    private waitForSceneResume(): Promise<void> {
+        return new Promise(resolve => {
+            this.events.once('resume', () => resolve());
+        });
+    }
+
+    async music(mission: Mission, sound: string) {
+        if (!this.captureWaveMusic(mission, sound)) {
             MusicScene.instance.play(sound);
         }
     }
@@ -352,15 +558,15 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     Activated(game: Mission, active: boolean) { }
     async baseAttackPossible(game: Mission, active: boolean) { }
 
-    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100): Phaser.Tweens.Tween {
-        return scene.add.tween({
+    public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100, repeat: number = 0): Phaser.Tweens.Tween {
+        return this.trackAnimation(scene.add.tween({
             targets: target,
-            x: direction + "=100",
+            x: direction + "=" + offset,
             ease: "Linear",
             duration: 150,
-            repeat: 0,
+            repeat: repeat,
             yoyo: true
-        });
+        }));
     }
 
     public updateHelp() {

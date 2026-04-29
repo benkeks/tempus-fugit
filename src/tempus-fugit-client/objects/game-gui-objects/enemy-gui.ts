@@ -15,10 +15,10 @@ import { formatEffectDescription } from "./effect-icon-text";
 export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListener{
     
     public enemy: Enemy; // enemy object associated with this gui
-    public toolTip:ToolTip;
-    public toolTipText:Text;
-    public formula:FormulaGUI;
-    public specialAttackShortText: Phaser.GameObjects.GameObject;
+    public toolTip!:ToolTip;
+    public toolTipText!:Text;
+    public formula!:FormulaGUI;
+    public specialAttackShortText!: Phaser.GameObjects.GameObject;
     private removeEnemyListener: () => void;
     private removeGameStateListener: () => void;
     private properX: number;
@@ -31,7 +31,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         enemy: Enemy,
         x: number = 1500,
         y: number = 500,
-        texture:string=undefined
+        texture?: string
     ) {
         super(scene, x, y);
         this.scene = scene;
@@ -118,11 +118,11 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         interactiveObject
             .setInteractive()
-            .on('pointerover', function () {
+            .on('pointerover', () => {
                 if (!this.toolTip.enabled) return;
                 this.toolTip.faderTimer = this.scene.time.delayedCall(this.toolTip.popUpDelay, this.toolTip.fadeIn, [], this.toolTip);
             }, this)
-            .on('pointerout', function () {
+            .on('pointerout', () => {
                 if (!this.toolTip.enabled) return;
                 if (this.toolTip.faderTimer) this.toolTip.faderTimer.destroy();
                 this.toolTip.fadeOut();
@@ -237,12 +237,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     async Attacking(enemy: Enemy, specialAttackActive: boolean) {
-        const first = this.scene.createAttackAnimation(this.scene, this, "-");
-        if (specialAttackActive) {
-            first.once('complete', () => {
-                this.scene.createAttackAnimation(this.scene, this, "-");
-            });
-        }
+        this.scene.createAttackAnimation(this.scene, this, "-", 100, specialAttackActive ? 1 : 0);
     }
 
     async baseAttackChanged(enemy:Enemy) {

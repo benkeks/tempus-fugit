@@ -1,5 +1,4 @@
 import Container = Phaser.GameObjects.Container;
-import Graphics = Phaser.GameObjects.Graphics;
 import { GameInfo } from "../../game";
 import { DecisionArrow } from "./decision-arrow";
 import { MissionScene } from "../../scenes/mission-scene";
@@ -7,8 +6,8 @@ import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import { CardGUI } from "./card-gui";
 import { Card } from "../game-objects/card";
 import { EnemyGUI } from "./enemy-gui";
+import { Enemy } from "../game-objects/enemy";
 import { Mission } from "../../mechanics/mission";
-import { HandGUI } from "./hand-gui";
 export class CardChannel extends Container {
 
     public decisionArrow: DecisionArrow;
@@ -20,9 +19,9 @@ export class CardChannel extends Container {
     public dotParticles: ParticleEmitter;
 
     public fadeOutDuration: number = 500;
-    public fadeOutParticles = undefined;
-    public emitter = undefined;
-    public channeled: boolean;
+    public fadeOutParticles: ParticleEmitter | undefined = undefined;
+    public emitter: ParticleEmitter | undefined = undefined;
+    public channeled: boolean = false;
 
     public missionScene: MissionScene;
 
@@ -63,11 +62,19 @@ export class CardChannel extends Container {
 
         this.scene.input.on(
             "drag",
-            function (
+            (
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
-            ) {
+            ) => {
                 if (!(gameObject instanceof CardGUI)) return;
+                if (!this.canPlayCards()) {
+                    if (this.channeled) this.reEmitCard(gameObject);
+                    this.decisionArrow.setVisible(false);
+                    this.dotParticles.setVisible(false);
+                    this.missionScene.handGUI.unhoverAll(true);
+                    return;
+                }
+
                 let card: Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
 
@@ -88,8 +95,10 @@ export class CardChannel extends Container {
                         let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
                         let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
 
-                        this.emitter.ops.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
-                        this.emitter.ops.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
+                        if (this.emitter) {
+                            this.emitter.ops.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
+                            this.emitter.ops.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
+                        }
                     }
 
                     gameObject.setPosition(pointer.x, pointer.y); // dragging cards
@@ -99,15 +108,21 @@ export class CardChannel extends Container {
 
         this.scene.input.on(
             "dragend",
-            function (
+            (
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
-            ) {
+            ) => {
                 this.decisionArrow.setVisible(false);
                 this.dotParticles.setVisible(false);
                 this.missionScene.enableToolTips(true);
 
                 if (!(gameObject instanceof CardGUI)) return;
+                if (!this.canPlayCards()) {
+                    if (this.channeled) this.reEmitCard(gameObject);
+                    this.missionScene.handGUI.unhoverAll(true);
+                    return;
+                }
+
                 let card: Card = (gameObject as CardGUI).card;
 
                 this.scene.input.activePointer.smoothFactor = 0;
@@ -125,19 +140,19 @@ export class CardChannel extends Container {
             }, this);
 
         // card is displayed bigger when hovered
-        this.scene.input.on('pointerover', function (
+        this.scene.input.on('pointerover', (
             pointer: Phaser.Input.Pointer,
-            gameObject: Phaser.GameObjects.Sprite
-        ) {
+            gameObject: Phaser.GameObjects.Sprite[]
+        ) => {
             if (gameObject[0] instanceof CardGUI)
                 this.missionScene.handGUI.toggleHovering(gameObject[0], false);
 
         }, this);
 
-        this.scene.input.on('pointerout', function (
+        this.scene.input.on('pointerout', (
             pointer: Phaser.Input.Pointer,
-            gameObject: Phaser.GameObjects.Sprite
-        ) {
+            gameObject: Phaser.GameObjects.Sprite[]
+        ) => {
 
             if (gameObject[0] instanceof CardGUI)
                 this.missionScene.handGUI.toggleHovering(gameObject[0], true);
@@ -145,7 +160,7 @@ export class CardChannel extends Container {
         }, this);
     }
 
-    public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI {
+    public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI | undefined {
         for (let e of this.missionScene.enemyGUI.enemies) {
             if (e.isHovered(xCursor, yCursor)) {
                 return e;
@@ -154,11 +169,21 @@ export class CardChannel extends Container {
         return undefined;
     }
 
-    public playCard(enemy: EnemyGUI, card: CardGUI) {
-        let e = undefined;
+    public playCard(enemy: EnemyGUI | undefined, card: CardGUI) {
+        if (!this.canPlayCards()) return;
+
+        let e: Enemy | undefined = undefined;
         if (enemy != undefined) e = enemy.enemy;
 
         this.missionScene.tfgame.player.applyCard(card.card, e, this.missionScene.tfgame);
+    }
+
+    private canPlayCards(): boolean {
+        const mission = this.missionScene.tfgame;
+        return mission != null
+            && !mission.paused
+            && mission.player.active
+            && (mission.curPhase === Mission.ENERGY_PHASE || mission.curPhase === Mission.PLAY_PHASE);
     }
 
     public emitCard(gameObject): void {
@@ -191,8 +216,8 @@ export class CardChannel extends Container {
             blendMode: 'ADD',
             moveToX: this.x,
             moveToY: this.y,
-            deathCallback: function () {
-                if (this.emitter.getParticleCount() == 0) {
+            deathCallback: () => {
+                if (this.fadeOutParticles && this.emitter && this.emitter.getParticleCount() == 0) {
                     this.fadeOutParticles.destroy(true);
                     this.fadeOutParticles = undefined;
                 }
@@ -201,8 +226,8 @@ export class CardChannel extends Container {
         });
         this.emitter = this.fadeOutParticles;
 
-        this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
-            this.emitter.setQuantity(0);
+        this.missionScene.time.delayedCall(this.fadeOutDuration, () => {
+            if (this.emitter) this.emitter.setQuantity(0);
         }, [], this);
     }
 
@@ -227,8 +252,8 @@ export class CardChannel extends Container {
             blendMode: 'ADD',
             moveToX: 0,
             moveToY: 0,
-            deathCallback: function () {
-                if (this.emitter.getParticleCount() == 0) {
+            deathCallback: () => {
+                if (this.fadeOutParticles && this.emitter && this.emitter.getParticleCount() == 0) {
                     this.fadeOutParticles.destroy(true);
                     this.fadeOutParticles = undefined;
                 }
@@ -237,8 +262,8 @@ export class CardChannel extends Container {
         });
         this.emitter = this.fadeOutParticles;
 
-        this.missionScene.time.delayedCall(this.fadeOutDuration, function () {
-            this.emitter.setQuantity(0);
+        this.missionScene.time.delayedCall(this.fadeOutDuration, () => {
+            if (this.emitter) this.emitter.setQuantity(0);
         }, [], this);
 
         this.decisionArrow.setVisible(false);

@@ -20,11 +20,11 @@ export class Card {
     public cardKind: string; // can be "global", "random", "directed" or "other"
     public isStandCard: boolean;
     public standRounds: number;
-    public targets: Enemy[];
+    public targets: Enemy[] = [];
     public action:Function;
-    public inDeckAtStart:number;
+    public inDeckAtStart!:number;
     public maxCardsInDeck:number = 5;
-    public formulaRepresentation:string = undefined;
+    public formulaRepresentation:string | undefined = undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -121,7 +121,7 @@ export class Card {
         this.action = eval("(function(mission, target){"+actionString+"})");
     }
 
-    public spawnStand(enemy: Enemy, mission: Mission) {
+    public spawnStand(enemy: Enemy | undefined, mission: Mission) {
         if (enemy != null) {
             this.targets =  [enemy];
         } else {

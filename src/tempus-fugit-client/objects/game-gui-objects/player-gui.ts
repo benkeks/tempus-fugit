@@ -99,7 +99,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
 
     async Activated(player: Player, active: boolean) { }
 
-    async Attacking(player: Player, target: Enemy) {
+    async Attacking(player: Player, target?: Enemy) {
         this.scene.createAttackAnimation(this.scene, this);
     }
 
@@ -110,5 +110,5 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
  * Interface for objects that listen when user attacks enemy with a card
  */
 export interface EnemyAttackListener {
-    applyCard(card: Card, enemy: Enemy, mission: Mission): void;
+    applyCard(card: Card, enemy: Enemy | undefined, mission: Mission): void;
 }

@@ -22,8 +22,7 @@ export class BTextBox {
     private nextPageIcon: string;
     private handGUI: HandGUI;
     private mission: Mission;
-    private blocking: boolean;
-    private icon: Phaser.GameObjects.Image;
+    private icon!: Phaser.GameObjects.Image;
 
     /**
      * Create a new textbox that appears on the right side of the screen.
@@ -56,7 +55,8 @@ export class BTextBox {
     }
 
     private switchToMissionScene(): void {
-        this.scene.scene.run('MissionScene');
+        this.mission.setPaused(false);
+        this.scene.scene.resume('MissionScene');
         this.scene.scene.stop('BTextBoxScene');
     }
 
@@ -74,17 +74,17 @@ export class BTextBox {
         let y = 770;
 
         // create a text box with fixed width, height depends on content
-        const nextDialog = this.storyDialogQueue.shift().text;
+        const nextDialog = this.storyDialogQueue.shift()!.text;
 
-        let content = [];
-        let icons = [];
+        let content: string[] = [];
+        let icons: string[] = [];
         for (let i in nextDialog) {
             content.push(nextDialog[i][1]);
             icons.push(nextDialog[i][0]);
         }
 
-        const firstLine = content.shift();
-        const firstIcon = icons.shift();
+        const firstLine = content.shift()!;
+        const firstIcon = icons.shift()!;
         const textBox = this.createTextBox(this.scene, x, y, {
             wrapWidth: this.boxWidth,
             fixedWidth: this.boxWidth,
@@ -97,11 +97,14 @@ export class BTextBox {
         // Display next part of dialog if SPACE BAR is pressed
         //  Emits only when the SPACE BAR is pressed down, and dispatches from the local Key object.
         //  Stops event reaching the global handler.
-        const spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        spaceKey.on('down', function (key, event) {
-            event.stopImmediatePropagation();
-            textBox.emit('pointerdown');
-        });
+        const keyboard = this.scene.input.keyboard;
+        if (keyboard) {
+            const spaceKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            spaceKey.on('down', (key, event) => {
+                event.stopImmediatePropagation();
+                textBox.emit('pointerdown');
+            });
+        }
     }
 
 
@@ -166,7 +169,7 @@ export class BTextBox {
         // handle events
         textBox
             .setInteractive()
-            .on('pointerdown', function () {
+            .on('pointerdown', () => {
 
                 // make textbox disappear to right side and delete it when last text is displayed
                 if (removeTextBox) {
@@ -182,11 +185,11 @@ export class BTextBox {
                 }
 
                 if (showNewLine) {
-                    const newLine = content.shift();
+                    const newLine = content.shift()!;
                     textBox.start(newLine);
                     showNewLine = false;
                     //change speaker icon
-                    let nextIcon = icons.shift();
+                    let nextIcon = icons.shift()!;
                     this.icon.destroy();
                     this.icon = scene.add.image(100, 100, nextIcon).setDepth(100);
                     this.icon.setPosition(textBox.x + 90, textBox.y + textBox.height / 2 - this.icon.height / 2)
@@ -202,7 +205,7 @@ export class BTextBox {
                 }
 
             }, this)
-            .on('pageend', function () {
+            .on('pageend', function (this: any) {
                 //event gets triggered when one element of content array is done printing on screen
 
                 if (this.isLastPage && content.length == 0)

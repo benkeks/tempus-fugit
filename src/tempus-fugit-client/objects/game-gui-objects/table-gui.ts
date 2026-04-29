@@ -38,6 +38,8 @@ export class TableGUI implements GameStateListener {
     private colorCellEdge: number; // default color of cell edge
     private colorArrow: number; // color of scrolling arrows
 
+    private isDestroyed = false;
+
     constructor(
         scene: Phaser.Scene,
         game: Mission,
@@ -79,6 +81,38 @@ export class TableGUI implements GameStateListener {
 
         this.roundChanged(this.gameState, -1, this.gameState.activeState);
         this.setUpScrollingArrows();
+
+        this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.destroy();
+        });
+    }
+
+    private isVariableTableReady(): boolean {
+        return !this.isDestroyed && !!this.variableTable && !!this.variableTable.scene && !!this.variableTable.getElement('table');
+    }
+
+    private isEnergyTableReady(): boolean {
+        return !this.isDestroyed && !!this.energyTable && !!this.energyTable.scene && !!this.energyTable.getElement('table');
+    }
+
+    public destroy(): void {
+        if (this.isDestroyed) return;
+        this.isDestroyed = true;
+
+        if (this.overlay) {
+            this.overlay.destroy();
+        }
+        if (this.outline) {
+            this.outline.destroy();
+        }
+        if (this.energyTable) {
+            this.energyTable.removeAllListeners();
+            this.energyTable.destroy();
+        }
+        if (this.variableTable) {
+            this.variableTable.removeAllListeners();
+            this.variableTable.destroy();
+        }
     }
 
     /**
@@ -158,10 +192,14 @@ export class TableGUI implements GameStateListener {
             .on(
                 "cell.click",
                 function (cellContainer, cellIndex) {
+                    if (this.isDestroyed) return;
                     const column = Math.floor(cellIndex / numVar);
                     const row = cellIndex % numVar;
                     const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
-                    this._gameState.invertVariableUser(variableName, column);
+                    this.scene.time.delayedCall(0, () => {
+                        if (this.isDestroyed || !variableName) return;
+                        this._gameState.invertVariableUser(variableName, column);
+                    });
                 }, this)
             .on("cell.over", function (cellContainer, cellIndex) {
                 // focus current cell when hovering over it
@@ -277,8 +315,11 @@ export class TableGUI implements GameStateListener {
         energyCount: number,
         paddingLeft: number = 230,
     ): void {
+        if (this.isDestroyed || !this.isVariableTableReady()) return;
+
         // destroy old table if available
         if (this.energyTable) {
+            this.energyTable.removeAllListeners();
             this.energyTable.destroy();
         }
 
@@ -329,13 +370,13 @@ export class TableGUI implements GameStateListener {
     }
 
     /**
->>>>>>> 7d66dfc4ec3ca1c52111d8f21a5d3edc369c04ca
      * change background color of table cell
      * @param color: color to change background to
      * @param column: position of cell
      * @param row: position of cell
      */
     private setCellColor(color: number, column: number, row: number): void {
+    if (!this.isVariableTableReady()) return;
         let cell = this.tableItems[column * Object.keys(this.variables).length + row];
         cell.backgroundColor = color;
         cell.backgroundAlpha = 0.25;
@@ -349,6 +390,7 @@ export class TableGUI implements GameStateListener {
      * @param row: position of cell
      */
     private toggleRune(visible: boolean, column: number, row: number): void {
+        if (!this.isVariableTableReady()) return;
         let index = column * Object.keys(this.variables).length + row;
         while (this.tableItems.length <= index) this.addColumns(1);
         this.tableItems[index].iconAlpha = Number(visible);
@@ -362,6 +404,7 @@ export class TableGUI implements GameStateListener {
      * @param visible: energy icon shows if visible is true
      */
     private setEnergyIconColor(visible: boolean, index: number) {
+        if (!this.isEnergyTableReady()) return;
         this.energyTable
             .getElement("table")
             .getCell(index)
@@ -404,6 +447,7 @@ export class TableGUI implements GameStateListener {
     }
 
     addColumns(n: number) {
+        if (!this.isVariableTableReady()) return;
         let numVar = Object.keys(this.variables).length;
         let itemCount = n * numVar;
         for (let i = 0; i < itemCount; i++) {
@@ -445,6 +489,7 @@ export class TableGUI implements GameStateListener {
     }
 
     async activated(gameState: GameState) {
+        if (!this.isVariableTableReady()) return;
         if (gameState.active) {
             if (this.overlay)
                 this.overlay.destroy();
@@ -465,6 +510,7 @@ export class TableGUI implements GameStateListener {
      * @param visible: true if outline should be shown 
      */
     toggleOutline(visible: boolean) {
+        if (!this.isVariableTableReady()) return;
         if (!this.outline) {
             let left = this.variableTable.left - this.variableTableCellWidth;
             let right = this.variableTable.right;
@@ -483,6 +529,7 @@ export class TableGUI implements GameStateListener {
      * @returns true if scoll was successfull
      */
     scrollTable(toRight: boolean): boolean {
+        if (!this.isVariableTableReady()) return false;
         let scrollFactor = this.variableTableCellWidth;
         if (toRight) {
             if (this.scrollCount + 20 < this.tableColumnCount) {

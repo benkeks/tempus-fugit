@@ -11,6 +11,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
     public enemies:EnemyGUI[] = [];
 
     public static enemyLayout:{[count:number]:number[][]};
+    public readonly fadeInDuration:number = 100;
 
     public mission:Mission;
 
@@ -41,7 +42,7 @@ export class EnemyGuiLayout extends Phaser.GameObjects.Group {
             targets: gameObject,
             x: to,
             ease: "Linear",
-            duration: 100,
+            duration: this.fadeInDuration,
             repeat: 0,
             yoyo: false,
             onComplete:function () {

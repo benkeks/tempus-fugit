@@ -142,6 +142,10 @@ export class MonologWindow {
         if (this.scene.scene.isPaused("BTextBoxScene")) {
             this.scene.scene.resume("BTextBoxScene");
         } else {
+            const missionScene: any = this.scene.scene.get('MissionScene');
+            if (missionScene && missionScene.tfgame) {
+                missionScene.tfgame.setPaused(false);
+            }
             this.scene.scene.resume('MissionScene');
         }
         this.scene.scene.stop('MonologScene');
