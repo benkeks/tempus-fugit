@@ -1,4 +1,4 @@
-# Contributing to Tempus Fugit
+# Contributing to Tempus fugit
 
 ## Reporting bugs
 

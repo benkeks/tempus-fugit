@@ -1,7 +1,7 @@
 {
     "name": "tempus-fugit",
     "version": "1.0.0",
-    "description": "My webpack project",
+    "description": "A card game for a first contact with temporal logics",
     "scripts": {
         "dev": "webpack --mode development && webpack-dev-server --mode development",
         "dev-production": "webpack --mode production && webpack-dev-server --mode production",
