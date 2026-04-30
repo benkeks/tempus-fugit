@@ -1,0 +1,12 @@
+export default [
+	{
+		"description":"Simple test",
+		"formula":"a&b",
+		"states":{
+			"a":[1,0,1],
+			"b":[1,0,1]
+		},
+		"evaluatedState":0,
+		"expected":true
+	}
+]
