@@ -72,6 +72,27 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     private pendingWavePresentation: PendingWavePresentation | null = null;
     public showCredits:boolean = false;
 
+    private readonly handleSceneResume = (): void => {
+        this.updateMissionInteractivity();
+        this.scheduleTurnStartDiscardCheck();
+    };
+
+    private readonly handleSceneShutdown = (): void => {
+        this.pendingWavePresentation = null;
+        this.pendingTurnStartDiscard = null;
+
+        if (this.tfgame) {
+            this.tfgame.destroy();
+        }
+
+        const waiters = this.animationWaiters;
+        this.animationWaiters = [];
+        this.pendingAnimations = 0;
+        waiters.forEach(resolve => resolve());
+
+        this.events.off('resume', this.handleSceneResume, this);
+    };
+
     constructor() {
         super({
             key: "MissionScene"
@@ -273,7 +294,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             key: data.key,
             index: data.index,
             player: data.player.copy(),
-            deck: data.deck.copy()
+            deck: data.deck.copy(),
+            showCredits: data.showCredits
         };
 
         this.tfgame.deck.setUpDeck();
@@ -396,10 +418,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tutorialButton = new TutorialButton(this, 1690, 310);
         this.soundButton = new SoundButton(this, 1780, 310);
 
-        this.events.on('resume', () => {
-            this.updateMissionInteractivity();
-            this.scheduleTurnStartDiscardCheck();
-        }, this);
+        this.events.on('resume', this.handleSceneResume, this);
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleSceneShutdown, this);
     }
 
     private finishWonMission(): void {
@@ -450,14 +470,16 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async iteratePhases(phase: number, delay: number) {
         if (this.tfgame.curPhase != phase) return;
 
+        const waveAtStart = this.tfgame.waveCounter;
+
         await this.wait(delay);
 
-        if (this.tfgame.curPhase != phase || this.tfgame.paused) return;
+        if (this.tfgame.curPhase != phase || this.tfgame.paused || this.tfgame.waveCounter !== waveAtStart) return;
 
         this.tfgame.nextPlayer();
         await this.waitForActionAnimations();
 
-        if (this.tfgame.curPhase == phase && !this.tfgame.paused) {
+        if (this.tfgame.curPhase == phase && !this.tfgame.paused && this.tfgame.waveCounter === waveAtStart) {
             this.iteratePhases(phase, delay);
         }
     }
