@@ -141,6 +141,7 @@ export class Variable extends Proposition {
     }
 
     public applyAssignment(assignment):void {
+        assignment = assignment.map(Boolean)
         if (assignment instanceof Array) {
             var somethingIsNotBoolean = false;
             assignment.forEach(function(item){
