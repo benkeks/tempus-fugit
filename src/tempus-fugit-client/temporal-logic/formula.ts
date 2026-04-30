@@ -98,12 +98,12 @@ export class Formula extends Proposition {
      * console.log(f.variables['b'].values);
      * console.log(f.evaluate(0)); // output: false
      * */
-    public applyAssignment(vars:{[represenstation:string]:Variable}):void {
+    public applyAssignment(vars:{[represenstation:string]:((number | boolean)[] | Variable)}):void {
         for (let i in this.variables) {
             let v:Variable = this.variables[i];
 
             if (v.representation in vars) {
-                let v1:Variable = vars[v.representation];
+                let v1 = vars[v.representation];
 
                 v.applyAssignment(v1);
             }

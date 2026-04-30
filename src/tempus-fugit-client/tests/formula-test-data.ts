@@ -1,4 +1,4 @@
-[
+export default [
 	{
 		"description":"Simple test",
 		"formula":"a&b",
