@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Formula } from "./formula";
+import { Formula } from "../temporal-logic/formula";
 
 describe("Formula", () => {
   it("evaluates variable states from a parsed formula", () => {
