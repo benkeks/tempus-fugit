@@ -149,7 +149,14 @@ export class GameState {
             }
 
             const openEnded = end < 0;
-            if (openEnded) end = this.variables[v].values.length;
+            if (openEnded) {
+                end = this.variables[v].values.length;
+                if (direction > 0) {
+                    this.variables[v].defaultValueFuture = value
+                } else {
+                    this.variables[v].defaultValuePast = value
+                }
+            }
 
             let changes = {};
             let oldVariable = this.getVariable(v).copy();

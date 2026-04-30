@@ -311,9 +311,9 @@ export class TableGUI implements GameStateListener {
     paddVariableStates(n: number) {
         const variableValues:any = {}
         for (let key in this.gameState.variables) {
-            const values = this.gameState.variables[key].values
-            if (n >= values.length) {
-                variableValues[key] = { [ n ]: false };
+            const variable = this.gameState.variables[key]
+            if (n >= variable.values.length) {
+                variableValues[key] = { [ n ]: variable.getValue(n) };
             }
         }
 
