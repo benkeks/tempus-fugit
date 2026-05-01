@@ -38,6 +38,10 @@ export class TableGUI implements GameStateListener {
     private colorCellEdge: number; // default color of cell edge
     private colorArrow: number; // color of scrolling arrows
 
+    private leftArrow!: Phaser.GameObjects.Image;
+    private rightArrow!: Phaser.GameObjects.Image;
+    private isScrolling = false;
+
     private isDestroyed = false;
 
     constructor(
@@ -457,6 +461,7 @@ export class TableGUI implements GameStateListener {
 
         // move table to the right if last visible column is reached
         this.scrollTable(true)
+        this.updateArrowStates();
     }
 
     addColumns(n: number) {
@@ -543,19 +548,58 @@ export class TableGUI implements GameStateListener {
      * @returns true if scoll was successfull
      */
     scrollTable(toRight: boolean): boolean {
-        if (!this.isVariableTableReady()) return false;
-        let scrollFactor = this.variableTableCellWidth;
-        if (toRight) {
-            if (this.scrollCount + 20 < this.tableColumnCount) {
-                this.variableTable.getElement('table').addTableOY(-scrollFactor).updateTable();
-                this.scrollCount++;
-                return true;
+        if (!this.isVariableTableReady() || this.isScrolling) return false;
+        if (toRight && this.scrollCount + 20 >= this.tableColumnCount) return false;
+        if (!toRight && this.scrollCount <= 0) return false;
+
+        // Update logical state immediately to block any re-entrant calls
+        this.isScrolling = true;
+        if (toRight) this.scrollCount++; else this.scrollCount--;
+        this.updateArrowStates();
+
+        const sign = toRight ? -1 : 1;
+        const total = this.variableTableCellWidth;
+        let scrolled = 0;
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: total,
+            duration: 120,
+            ease: 'Cubic.easeOut',
+            onUpdate: (tween) => {
+                const current = tween.getValue() ?? total;
+                const delta = current - scrolled;
+                scrolled = current;
+                this.variableTable.getElement('table').addTableOY(sign * delta).updateTable();
+            },
+            onComplete: () => {
+                this.isScrolling = false;
+                this.updateArrowStates();
             }
-        } else {
-            if (this.scrollCount > 0) {
-                this.variableTable.getElement('table').addTableOY(scrollFactor).updateTable();
-                this.scrollCount--;
-                return true;
+        });
+        return true;
+    }
+
+    /**
+     * fades out and disables arrows that cannot scroll in their direction,
+     * fades in and enables arrows that can.
+     */
+    private updateArrowStates(): void {
+        const canScrollLeft = this.scrollCount > 0;
+        const canScrollRight = this.scrollCount + 20 < this.tableColumnCount;
+        if (this.leftArrow) {
+            this.leftArrow.setAlpha(canScrollLeft ? 1 : 0.25);
+            if (canScrollLeft) {
+                this.leftArrow.setInteractive();
+            } else {
+                this.leftArrow.disableInteractive();
+            }
+        }
+        if (this.rightArrow) {
+            this.rightArrow.setAlpha(canScrollRight ? 1 : 0.25);
+            if (canScrollRight) {
+                this.rightArrow.setInteractive();
+            } else {
+                this.rightArrow.disableInteractive();
             }
         }
     }
@@ -567,149 +611,52 @@ export class TableGUI implements GameStateListener {
     setUpScrollingArrows() {
         let bottom = this.variableTable.bottom + 35;
 
-        // arrows for scrolling, 
-        let rightTweenSucc;
-        let rightTweenFail;
-        let rightArrow = this.scene.add.image(150, bottom, 'arrow')
+        // right arrow — no tween guard needed: arrows are disabled while scrolling
+        this.rightArrow = this.scene.add.image(150, bottom, 'arrow')
             .setAngle(180)
             .setTint(this.colorArrow);
+        const rightArrowBaseX = 150;
 
-        rightArrow.setInteractive()
-            .on('pointerdown', function () {
-
-                if (
-                    (typeof rightTweenSucc === 'undefined' || !rightTweenSucc.isPlaying()) &&
-                    (typeof rightTweenFail === 'undefined' || !rightTweenFail.isPlaying())
-                ) {
-
-                    // color arrow red
-                    rightArrow.setTint(0xff0000);
-
-                    if (this.scrollTable(true)) {
-
-                        // successful click
-                        rightTweenSucc = this.scene.tweens.add({
-                            targets: rightArrow,
-                            x: '+=20',
-                            ease: 'power2',
-                            duration: 100,
-                            yoyo: true,
-                            onComplete: () => rightArrow.setTint(this.colorArrow)
-                        });
-
-                    } else {
-
-                        // unsuccessful click
-                        rightTweenFail = this.scene.tweens.add({
-                            targets: rightArrow,
-                            angle: '+=20',
-                            ease: 'power1',
-                            duration: 30,
-                            yoyo: true,
-                            onComplete: () => {
-                                rightTweenFail = this.scene.tweens.add({
-                                    targets: rightArrow,
-                                    angle: '-=20',
-                                    ease: 'power1',
-                                    duration: 30,
-                                    yoyo: true,
-                                    onComplete: () => {
-                                        rightTweenFail = this.scene.tweens.add({
-                                            targets: rightArrow,
-                                            angle: '+=10',
-                                            ease: 'power1',
-                                            duration: 30,
-                                            yoyo: true,
-                                            onComplete: () => {
-                                                rightTweenFail = this.scene.tweens.add({
-                                                    targets: rightArrow,
-                                                    angle: '-=10',
-                                                    ease: 'power1',
-                                                    duration: 30,
-                                                    yoyo: true,
-                                                    onComplete: () => rightArrow.setTint(this.colorArrow)
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            }, this);
-
-
-        let leftTweenSucc;
-        let leftTweenFail;
-        let leftArrow = this.scene.add.image(70, bottom, 'arrow')
-            .setInteractive()
-            .setTint(this.colorArrow);
-
-        leftArrow.on('pointerdown', function () {
-            if (
-                (typeof leftTweenSucc === 'undefined' || !leftTweenSucc.isPlaying()) &&
-                (typeof leftTweenFail === 'undefined' || !leftTweenFail.isPlaying())
-            ) {
-
-                // color arrow red
-                leftArrow.setTint(0xff0000);
-
-                if (this.scrollTable(false)) {
-
-                    // successful click
-                    leftTweenSucc = this.scene.tweens.add({
-                        targets: leftArrow,
-                        x: '-=20',
+        this.rightArrow.setInteractive()
+            .on('pointerdown', () => {
+                if (this.scrollTable(true)) {
+                    this.rightArrow.setTint(0xff0000);
+                    this.scene.tweens.killTweensOf(this.rightArrow);
+                    this.rightArrow.x = rightArrowBaseX;
+                    this.scene.tweens.add({
+                        targets: this.rightArrow,
+                        x: rightArrowBaseX + 20,
                         ease: 'power2',
                         duration: 100,
                         yoyo: true,
-                        onComplete: () => leftArrow.setTint(this.colorArrow)
-                    });
-
-                } else {
-
-                    // unsuccessful click
-                    leftTweenFail = this.scene.tweens.add({
-                        targets: leftArrow,
-                        angle: '+=20',
-                        ease: 'power1',
-                        duration: 30,
-                        yoyo: true,
-                        onComplete: () => {
-                            leftTweenFail = this.scene.tweens.add({
-                                targets: leftArrow,
-                                angle: '-=20',
-                                ease: 'power1',
-                                duration: 30,
-                                yoyo: true,
-                                onComplete: () => {
-                                    leftTweenFail = this.scene.tweens.add({
-                                        targets: leftArrow,
-                                        angle: '+=10',
-                                        ease: 'power1',
-                                        duration: 30,
-                                        yoyo: true,
-                                        onComplete: () => {
-                                            leftTweenFail = this.scene.tweens.add({
-                                                targets: leftArrow,
-                                                angle: '-=10',
-                                                ease: 'power1',
-                                                duration: 30,
-                                                yoyo: true,
-                                                onComplete: () => leftArrow.setTint(this.colorArrow)
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
+                        onComplete: () => this.rightArrow.setTint(this.colorArrow)
                     });
                 }
+            });
+
+        // left arrow
+        this.leftArrow = this.scene.add.image(70, bottom, 'arrow')
+            .setInteractive()
+            .setTint(this.colorArrow);
+        const leftArrowBaseX = 70;
+
+        this.leftArrow.on('pointerdown', () => {
+            if (this.scrollTable(false)) {
+                this.leftArrow.setTint(0xff0000);
+                this.scene.tweens.killTweensOf(this.leftArrow);
+                this.leftArrow.x = leftArrowBaseX;
+                this.scene.tweens.add({
+                    targets: this.leftArrow,
+                    x: leftArrowBaseX - 20,
+                    ease: 'power2',
+                    duration: 100,
+                    yoyo: true,
+                    onComplete: () => this.leftArrow.setTint(this.colorArrow)
+                });
             }
+        });
 
-
-        }, this);
+        this.updateArrowStates();
     }
 }
 
