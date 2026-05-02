@@ -73,19 +73,19 @@ export class Mission implements EnemyListener, PlayerListener {
         this.player.listener.push(this);
     }
 
+    public getReplaceableStandIndex(): number | null {
+        if (this.stands[0] == null || this.stands[1] == null) return null;
+        return this.stands[0].getRoundsRemaining() <= this.stands[1].getRoundsRemaining() ? 0 : 1;
+    }
+
     public pushStand(stand: Card) {
-        if (this.stands[0] != null && this.stands[1] != null) {
-            if (this.stands[0].getRoundsRemaining() <= this.stands[1].getRoundsRemaining()) {
-                this.stands[0] = stand;
-            } else {
-                this.stands[1] = stand;
-            }
+        const replaceIdx = this.getReplaceableStandIndex();
+        if (replaceIdx !== null) {
+            this.stands[replaceIdx] = stand;
+        } else if (this.stands[0] == null) {
+            this.stands[0] = stand;
         } else {
-            if (this.stands[0] == null) {
-                this.stands[0] = stand;
-            } else {
-                this.stands[1] = stand;
-            }
+            this.stands[1] = stand;
         }
         for (let l of this.standListener) {
             l.updateStandGUI(this.stands);

@@ -16,6 +16,9 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     private readonly roundList: Array<Phaser.GameObjects.Text | null>;
     public scene: MissionScene;
     private stands: [Card | null, Card | null];
+    private spritedStands: [Card | null, Card | null];
+    private previewOverlays: Array<Phaser.GameObjects.Rectangle | null>;
+    private previewTweens: Array<Phaser.Tweens.Tween | null>;
 
     constructor(
         scene: MissionScene,
@@ -29,6 +32,9 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList = [null, null];
         this.hoverElementList = [null, null];
         this.roundList = [null, null];
+        this.spritedStands = [null, null];
+        this.previewOverlays = [null, null];
+        this.previewTweens = [null, null];
 
         this.scene.add.existing(this);
     }
@@ -41,6 +47,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList[index] = null;
         this.hoverElementList[index] = null;
         this.roundList[index] = null;
+        this.spritedStands[index] = null;
     }
 
     private createSlot(index: number, stand: Card): void {
@@ -91,17 +98,78 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
             let stand = this.stands[i];
             if (stand == null) {
                 this.destroySlot(i);
+                this.clearPreviewSlot(i);
                 continue;
             }
 
             if (this.elementList[i] == null) {
                 this.createSlot(i, stand);
+                this.spritedStands[i] = stand;
+            } else if (this.spritedStands[i] !== stand) {
+                this.destroySlot(i);
+                this.createSlot(i, stand);
+                this.spritedStands[i] = stand;
+                this.flashSlot(i);
             } else {
                 this.roundList[i]?.setText(stand.getRoundsRemaining().toString());
             }
         }
 
+        this.clearPreview();
+
         this.updateTint(this.scene.tfgame.gameState);
+    }
+
+    private flashSlot(index: number): void {
+        const sprite = this.elementList[index];
+        if (!sprite) return;
+        sprite.setTint(0xFFFFAA);
+        this.scene.tweens.add({
+            targets: sprite,
+            scale: { from: 5.5, to: 4 },
+            duration: 600,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                if (sprite.active) sprite.clearTint();
+            }
+        });
+    }
+
+    public previewReplacement(index: number): void {
+        for (let i of [0, 1]) if (i !== index) this.clearPreviewSlot(i);
+        if (this.previewOverlays[index] != null) return;
+
+        const sprite = this.elementList[index];
+        if (!sprite) return;
+
+        const x = 200 * index;
+        const w = sprite.displayWidth + 16;
+        const h = sprite.displayHeight + 16;
+        const overlay = this.scene.add.rectangle(x, 0, w, h, 0xff3333, 0.18);
+        overlay.setStrokeStyle(4, 0xff3333, 1);
+
+        this.previewOverlays[index] = overlay;
+        this.add(overlay);
+
+        this.previewTweens[index] = this.scene.tweens.add({
+            targets: overlay,
+            alpha: { from: 1, to: 0.35 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    public clearPreview(): void {
+        for (let i of [0, 1]) this.clearPreviewSlot(i);
+    }
+
+    private clearPreviewSlot(index: number): void {
+        this.previewTweens[index]?.stop();
+        this.previewTweens[index] = null;
+        this.previewOverlays[index]?.destroy();
+        this.previewOverlays[index] = null;
     }
 
 

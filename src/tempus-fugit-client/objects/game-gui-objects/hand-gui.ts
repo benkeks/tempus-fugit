@@ -102,6 +102,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                     self.unhoverAll();
                     if (!unhover)
                         card.hover()
+                    self.syncStandReplacePreview(card, unhover);
                 })
         } else {
 
@@ -110,6 +111,22 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
             if (!unhover)
                 if (this.canHoverCard(card))
                     card.hover();
+            this.syncStandReplacePreview(card, unhover);
+        }
+    }
+
+    private syncStandReplacePreview(card: CardGUI, unhover: Boolean): void {
+        const standGUI = this.missionScene.standGUI;
+        if (!standGUI) return;
+        if (unhover || !card.card.stand()) {
+            standGUI.clearPreview();
+            return;
+        }
+        const idx = this.missionScene.tfgame.getReplaceableStandIndex();
+        if (idx === null) {
+            standGUI.clearPreview();
+        } else {
+            standGUI.previewReplacement(idx);
         }
     }
 
@@ -138,6 +155,8 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
                 card.setScale(1);
             }
         }
+
+        this.missionScene.standGUI?.clearPreview();
     }
 
     /**
