@@ -31,4 +31,49 @@ export default [
 		"evaluatedState":5,
 		"expected":true
 	},
+	{
+		"description":"Simple globally test",
+		"formula":"Gl",
+		"states":{
+			"l":[0,1,1,1,1,1],
+		},
+		"evaluatedState":1,
+		"expected":true
+	},
+	{
+		"description":"Simple globally test",
+		"formula":"Gl",
+		"states":{
+			"l":[0,1,1,1,1,1],
+		},
+		"evaluatedState":0,
+		"expected":false
+	},
+	{
+		"description":"Simple Next test",
+		"formula":"Ol",
+		"states":{
+			"l":[1,1,0,],
+		},
+		"evaluatedState":1,
+		"expected":false
+	},
+	{
+		"description":"Simple Next test",
+		"formula":"Ol",
+		"states":{
+			"l":[1,1,0,],
+		},
+		"evaluatedState":0,
+		"expected":true
+	},
+	{
+		"description":"Applying reverse twice",
+		"formula":"##Ol",
+		"states":{
+			"l":[1,1,0,],
+		},
+		"evaluatedState":1,
+		"expected":false
+	},
 ]
