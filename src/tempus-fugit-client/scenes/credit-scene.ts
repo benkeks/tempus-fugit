@@ -78,17 +78,19 @@ export class CreditScene extends Phaser.Scene {
 const credits = [
     `Tempus Fugit`,
     `Made by ...`,
-    `Lead Software Developer.....................................Tobias Loch`,
-    `Software Developer/Inspiration...........................Mustafa Mohsen`,
-    `Software Developer & Mergerequest Manager.................Florian Eyert`,
-    `Software Developer, Mergerequest Manager & Artist............Kejni Dema`,
-    `Product Owner, Card Designer & Artist............Maximilian Lukas Stamm`,
-    `Scrum Master, DevOP & Artist.......................Alessio Nicolo Perna`,
+    `Lead software developer.....................................Tobias Loch`,
+    `Software developer/inspiration...........................Mustafa Mohsen`,
+    `Software developer & merge manager........................Florian Eyert`,
+    `Software developer, merge manager & artist...................Kejni Dema`,
+    `Product owner, card designer & artist............Maximilian Lukas Stamm`,
+    `Scrum master, devops & artist......................Alessio Nicolo Perna`,
+    `Software developer & coordinator.......................Benjamin Bisping`,
     `...............`,
     `Music by ...`,
     `Malek El-Tannir`,
     `...............`,
     `Special Thanks to ...`,
-    `Willy Cai`
+    `Willy Cai`,
+    `TU Berlin`
 ];
 
