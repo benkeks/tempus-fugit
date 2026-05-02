@@ -41,12 +41,12 @@ export class Reverse extends OneParamOperator {
     }
 
     generateRepresentation(recursive: boolean, defaultRepresentation: boolean = true, direction: number=Proposition.DEFAULT_DIRECTION): string {
-        if (defaultRepresentation) return this.operand.generateRepresentation(recursive, defaultRepresentation, -1);
+        if (defaultRepresentation) return this.operand.generateRepresentation(recursive, defaultRepresentation, -direction);
         return super.generateRepresentation(recursive, defaultRepresentation);
     }
 
     evaluateInternal(condition: number, direction:number): PropositionStatus {
-        return this.operand.evaluateInternal(condition, -1);
+        return this.operand.evaluateInternal(condition, -direction);
     }
 
     public static getAlphabet():string {
