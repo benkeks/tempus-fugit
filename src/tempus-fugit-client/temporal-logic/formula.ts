@@ -1,5 +1,5 @@
 ///<reference path="proposition.ts"/>
-import {Proposition, PropositionStatus} from "./proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "./proposition";
 import {Variable} from "./variable";
 import {And} from "./Operator/and";
 import {Eventual} from "./Operator/eventual";
@@ -30,14 +30,14 @@ export class Formula extends Proposition {
      * */
     public variables:{[represenstation:string]:Variable} = {};
 
-    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
         if (this.hjunctor === undefined) {
             let pstat = new PropositionStatus();
             pstat.successful = false;
             return pstat;
         }
 
-        return this.hjunctor.evaluateInternal(condition, direction);
+        return this.hjunctor.evaluateInternal(condition, direction, evaluationWindow);
     }
 
     generateRepresentation(recursive:boolean = true, defaultRepresentation:boolean=true, direction:number=Proposition.DEFAULT_DIRECTION): string {

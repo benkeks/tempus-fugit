@@ -1,6 +1,6 @@
 ///<reference path="one-param-operator.ts"/>
 import {OneParamOperator} from "./one-param-operator";
-import {Proposition, PropositionStatus} from "../proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "../proposition";
 
 export class Eventual extends OneParamOperator {
 
@@ -12,8 +12,8 @@ export class Eventual extends OneParamOperator {
         return "F";
     }
 
-    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
+        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, evaluationWindow);
 
         let status:PropositionStatus = new PropositionStatus();
         let i:number = condition;
@@ -22,13 +22,16 @@ export class Eventual extends OneParamOperator {
         status.successful = false;
         status.maxStatus = operandStatus.maxStatus;
         status.minStatus = operandStatus.minStatus;
-        const upperBound = direction > 0 ? status.maxStatus : condition;
-        while (i<=upperBound && !status.value && i >= status.minStatus && operandStatus.successful) {
+        evaluationWindow = {
+            endState: evaluationWindow ? evaluationWindow.endState : status.maxStatus,
+            startState: evaluationWindow ? evaluationWindow.startState: status.minStatus
+        }
+        while (i<=evaluationWindow.endState && !status.value && i >= evaluationWindow.startState && operandStatus.successful) {
             status.value = operandStatus.value;
             status.successful = true;
 
             i+=direction;
-            operandStatus = this.operand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
+            operandStatus = this.operand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION, evaluationWindow);
         }
         return status;
     }

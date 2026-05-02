@@ -1,6 +1,6 @@
 ///<reference path="one-param-operator.ts"/>
 import {OneParamOperator} from "./one-param-operator";
-import {Proposition, PropositionStatus} from "../proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "../proposition";
 
 export class Not extends OneParamOperator {
 
@@ -8,8 +8,8 @@ export class Not extends OneParamOperator {
         return "!";
     }
 
-    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
+        let operandStatus:PropositionStatus=this.operand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, evaluationWindow);
 
         let status:PropositionStatus = new PropositionStatus();
         status.successful = operandStatus.successful;

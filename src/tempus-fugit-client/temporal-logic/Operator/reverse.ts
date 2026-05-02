@@ -1,6 +1,6 @@
 import {Operator} from "./operator";
 import {OneParamOperator} from "./one-param-operator";
-import {Proposition, PropositionStatus} from "../proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "../proposition";
 import {Global} from "./global";
 import {Next} from "./next";
 import {Until} from "./until";
@@ -45,8 +45,8 @@ export class Reverse extends OneParamOperator {
         return super.generateRepresentation(recursive, defaultRepresentation);
     }
 
-    evaluateInternal(condition: number, direction:number): PropositionStatus {
-        return this.operand.evaluateInternal(condition, -direction);
+    evaluateInternal(condition: number, direction:number, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
+        return this.operand.evaluateInternal(condition, -direction, evaluationWindow);
     }
 
     public static getAlphabet():string {

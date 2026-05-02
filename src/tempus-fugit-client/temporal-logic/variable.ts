@@ -1,5 +1,5 @@
 ///<reference path="proposition.ts"/>
-import {Proposition, PropositionStatus} from "./proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "./proposition";
 
 export class Variable extends Proposition {
     get representation(): string {
@@ -40,7 +40,7 @@ export class Variable extends Proposition {
         this.defaultValueFuture = value;
     }
 
-    evaluateInternal(condition:number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
+    evaluateInternal(condition:number, direction:number=Proposition.DEFAULT_DIRECTION, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
         let pstat : PropositionStatus = new PropositionStatus();
 
         pstat.successful = true;

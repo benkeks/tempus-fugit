@@ -1,6 +1,6 @@
 ///<reference path="one-param-operator.ts"/>
 import {TwoParamOperator} from "./two-param-operator";
-import {Proposition, PropositionStatus} from "../proposition";
+import {EvaluationWindow, Proposition, PropositionStatus} from "../proposition";
 
 export class Release extends TwoParamOperator {
 
@@ -12,9 +12,9 @@ export class Release extends TwoParamOperator {
         return "S";
     }
 
-    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION): PropositionStatus {
-        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
-        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
+    evaluateInternal(condition: number, direction:number=Proposition.DEFAULT_DIRECTION, evaluationWindow: EvaluationWindow|undefined): PropositionStatus {
+        let leftStatus:PropositionStatus=this.leftOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, evaluationWindow);
+        let rightStatus:PropositionStatus=this.rightOperand.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, evaluationWindow);
 
         let status:PropositionStatus = new PropositionStatus();
         let i:number = condition;
@@ -23,7 +23,11 @@ export class Release extends TwoParamOperator {
         status.successful = false;
         status.maxStatus = Math.max(leftStatus.maxStatus, rightStatus.maxStatus);
         status.minStatus = Math.min(leftStatus.minStatus, rightStatus.minStatus);
-        while (i<=status.maxStatus && i>= status.minStatus && leftStatus.successful && rightStatus.successful) {
+        evaluationWindow = {
+            endState: evaluationWindow ? evaluationWindow.endState : status.maxStatus,
+            startState: evaluationWindow ? evaluationWindow.startState: status.minStatus
+        }
+        while (i<=evaluationWindow.endState && i>= evaluationWindow.startState && leftStatus.successful && rightStatus.successful) {
             status.successful = true;
 
             if (!rightStatus.value) {
@@ -36,8 +40,8 @@ export class Release extends TwoParamOperator {
             }
 
             i+=direction;
-            leftStatus = this.leftOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
-            rightStatus = this.rightOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION);
+            leftStatus = this.leftOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION, evaluationWindow);
+            rightStatus = this.rightOperand.evaluateInternal(i, Proposition.DEFAULT_DIRECTION, evaluationWindow);
         }
         return status;
     }

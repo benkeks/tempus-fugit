@@ -44,7 +44,7 @@
          * @param condition the temporal state of the Evaluation
          * @return returns a status struct that contains the boolean value of the Evaluation, the success of the Evaluation and the minimal Condition that the variables can evaluate.
          * */
-        public abstract evaluateInternal(condition: number, direction:number): PropositionStatus;
+        public abstract evaluateInternal(condition: number, direction:number, evaluationWindow: EvaluationWindow|undefined): PropositionStatus;
 
         /**
          * @author Tobias Loch
@@ -77,7 +77,12 @@
          *      console.log(formula.evaluate(1)); // true
          * */
         public evaluate(condition: number): boolean {
-            let status: PropositionStatus = this.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION);
+            let status: PropositionStatus = this.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, undefined);
+            const evaluationWindow = {
+                startState: status.minStatus,
+                endState: status.maxStatus
+            }
+            status = this.evaluateInternal(condition, Proposition.DEFAULT_DIRECTION, evaluationWindow);
 
             if (!status.successful) {
                 return undefined;
@@ -103,4 +108,9 @@
         public maxStatus:number = 0;
 
         public successful: boolean = false;
+    }
+
+    export class EvaluationWindow {
+        startState: number = 0;
+        endState: number = 0;
     }
