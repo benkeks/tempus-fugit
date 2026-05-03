@@ -2,6 +2,7 @@ import "phaser";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { StartingScene } from "./scenes/starting-scene";
 import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
+import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin';
 import { NavigationScene } from "./scenes/navigation-scene";
 import { MissionScene } from "./scenes/mission-scene";
 import { HelpScene } from "./scenes/help-scene";
@@ -72,6 +73,10 @@ const config = {
         global: [{
             key: 'WebFontLoader',
             plugin: WebFontLoaderPlugin,
+            start: true
+        }, {
+            key: 'rexOutlinePipeline',
+            plugin: OutlinePipelinePlugin,
             start: true
         }]
     },

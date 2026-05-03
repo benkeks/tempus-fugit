@@ -16,6 +16,9 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     private readonly roundList: Array<Phaser.GameObjects.Text | null>;
     public scene: MissionScene;
     private stands: [Card | null, Card | null];
+    private spritedStands: [Card | null, Card | null];
+    private previewTweens: Array<Phaser.Tweens.Tween | null>;
+    private previewActive: boolean = false;
 
     constructor(
         scene: MissionScene,
@@ -29,6 +32,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList = [null, null];
         this.hoverElementList = [null, null];
         this.roundList = [null, null];
+        this.spritedStands = [null, null];
+        this.previewTweens = [null, null];
 
         this.scene.add.existing(this);
     }
@@ -41,6 +46,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.elementList[index] = null;
         this.hoverElementList[index] = null;
         this.roundList[index] = null;
+        this.spritedStands[index] = null;
     }
 
     private createSlot(index: number, stand: Card): void {
@@ -55,6 +61,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
         standImage.setInteractive();
         standImage.on("pointerover", () => {
+            if (this.previewActive) return;
             desc.fadeInAnimation();
         }, this);
 
@@ -91,17 +98,85 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
             let stand = this.stands[i];
             if (stand == null) {
                 this.destroySlot(i);
+                this.clearPreviewSlot(i);
                 continue;
             }
 
             if (this.elementList[i] == null) {
                 this.createSlot(i, stand);
+                this.spritedStands[i] = stand;
+            } else if (this.spritedStands[i] !== stand) {
+                this.destroySlot(i);
+                this.createSlot(i, stand);
+                this.spritedStands[i] = stand;
+                this.flashSlot(i);
             } else {
                 this.roundList[i]?.setText(stand.getRoundsRemaining().toString());
             }
         }
 
+        this.clearPreview();
+
         this.updateTint(this.scene.tfgame.gameState);
+    }
+
+    private flashSlot(index: number): void {
+        const sprite = this.elementList[index];
+        if (!sprite) return;
+        sprite.setTint(0xFFFFAA);
+        this.scene.tweens.add({
+            targets: sprite,
+            scale: { from: 5.5, to: 4 },
+            duration: 600,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                if (sprite.active) sprite.clearTint();
+            }
+        });
+    }
+
+    public previewReplacement(index: number): void {
+        for (let i of [0, 1]) if (i !== index) this.clearPreviewSlot(i);
+        if (this.previewTweens[index] != null) return;
+
+        const sprite = this.elementList[index];
+        if (!sprite) return;
+
+        this.previewActive = true;
+        for (let i of [0, 1]) {
+            const d = this.hoverElementList[i];
+            if (d) {
+                if (d.fadeTween) d.fadeTween.stop();
+                d.setAlpha(0);
+                d.setVisible(false);
+            }
+        }
+
+        sprite.setPostPipeline('rexOutlinePostFx');
+        const pipeline = sprite.getPostPipeline('rexOutlinePostFx') as Phaser.Renderer.WebGL.Pipelines.PostFXPipeline & { setThickness(n: number): unknown; setOutlineColor(c: number): unknown };
+        pipeline.setOutlineColor(0xff3333);
+        pipeline.setThickness(4);
+
+        this.previewTweens[index] = this.scene.tweens.add({
+            targets: pipeline,
+            thickness: { from: 6, to: 2 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    public clearPreview(): void {
+        for (let i of [0, 1]) this.clearPreviewSlot(i);
+        this.previewActive = false;
+    }
+
+    private clearPreviewSlot(index: number): void {
+        this.previewTweens[index]?.stop();
+        this.previewTweens[index] = null;
+        const sprite = this.elementList[index];
+        if (sprite) sprite.removePostPipeline('rexOutlinePostFx');
     }
 
 
