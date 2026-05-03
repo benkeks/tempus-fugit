@@ -1,15 +1,30 @@
 # Tempus fugit
-[Hierüber](https://benkeks.github.io/tempus-fugit/) ist das Spiel aufrufbar:
-## Rollenverteilung
-* Technologie: Phaser.io, TypeScript
-* Scrum: @Alessio
-* Product Owner: @Max
-* MRM: @Kejni @flo
-* DevOps: @Alessio
-* Devs: @Tobi @mustafa @flo @Kejni
 
-## Spielbeschreibung
-Der Spieler muss sich in einer Reihe von Missionen gegen in Wellen auftauchende Feinde behaupten.
-Er tut dies, indem er Karten ausspielt, um entweder Upgrades zu erhalten oder direkte Auswirkungen auf den Feind zu erzielen. 
-Diese Karten und bereits erhaltene Upgrades werden aber erst nutzbar, wenn die rundenweise verteilbare Energie ihre LTL-Bedingungen erfüllt. 
-Doch Vorsicht, denn der Feind kann die Energieverteilung verpfuschen und profitiert von ungeschickter Platzierung!
+**Tempus fugit** is a card-based combat game around concepts of *linear temporal logic* (LTL).
+
+Play on: <https://tempusfugit.equiv.io/>
+
+[![Gameplay screenshot](./doc/tempus-fugit-concert.png)](https://tempusfugit.equiv.io/)
+
+## Gameplay
+
+The core mechanic of *Tempus fugit* is to combat enemies with spell cards based on the strategic distribution of runes (variables) in successive rounds.
+The assignments enable or disable temporal conditions for various actions.
+The conditions are expressed in [LTL](https://en.wikipedia.org/wiki/Linear_temporal_logic), one of the most widely used temporal logics in computer science.
+
+Specifically all of the player’s spell cards are subject to a logical condition that may depend on past or future rune assignments relative to the combat round.
+The same is true for enemy abilities.
+
+## How to build
+
+The game has been developed with the [Phaser 3 Game Framework](https://phaser.io/) and TypeScript.
+You can run it locally using `npm` after cloning the repository:
+
+```
+npm install
+npm run dev
+```
+
+## Credits
+
+Tobias Loch (software lead dev), Mustafa Mohsen (dev & inspiration), Florian Eyert (dev), Kejni Dema (dev), Maximilian Lukas Stamm (product management, card design, art), Alessio Nicolo Perna (scrum, devops & art), [Benjamin Bisping](https://bbisping.de) (additional software dev & coordination), Malek El-Tannir (music).
