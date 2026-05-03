@@ -17,8 +17,8 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     public scene: MissionScene;
     private stands: [Card | null, Card | null];
     private spritedStands: [Card | null, Card | null];
-    private previewOverlays: Array<Phaser.GameObjects.Rectangle | null>;
     private previewTweens: Array<Phaser.Tweens.Tween | null>;
+    private previewActive: boolean = false;
 
     constructor(
         scene: MissionScene,
@@ -33,7 +33,6 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.hoverElementList = [null, null];
         this.roundList = [null, null];
         this.spritedStands = [null, null];
-        this.previewOverlays = [null, null];
         this.previewTweens = [null, null];
 
         this.scene.add.existing(this);
@@ -62,6 +61,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
         standImage.setInteractive();
         standImage.on("pointerover", () => {
+            if (this.previewActive) return;
             desc.fadeInAnimation();
         }, this);
 
@@ -137,23 +137,29 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
     public previewReplacement(index: number): void {
         for (let i of [0, 1]) if (i !== index) this.clearPreviewSlot(i);
-        if (this.previewOverlays[index] != null) return;
+        if (this.previewTweens[index] != null) return;
 
         const sprite = this.elementList[index];
         if (!sprite) return;
 
-        const x = 200 * index;
-        const w = sprite.displayWidth + 16;
-        const h = sprite.displayHeight + 16;
-        const overlay = this.scene.add.rectangle(x, 0, w, h, 0xff3333, 0.18);
-        overlay.setStrokeStyle(4, 0xff3333, 1);
+        this.previewActive = true;
+        for (let i of [0, 1]) {
+            const d = this.hoverElementList[i];
+            if (d) {
+                if (d.fadeTween) d.fadeTween.stop();
+                d.setAlpha(0);
+                d.setVisible(false);
+            }
+        }
 
-        this.previewOverlays[index] = overlay;
-        this.add(overlay);
+        sprite.setPostPipeline('rexOutlinePostFx');
+        const pipeline = sprite.getPostPipeline('rexOutlinePostFx') as Phaser.Renderer.WebGL.Pipelines.PostFXPipeline & { setThickness(n: number): unknown; setOutlineColor(c: number): unknown };
+        pipeline.setOutlineColor(0xff3333);
+        pipeline.setThickness(4);
 
         this.previewTweens[index] = this.scene.tweens.add({
-            targets: overlay,
-            alpha: { from: 1, to: 0.35 },
+            targets: pipeline,
+            thickness: { from: 6, to: 2 },
             duration: 500,
             yoyo: true,
             repeat: -1,
@@ -163,13 +169,14 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
     public clearPreview(): void {
         for (let i of [0, 1]) this.clearPreviewSlot(i);
+        this.previewActive = false;
     }
 
     private clearPreviewSlot(index: number): void {
         this.previewTweens[index]?.stop();
         this.previewTweens[index] = null;
-        this.previewOverlays[index]?.destroy();
-        this.previewOverlays[index] = null;
+        const sprite = this.elementList[index];
+        if (sprite) sprite.removePostPipeline('rexOutlinePostFx');
     }
 
 
