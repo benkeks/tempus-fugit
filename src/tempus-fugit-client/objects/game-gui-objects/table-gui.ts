@@ -19,6 +19,13 @@ export class TableGUI implements GameStateListener {
     private initialColumnCount = 20; // number of visible columns
     private tableColumnCount = 20; // number of total columns
     private variables: { [name: string]: number } = {}; // mapping from variable name to index
+    private get variableByIndex(): {[ index: number ] : string } {
+        const dict = {}
+        for (const [varName, index] of Object.entries(this.variables)) {
+            dict[index] = varName
+        }
+        return dict
+    }
     private mapping: { [char: string]: { frame: number } } = {}; // mapping from rune name to frame in sprite sheet
     private tableItems: {
         id: number,
@@ -311,9 +318,9 @@ export class TableGUI implements GameStateListener {
     paddVariableStates(n: number) {
         const variableValues:any = {}
         for (let key in this.gameState.variables) {
-            const values = this.gameState.variables[key].values
-            if (n >= values.length) {
-                variableValues[key] = { [ n ]: false };
+            const variable = this.gameState.variables[key]
+            if (n >= variable.values.length) {
+                variableValues[key] = { [ n ]: variable.getValue(n) };
             }
         }
 
@@ -463,17 +470,21 @@ export class TableGUI implements GameStateListener {
         if (!this.isVariableTableReady()) return;
         let numVar = Object.keys(this.variables).length;
         let itemCount = n * numVar;
+        this.paddVariableStates(this.tableColumnCount-1);
+        
         for (let i = 0; i < itemCount; i++) {
+            const state = this.tableColumnCount + Number(i / 4)
+            const variable = this.gameState.variables[this.variableByIndex[i%4]]
+            const value = variable.getValue(state)
             this.tableItems.push({
                 id: this.tableColumnCount * numVar + i,
-                iconAlpha: 0,
+                iconAlpha: Number(value),
                 backgroundColor: this.colorPrimary,
                 backgroundAlpha: 0
             });
         }
         this.tableColumnCount += n;
         this.variableTable.setItems(this.tableItems);
-        this.paddVariableStates(this.tableColumnCount-1);
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
