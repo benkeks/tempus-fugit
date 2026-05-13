@@ -23,6 +23,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     private removeGameStateListener: () => void;
     private properX: number;
     private properY: number;
+    private dragOutlineVisible: boolean = false;
 
     public scene:MissionScene;
 
@@ -137,6 +138,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     public die():void {
         if (this.isDestroyed) return;
 
+        this.clearDragOutline();
+
         this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },
@@ -167,6 +170,26 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         const isActive = gameState.evaluate(this.enemy.specialAttack);
         this.formula.tintGraphics.setVisible(!isActive);
         this.updateSpecialAttackShortDescriptionColor(isActive);
+    }
+
+    public setDragOutline(color: number): void {
+        if (this.isDestroyed || !this.sprite || !(this.sprite as any).scene) return;
+
+        if (!this.dragOutlineVisible) {
+            this.sprite.setPostPipeline('rexOutlinePostFx');
+            this.dragOutlineVisible = true;
+        }
+
+        const pipeline = this.sprite.getPostPipeline('rexOutlinePostFx') as Phaser.Renderer.WebGL.Pipelines.PostFXPipeline & { setThickness(n: number): unknown; setOutlineColor(c: number): unknown };
+        pipeline.setOutlineColor(color);
+        pipeline.setThickness(4);
+    }
+
+    public clearDragOutline(): void {
+        if (!this.dragOutlineVisible || !this.sprite || !(this.sprite as any).scene) return;
+
+        this.sprite.removePostPipeline('rexOutlinePostFx');
+        this.dragOutlineVisible = false;
     }
 
     private createSpecialAttackShortDescription(): void {
