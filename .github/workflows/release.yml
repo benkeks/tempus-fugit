@@ -7,7 +7,25 @@ on:
  
 jobs:
   build:
-    uses: ./.github/workflows/build.yml
+    runs-on: ubuntu-latest # Base Image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Get code from repo
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 # Install Node.JS
+        with:
+          node-version: 20.x # Use any major version 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install # Install dependencies
+      - name: Build project
+        run: npm run build # Compile Code
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 2
   deploy:
     name: Upload to Itch
     needs: build
