@@ -1,0 +1,29 @@
+name: Deploy Itch
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+ 
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  deploy:
+    name: Upload to Itch
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: clave
+          path: build/clave
+      - uses: manleydev/butler-publish-itchio-action@v1.2.0
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: html5
+          PACKAGE: build/tempusfugit
+          VERSION: 1.0.0
+          ITCH_USER: benkeks
+          ITCH_GAME: tempusfugit
