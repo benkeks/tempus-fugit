@@ -575,8 +575,8 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.deckBuilderButton = new DeckBuilderButton(this, 1780, 50, this.player);
-        this.soundButton = new SoundButton(this, 1690, 50);
+        this.deckBuilderButton = new DeckBuilderButton(this, 1690, 50, this.player);
+        this.soundButton = new SoundButton(this, 1780, 50);
         this.tutorialButton = new TutorialButton(this, 1600, 50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {

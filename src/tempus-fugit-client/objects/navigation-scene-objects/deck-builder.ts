@@ -126,7 +126,7 @@ export class DeckBuilder {
             //@ts-ignore
             background:this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, GUI_TEXT_AREA)
             .setStrokeStyle(RECT_LINE_WIDTH, GUI_TEXT_AREA_BORDER),
-            title:this.scene.add.text(0,0,"Deck builder", { fontSize: '16px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
+            title:this.scene.add.text(0,0,"Deck Builder", { fontSize: '16px', fontStyle: 'bold', fontFamily: 'pressStart', color: '#000000' }),
             space: {
                 top:10,
                 bottom:10

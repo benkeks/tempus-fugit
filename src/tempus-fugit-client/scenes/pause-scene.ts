@@ -26,7 +26,7 @@ export class PauseScene extends Phaser.Scene {
         this.pauseWindow.createPauseWindow(isMissionContext);
         this.scene.pause(PauseButton.currPauseParent);
         this.scene.bringToTop('PauseScene');
-        new SoundButton(this, isMissionContext ? 1780 : 1690, isMissionContext ? 310 : 50);
+        new SoundButton(this, 1780, isMissionContext ? 310 : 50);
         new PauseButton(this, isMissionContext, () => this.pauseWindow.close());
 
         if (PauseButton.currPauseParent === 'NavigationScene') {
@@ -39,7 +39,7 @@ export class PauseScene extends Phaser.Scene {
                 this.scene.run('TutorialScene', {backScene: 'NavigationScene', guided: false});
                 this.scene.stop('PauseScene');
             });
-            new DeckBuilderButton(this, 1780, 50, NavigationScene.instance.player, () => {
+            new DeckBuilderButton(this, 1690, 50, NavigationScene.instance.player, () => {
                 this.scene.run('DeckBuilderScene', {parent: 'NavigationScene', player: NavigationScene.instance.player, newCards: DeckBuilderButton.newCards});
                 this.scene.stop('PauseScene');
             });
