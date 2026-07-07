@@ -33,7 +33,10 @@ export class TutorialScene extends Phaser.Scene {
         this.closing = false;
         this.sys.canvas.style.cursor = "default";
         this.add.rectangle(960, 540, 1920, 1080, 0x000000, 0.5);
-        this.tutWindow = new TutorialWindow(this, data.guided);
+        this.tutWindow = new TutorialWindow(
+            this,
+            data.guided
+       );
         this.backScene = data.backScene;
         this.scene.pause(this.backScene);
 
@@ -53,8 +56,10 @@ export class TutorialScene extends Phaser.Scene {
             });
             new TutorialButton(this, 1600, 50, () => {
                 this.closing = true;
-                this.scene.resume(this.backScene);
-                this.scene.stop('TutorialScene');
+                this.tutWindow.fadeOut(() => {
+                    this.scene.resume(this.backScene);
+                    this.scene.stop('TutorialScene');
+                });
             });
             new HelpButton(this, false, () => {
                 this.closing = true;
