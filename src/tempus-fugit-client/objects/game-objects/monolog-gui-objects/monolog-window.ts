@@ -25,7 +25,6 @@ export class MonologWindow {
     private typing = true;
     private done = false;
     private skipcont;
-    private gameOver!: boolean;
     private holdStartTimer: ReturnType<typeof setTimeout> | undefined;
     private holdRepeatTimer: ReturnType<typeof setInterval> | undefined;
     private skipButtonX = GameInfo.width - 150;
@@ -60,11 +59,10 @@ export class MonologWindow {
         }
     }
 
-    public createMonologWindow(monolog: string, gameOver: boolean) {
+    public createMonologWindow(monolog: string) {
 
         if (this.instanceCounter > 0) return;
         this.instanceCounter += 1;
-        this.gameOver = gameOver;
 
         // create black background
         this.scene.cameras.add(0, 0, GameInfo.width, GameInfo.height).setBackgroundColor(BACKGROUND_COLOR);
@@ -95,7 +93,6 @@ export class MonologWindow {
 
         // skip button
         let text = "Skip";
-        if (gameOver) text = "Return to Map"
 
         //@ts-ignore
         const skipButtonBackground = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, BUTTON_BG, 0.75)
@@ -235,7 +232,7 @@ export class MonologWindow {
                 self.text.setText(displayedText + message[index++] + '|');
                 setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
             } else {
-                self.setSkipButtonState(self.gameOver ? "Return to Map" : "Continue");
+                self.setSkipButtonState("Continue");
                 self.typing = false;
                 setTimeout(() => pipeAnim(), self.interval)
             }
