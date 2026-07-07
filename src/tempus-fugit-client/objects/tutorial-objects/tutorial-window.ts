@@ -119,7 +119,7 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
 
     public setSlide(next:number=this.activeIndex+1):boolean {
         if (next >= this.sprites.length) {
-            this.rightButton.setTint(0x333333);
+            this.fadeOut();
             return false;
         }
         else if (next < 0) {
@@ -129,13 +129,13 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
 
         if (next == 0) {
             this.leftButton.setTint(0x333333);
-            this.rightButton.clearTint();
+            this.rightButton.setText("next");
         } else if (next == this.sprites.length-1) {
-            this.rightButton.setTint(0x333333);
+            this.rightButton.setText("let's go!");
             this.leftButton.clearTint();
         } else {
             this.leftButton.clearTint();
-            this.rightButton.clearTint();
+            this.rightButton.setText("next");
         }
 
 
@@ -165,7 +165,6 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         
         // disable left and right button
         this.leftButton.disableInteractive();
-        this.rightButton.disableInteractive();
 
         sprite.setVisible(true);
         background.setVisible(true);
@@ -179,8 +178,6 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             onComplete: function() {
                 if (next == 0) {
                     this.rightButton.setInteractive();
-                } else if (next == this.sprites.length-1) {
-                    this.leftButton.setInteractive();
                 } else {
                     this.leftButton.setInteractive();
                     this.rightButton.setInteractive();
