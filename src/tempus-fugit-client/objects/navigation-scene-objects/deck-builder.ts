@@ -72,12 +72,19 @@ export class DeckBuilder {
     public notEnoughCards;
 
     public activeButton;
+    public activeDialog;
 
     public newCards:Set<string>;
+    private initialCustomDeckSignature:string;
+    private closeAfterDialog:boolean = false;
 
     constructor(scene: Scene, player:Player, newCards?:Set<string>) {
         this.scene = scene;
         this.player = player;
+        this.scene.events.on("resume", this.handleSceneResume, this);
+        this.scene.events.once("shutdown", () => {
+            this.scene.events.off("resume", this.handleSceneResume, this);
+        });
         this.scene.input.dragDistanceThreshold = 12;
         this.scene.input.dragTimeThreshold = 80;
         this.screenMargin = this.screenPadding/2;
@@ -113,7 +120,12 @@ export class DeckBuilder {
                 return;
             }
 
-            this.fadeOut(200, true);
+            if (this.shouldPromptToActivateCustomDeck()) {
+                this.showActivateCustomDeckPrompt();
+                return;
+            }
+
+            this.closeDeckBuilder();
         }, this, {backgroundColor:RED,
         left:5,
         right:5,
@@ -173,6 +185,7 @@ export class DeckBuilder {
 
         this.initCardsViewer();
         this.initDeckViewer();
+        this.initialCustomDeckSignature = this.getCustomDeckSignature();
         this.update();
 
         this.fadeIn(200, function() {
@@ -188,6 +201,51 @@ export class DeckBuilder {
     public showNotEnoughCards() {
         this.scene.scene.run("DialogScene", {parent:"DeckBuilderScene", 
                 description:"You need at least " + Deck.MIN_CARDS_IN_DECK + " cards in your deck!"});
+    }
+
+    private handleSceneResume() {
+        if (!this.closeAfterDialog) return;
+
+        this.closeAfterDialog = false;
+        this.closeDeckBuilder();
+    }
+
+    private getCustomDeckSignature(): string {
+        let customDeck = Deck.Decks["custom"];
+        if (!customDeck) return "";
+
+        return Object.keys(customDeck.deck).sort().join("|");
+    }
+
+    private shouldPromptToActivateCustomDeck(): boolean {
+        return this.getCustomDeckSignature() !== this.initialCustomDeckSignature
+            && !NavigationScene.instance.useCustomDeck;
+    }
+
+    private closeDeckBuilder() {
+        this.fadeOut(200, true);
+    }
+
+    private showActivateCustomDeckPrompt() {
+        let buttons = [
+            ["Keep default", function() {
+                this.closeAfterDialog = true;
+                this.activeDialog.hide();
+            }, this],
+            ["Activate custom", function() {
+                NavigationScene.instance.useCustomDeck = true;
+                this.closeAfterDialog = true;
+                this.activeDialog.hide();
+            }, this]
+        ];
+
+        this.scene.scene.run("DialogScene", {
+            scene: this,
+            parent:"DeckBuilderScene",
+            description:"You personalized your deck. Do you want to activate your custom deck now?",
+            buttons:buttons,
+            title:"Use custom deck"
+        });
     }
 
     public fadeIn(duration = 200, callback?, callbackScope?) {
