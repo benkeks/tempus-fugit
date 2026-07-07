@@ -164,7 +164,6 @@ export class Player {
                     var target = enemies[Math.floor(Math.random() * enemies.length)];
                     card.action(mission, target);
 
-
                     this.listener.map(l => l.Attacking(this, enemy));
                     break;
                 case Card.DIRECTED:

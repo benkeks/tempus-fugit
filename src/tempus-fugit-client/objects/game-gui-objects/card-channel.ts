@@ -8,6 +8,7 @@ import { Card } from "../game-objects/card";
 import { EnemyGUI } from "./enemy-gui";
 import { Enemy } from "../game-objects/enemy";
 import { Mission } from "../../mechanics/mission";
+
 export class CardChannel extends Container {
 
     public decisionArrow: DecisionArrow;
@@ -15,13 +16,13 @@ export class CardChannel extends Container {
     public color: number = 0xFFFFFF;
 
     public book: Phaser.GameObjects.Sprite;
-    // public dot: Graphics;
     public dotParticles: ParticleEmitter;
 
     public fadeOutDuration: number = 500;
     public fadeOutParticles: ParticleEmitter | undefined = undefined;
     public emitter: ParticleEmitter | undefined = undefined;
     public channeled: boolean = false;
+    private bookOutlineVisible: boolean = false;
 
     public missionScene: MissionScene;
 
@@ -44,6 +45,7 @@ export class CardChannel extends Container {
         this.dotParticles.setVisible(false);
 
         this.decisionArrow = new DecisionArrow(scene);
+        this.decisionArrow.setDepth(200);
 
         this.add(this.book);
         this.add(this.dotParticles);
@@ -69,8 +71,7 @@ export class CardChannel extends Container {
                 if (!(gameObject instanceof CardGUI)) return;
                 if (!this.canPlayCards()) {
                     if (this.channeled) this.reEmitCard(gameObject);
-                    this.decisionArrow.setVisible(false);
-                    this.dotParticles.setVisible(false);
+                    this.resetDragFeedback();
                     this.missionScene.handGUI.unhoverAll(true);
                     return;
                 }
@@ -78,14 +79,48 @@ export class CardChannel extends Container {
                 let card: Card = (gameObject as CardGUI).card;
                 this.missionScene.enableToolTips(false);
 
+                if (card.getKind() == Card.DIRECTED) {
+                    if (pointer.y < this.y) {
+                        if (!this.channeled) {
+                            this.emitCard(gameObject);
+
+                            this.channeled = true;
+                        }
+
+                        this.updateDirectedTargetHighlights(pointer);
+                        this.decisionArrow.updateDrag(pointer);
+                    } else {
+                        if (this.channeled) {
+                            this.reEmitCard(gameObject);
+                        }
+
+                        this.clearDragHighlights();
+
+                        if (this.fadeOutParticles) {
+                            let x: number = gameObject.x - gameObject.displayWidth * gameObject.originX;
+                            let y: number = gameObject.y - gameObject.displayHeight * gameObject.originY;
+
+                            if (this.emitter) {
+                                this.emitter.ops.moveToX.propertyValue = (x + x + gameObject.displayWidth) / 2;
+                                this.emitter.ops.moveToY.propertyValue = (y + y + gameObject.displayHeight) / 2;
+                            }
+                        }
+
+                        gameObject.setPosition(pointer.x, pointer.y); // dragging cards
+                        gameObject.setAngle(0);
+                    }
+
+                    return;
+                }
+
+                this.updateBookTargetHighlight(card, pointer);
+
                 if (pointer.y < this.y) {
                     if (!this.channeled) {
                         this.emitCard(gameObject);
 
                         this.channeled = true;
                     }
-
-                    if (card.getKind() == Card.DIRECTED) this.decisionArrow.updateDrag(pointer);
                 } else {
                     if (this.channeled) {
                         this.reEmitCard(gameObject);
@@ -112,13 +147,13 @@ export class CardChannel extends Container {
                 pointer: Phaser.Input.Pointer,
                 gameObject: Phaser.GameObjects.Sprite
             ) => {
-                this.decisionArrow.setVisible(false);
-                this.dotParticles.setVisible(false);
                 this.missionScene.enableToolTips(true);
+                this.resetDragFeedback();
 
                 if (!(gameObject instanceof CardGUI)) return;
                 if (!this.canPlayCards()) {
                     if (this.channeled) this.reEmitCard(gameObject);
+                    this.resetDragFeedback();
                     this.missionScene.handGUI.unhoverAll(true);
                     return;
                 }
@@ -136,6 +171,8 @@ export class CardChannel extends Container {
                     //gameObject.setPosition(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 30), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 80))
                     this.missionScene.handGUI.unhoverAll(true);
                 }
+
+                this.resetDragFeedback();
 
             }, this);
 
@@ -160,13 +197,77 @@ export class CardChannel extends Container {
         }, this);
     }
 
-    public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI | undefined {
-        for (let e of this.missionScene.enemyGUI.enemies) {
-            if (e.isHovered(xCursor, yCursor)) {
-                return e;
-            }
+    private clearDragHighlights(): void {
+        for (let enemy of this.missionScene.enemyGUI.enemies) {
+            enemy.clearDragOutline();
         }
-        return undefined;
+
+        this.clearBookOutline();
+    }
+
+    private resetDragFeedback(): void {
+        this.clearDragHighlights();
+        this.decisionArrow.setVisible(false);
+        this.dotParticles.setVisible(false);
+    }
+
+    private clearBookOutline(): void {
+        if (!this.bookOutlineVisible) return;
+
+        this.book.removePostPipeline('rexOutlinePostFx');
+        this.bookOutlineVisible = false;
+        this.book.y = 0;
+    }
+
+    private setBookOutline(color: number): void {
+        if (!this.bookOutlineVisible) {
+            this.book.setPostPipeline('rexOutlinePostFx');
+            this.bookOutlineVisible = true;
+        }
+
+        const pipeline = this.book.getPostPipeline('rexOutlinePostFx') as Phaser.Renderer.WebGL.Pipelines.PostFXPipeline & { setThickness(n: number): unknown; setOutlineColor(c: number): unknown };
+        pipeline.setOutlineColor(color);
+        pipeline.setThickness(4);
+        this.book.y = -4;
+    }
+
+    private getBookOutlineColor(cardKind: string): number {
+        switch (cardKind) {
+            case Card.GLOBAL:
+                return 0x33ff33;
+            case Card.RANDOM:
+                return 0xff0000;
+            case Card.PLAYER:
+                return 0x3366ff;
+            case Card.OTHER:
+            default:
+                return 0xaa33ff;
+        }
+    }
+
+    private updateDirectedTargetHighlights(pointer: Phaser.Input.Pointer): void {
+        const hoveredEnemy = this.cursorHoversEnemy(pointer.x, pointer.y);
+
+        for (let enemy of this.missionScene.enemyGUI.enemies) {
+            enemy.setDragOutline(enemy === hoveredEnemy ? 0xffffff : 0xff0000);
+        }
+
+        this.clearBookOutline();
+    }
+
+    private updateBookTargetHighlight(card: Card, pointer: Phaser.Input.Pointer): void {
+        for (let enemy of this.missionScene.enemyGUI.enemies) {
+            enemy.clearDragOutline();
+        }
+
+        const outlineColor = pointer.y < this.y ? 0xffffff : this.getBookOutlineColor(card.getKind());
+        this.setBookOutline(outlineColor);
+    }
+
+    public cursorHoversEnemy(xCursor: number, yCursor: number): EnemyGUI | undefined {
+        return this.missionScene.enemyGUI.enemies.find((e) => 
+            e.isHovered(xCursor, yCursor)
+        );
     }
 
     public playCard(enemy: EnemyGUI | undefined, card: CardGUI) {
