@@ -11,7 +11,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     public scene: Phaser.Scene;
     public wheel: Phaser.GameObjects.Sprite;
     public box: Phaser.GameObjects.Rectangle;
-
+    public pulseBackground: Phaser.GameObjects.Rectangle;
 
     // this is the done text that changes if baseAttack is possible
     // It pulsates if base attack is true
@@ -96,8 +96,12 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
      *  creates for button for ending selection of boolean values
      */
     private createButton(x: number, y: number, width: number = undefined, height: number = undefined) {
+        this.pulseBackground = this.scene.add.rectangle(x, y, width + 10, height + 10, 0xffffff, 0);
+        this.pulseBackground.setOrigin(1);
+
         this.box = this.scene.add.rectangle(x, y, width, height, 0x666666);
         this.box.setOrigin(1);
+        this.box.setStrokeStyle(2, 0x000000);
 
         this.text = this.scene.add.text(0, 0, "Done", {
             fontSize: 20,
@@ -119,10 +123,14 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
         this.endRoundTextContainer = this.scene.add.container(x-width/2, y-height/2, [this.text, this.plusText, this.baseAttackIcon])
 
-        this.sendToBack(this.box);
-
         this.box
             .setInteractive({ useHandCursor: true })
+            .on('pointerover', function () {
+                this.box.setStrokeStyle(3, 0xffffff);
+            }, this)
+            .on('pointerout', function () {
+                this.box.setStrokeStyle(2, 0x000000);
+            }, this)
             .on('pointerdown', function (pointer, localX, localY, event) {
                 if (this.baseAttackAllowed) {
                     const currentWave = this.game.waveCounter;
@@ -165,35 +173,36 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             false
         )
 
+        this.add(this.pulseBackground);
         this.add(this.box);
         this.add(this.doneButtonTooltip);
         this.add(this.endRoundTextContainer);
     }
 
     async drawPhase(game: Mission) {
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
         this.doneButtonTooltip.setVisible(false);
     }
     async energyPhase(game: Mission) {
         this.wheel.play("wheel_enemy_to_play");
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
         this.doneButtonTooltip.setVisible(false);
     }
     async playPhase(game: Mission) {
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
     }
     async standPhase(game: Mission) {
         this.wheel.play("wheel_play_to_stand");
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
         this.doneButtonTooltip.setVisible(false);
     }
     async enemyPhase(game: Mission) {
         this.wheel.play("wheel_stand_to_enemy");
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
         this.doneButtonTooltip.setVisible(false);
     }
     async effectPhase(game: Mission) {
-        this.toggleEasingAnimationOfEndRoundButton(false);
+        this.toggleAnimationOfEndRoundButton(false);
         this.doneButtonTooltip.setVisible(false);
     }
     async storyDialog(game: Mission, dialog: StoryDialog) {
@@ -207,27 +216,37 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
     async music(game:Mission, song:string) {}
     async Activated(game: Mission, active: boolean) {
         if (!active) this.box.disableInteractive();
-        else this.box.setInteractive();
+        else this.box.setInteractive({ useHandCursor: true });
+        this.box.setStrokeStyle(2, 0x000000);
         this.setBaseAttackAllowed(active);
     }
     async baseAttackPossible(game: Mission, active: boolean) {
         this.setBaseAttackAllowed(active);
     }
 
-    toggleEasingAnimationOfEndRoundButton(active: boolean) {
+    toggleAnimationOfEndRoundButton(active: boolean) {
+        const baseColor = new Phaser.Display.Color(0x66, 0x66, 0x66);
+        const brightColor = new Phaser.Display.Color(0x9a, 0x9a, 0x9a);
+
         if (active) {
             if (this.animationTween) this.animationTween.stop();
-            this.animationTween = this.scene.tweens.add({
-                targets: this.endRoundTextContainer,
-                scale: 1.1,
-                duration: 600,
+
+            this.animationTween = this.scene.tweens.addCounter({
+                from: 0,
+                to: 100,
+                duration: 1000,
                 yoyo: true,
                 repeat: -1,
-                ease: 'Sine.easeInOut'
+                ease: 'Sine.easeInOut',
+                onUpdate: (tween) => {
+                    const step = tween.getValue() ?? 0;
+                    const interpolated = Phaser.Display.Color.Interpolate.ColorWithColor(baseColor, brightColor, 100, step);
+                    this.box.setFillStyle(Phaser.Display.Color.GetColor(interpolated.r, interpolated.g, interpolated.b));
+                }
             });
-        } else if (this.animationTween) {
-            this.animationTween.stop();
-            this.endRoundTextContainer.setScale(1)
+        } else {
+            if (this.animationTween) this.animationTween.stop();
+            this.box.setFillStyle(0x666666);
         }
     }
 
@@ -238,13 +257,13 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             this.text.setPosition(-30, 0);
             this.plusText.setVisible(true);
             this.baseAttackIcon.setVisible(true);
-            this.toggleEasingAnimationOfEndRoundButton(false);
+            this.toggleAnimationOfEndRoundButton(false);
             this.doneButtonTooltip.setText(1, "End your turn, attack all enemies with base attack and draw an additional card.")
         } else {
             this.text.setPosition(0, 0);
             this.plusText.setVisible(false);
             this.baseAttackIcon.setVisible(false);
-            this.toggleEasingAnimationOfEndRoundButton(true);
+            this.toggleAnimationOfEndRoundButton(true);
             this.doneButtonTooltip.setText(1, "End your turn.")
         }
     }
