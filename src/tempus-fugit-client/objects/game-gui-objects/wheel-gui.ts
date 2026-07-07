@@ -133,6 +133,12 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
             }, this)
             .on('pointerdown', function (pointer, localX, localY, event) {
                 if (this.baseAttackAllowed) {
+                    if (!this.game.tryConsumeBaseAttack()) {
+                        return;
+                    }
+
+                    this.box.disableInteractive();
+                    this.box.setStrokeStyle(2, 0x000000);
                     const currentWave = this.game.waveCounter;
                     this.game.player.attackWithBaseAttack(this.game);
                     this.scene.time.delayedCall(500, () => {
@@ -144,6 +150,8 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
                         this.game.nextPhase(Mission.STAND_PHASE);
                     }, [], this)
                 } else {
+                    this.box.disableInteractive();
+                    this.box.setStrokeStyle(2, 0x000000);
                     this.game.nextPhase(Mission.STAND_PHASE);
                 }
             }, this);
