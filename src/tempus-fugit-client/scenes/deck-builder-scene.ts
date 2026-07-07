@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 import { SoundButton } from "../objects/sound-button";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";

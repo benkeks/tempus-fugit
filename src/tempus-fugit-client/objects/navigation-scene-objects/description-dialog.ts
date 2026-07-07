@@ -14,7 +14,7 @@ const GUI_TEXT_AREA = 0xf2f1e7;
 
 const RED = 0xdd6666;
 
-export class DescritptionDialog {
+export class DescriptionDialog {
 
     public scene:Scene;
 
@@ -27,7 +27,7 @@ export class DescritptionDialog {
     public textWidth:number=500;
     public margin:number = 15;
 
-    constructor(scene:Scene, description:string, buttons?, title:string="Tutorial") {
+    constructor(scene:Scene, description:string, buttons?, title:string="Info") {
         this.scene = scene;
         let actions = [];
         this.returnToScene = true;

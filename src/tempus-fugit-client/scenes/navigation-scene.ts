@@ -21,7 +21,6 @@ import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 import { Sound } from "phaser";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilderButton } from "../objects/navigation-scene-objects/deck-builder-button";
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
 import { ProgressStore } from "../progress/progress-store";

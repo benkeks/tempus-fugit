@@ -4,7 +4,6 @@ import { CardGUI } from "../game-gui-objects/card-gui";
 import { Deck } from "../game-objects/deck";
 import { Card } from "../game-objects/card";
 import { Player } from "../game-objects/player";
-import { DescritptionDialog } from "./description-dialog";
 import { NavigationScene } from "../../scenes/navigation-scene";
 import { ProgressStore } from "../../progress/progress-store";
 
@@ -101,7 +100,7 @@ export class DeckBuilder {
 
         let toolbar = [];
         toolbar.push(this.createButton("questionmark", function(pointer) {
-            this.showTutorial();
+            this.showDeckBuilderHelp();
         }, this, {sprite:true,
         left:5,
         right:5,
@@ -177,14 +176,10 @@ export class DeckBuilder {
         this.update();
 
         this.fadeIn(200, function() {
-            if (DeckBuilder.firstTime) {
-                DeckBuilder.firstTime = false;
-                this.showTutorial();
-           }
         }, this);
     }
 
-    public showTutorial() {
+    public showDeckBuilderHelp() {
         this.scene.scene.run("DialogScene", {parent:"DeckBuilderScene", 
                 description:"This is the DeckBuilder. Here you can design a custom deck by dragging objects from left to right and reverse. You need at least 4 cards in your deck.\n\nYou can choose to play with your custom deck or a premade (default) deck."});
 
