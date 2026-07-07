@@ -181,6 +181,7 @@ export class MonologWindow {
         this.done = true;
         this.stopPointerHold();
         this.setSkipButtonState();
+        this.scene.scene.setVisible(true, 'MissionScene');
         if (this.scene.scene.isPaused("BTextBoxScene")) {
             this.scene.scene.resume("BTextBoxScene");
         } else {
