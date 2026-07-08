@@ -24,6 +24,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     private properX: number;
     private properY: number;
     private dragOutlineVisible: boolean = false;
+    private deathAnimationStarted: boolean = false;
 
     public scene:MissionScene;
 
@@ -136,6 +137,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public die():void {
+        if (this.deathAnimationStarted) {
+            if (!this.isDestroyed) {
+                this.isDestroyed = true;
+                this.destroy(true);
+                if (this.toolTip) this.toolTip.destroy(true);
+            }
+            return;
+        }
+
         this.playDeathAnimation();
     }
 
@@ -176,9 +186,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     private playDeathAnimation(): void {
-        if (this.isDestroyed) return;
+        if (this.isDestroyed || this.deathAnimationStarted) return;
 
         const smallEnemy = this.isSmallEnemy();
+        this.deathAnimationStarted = true;
 
         this.clearDragOutline();
         this.disableInteractive();
@@ -214,6 +225,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             ease: "Cubic.easeIn",
             onComplete: () => {
                 if (this.isDestroyed) return;
+                if (!smallEnemy) {
+                    return;
+                }
+
                 this.isDestroyed = true;
                 this.destroy(true);
                 if (this.toolTip) this.toolTip.destroy(true);

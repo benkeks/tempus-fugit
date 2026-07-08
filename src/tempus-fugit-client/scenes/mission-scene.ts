@@ -284,6 +284,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     private async waitForCombatAnimationsToSettle(): Promise<void> {
+        // Allow same-frame listener callbacks to enqueue their tracked tweens.
+        await this.wait(0);
+
         if (this.pendingAnimations === 0) return;
 
         await this.waitForActionAnimations();
