@@ -61,11 +61,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public lowerMenu!: Phaser.GameObjects.Graphics;
 
-    public gameOverText;
+    public gameOverText!: Phaser.GameObjects.Text;
 
     public phaseWheel!: WheelGUI;
 
     public delay:number = 1250;
+    public readonly combatAnimationTimeoutMs: number = 2500;
     private pendingAnimations = 0;
     private animationWaiters: AnimationWaiter[] = [];
     private pendingTurnStartDiscard: Card | null = null;
@@ -257,13 +258,16 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.handGUI.discardCard(card);
     }
 
-    private trackAnimation(tween: Phaser.Tweens.Tween): Phaser.Tweens.Tween {
+    public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
         this.pendingAnimations++;
 
         let settled = false;
+        let timeoutEvent: Phaser.Time.TimerEvent | null = null;
+
         const finish = () => {
             if (settled) return;
             settled = true;
+            if (timeoutEvent) timeoutEvent.remove(false);
             this.pendingAnimations--;
 
             if (this.pendingAnimations === 0) {
@@ -275,6 +279,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         tween.once("complete", finish);
         tween.once("stop", finish);
+        timeoutEvent = this.time.delayedCall(timeoutMs, finish, [], this);
         return tween;
     }
 
@@ -581,7 +586,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     async baseAttackPossible(game: Mission, active: boolean) { }
 
     public createAttackAnimation(scene: Scene, target: GameObjects.GameObject, direction: string = "+", offset: number = 100, repeat: number = 0): Phaser.Tweens.Tween {
-        return this.trackAnimation(scene.add.tween({
+        return this.trackCombatAnimation(scene.add.tween({
             targets: target,
             x: direction + "=" + offset,
             ease: "Linear",

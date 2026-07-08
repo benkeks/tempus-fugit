@@ -140,7 +140,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         this.clearDragOutline();
 
-        this.scene.add.tween({ // fade out
+        this.scene.trackCombatAnimation(this.scene.add.tween({ // fade out
             targets: this,
             alpha: { from: 1, to: 0 },
             ease: "Linear",
@@ -153,7 +153,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                 this.toolTip.destroy(true);
             },
             callbackScope: this
-        });
+        }));
         this.disableInteractive();
         if (this.toolTip) this.toolTip.enabled = false;
 
@@ -241,17 +241,17 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
-            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
+            this.scene.trackCombatAnimation(this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
             onComplete: function () {
                 damageText.destroy()
-            }});
+            }}));
             let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
             //blood.setScale(0.2,0.2);
             blood.alpha = 0;
-            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+            this.scene.trackCombatAnimation(this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
                 onComplete: function () {
                     blood.destroy()
-                }});
+                }}));
         }
 
         if (changedFrom > 0 && changedTo <= 0) {
