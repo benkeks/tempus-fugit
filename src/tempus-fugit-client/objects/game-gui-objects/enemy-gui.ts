@@ -191,6 +191,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         const smallEnemy = this.isSmallEnemy();
         this.deathAnimationStarted = true;
 
+        if (this.sprite && this.sprite.anims) {
+            this.sprite.anims.stop();
+        }
+
         this.clearDragOutline();
         this.disableInteractive();
         if (this.toolTip) this.toolTip.enabled = false;
