@@ -64,12 +64,12 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         if (changedBy > 0) {
             font1 = { fontSize: '50px', fontFamily: 'pressStart', color: '#00DD00' }
             let damageText = this.scene.add.text(this.x - 20, this.y - 100, Math.abs(changedBy).toString(), font1);
-            this.scene.trackCombatAnimation(this.scene.tweens.add({
+            this.scene.tweens.add({
                 targets: damageText, duration: 600, y: damageText.y - 40, ease: "Linear",
                 onComplete: function () {
                     damageText.destroy()
                 }
-            }));
+            });
         } else if (changedBy < 0) {
             this.scene.trackCombatAnimation(this.scene.tweens.add({
                 targets: this,
@@ -81,39 +81,52 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
             }));
 
             let damageText = this.scene.add.text(this.x - 20, this.y - 100, Math.abs(changedBy).toString(), font1);
-            this.scene.trackCombatAnimation(this.scene.tweens.add({
+            this.scene.tweens.add({
                 targets: damageText, duration: 600, y: damageText.y - 40, ease: "Linear", delay: 500,
                 onComplete: function () {
                     damageText.destroy()
                 }
-            }));
+            });
             let blood = this.scene.add.sprite(this.x, this.y + 30, "blood");
             //blood.setScale(0.3, 0.4);
             blood.alpha = 0;
-            this.scene.trackCombatAnimation(this.scene.tweens.add({
+            this.scene.tweens.add({
                 targets: blood, duration: 200, alpha: 1, ease: "power2", yoyo: true,
                 onComplete: function () {
                     blood.destroy()
                 }
-            }));
+            });
 
             if (changedTo <= 0 && !this.isDead) {
-                this.isDead = true;
-                this.scene.trackCombatAnimation(this.scene.tweens.add({
-                    targets: [this, this.baseAttackText, this.hpText, this.sword, this.heart],
-                    alpha: { from: 1, to: 0 },
-                    duration: 250,
-                    ease: "Linear",
-                    onComplete: () => {
-                        this.setVisible(false);
-                        this.baseAttackText.setVisible(false);
-                        this.hpText.setVisible(false);
-                        this.sword.setVisible(false);
-                        this.heart.setVisible(false);
-                    }
-                }));
+                this.playDeathAnimation();
             }
         }
+    }
+
+    private playDeathAnimation(): void {
+        if (this.isDead) return;
+
+        this.isDead = true;
+
+        this.scene.trackCombatAnimation(this.scene.tweens.add({
+            targets: this,
+            angle: { from: this.angle, to: -90 },
+            duration: 650,
+            ease: "Cubic.easeIn"
+        }));
+
+        this.scene.trackCombatAnimation(this.scene.tweens.add({
+            targets: [this.baseAttackText, this.hpText, this.sword, this.heart],
+            alpha: { from: 1, to: 0 },
+            duration: 300,
+            ease: "Linear",
+            onComplete: () => {
+                this.baseAttackText.setVisible(false);
+                this.hpText.setVisible(false);
+                this.sword.setVisible(false);
+                this.heart.setVisible(false);
+            }
+        }));
     }
 
     public reposition() {

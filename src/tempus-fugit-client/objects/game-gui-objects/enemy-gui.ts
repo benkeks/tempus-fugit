@@ -136,28 +136,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public die():void {
-        if (this.isDestroyed) return;
-
-        this.clearDragOutline();
-
-        this.scene.trackCombatAnimation(this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: { from: 1, to: 0 },
-            ease: "Linear",
-            duration: 200,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-                this.isDestroyed = true;
-                this.destroy(true);
-                this.toolTip.destroy(true);
-            },
-            callbackScope: this
-        }));
-        this.disableInteractive();
-        if (this.toolTip) this.toolTip.enabled = false;
-
-        this.disableListeners();
+        this.playDeathAnimation();
     }
 
     public updateEnemyAttributes():void {
@@ -190,6 +169,56 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         this.sprite.removePostPipeline('rexOutlinePostFx');
         this.dragOutlineVisible = false;
+    }
+
+    private isSmallEnemy(): boolean {
+        return !this.enemy.size || this.enemy.size[0] <= 32;
+    }
+
+    private playDeathAnimation(): void {
+        if (this.isDestroyed) return;
+
+        const smallEnemy = this.isSmallEnemy();
+
+        this.clearDragOutline();
+        this.disableInteractive();
+        if (this.toolTip) this.toolTip.enabled = false;
+        this.disableListeners();
+
+        if (smallEnemy) {
+            const startX = this.x;
+            const startY = this.y;
+            const durationSeconds = 0.52;
+            const horizontalDistance = 260;
+            const horizontalSpeed = horizontalDistance / durationSeconds;
+            const initialVerticalSpeed = -260;
+            const gravity = 1400;
+
+            this.scene.trackCombatAnimation(this.scene.tweens.addCounter({
+                from: 0,
+                to: durationSeconds,
+                duration: durationSeconds * 1000,
+                ease: "Linear",
+                onUpdate: tween => {
+                    const t = tween.getValue() as number;
+                    this.x = startX + horizontalSpeed * t;
+                    this.y = startY + initialVerticalSpeed * t + 0.5 * gravity * t * t;
+                }
+            }));
+        }
+
+        this.scene.trackCombatAnimation(this.scene.tweens.add({
+            targets: this.sprite,
+            angle: { from: this.sprite.angle, to: 90 },
+            duration: smallEnemy ? 520 : 700,
+            ease: "Cubic.easeIn",
+            onComplete: () => {
+                if (this.isDestroyed) return;
+                this.isDestroyed = true;
+                this.destroy(true);
+                if (this.toolTip) this.toolTip.destroy(true);
+            }
+        }));
     }
 
     private createSpecialAttackShortDescription(): void {
@@ -250,21 +279,21 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             }));
 
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
-            this.scene.trackCombatAnimation(this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
+            this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
             onComplete: function () {
                 damageText.destroy()
-            }}));
+            }});
             let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
             //blood.setScale(0.2,0.2);
             blood.alpha = 0;
-            this.scene.trackCombatAnimation(this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
                 onComplete: function () {
                     blood.destroy()
-                }}));
+                }});
         }
 
         if (changedFrom > 0 && changedTo <= 0) {
-            this.die();
+            this.playDeathAnimation();
         }else this.updateEnemyAttributes();
     }
 

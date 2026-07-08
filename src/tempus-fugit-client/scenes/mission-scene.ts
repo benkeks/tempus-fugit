@@ -283,6 +283,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         return tween;
     }
 
+    private async waitForCombatAnimationsToSettle(): Promise<void> {
+        if (this.pendingAnimations === 0) return;
+
+        await this.waitForActionAnimations();
+        await this.wait(300);
+    }
+
     preload(): void {
 
     }
@@ -504,6 +511,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async gameover(game: Mission, gameWon: boolean) {
+        await this.waitForCombatAnimationsToSettle();
+
         if (!gameWon) {
             this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
         } else {
@@ -526,6 +535,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     wavePresentationReady(game: Mission): void {
+        void this.startWavePresentationAfterCombat(game);
+    }
+
+    private async startWavePresentationAfterCombat(game: Mission): Promise<void> {
+        await this.waitForCombatAnimationsToSettle();
         this.startWavePresentation(game);
     }
 
