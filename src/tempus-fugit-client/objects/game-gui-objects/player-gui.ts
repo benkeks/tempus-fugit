@@ -20,7 +20,7 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
     private properY: number;
     private isDead: boolean = false;
 
-    public scene: MissionScene;
+    public scene!: MissionScene;
 
     constructor(
         scene: MissionScene,
@@ -28,12 +28,12 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
         player: Player,
         hp: number = 100,
         x: number = 300,
-        y: number = 480
+        y: number = 620
     ) {
         super(scene, x, y, texture);
-        this.scene.add.existing(this);
-        this.player = player;
         this.scene = scene;
+        scene.add.existing(this);
+        this.player = player;
         const textStyle = {
             fontSize: '40px',
             fontStyle: 'bold',
@@ -41,12 +41,13 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
             color: '#FFFFFF'
         };
         this.setScale(GameInfo.scale);
+        this.setOrigin(0.5, 1);
 
-        this.baseAttackText = this.scene.add.text(this.x + 95, this.y + 320, player.baseAttack.toString()).setStyle(textStyle).setOrigin(0.5,0);
-        this.sword = this.scene.add.sprite(this.x - 20, this.y + 340, "swordFont").setScale(0.4);
+        this.baseAttackText = this.scene.add.text(this.x + 95, this.y + 180, player.baseAttack.toString()).setStyle(textStyle).setOrigin(0.5,0);
+        this.sword = this.scene.add.sprite(this.x - 20, this.y + 200, "swordFont").setScale(0.4);
         this.sword.setScale(2, 2);
-        this.hpText = this.scene.add.text(this.x + 95, this.y + 390, player.getHP().toString()).setStyle(textStyle).setOrigin(0.5,0);
-        this.heart = this.scene.add.sprite(this.x - 20, this.y + 410, "heartFont").setScale(0.4);
+        this.hpText = this.scene.add.text(this.x + 95, this.y + 250, player.getHP().toString()).setStyle(textStyle).setOrigin(0.5,0);
+        this.heart = this.scene.add.sprite(this.x - 20, this.y + 270, "heartFont").setScale(0.4);
         this.heart.setScale(2, 2);
         this.properX = x;
         this.properY = y;
@@ -70,6 +71,15 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
                 }
             }));
         } else if (changedBy < 0) {
+            this.scene.trackCombatAnimation(this.scene.tweens.add({
+                targets: this,
+                angle: { from: 0, to: -10 },
+                duration: 150,
+                ease: "Linear",
+                yoyo: true,
+                repeat: 0
+            }));
+
             let damageText = this.scene.add.text(this.x - 20, this.y - 100, Math.abs(changedBy).toString(), font1);
             this.scene.trackCombatAnimation(this.scene.tweens.add({
                 targets: damageText, duration: 600, y: damageText.y - 40, ease: "Linear", delay: 500,

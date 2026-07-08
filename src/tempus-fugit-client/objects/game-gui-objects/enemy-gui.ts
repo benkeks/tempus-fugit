@@ -240,6 +240,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
+            this.scene.trackCombatAnimation(this.scene.tweens.add({
+                targets: this.sprite,
+                angle: { from: 0, to: 10 },
+                duration: 150,
+                ease: "Linear",
+                yoyo: true,
+                repeat: 0
+            }));
+
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
             this.scene.trackCombatAnimation(this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
             onComplete: function () {
