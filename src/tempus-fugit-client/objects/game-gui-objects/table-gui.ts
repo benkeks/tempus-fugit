@@ -68,11 +68,59 @@ export class TableGUI implements GameStateListener {
     private pendingSpendEnergyIndex: number | null = null;
     private pendingRefundEnergyIndex: number | null = null;
     private pendingEnergyLinkClearTimer: Phaser.Time.TimerEvent | null = null;
+    private hoveredVariableCellIndex: number | null = null;
 
     private isDestroyed = false;
 
     private getVariableCount(): number {
         return Object.keys(this.variables).length;
+    }
+
+    private getVariableNameForRow(row: number): string | null {
+        return this.variableByIndex[row] ?? null;
+    }
+
+    private isCellChangeableNow(column: number, row: number): boolean {
+        if (this.isDestroyed) return false;
+        if (!this.gameState.active) return false;
+        if (column !== this.gameState.activeState) return false;
+
+        const variableName = this.getVariableNameForRow(row);
+        if (!variableName) return false;
+
+        const variableStatus = this.gameState.getVariableStatus(variableName);
+        if (variableStatus.isBlocked(column)) return false;
+
+        const hasUserChanged = Boolean(variableStatus.userChanged[column]);
+        if (!hasUserChanged) return this.gameState.energy > 0;
+        return this.gameState.energy < this.gameState.maxEnergy;
+    }
+
+    private applyVariableCellHoverVisual(cellContainer: any, cellIndex: number): void {
+        const numVar = this.getVariableCount();
+        if (numVar <= 0) return;
+
+        const column = Math.floor(cellIndex / numVar);
+        const row = cellIndex % numVar;
+        const canChange = this.isCellChangeableNow(column, row);
+
+        cellContainer
+            .getElement("background")
+            .setStrokeStyle(4, canChange ? this.colorCellOver : this.colorCellEdge)
+            .setDepth(canChange ? 2 : 0);
+    }
+
+    private refreshHoveredVariableCellVisual(): void {
+        if (this.hoveredVariableCellIndex === null) return;
+        if (!this.isVariableTableReady()) return;
+
+        const cell = this.variableTable.getElement("table").getCell(this.hoveredVariableCellIndex);
+        if (!cell) return;
+
+        const cellContainer = cell.getContainer();
+        if (!cellContainer) return;
+
+        this.applyVariableCellHoverVisual(cellContainer, this.hoveredVariableCellIndex);
     }
 
     private getCellAnimationKey(row: number, variableIndex: number): string {
@@ -203,6 +251,8 @@ export class TableGUI implements GameStateListener {
         const toPos = cellIcon ? this.getTableIconCenter(cellIcon) : null;
 
         if (!fromPos || !toPos) {
+            // Keep visual state in sync when tween endpoints are unavailable.
+            onKickStart();
             onDone();
             return () => {};
         }
@@ -420,17 +470,14 @@ export class TableGUI implements GameStateListener {
             return;
         }
 
-        const energyIcon = this.getEnergyIcon(energyIndex);
-        const cellIcon = this.getVariableIcon(row, variableIndex);
-
         const handlers: Record<Exclude<RuneAnimationRecipe, "direct">, () => void> = {
             spendSet: () => {
                 this.toggleRune(false, row, variableIndex);
                 withConflict(
                     energyIndex,
                     done => this.animateEnergyBallTransfer(
-                        energyIcon,
-                        cellIcon,
+                        this.getEnergyIcon(energyIndex),
+                        this.getVariableIcon(row, variableIndex),
                         () => {
                             this.toggleRune(true, row, variableIndex);
                             done();
@@ -443,14 +490,16 @@ export class TableGUI implements GameStateListener {
                 withConflict(
                     energyIndex,
                     done => this.animateSpendIntoOccupiedCell(
-                        energyIcon,
-                        cellIcon,
+                        this.getEnergyIcon(energyIndex),
+                        this.getVariableIcon(row, variableIndex),
                         () => this.toggleRune(false, row, variableIndex),
                         done
                     )
                 );
             },
             refundUnset: () => {
+                const cellIcon = this.getVariableIcon(row, variableIndex);
+                const energyIcon = this.getEnergyIcon(energyIndex);
                 const fromPos = this.getTableIconCenter(cellIcon as Phaser.GameObjects.GameObject);
                 const toPos = this.getTableIconCenter(energyIcon as Phaser.GameObjects.GameObject);
                 this.toggleRune(false, row, variableIndex);
@@ -470,8 +519,8 @@ export class TableGUI implements GameStateListener {
                 withConflict(
                     energyIndex,
                     done => this.animateRefundFromOccupiedSpend(
-                        cellIcon,
-                        energyIcon,
+                        this.getVariableIcon(row, variableIndex),
+                        this.getEnergyIcon(energyIndex),
                         () => finalize(energyIndex, true, done)
                     )
                 );
@@ -488,7 +537,7 @@ export class TableGUI implements GameStateListener {
         colorPrimary: number = 0x5C4D4D,
         colorHighlight: number = 0xc9c7c5,
         colorArrow: number = 0x376A8E,
-        colorCellOver: number = 0xff0000,
+        colorCellOver: number = 0xffffff,
         colorCellEdge: number = 0x260e05,
         energyTexture: string = "energyFont"
     ) {
@@ -637,29 +686,29 @@ export class TableGUI implements GameStateListener {
         this.variableTable
             .on(
                 "cell.click",
-                function (cellContainer, cellIndex) {
+                (cellContainer, cellIndex) => {
                     if (this.isDestroyed) return;
                     const column = Math.floor(cellIndex / numVar);
                     const row = cellIndex % numVar;
-                    const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
+                    if (!this.isCellChangeableNow(column, row)) return;
+                    const variableName = this.getVariableNameForRow(row);
                     this.scene.time.delayedCall(0, () => {
                         if (this.isDestroyed || !variableName) return;
+                        if (!this.isCellChangeableNow(column, row)) return;
                         this._gameState.invertVariableUser(variableName, column);
                     });
-                }, this)
-            .on("cell.over", function (cellContainer, cellIndex) {
-                // focus current cell when hovering over it
-                cellContainer
-                    .getElement("background")
-                    .setStrokeStyle(2, this.colorCellOver)
-                    .setDepth(1);
-            }, this)
-            .on("cell.out", function (cellContainer, cellIndex) {
+                })
+            .on("cell.over", (cellContainer, cellIndex) => {
+                this.hoveredVariableCellIndex = cellIndex;
+                this.applyVariableCellHoverVisual(cellContainer, cellIndex);
+            })
+            .on("cell.out", (cellContainer, cellIndex) => {
+                if (this.hoveredVariableCellIndex === cellIndex) this.hoveredVariableCellIndex = null;
                 cellContainer
                     .getElement("background")
                     .setStrokeStyle(2, this.colorCellEdge)
                     .setDepth(0);
-            }, this);
+            });
 
 
         // table for variable names
@@ -843,6 +892,7 @@ export class TableGUI implements GameStateListener {
         cell.backgroundColor = color;
         cell.backgroundAlpha = 0.25;
         this.variableTable.getElement('table').updateTable(true);
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**
@@ -857,6 +907,7 @@ export class TableGUI implements GameStateListener {
         while (this.tableItems.length <= index) this.addColumns(1);
         this.tableItems[index].iconAlpha = Number(visible);
         this.variableTable.getElement('table').updateTable(true);
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**
@@ -905,6 +956,7 @@ export class TableGUI implements GameStateListener {
         // move table to the right if last visible column is reached
         this.scrollTable(true)
         this.updateArrowStates();
+        this.refreshHoveredVariableCellVisual();
     }
 
     addColumns(n: number) {
@@ -961,6 +1013,7 @@ export class TableGUI implements GameStateListener {
             this.stagePendingEnergyLink(null, newEnergy - 1);
             this.setEnergyIconColor(true, newEnergy - 1);
         }
+        this.refreshHoveredVariableCellVisual();
     }
 
     async activated(gameState: GameState) {
@@ -978,6 +1031,7 @@ export class TableGUI implements GameStateListener {
             this.overlay = this.scene.add.rectangle(left, top, width, height, 0x000000, 0.5)
                 .setDepth(100).setOrigin(0, 0);
         }
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**
