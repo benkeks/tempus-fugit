@@ -1,20 +1,18 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
-import { ToolTip } from "./tool-tip";
 import { ListGUI } from "./list-gui";
 
 type PendingEnergyKind = "none" | "spend" | "refund";
-type RuneAnimationRecipe =
-    | "direct"
-    | "spendSet"
-    | "spendUnsetKickout"
-    | "refundUnset"
-    | "refundSetReverseKickout";
 
 type PendingEnergyLink = {
     kind: PendingEnergyKind;
     index: number | null;
+};
+
+type RuneAnimationSource = {
+    x: number;
+    y: number;
 };
 
 const NO_PENDING_ENERGY: PendingEnergyLink = { kind: "none", index: null };
@@ -68,6 +66,8 @@ export class TableGUI implements GameStateListener {
     private pendingSpendEnergyIndex: number | null = null;
     private pendingRefundEnergyIndex: number | null = null;
     private pendingEnergyLinkClearTimer: Phaser.Time.TimerEvent | null = null;
+    private pendingCardRuneSource: RuneAnimationSource | null = null;
+    private pendingCardRuneSourceClearTimer: Phaser.Time.TimerEvent | null = null;
     private hoveredVariableCellIndex: number | null = null;
 
     private isDestroyed = false;
@@ -241,14 +241,12 @@ export class TableGUI implements GameStateListener {
         };
     }
 
-    private animateSpendIntoOccupiedCell(
-        energyIcon: Phaser.GameObjects.GameObject | null,
-        cellIcon: Phaser.GameObjects.GameObject | null,
+    private animateSpendIntoOccupiedCellBetweenPositions(
+        fromPos: RuneAnimationSource | null,
+        toPos: RuneAnimationSource | null,
         onKickStart: () => void,
         onDone: () => void,
     ): () => void {
-        const fromPos = energyIcon ? this.getTableIconCenter(energyIcon) : null;
-        const toPos = cellIcon ? this.getTableIconCenter(cellIcon) : null;
 
         if (!fromPos || !toPos) {
             // Keep visual state in sync when tween endpoints are unavailable.
@@ -409,6 +407,19 @@ export class TableGUI implements GameStateListener {
         this.setEnergyIconColor(true, energyIndex);
     }
 
+    public stagePendingCardRuneSource(x: number, y: number): void {
+        this.pendingCardRuneSource = { x, y };
+
+        if (this.pendingCardRuneSourceClearTimer) {
+            this.pendingCardRuneSourceClearTimer.remove(false);
+        }
+
+        this.pendingCardRuneSourceClearTimer = this.scene.time.delayedCall(0, () => {
+            this.pendingCardRuneSource = null;
+            this.pendingCardRuneSourceClearTimer = null;
+        });
+    }
+
     private consumePendingEnergyLink(): PendingEnergyLink {
         if (this.pendingSpendEnergyIndex !== null) {
             const index = this.pendingSpendEnergyIndex;
@@ -425,20 +436,29 @@ export class TableGUI implements GameStateListener {
         return { kind: "none", index: null };
     }
 
-    private resolveRuneAnimationRecipe(oldValue: boolean, newValue: boolean, energy: PendingEnergyLink): RuneAnimationRecipe {
-        if (energy.kind === "spend") {
-            if (!oldValue && newValue) return "spendSet";
-            if (oldValue && !newValue) return "spendUnsetKickout";
-            return "direct";
+    private resolveIncomingRuneSource(
+        energy: PendingEnergyLink,
+        cardSource: RuneAnimationSource | null,
+    ): { fromPos: RuneAnimationSource | null; conflictEnergyIndex: number | null } {
+        if (energy.kind === "spend" && energy.index !== null) {
+            const energyIcon = this.getEnergyIcon(energy.index);
+            return {
+                fromPos: this.getTableIconCenter(energyIcon as Phaser.GameObjects.GameObject),
+                conflictEnergyIndex: energy.index,
+            };
         }
 
-        if (energy.kind === "refund") {
-            if (oldValue && !newValue) return "refundUnset";
-            if (!oldValue && newValue) return "refundSetReverseKickout";
-            return "direct";
+        if (cardSource) {
+            return {
+                fromPos: cardSource,
+                conflictEnergyIndex: null,
+            };
         }
 
-        return "direct";
+        return {
+            fromPos: null,
+            conflictEnergyIndex: null,
+        };
     }
 
     private applyRuneTransition(
@@ -447,57 +467,58 @@ export class TableGUI implements GameStateListener {
         oldValue: boolean,
         newValue: boolean,
         energy: PendingEnergyLink,
+        cardSource: RuneAnimationSource | null,
     ): void {
         const withConflict = (energyIndex: number, animate: (done: () => void) => (() => void)): void => {
             this.startConflictAwareAnimation(row, variableIndex, energyIndex, animate, () => {});
+        };
+        const withCellConflict = (animate: (done: () => void) => (() => void)): void => {
+            this.startConflictAwareAnimation(row, variableIndex, null, animate, () => {});
         };
         const finalize = (energyIndex: number, runeVisible: boolean, done: () => void): void => {
             this.finalizeRefundAnimation(row, variableIndex, energyIndex, runeVisible);
             done();
         };
 
-        const recipe = this.resolveRuneAnimationRecipe(oldValue, newValue, energy);
         const energyIndex = energy.index;
+        const incoming = this.resolveIncomingRuneSource(energy, cardSource);
 
-        if (recipe === "direct") {
-            this.toggleRune(newValue, row, variableIndex);
-            if (energy.kind === "refund" && energyIndex !== null) this.setEnergyIconColor(true, energyIndex);
-            return;
-        }
-
-        if (energyIndex === null) {
-            this.toggleRune(newValue, row, variableIndex);
-            return;
-        }
-
-        const handlers: Record<Exclude<RuneAnimationRecipe, "direct">, () => void> = {
-            spendSet: () => {
+        if (oldValue !== newValue && incoming.fromPos) {
+            if (!oldValue && newValue) {
                 this.toggleRune(false, row, variableIndex);
-                withConflict(
-                    energyIndex,
-                    done => this.animateEnergyBallTransfer(
-                        this.getEnergyIcon(energyIndex),
-                        this.getVariableIcon(row, variableIndex),
+                const run = (
+                    done => this.animateEnergyBallTransferBetweenPositions(
+                        incoming.fromPos,
+                        this.getTableIconCenter(this.getVariableIcon(row, variableIndex) as Phaser.GameObjects.GameObject),
                         () => {
                             this.toggleRune(true, row, variableIndex);
                             done();
                         }
                     )
                 );
-            },
-            spendUnsetKickout: () => {
-                this.toggleRune(true, row, variableIndex);
-                withConflict(
-                    energyIndex,
-                    done => this.animateSpendIntoOccupiedCell(
-                        this.getEnergyIcon(energyIndex),
-                        this.getVariableIcon(row, variableIndex),
-                        () => this.toggleRune(false, row, variableIndex),
-                        done
-                    )
-                );
-            },
-            refundUnset: () => {
+
+                if (incoming.conflictEnergyIndex !== null) withConflict(incoming.conflictEnergyIndex, run);
+                else withCellConflict(run);
+                return;
+            }
+
+            this.toggleRune(true, row, variableIndex);
+            const run = (
+                done => this.animateSpendIntoOccupiedCellBetweenPositions(
+                    incoming.fromPos,
+                    this.getTableIconCenter(this.getVariableIcon(row, variableIndex) as Phaser.GameObjects.GameObject),
+                    () => this.toggleRune(false, row, variableIndex),
+                    done
+                )
+            );
+
+            if (incoming.conflictEnergyIndex !== null) withConflict(incoming.conflictEnergyIndex, run);
+            else withCellConflict(run);
+            return;
+        }
+
+        if (energy.kind === "refund" && energyIndex !== null) {
+            if (oldValue && !newValue) {
                 const cellIcon = this.getVariableIcon(row, variableIndex);
                 const energyIcon = this.getEnergyIcon(energyIndex);
                 const fromPos = this.getTableIconCenter(cellIcon as Phaser.GameObjects.GameObject);
@@ -512,8 +533,10 @@ export class TableGUI implements GameStateListener {
                         () => finalize(energyIndex, false, done)
                     )
                 );
-            },
-            refundSetReverseKickout: () => {
+                return;
+            }
+
+            if (!oldValue && newValue) {
                 this.toggleRune(false, row, variableIndex);
                 this.setEnergyIconColor(false, energyIndex);
                 withConflict(
@@ -524,10 +547,15 @@ export class TableGUI implements GameStateListener {
                         () => finalize(energyIndex, true, done)
                     )
                 );
-            },
-        };
+                return;
+            }
 
-        handlers[recipe]();
+            this.toggleRune(newValue, row, variableIndex);
+            this.setEnergyIconColor(true, energyIndex);
+            return;
+        }
+
+        this.toggleRune(newValue, row, variableIndex);
     }
 
     constructor(
@@ -999,7 +1027,9 @@ export class TableGUI implements GameStateListener {
                     ? this.consumePendingEnergyLink()
                     : NO_PENDING_ENERGY;
 
-                this.applyRuneTransition(row, variableIndex, oldValue, newValue, pendingEnergy);
+                const cardSource = this.pendingCardRuneSource;
+
+                this.applyRuneTransition(row, variableIndex, oldValue, newValue, pendingEnergy, cardSource);
             }
         }
     }
