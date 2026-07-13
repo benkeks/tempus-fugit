@@ -32,7 +32,7 @@ export class HelpScene extends Phaser.Scene {
         this.scene.pause(HelpButton.currHelpParent);
 
         if (HelpButton.currHelpParent === 'NavigationScene') {
-            new SoundButton(this, 1690, 50);
+            new SoundButton(this, 1780, 50);
             new PauseButton(this, false, () => {
                 this.closing = true;
                 this.scene.resume(HelpButton.currHelpParent);
@@ -50,7 +50,7 @@ export class HelpScene extends Phaser.Scene {
                 this.scene.resume(HelpButton.currHelpParent);
                 this.scene.stop('HelpScene');
             });
-            new DeckBuilderButton(this, 1780, 50, NavigationScene.instance.player, () => {
+            new DeckBuilderButton(this, 1690, 50, NavigationScene.instance.player, () => {
                 this.closing = true;
                 this.scene.run('DeckBuilderScene', {parent: HelpButton.currHelpParent, player: NavigationScene.instance.player, newCards: DeckBuilderButton.newCards});
                 this.scene.stop('HelpScene');

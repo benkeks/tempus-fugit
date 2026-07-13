@@ -21,7 +21,6 @@ import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 import { Sound } from "phaser";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilderButton } from "../objects/navigation-scene-objects/deck-builder-button";
 import { HelpWindow } from "../objects/help-gui-objects/help-window";
 import { ProgressStore } from "../progress/progress-store";
@@ -576,8 +575,8 @@ export class NavigationScene extends Phaser.Scene {
 
         this.helpButton = new HelpButton(this, false);
         this.pauseButton = new PauseButton(this, false);
-        this.deckBuilderButton = new DeckBuilderButton(this, 1780, 50, this.player);
-        this.soundButton = new SoundButton(this, 1690, 50);
+        this.deckBuilderButton = new DeckBuilderButton(this, 1690, 50, this.player);
+        this.soundButton = new SoundButton(this, 1780, 50);
         this.tutorialButton = new TutorialButton(this, 1600, 50);
 
         if (data.mission && gamewon && data.mission.loot.length > 0) {

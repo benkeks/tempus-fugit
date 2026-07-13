@@ -1,6 +1,10 @@
 import { GameInfo } from "../../../game";
 
-const BACKGROUND_COLOR = 0X000000;
+const BACKGROUND_COLOR = 0x002040;
+const BUTTON_BG = 0x666666;
+const BUTTON_BORDER = 0x000000;
+const BUTTON_BORDER_HOVER = 0xffffff;
+const BUTTON_BORDER_WIDTH = 3;
 
 export class MonologWindow {
     private scene: Phaser.Scene;
@@ -14,15 +18,17 @@ export class MonologWindow {
     private blinkCount = 20;
     private fontStyle = {
         fontSize: GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 1.5),
-        fontFamily: "pressStart"
+        fontFamily: "pressStart",
+        color: "#FFFFFF"
     };
     private displayAll = false;
     private typing = true;
     private done = false;
-    private skipcont!: Phaser.GameObjects.Text;
-    private gameOver!: boolean;
+    private skipcont;
     private holdStartTimer: ReturnType<typeof setTimeout> | undefined;
     private holdRepeatTimer: ReturnType<typeof setInterval> | undefined;
+    private skipButtonX = GameInfo.width - 150;
+    private skipButtonY = GameInfo.height - 100;
 
     public clicks:number = 0;
 
@@ -30,11 +36,33 @@ export class MonologWindow {
         this.scene = scene;
     }
 
-    public createMonologWindow(monolog: string, gameOver: boolean) {
+    private setSkipButtonState(label: string = ""): void {
+        if (!this.skipcont) return;
+
+        const textObject = this.skipcont.getElement('text');
+        const background = this.skipcont.getElement('background');
+        const hasText = label.trim().length > 0;
+        textObject.setText(hasText ? label : "");
+        textObject.setColor("#FFFFFF");
+        this.skipcont.layout();
+        this.skipcont.setPosition(
+            this.skipButtonX - this.skipcont.width / 2,
+            this.skipButtonY - this.skipcont.height / 2
+        );
+        this.skipcont.setVisible(hasText);
+
+        if (hasText) {
+            this.skipcont.setInteractive({ useHandCursor: true });
+            background.setStrokeStyle(BUTTON_BORDER_WIDTH, BUTTON_BORDER);
+        } else {
+            this.skipcont.disableInteractive();
+        }
+    }
+
+    public createMonologWindow(monolog: string) {
 
         if (this.instanceCounter > 0) return;
         this.instanceCounter += 1;
-        this.gameOver = gameOver;
 
         // create black background
         this.scene.cameras.add(0, 0, GameInfo.width, GameInfo.height).setBackgroundColor(BACKGROUND_COLOR);
@@ -65,24 +93,38 @@ export class MonologWindow {
 
         // skip button
         let text = "Skip";
-        if (gameOver) text = "Return to Map"
 
-        this.skipcont = this.scene.add.text(GameInfo.width - 150, GameInfo.height - 100, text, this.fontStyle);
-        this.skipcont.setOrigin(1,1)
-            .setInteractive({useHandCursor:true})
+        //@ts-ignore
+        const skipButtonBackground = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, BUTTON_BG, 0.75)
+            .setStrokeStyle(BUTTON_BORDER_WIDTH, BUTTON_BORDER);
+        const skipText = this.scene.add.text(0, 0, text, this.fontStyle);
+        skipText.setDepth(skipButtonBackground.depth + 1);
+        //@ts-ignore
+        this.skipcont = this.scene.rexUI.add.label({
+            x: this.skipButtonX,
+            y: this.skipButtonY,
+            background: skipButtonBackground,
+            text: skipText,
+            space: {
+                left: 16,
+                right: 16,
+                top: 10,
+                bottom: 10
+            }
+        }).layout();
+
+        this.skipcont
             .on('pointerdown', () => {
                 this.stopPointerHold();
                 this.switchToMissionScene();
             }).on('pointerover', () => {
-            // color red
-            this.skipcont.setTint(0xff0000);
+            this.skipcont.getElement('background').setStrokeStyle(BUTTON_BORDER_WIDTH, BUTTON_BORDER_HOVER);
         }).on('pointerout', () => {
-            // color white
-            this.skipcont.clearTint();
+            this.skipcont.getElement('background').setStrokeStyle(BUTTON_BORDER_WIDTH, BUTTON_BORDER);
         })
 
-        //.setOrigin(1, 0);
-
+        this.setSkipButtonState();
+        
         // space key events
         this.scene.input.keyboard?.on("keydown", e => {
             if (e.key != " ") return;
@@ -105,7 +147,6 @@ export class MonologWindow {
             case 1:
                 this.displayAll = true;
                 this.clicks++;
-                if (!this.gameOver) this.skipcont.text = "Continue";
                 break;
 
             default:
@@ -139,6 +180,8 @@ export class MonologWindow {
     private switchToMissionScene(): void {
         this.done = true;
         this.stopPointerHold();
+        this.setSkipButtonState();
+        this.scene.scene.setVisible(true, 'MissionScene');
         if (this.scene.scene.isPaused("BTextBoxScene")) {
             this.scene.scene.resume("BTextBoxScene");
         } else {
@@ -190,7 +233,7 @@ export class MonologWindow {
                 self.text.setText(displayedText + message[index++] + '|');
                 setTimeout(() => showText(displayedText + message[index - 1], message, index), self.interval);
             } else {
-                if (!self.gameOver) self.skipcont.text = "Continue";
+                self.setSkipButtonState("Continue");
                 self.typing = false;
                 setTimeout(() => pipeAnim(), self.interval)
             }

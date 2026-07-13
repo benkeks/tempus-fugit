@@ -3,8 +3,6 @@ import {SoundButton} from "../objects/sound-button";
 import { Formula } from "../temporal-logic/formula";
 import { GameState } from "../objects/game-objects/game-state";
 import { MusicScene } from "./music-scene";
-import { MissionScene } from "./mission-scene";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { ProgressStore } from "../progress/progress-store";
 
 export class StartingScene extends Phaser.Scene {
