@@ -20,13 +20,13 @@ export class DeathScene extends Phaser.Scene {
 
     create(data) {
         this.sceneData = data;
-        this.add.rectangle(1920 / 2, 1080 / 2, 1920, 1080, 0x000000);
+        this.add.rectangle(1920 / 2, 1080 / 2, 1920, 1080, 0x400000);
         this.add.sprite(1920 / 2, 400, 'skull').setScale(5);
 
         let createText = (text) => this.add.text(0, 0, text, { fontSize: '36px', fontFamily: "pressStart" });
 
-        this.tryAgain = createText('Try Again?');
-        this.backToNav = createText('Back to Navigation');
+        this.tryAgain = createText('Try again?');
+        this.backToNav = createText('Back to navigation');
         this.quitText = createText('Quit');
         let gameOver = this.add.text(0, 0, 'GAME OVER', { fontSize: '72px', fontFamily: "pressStart" });
 

@@ -38,8 +38,8 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
     public backgroundWidth:number;
     public backgroundHeight:number;
 
-    public leftButton:Phaser.GameObjects.Text;
-    public rightButton:Phaser.GameObjects.Text;
+    public leftButton;
+    public rightButton;
 
     public titleText:Phaser.GameObjects.Text;
     public titleBackground:Phaser.GameObjects.Graphics;
@@ -49,13 +49,20 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
     public exitBackgroundHover:Phaser.GameObjects.Graphics;
 
     public guided:boolean;
+    private buttonX:number;
+    private buttonY:number;
+    private isClosing:boolean = false;
 
     constructor(scene: Phaser.Scene, guided:boolean=true) {
         let screenPadding = Math.max(GameInfo.convertRelativeCoordinates(GameInfo.X_AXIS, 5), GameInfo.convertRelativeCoordinates(GameInfo.Y_AXIS, 5));
-        super(scene, screenPadding, screenPadding);
+        let startX = 1600;
+        let startY = 50;
+        super(scene, startX, startY);
 
         this.guided = guided;
         this.screenPadding = screenPadding;
+        this.buttonX = startX;
+        this.buttonY = startY;
         this.scene = scene;
         scene.add.existing(this);
 
@@ -118,24 +125,28 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
     }
 
     public setSlide(next:number=this.activeIndex+1):boolean {
+        if (this.isClosing) {
+            return false;
+        }
+
         if (next >= this.sprites.length) {
-            this.rightButton.setTint(0x333333);
+            this.fadeOut();
             return false;
         }
         else if (next < 0) {
-            this.leftButton.setTint(0x333333);
+            this.setArrowButtonEnabled(this.leftButton, false);
             return false;
         }
 
         if (next == 0) {
-            this.leftButton.setTint(0x333333);
-            this.rightButton.clearTint();
+            this.setArrowButtonEnabled(this.leftButton, false);
+            this.setArrowButtonEnabled(this.rightButton, true, "next");
         } else if (next == this.sprites.length-1) {
-            this.rightButton.setTint(0x333333);
-            this.leftButton.clearTint();
+            this.setArrowButtonEnabled(this.leftButton, true);
+            this.setArrowButtonEnabled(this.rightButton, true, "let's go!");
         } else {
-            this.leftButton.clearTint();
-            this.rightButton.clearTint();
+            this.setArrowButtonEnabled(this.leftButton, true);
+            this.setArrowButtonEnabled(this.rightButton, true, "next");
         }
 
 
@@ -165,7 +176,6 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         
         // disable left and right button
         this.leftButton.disableInteractive();
-        this.rightButton.disableInteractive();
 
         sprite.setVisible(true);
         background.setVisible(true);
@@ -179,8 +189,6 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
             onComplete: function() {
                 if (next == 0) {
                     this.rightButton.setInteractive();
-                } else if (next == this.sprites.length-1) {
-                    this.leftButton.setInteractive();
                 } else {
                     this.leftButton.setInteractive();
                     this.rightButton.setInteractive();
@@ -190,6 +198,28 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         });
 
         this.activeIndex = next;
+    }
+
+    private setArrowButtonEnabled(button, enabled:boolean, text?:string) {
+        let background = button.getElement("background");
+        let labelText = button.getElement("text");
+
+        if (text) {
+            labelText.setText(text);
+            button.layout();
+        }
+
+        if (enabled) {
+            button.setInteractive({useHandCursor:true});
+            button.setAlpha(1);
+            labelText.setColor("#000000");
+            background.setStrokeStyle(BORDER_WIDTH, GUI_BORDER);
+        } else {
+            button.disableInteractive();
+            button.setAlpha(0.55);
+            labelText.setColor("#333333");
+            background.setStrokeStyle(BORDER_WIDTH, GUI_BORDER);
+        }
     }
 
     public updateTitleText() {
@@ -271,52 +301,98 @@ export class TutorialWindow extends Phaser.GameObjects.Container{
         }
     }
 
-    public fadeOut(go=[this]) {
-        this.scene.add.tween({ // fade out
-            targets: go,
-            alpha: 0,
-            ease: "Linear",
-            duration: 500,
+    public fadeOut(onComplete?: () => void) {
+        if (this.isClosing) {
+            return;
+        }
+
+        this.isClosing = true;
+        this.scene.add.tween({
+            targets: this,
+            x: this.buttonX,
+            y: this.buttonY,
+            scaleX: 0.1,
+            scaleY: 0.1,
+            ease: "Back.In",
+            duration: 350,
             repeat: 0,
             yoyo: false,
-            onComplete: function () {
-                go.map(g => g.destroy(true));
-            },
-            callbackScope: this
+            onComplete: () => {
+                if (onComplete) {
+                    onComplete();
+                }
+                this.destroy(true);
+            }
         });
     }
 
-    public fadeIn(go=[this]) {
-        go.map(g => g.setVisible(true));
-        this.scene.add.tween({ // fade out
-            targets: go,
-            alpha: {from:0, to:1},
-            ease: "Linear",
-            duration: 500,
+    public fadeIn() {
+        this.setVisible(true);
+        this.setPosition(this.buttonX, this.buttonY);
+        this.setScale(0.1);
+        this.scene.add.tween({
+            targets: this,
+            x: this.screenPadding,
+            y: this.screenPadding,
+            scaleX: 1,
+            scaleY: 1,
+            ease: "Back.Out",
+            duration: 350,
             repeat: 0,
             yoyo: false
         });
     }
 
     public setUpScrollingArrows() {
-        let padding = 15;
-        let config = { fontSize: "22px", fontFamily: 'pressStart' }
-        this.rightButton = this.scene.add.text(this.backgroundWidth/2+padding, this.backgroundHeight-this.screenPadding/2, "next", config)
-        .setOrigin(0,0.5);
-        this.leftButton = this.scene.add.text(this.backgroundWidth/2-padding, this.backgroundHeight-this.screenPadding/2, "previous", config)
-        .setOrigin(1,0.5);
+        let padding = 150;
+        let config = { fontSize: "22px", fontFamily: 'pressStart', color: '#000000' };
 
-        this.leftButton.setInteractive({useHandCursor:true}).on("pointerdown", () => {
+        this.rightButton = this.createArrowButton(this.backgroundWidth/2+padding, this.backgroundHeight-this.screenPadding/2, "next", config)
+        .setOrigin(0.5,0.5);
+        this.leftButton = this.createArrowButton(this.backgroundWidth/2-padding, this.backgroundHeight-this.screenPadding/2, "previous", config)
+        .setOrigin(0.5,0.5);
+
+        this.leftButton.on("pointerdown", () => {
             this.setSlide(this.activeIndex-1);
             this.updateTitleText();
         }, this);
 
-        this.rightButton.setInteractive({useHandCursor:true}).on("pointerdown", () => {
+        this.rightButton.on("pointerdown", () => {
             this.setSlide();
             this.updateTitleText();
         }, this);
 
         this.add(this.rightButton);
         this.add(this.leftButton);
+    }
+
+    private createArrowButton(x:number, y:number, text:string, config) {
+        let background = this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 18, GUI_FILL)
+            .setStrokeStyle(BORDER_WIDTH, GUI_BORDER);
+
+        let label = this.scene.rexUI.add.label({
+            x: x,
+            y: y,
+            background: background,
+            text: this.scene.add.text(0, 0, text, config),
+            width: 250,
+            align: "center",
+            space: {
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 16,
+            }
+        }).layout();
+
+        label.setInteractive({useHandCursor:true});
+        label.on("pointerover", () => {
+            background.setStrokeStyle(BORDER_WIDTH, 0xffffff);
+        }, this);
+        label.on("pointerout", () => {
+            background.setStrokeStyle(BORDER_WIDTH, GUI_BORDER);
+        }, this);
+
+        return label;
     }
 }

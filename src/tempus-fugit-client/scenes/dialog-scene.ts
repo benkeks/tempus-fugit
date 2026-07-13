@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
+import { DescriptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 
 export class DialogScene extends Scene {
     public window;
@@ -17,7 +17,7 @@ export class DialogScene extends Scene {
     create(data) {
         this.sys.canvas.style.cursor = "default";
         this.parentScene = data.parent;
-        this.window = new DescritptionDialog(this, data.description, data.buttons, data.title);
+        this.window = new DescriptionDialog(this, data.description, data.buttons, data.title);
 
         const overlay = this.add.rectangle(
             this.sys.canvas.width / 2,

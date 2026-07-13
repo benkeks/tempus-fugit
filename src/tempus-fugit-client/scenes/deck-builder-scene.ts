@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import { DescritptionDialog } from "../objects/navigation-scene-objects/description-dialog";
 import { DeckBuilder } from "../objects/navigation-scene-objects/deck-builder";
 import { SoundButton } from "../objects/sound-button";
 import { PauseButton } from "../objects/pause-gui-objects/pause-button";
@@ -34,7 +33,7 @@ export class DeckBuilderScene extends Scene {
             this.scene.stop("DeckBuilderScene");
         },this)
 
-        new SoundButton(this, 1690, 50);
+        new SoundButton(this, 1780, 50);
         new PauseButton(this, false, () => {
             this.closing = true;
             this.scene.resume(this.parentScene);
@@ -53,7 +52,7 @@ export class DeckBuilderScene extends Scene {
             this.scene.run('HelpScene');
             this.scene.stop('DeckBuilderScene');
         });
-        new DeckBuilderButton(this, 1780, 50, data.player, () => {
+        new DeckBuilderButton(this, 1690, 50, data.player, () => {
             this.closing = true;
             this.scene.resume(this.parentScene);
             this.scene.stop('DeckBuilderScene');

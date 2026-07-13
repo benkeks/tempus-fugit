@@ -133,6 +133,7 @@ export class Mission implements EnemyListener, PlayerListener {
     private pendingWaveTransition: ReturnType<typeof setTimeout> | null = null;
     private pendingWaveAdvance: number | null = null;
     private aliveEnemiesCount = -1;
+    private baseAttackConsumedThisTurn: boolean = false;
     // TODO: effect list
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {
@@ -473,7 +474,19 @@ export class Mission implements EnemyListener, PlayerListener {
     private playPhase(): void {
         this.player.active = true;
         this.gameState.active = false;
+        this.baseAttackConsumedThisTurn = false;
         this.listener.map(l => l.baseAttackPossible(this, true));
+    }
+
+    public tryConsumeBaseAttack(): boolean {
+        const inPlayerActionPhase = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
+        if (!inPlayerActionPhase || this.baseAttackConsumedThisTurn) {
+            return false;
+        }
+
+        this.baseAttackConsumedThisTurn = true;
+        this.listener.map(l => l.baseAttackPossible(this, false));
+        return true;
     }
 
     private standPhaseIterator() {
@@ -549,6 +562,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     private endOfRound(): void {
         this.gameState.changeRound();
+        this.baseAttackConsumedThisTurn = false;
 
         this.curTurn++;
     }
@@ -642,6 +656,7 @@ export class Mission implements EnemyListener, PlayerListener {
     baseAttackChanged(enemy: Enemy) { }
 
     async cardPlayed(player, card) {
+        this.baseAttackConsumedThisTurn = true;
         if (this.curPhase == Mission.ENERGY_PHASE) this.nextPhase(Mission.PLAY_PHASE);
         this.listener.map(l => l.baseAttackPossible(this, false));
     }

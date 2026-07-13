@@ -12,7 +12,7 @@ import { GameInfo } from "../../game";
  * for now only displays "name: text", without icon
  */
 export class BTextBox {
-    private COLOR_PRIMARY = 0x002800;
+    private COLOR_PRIMARY = 0x002040;
     private COLOR_LIGHT = 0x7b5e57;
     private GetValue = Phaser.Utils.Objects.GetValue;
     public storyDialogQueue: StoryDialog[] = [];

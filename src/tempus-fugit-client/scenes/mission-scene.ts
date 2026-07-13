@@ -526,7 +526,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     private async presentMonolog(game: Mission, monolog: string): Promise<void> {
         await this.withMissionPresentation(game, { blocking: true }, () => {
-            this.scene.run('MonologScene', { monolog: monolog, gameOver: game.isGameWon() });
+            this.scene.pause('MissionScene');
+            this.scene.setVisible(false, 'MissionScene');
+            this.scene.run('MonologScene', { monolog: monolog });
         });
     }
 
