@@ -87,7 +87,7 @@ const credits = [
     `Software developer & coordinator.......................Benjamin Bisping`,
     `...............`,
     `Music by ...`,
-    `Malek El-Tannir`,
+    `Malek El-Tannir (@Makelek)`,
     `...............`,
     `Special Thanks to ...`,
     `Willy Cai`,
