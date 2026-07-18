@@ -2,9 +2,13 @@
 
 **Tempus fugit** is a card-based combat game around concepts of *linear temporal logic* (LTL).
 
-Play on: <https://tempusfugit.equiv.io/>
+**Play on: <https://benkeks.itch.io/tempusfugit>**
 
-[![Gameplay screenshot](./doc/tempus-fugit-concert.png)](https://tempusfugit.equiv.io/)
+[![Gameplay screenshot](./doc/tempus-fugit-concert.png)](https://benkeks.itch.io/tempusfugit)
+
+**Preprint article:** Read about the game design and its connection to LTL in our preprint [‹Tempus fugit: Anyone can understand temporal logic if they have to save the realm›](https://doi.org/10.48550/arXiv.2607.05062).
+
+**Beta builds:** The continuous integration build of the master branch can be tested on <https://tempusfugit.equiv.io/>.
 
 ## Gameplay
 
