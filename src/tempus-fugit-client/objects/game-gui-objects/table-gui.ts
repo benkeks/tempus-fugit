@@ -1,8 +1,21 @@
 import { GameState, GameStateListener } from "../game-objects/game-state";
 import { Variable } from "../../temporal-logic/variable";
 import { Mission } from "../../mechanics/mission";
-import { ToolTip } from "./tool-tip";
 import { ListGUI } from "./list-gui";
+
+type PendingEnergyKind = "none" | "spend" | "refund";
+
+type PendingEnergyLink = {
+    kind: PendingEnergyKind;
+    index: number | null;
+};
+
+type RuneAnimationSource = {
+    x: number;
+    y: number;
+};
+
+const NO_PENDING_ENERGY: PendingEnergyLink = { kind: "none", index: null };
 
 /**
  * @author Mustafa
@@ -48,8 +61,502 @@ export class TableGUI implements GameStateListener {
     private leftArrow!: Phaser.GameObjects.Image;
     private rightArrow!: Phaser.GameObjects.Image;
     private isScrolling = false;
+    private activeCellAnimations: Map<string, () => void> = new Map();
+    private activeEnergyAnimations: Map<number, () => void> = new Map();
+    private pendingSpendEnergyIndex: number | null = null;
+    private pendingRefundEnergyIndex: number | null = null;
+    private pendingEnergyLinkClearTimer: Phaser.Time.TimerEvent | null = null;
+    private pendingCardRuneSource: RuneAnimationSource | null = null;
+    private pendingCardRuneSourceClearTimer: Phaser.Time.TimerEvent | null = null;
+    private hoveredVariableCellIndex: number | null = null;
 
     private isDestroyed = false;
+
+    private getVariableCount(): number {
+        return Object.keys(this.variables).length;
+    }
+
+    private getVariableNameForRow(row: number): string | null {
+        return this.variableByIndex[row] ?? null;
+    }
+
+    private isCellChangeableNow(column: number, row: number): boolean {
+        if (this.isDestroyed) return false;
+        if (!this.gameState.active) return false;
+        if (column !== this.gameState.activeState) return false;
+
+        const variableName = this.getVariableNameForRow(row);
+        if (!variableName) return false;
+
+        const variableStatus = this.gameState.getVariableStatus(variableName);
+        if (variableStatus.isBlocked(column)) return false;
+
+        const hasUserChanged = Boolean(variableStatus.userChanged[column]);
+        if (!hasUserChanged) return this.gameState.energy > 0;
+        return this.gameState.energy < this.gameState.maxEnergy;
+    }
+
+    private applyVariableCellHoverVisual(cellContainer: any, cellIndex: number): void {
+        const numVar = this.getVariableCount();
+        if (numVar <= 0) return;
+
+        const column = Math.floor(cellIndex / numVar);
+        const row = cellIndex % numVar;
+        const canChange = this.isCellChangeableNow(column, row);
+
+        cellContainer
+            .getElement("background")
+            .setStrokeStyle(4, canChange ? this.colorCellOver : this.colorCellEdge)
+            .setDepth(canChange ? 2 : 0);
+    }
+
+    private refreshHoveredVariableCellVisual(): void {
+        if (this.hoveredVariableCellIndex === null) return;
+        if (!this.isVariableTableReady()) return;
+
+        const cell = this.variableTable.getElement("table").getCell(this.hoveredVariableCellIndex);
+        if (!cell) return;
+
+        const cellContainer = cell.getContainer();
+        if (!cellContainer) return;
+
+        this.applyVariableCellHoverVisual(cellContainer, this.hoveredVariableCellIndex);
+    }
+
+    private getCellAnimationKey(row: number, variableIndex: number): string {
+        return `${row}:${variableIndex}`;
+    }
+
+    private abortConflictingAnimations(row: number, variableIndex: number, energyIndex: number | null): void {
+        const cancels: Array<() => void> = [];
+        const cellCancel = this.activeCellAnimations.get(this.getCellAnimationKey(row, variableIndex));
+        if (cellCancel) cancels.push(cellCancel);
+        if (energyIndex !== null) {
+            const energyCancel = this.activeEnergyAnimations.get(energyIndex);
+            if (energyCancel && energyCancel !== cellCancel) cancels.push(energyCancel);
+        }
+
+        cancels.forEach(cancel => cancel());
+    }
+
+    private startConflictAwareAnimation(
+        row: number,
+        variableIndex: number,
+        energyIndex: number | null,
+        run: (done: () => void) => () => void,
+        onDone: () => void,
+    ): void {
+        this.abortConflictingAnimations(row, variableIndex, energyIndex);
+
+        const cellKey = this.getCellAnimationKey(row, variableIndex);
+        let finished = false;
+        let internalCancel: (() => void) | null = null;
+
+        const done = () => {
+            if (finished) return;
+            finished = true;
+            if (this.activeCellAnimations.get(cellKey) === wrappedCancel) this.activeCellAnimations.delete(cellKey);
+            if (energyIndex !== null && this.activeEnergyAnimations.get(energyIndex) === wrappedCancel) this.activeEnergyAnimations.delete(energyIndex);
+            onDone();
+        };
+
+        const wrappedCancel = () => {
+            if (finished) return;
+            finished = true;
+            if (internalCancel) internalCancel();
+            if (this.activeCellAnimations.get(cellKey) === wrappedCancel) this.activeCellAnimations.delete(cellKey);
+            if (energyIndex !== null && this.activeEnergyAnimations.get(energyIndex) === wrappedCancel) this.activeEnergyAnimations.delete(energyIndex);
+        };
+
+        internalCancel = run(done);
+        this.activeCellAnimations.set(cellKey, wrappedCancel);
+        if (energyIndex !== null) this.activeEnergyAnimations.set(energyIndex, wrappedCancel);
+    }
+
+    private getTableIconCenter(icon: Phaser.GameObjects.GameObject): { x: number; y: number } | null {
+        if (!icon || !(icon as any).scene) return null;
+        const bounds = (icon as any).getBounds?.();
+        if (!bounds) return null;
+        return { x: bounds.centerX, y: bounds.centerY };
+    }
+
+    private getEnergyIcon(index: number): Phaser.GameObjects.GameObject | null {
+        if (!this.isEnergyTableReady() || index < 0) return null;
+        const cell = this.energyTable.getElement("table").getCell(index);
+        if (!cell) return null;
+        return cell.getContainer().getElement("icon") || null;
+    }
+
+    private getVariableIcon(state: number, variableIndex: number): Phaser.GameObjects.GameObject | null {
+        if (!this.isVariableTableReady()) return null;
+        const cellIndex = state * this.getVariableCount() + variableIndex;
+        const cell = this.variableTable.getElement("table").getCell(cellIndex);
+        if (!cell) return null;
+        return cell.getContainer().getElement("icon") || null;
+    }
+
+    private animateEnergyBallTransfer(from: Phaser.GameObjects.GameObject | null, to: Phaser.GameObjects.GameObject | null, onDone: () => void): () => void {
+        const fromPos = from ? this.getTableIconCenter(from) : null;
+        const toPos = to ? this.getTableIconCenter(to) : null;
+
+        return this.animateEnergyBallTransferBetweenPositions(fromPos, toPos, onDone);
+    }
+
+    private animateEnergyBallTransferBetweenPositions(fromPos: { x: number; y: number } | null, toPos: { x: number; y: number } | null, onDone: () => void): () => void {
+
+        if (!fromPos || !toPos) {
+            onDone();
+            return () => {};
+        }
+
+        const ball = this.scene.add.image(fromPos.x, fromPos.y, this.energyTexture).setDepth(1000);
+        let finished = false;
+        let tween: Phaser.Tweens.Tween | null = null;
+        let timeout: Phaser.Time.TimerEvent | null = null;
+        const finish = () => {
+            if (finished) return;
+            finished = true;
+            if (ball && ball.scene) ball.destroy();
+            onDone();
+        };
+
+        tween = this.scene.tweens.add({
+            targets: ball,
+            x: toPos.x,
+            y: toPos.y,
+            duration: 220,
+            ease: "Cubic.easeInOut",
+            onComplete: finish,
+            onStop: finish
+        });
+
+        timeout = this.scene.time.delayedCall(280, finish);
+
+        return () => {
+            if (finished) return;
+            finished = true;
+            if (tween) tween.stop();
+            if (timeout) timeout.remove(false);
+            if (ball.scene) ball.destroy();
+        };
+    }
+
+    private animateSpendIntoOccupiedCellBetweenPositions(
+        fromPos: RuneAnimationSource | null,
+        toPos: RuneAnimationSource | null,
+        onKickStart: () => void,
+        onDone: () => void,
+    ): () => void {
+
+        if (!fromPos || !toPos) {
+            // Keep visual state in sync when tween endpoints are unavailable.
+            onKickStart();
+            onDone();
+            return () => {};
+        }
+
+        const incoming = this.scene.add.image(fromPos.x, fromPos.y, this.energyTexture).setDepth(1000);
+        let stationary: Phaser.GameObjects.Image | null = null;
+        let incomingTween: Phaser.Tweens.Tween | null = null;
+        let kickIncomingTween: Phaser.Tweens.Tween | null = null;
+        let kickStationaryTween: Phaser.Tweens.Tween | null = null;
+        let timeout: Phaser.Time.TimerEvent | null = null;
+        let finished = false;
+        const finish = () => {
+            if (finished) return;
+            finished = true;
+            if (incoming.scene) incoming.destroy();
+            if (stationary && stationary.scene) stationary.destroy();
+            onDone();
+        };
+
+        incomingTween = this.scene.tweens.add({
+            targets: incoming,
+            x: toPos.x,
+            y: toPos.y,
+            duration: 220,
+            ease: "Cubic.easeInOut",
+            onComplete: () => {
+                onKickStart();
+                stationary = this.scene.add.image(toPos.x, toPos.y, this.energyTexture).setDepth(1000);
+                let doneCount = 0;
+                const doneKick = () => {
+                    doneCount++;
+                    if (doneCount < 2) return;
+                    finish();
+                };
+
+                kickIncomingTween = this.scene.tweens.add({
+                    targets: incoming,
+                    x: toPos.x - 18,
+                    y: toPos.y - 170,
+                    alpha: 0,
+                    duration: 180,
+                    ease: "Cubic.easeOut",
+                    onComplete: doneKick,
+                    onStop: doneKick
+                });
+
+                kickStationaryTween = this.scene.tweens.add({
+                    targets: stationary,
+                    x: toPos.x + 18,
+                    y: toPos.y - 170,
+                    alpha: 0,
+                    duration: 180,
+                    ease: "Cubic.easeOut",
+                    onComplete: doneKick,
+                    onStop: doneKick
+                });
+            },
+            onStop: finish
+        });
+
+        timeout = this.scene.time.delayedCall(520, finish);
+
+        return () => {
+            if (finished) return;
+            finished = true;
+            if (incomingTween) incomingTween.stop();
+            if (kickIncomingTween) kickIncomingTween.stop();
+            if (kickStationaryTween) kickStationaryTween.stop();
+            if (timeout) timeout.remove(false);
+            if (incoming.scene) incoming.destroy();
+            if (stationary && stationary.scene) stationary.destroy();
+        };
+    }
+
+    private animateRefundFromOccupiedSpend(cellIcon: Phaser.GameObjects.GameObject | null, energyIcon: Phaser.GameObjects.GameObject | null, onDone: () => void): () => void {
+        const cellPos = cellIcon ? this.getTableIconCenter(cellIcon) : null;
+        const energyPos = energyIcon ? this.getTableIconCenter(energyIcon) : null;
+
+        if (!cellPos || !energyPos) {
+            onDone();
+            return () => {};
+        }
+
+        const topY = cellPos.y - 170;
+        const ballToEnergy = this.scene.add.image(cellPos.x - 18, topY, this.energyTexture).setDepth(1000);
+        const ballToCell = this.scene.add.image(cellPos.x + 18, topY, this.energyTexture).setDepth(1000);
+        let convergeTween: Phaser.Tweens.Tween | null = null;
+        let toEnergyTween: Phaser.Tweens.Tween | null = null;
+        let timeout: Phaser.Time.TimerEvent | null = null;
+
+        let finished = false;
+        const finish = () => {
+            if (finished) return;
+            finished = true;
+            if (ballToEnergy.scene) ballToEnergy.destroy();
+            if (ballToCell.scene) ballToCell.destroy();
+            onDone();
+        };
+
+        convergeTween = this.scene.tweens.add({
+            targets: [ballToEnergy, ballToCell],
+            x: cellPos.x,
+            y: cellPos.y,
+            duration: 180,
+            ease: "Cubic.easeIn",
+            onComplete: () => {
+                toEnergyTween = this.scene.tweens.add({
+                    targets: ballToEnergy,
+                    x: energyPos.x,
+                    y: energyPos.y,
+                    duration: 220,
+                    ease: "Cubic.easeInOut",
+                    onComplete: () => {
+                        if (ballToEnergy.scene) ballToEnergy.destroy();
+                        if (ballToCell.scene) ballToCell.destroy();
+                        finish();
+                    },
+                    onStop: finish
+                });
+            },
+            onStop: finish
+        });
+
+        timeout = this.scene.time.delayedCall(520, finish);
+
+        return () => {
+            if (finished) return;
+            finished = true;
+            if (convergeTween) convergeTween.stop();
+            if (toEnergyTween) toEnergyTween.stop();
+            if (timeout) timeout.remove(false);
+            if (ballToEnergy.scene) ballToEnergy.destroy();
+            if (ballToCell.scene) ballToCell.destroy();
+        };
+    }
+
+    private stagePendingEnergyLink(spendIndex: number | null, refundIndex: number | null): void {
+        this.pendingSpendEnergyIndex = spendIndex;
+        this.pendingRefundEnergyIndex = refundIndex;
+
+        if (this.pendingEnergyLinkClearTimer) {
+            this.pendingEnergyLinkClearTimer.remove(false);
+        }
+
+        this.pendingEnergyLinkClearTimer = this.scene.time.delayedCall(0, () => {
+            this.pendingSpendEnergyIndex = null;
+            this.pendingRefundEnergyIndex = null;
+            this.pendingEnergyLinkClearTimer = null;
+        });
+    }
+
+    private finalizeRefundAnimation(row: number, variableIndex: number, energyIndex: number, runeVisible: boolean): void {
+        this.toggleRune(runeVisible, row, variableIndex);
+        this.setEnergyIconColor(true, energyIndex);
+    }
+
+    public stagePendingCardRuneSource(x: number, y: number): void {
+        this.pendingCardRuneSource = { x, y };
+
+        if (this.pendingCardRuneSourceClearTimer) {
+            this.pendingCardRuneSourceClearTimer.remove(false);
+        }
+
+        this.pendingCardRuneSourceClearTimer = this.scene.time.delayedCall(0, () => {
+            this.pendingCardRuneSource = null;
+            this.pendingCardRuneSourceClearTimer = null;
+        });
+    }
+
+    private consumePendingEnergyLink(): PendingEnergyLink {
+        if (this.pendingSpendEnergyIndex !== null) {
+            const index = this.pendingSpendEnergyIndex;
+            this.pendingSpendEnergyIndex = null;
+            return { kind: "spend", index };
+        }
+
+        if (this.pendingRefundEnergyIndex !== null) {
+            const index = this.pendingRefundEnergyIndex;
+            this.pendingRefundEnergyIndex = null;
+            return { kind: "refund", index };
+        }
+
+        return { kind: "none", index: null };
+    }
+
+    private resolveIncomingRuneSource(
+        energy: PendingEnergyLink,
+        cardSource: RuneAnimationSource | null,
+    ): { fromPos: RuneAnimationSource | null; conflictEnergyIndex: number | null } {
+        if (energy.kind === "spend" && energy.index !== null) {
+            const energyIcon = this.getEnergyIcon(energy.index);
+            return {
+                fromPos: this.getTableIconCenter(energyIcon as Phaser.GameObjects.GameObject),
+                conflictEnergyIndex: energy.index,
+            };
+        }
+
+        if (cardSource) {
+            return {
+                fromPos: cardSource,
+                conflictEnergyIndex: null,
+            };
+        }
+
+        return {
+            fromPos: null,
+            conflictEnergyIndex: null,
+        };
+    }
+
+    private applyRuneTransition(
+        row: number,
+        variableIndex: number,
+        oldValue: boolean,
+        newValue: boolean,
+        energy: PendingEnergyLink,
+        cardSource: RuneAnimationSource | null,
+    ): void {
+        const withConflict = (energyIndex: number, animate: (done: () => void) => (() => void)): void => {
+            this.startConflictAwareAnimation(row, variableIndex, energyIndex, animate, () => {});
+        };
+        const withCellConflict = (animate: (done: () => void) => (() => void)): void => {
+            this.startConflictAwareAnimation(row, variableIndex, null, animate, () => {});
+        };
+        const finalize = (energyIndex: number, runeVisible: boolean, done: () => void): void => {
+            this.finalizeRefundAnimation(row, variableIndex, energyIndex, runeVisible);
+            done();
+        };
+
+        const energyIndex = energy.index;
+        const incoming = this.resolveIncomingRuneSource(energy, cardSource);
+
+        if (oldValue !== newValue && incoming.fromPos) {
+            if (!oldValue && newValue) {
+                this.toggleRune(false, row, variableIndex);
+                const run = (
+                    done => this.animateEnergyBallTransferBetweenPositions(
+                        incoming.fromPos,
+                        this.getTableIconCenter(this.getVariableIcon(row, variableIndex) as Phaser.GameObjects.GameObject),
+                        () => {
+                            this.toggleRune(true, row, variableIndex);
+                            done();
+                        }
+                    )
+                );
+
+                if (incoming.conflictEnergyIndex !== null) withConflict(incoming.conflictEnergyIndex, run);
+                else withCellConflict(run);
+                return;
+            }
+
+            this.toggleRune(true, row, variableIndex);
+            const run = (
+                done => this.animateSpendIntoOccupiedCellBetweenPositions(
+                    incoming.fromPos,
+                    this.getTableIconCenter(this.getVariableIcon(row, variableIndex) as Phaser.GameObjects.GameObject),
+                    () => this.toggleRune(false, row, variableIndex),
+                    done
+                )
+            );
+
+            if (incoming.conflictEnergyIndex !== null) withConflict(incoming.conflictEnergyIndex, run);
+            else withCellConflict(run);
+            return;
+        }
+
+        if (energy.kind === "refund" && energyIndex !== null) {
+            if (oldValue && !newValue) {
+                const cellIcon = this.getVariableIcon(row, variableIndex);
+                const energyIcon = this.getEnergyIcon(energyIndex);
+                const fromPos = this.getTableIconCenter(cellIcon as Phaser.GameObjects.GameObject);
+                const toPos = this.getTableIconCenter(energyIcon as Phaser.GameObjects.GameObject);
+                this.toggleRune(false, row, variableIndex);
+                this.setEnergyIconColor(false, energyIndex);
+                withConflict(
+                    energyIndex,
+                    done => this.animateEnergyBallTransferBetweenPositions(
+                        fromPos,
+                        toPos,
+                        () => finalize(energyIndex, false, done)
+                    )
+                );
+                return;
+            }
+
+            if (!oldValue && newValue) {
+                this.toggleRune(false, row, variableIndex);
+                this.setEnergyIconColor(false, energyIndex);
+                withConflict(
+                    energyIndex,
+                    done => this.animateRefundFromOccupiedSpend(
+                        this.getVariableIcon(row, variableIndex),
+                        this.getEnergyIcon(energyIndex),
+                        () => finalize(energyIndex, true, done)
+                    )
+                );
+                return;
+            }
+
+            this.toggleRune(newValue, row, variableIndex);
+            this.setEnergyIconColor(true, energyIndex);
+            return;
+        }
+
+        this.toggleRune(newValue, row, variableIndex);
+    }
 
     constructor(
         scene: Phaser.Scene,
@@ -58,7 +565,7 @@ export class TableGUI implements GameStateListener {
         colorPrimary: number = 0x5C4D4D,
         colorHighlight: number = 0xc9c7c5,
         colorArrow: number = 0x376A8E,
-        colorCellOver: number = 0xff0000,
+        colorCellOver: number = 0xffffff,
         colorCellEdge: number = 0x260e05,
         energyTexture: string = "energyFont"
     ) {
@@ -109,6 +616,11 @@ export class TableGUI implements GameStateListener {
     public destroy(): void {
         if (this.isDestroyed) return;
         this.isDestroyed = true;
+
+        if (this.pendingEnergyLinkClearTimer) {
+            this.pendingEnergyLinkClearTimer.remove(false);
+            this.pendingEnergyLinkClearTimer = null;
+        }
 
         if (this.overlay) {
             this.overlay.destroy();
@@ -202,29 +714,29 @@ export class TableGUI implements GameStateListener {
         this.variableTable
             .on(
                 "cell.click",
-                function (cellContainer, cellIndex) {
+                (cellContainer, cellIndex) => {
                     if (this.isDestroyed) return;
                     const column = Math.floor(cellIndex / numVar);
                     const row = cellIndex % numVar;
-                    const variableName = Object.keys(this.variables).find(key => this.variables[key] === row);
+                    if (!this.isCellChangeableNow(column, row)) return;
+                    const variableName = this.getVariableNameForRow(row);
                     this.scene.time.delayedCall(0, () => {
                         if (this.isDestroyed || !variableName) return;
+                        if (!this.isCellChangeableNow(column, row)) return;
                         this._gameState.invertVariableUser(variableName, column);
                     });
-                }, this)
-            .on("cell.over", function (cellContainer, cellIndex) {
-                // focus current cell when hovering over it
-                cellContainer
-                    .getElement("background")
-                    .setStrokeStyle(2, this.colorCellOver)
-                    .setDepth(1);
-            }, this)
-            .on("cell.out", function (cellContainer, cellIndex) {
+                })
+            .on("cell.over", (cellContainer, cellIndex) => {
+                this.hoveredVariableCellIndex = cellIndex;
+                this.applyVariableCellHoverVisual(cellContainer, cellIndex);
+            })
+            .on("cell.out", (cellContainer, cellIndex) => {
+                if (this.hoveredVariableCellIndex === cellIndex) this.hoveredVariableCellIndex = null;
                 cellContainer
                     .getElement("background")
                     .setStrokeStyle(2, this.colorCellEdge)
                     .setDepth(0);
-            }, this);
+            });
 
 
         // table for variable names
@@ -408,6 +920,7 @@ export class TableGUI implements GameStateListener {
         cell.backgroundColor = color;
         cell.backgroundAlpha = 0.25;
         this.variableTable.getElement('table').updateTable(true);
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**
@@ -422,6 +935,7 @@ export class TableGUI implements GameStateListener {
         while (this.tableItems.length <= index) this.addColumns(1);
         this.tableItems[index].iconAlpha = Number(visible);
         this.variableTable.getElement('table').updateTable(true);
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**
@@ -432,6 +946,7 @@ export class TableGUI implements GameStateListener {
      */
     private setEnergyIconColor(visible: boolean, index: number) {
         if (!this.isEnergyTableReady()) return;
+        if (index < 0) return;
         this.energyTable
             .getElement("table")
             .getCell(index)
@@ -469,6 +984,7 @@ export class TableGUI implements GameStateListener {
         // move table to the right if last visible column is reached
         this.scrollTable(true)
         this.updateArrowStates();
+        this.refreshHoveredVariableCellVisual();
     }
 
     addColumns(n: number) {
@@ -493,18 +1009,27 @@ export class TableGUI implements GameStateListener {
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
-        const column = this.variables[variable.representation];
+        const variableIndex = this.variables[variable.representation];
         if (oldVariable.defaultValueFuture !== variable.defaultValueFuture) {
             // defaultValueFuture changed: repaint every visible cell so the
             // whole trace reflects the new open-ended value.
             for (let row = 0; row < this.tableColumnCount; row++) {
-                this.toggleRune(variable.getValue(row), row, column);
+                this.toggleRune(variable.getValue(row), row, variableIndex);
             }
         } else {
             for (let key in valueChanges) {
                 let row = parseInt(key);
                 let newValue = valueChanges[key];
-                this.toggleRune(newValue, row, column);
+                const isCurrentState = row === this.gameState.activeState;
+                const oldValue = oldVariable.getValue(row);
+
+                const pendingEnergy = isCurrentState
+                    ? this.consumePendingEnergyLink()
+                    : NO_PENDING_ENERGY;
+
+                const cardSource = this.pendingCardRuneSource;
+
+                this.applyRuneTransition(row, variableIndex, oldValue, newValue, pendingEnergy, cardSource);
             }
         }
     }
@@ -512,10 +1037,13 @@ export class TableGUI implements GameStateListener {
     async energyChanged(gameState: GameState, oldEnergy: number, newEnergy: number, oldMaxEnergy: number, newMaxEnergy: number) {
         // only changes one energy
         if (oldEnergy > newEnergy) {
+            this.stagePendingEnergyLink(newEnergy, null);
             this.setEnergyIconColor(false, newEnergy);
         } else {
+            this.stagePendingEnergyLink(null, newEnergy - 1);
             this.setEnergyIconColor(true, newEnergy - 1);
         }
+        this.refreshHoveredVariableCellVisual();
     }
 
     async activated(gameState: GameState) {
@@ -533,6 +1061,7 @@ export class TableGUI implements GameStateListener {
             this.overlay = this.scene.add.rectangle(left, top, width, height, 0x000000, 0.5)
                 .setDepth(100).setOrigin(0, 0);
         }
+        this.refreshHoveredVariableCellVisual();
     }
 
     /**

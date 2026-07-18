@@ -249,7 +249,7 @@ export class CardChannel extends Container {
         const hoveredEnemy = this.cursorHoversEnemy(pointer.x, pointer.y);
 
         for (let enemy of this.missionScene.enemyGUI.enemies) {
-            enemy.setDragOutline(enemy === hoveredEnemy ? 0xffffff : 0xff0000);
+            enemy.setDragOutline(enemy === hoveredEnemy ? 0xffffff : 0x665555);
         }
 
         this.clearBookOutline();
@@ -272,6 +272,9 @@ export class CardChannel extends Container {
 
     public playCard(enemy: EnemyGUI | undefined, card: CardGUI) {
         if (!this.canPlayCards()) return;
+
+        const cardBounds = card.getBounds();
+        this.missionScene.gameStateGUI.stagePendingCardRuneSource(cardBounds.centerX, cardBounds.centerY);
 
         let e: Enemy | undefined = undefined;
         if (enemy != undefined) e = enemy.enemy;

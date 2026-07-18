@@ -39,9 +39,23 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     }
 
     private destroySlot(index: number): void {
-        this.elementList[index]?.destroy();
-        this.hoverElementList[index]?.destroy();
-        this.roundList[index]?.destroy();
+        const sprite = this.elementList[index];
+        const hoverElement = this.hoverElementList[index];
+        const roundText = this.roundList[index];
+
+        if (sprite || hoverElement || roundText) {
+            this.scene.trackCombatAnimation(this.scene.tweens.add({
+                targets: [sprite, hoverElement, roundText].filter(Boolean),
+                alpha: { from: 1, to: 0 },
+                duration: 200,
+                ease: "Linear",
+                onComplete: () => {
+                    sprite?.destroy();
+                    hoverElement?.destroy();
+                    roundText?.destroy();
+                }
+            }));
+        }
 
         this.elementList[index] = null;
         this.hoverElementList[index] = null;

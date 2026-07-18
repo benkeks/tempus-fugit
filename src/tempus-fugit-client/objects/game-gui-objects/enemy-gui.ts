@@ -24,6 +24,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     private properX: number;
     private properY: number;
     private dragOutlineVisible: boolean = false;
+    private deathAnimationStarted: boolean = false;
 
     public scene:MissionScene;
 
@@ -136,28 +137,16 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public die():void {
-        if (this.isDestroyed) return;
-
-        this.clearDragOutline();
-
-        this.scene.add.tween({ // fade out
-            targets: this,
-            alpha: { from: 1, to: 0 },
-            ease: "Linear",
-            duration: 200,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
+        if (this.deathAnimationStarted) {
+            if (!this.isDestroyed) {
                 this.isDestroyed = true;
                 this.destroy(true);
-                this.toolTip.destroy(true);
-            },
-            callbackScope: this
-        });
-        this.disableInteractive();
-        if (this.toolTip) this.toolTip.enabled = false;
+                if (this.toolTip) this.toolTip.destroy(true);
+            }
+            return;
+        }
 
-        this.disableListeners();
+        this.playDeathAnimation();
     }
 
     public updateEnemyAttributes():void {
@@ -190,6 +179,65 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         this.sprite.removePostPipeline('rexOutlinePostFx');
         this.dragOutlineVisible = false;
+    }
+
+    private isSmallEnemy(): boolean {
+        return !this.enemy.size || this.enemy.size[0] <= 32;
+    }
+
+    private playDeathAnimation(): void {
+        if (this.isDestroyed || this.deathAnimationStarted) return;
+
+        const smallEnemy = this.isSmallEnemy();
+        this.deathAnimationStarted = true;
+
+        if (this.sprite && this.sprite.anims) {
+            this.sprite.anims.stop();
+        }
+
+        this.clearDragOutline();
+        this.disableInteractive();
+        if (this.toolTip) this.toolTip.enabled = false;
+        this.disableListeners();
+
+        if (smallEnemy) {
+            const startX = this.x;
+            const startY = this.y;
+            const durationSeconds = 0.52;
+            const horizontalDistance = 260;
+            const horizontalSpeed = horizontalDistance / durationSeconds;
+            const initialVerticalSpeed = -260;
+            const gravity = 1400;
+
+            this.scene.trackCombatAnimation(this.scene.tweens.addCounter({
+                from: 0,
+                to: durationSeconds,
+                duration: durationSeconds * 1000,
+                ease: "Linear",
+                onUpdate: tween => {
+                    const t = tween.getValue() as number;
+                    this.x = startX + horizontalSpeed * t;
+                    this.y = startY + initialVerticalSpeed * t + 0.5 * gravity * t * t;
+                }
+            }));
+        }
+
+        this.scene.trackCombatAnimation(this.scene.tweens.add({
+            targets: this.sprite,
+            angle: { from: this.sprite.angle, to: 90 },
+            duration: smallEnemy ? 520 : 700,
+            ease: "Cubic.easeIn",
+            onComplete: () => {
+                if (this.isDestroyed) return;
+                if (!smallEnemy) {
+                    return;
+                }
+
+                this.isDestroyed = true;
+                this.destroy(true);
+                if (this.toolTip) this.toolTip.destroy(true);
+            }
+        }));
     }
 
     private createSpecialAttackShortDescription(): void {
@@ -240,6 +288,15 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
+            this.scene.trackCombatAnimation(this.scene.tweens.add({
+                targets: this.sprite,
+                angle: { from: 0, to: 10 },
+                duration: 150,
+                ease: "Linear",
+                yoyo: true,
+                repeat: 0
+            }));
+
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
             this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
             onComplete: function () {
@@ -255,7 +312,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         }
 
         if (changedFrom > 0 && changedTo <= 0) {
-            this.die();
+            this.playDeathAnimation();
         }else this.updateEnemyAttributes();
     }
 
