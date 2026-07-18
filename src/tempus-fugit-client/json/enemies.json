@@ -3,7 +3,7 @@
         {
             "name": "Slime",
             "key": "slime1",
-            "description": "a suicide slime!",
+            "description": "a slimy slime!",
             "maxHP": 15,
             "baseAttack": 2,
             "specialAttack": {

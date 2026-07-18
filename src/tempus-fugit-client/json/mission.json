@@ -7,16 +7,16 @@
                 ["slime1", "slime2", "slime1"]
             ],
             "monologue": {
-                "0": "Hey.... Listen.... Once upon a time, on an island, far away from anything you could imagine, evil forces have started to corrupt all living creatures and beings. A young wizard and I, his loyal fairy, take it upon ourselves to defeat these evil forces that have corrupted the Islands of Tempus Fugit. Our story begins when someday, out of nowhere, slimes started to attack. Watch out!",
-                "1": "Congratulations! You won!"
+                "0": "Hey.... Listen.... Once upon a time, on an island, far away from anything you could imagine, evil forces have started to corrupt all living creatures and beings. A young wizard takes it upon himself to defeat the evil forces that have corrupted the Islands of Tempus Fugit. Our story begins when someday, out of nowhere, otherwise peaceful slimes started to attack. Watch out!",
+                "1": "Congratulations! You survived the attack of the slimes."
             },
             "dialogue": [
                 {
                     "triggerFunctionString": "return true;",
                     "blocking":"true",
                     "text": [
-                        ["slime2", "Please end our misery. WE ARE IN PAIN. OUR HEADS ARE HURTING."],
-                        ["player", "Wait, what is going on here? Why are you in pain?"]
+                        ["slime2", "WE ARE IN PAIN. And we will make you feel it too!"],
+                        ["player", "Wait, what is going on here? Why are you in pain?"],                       ["slime2", "Attack!"]
                     ]
                 }
             ],
@@ -37,10 +37,10 @@
                 ["goblin1", "slime_mother", "goblin1"]
             ],
             "monologue": {
-                "0": "You're walking deeper into the woods... What is it with these slimes? Why are they so eager to feel pain?",
+                "0": "You're walking deeper into the woods... What is it with these slimes? Why are they so aggressive?",
                 "1": "Onwards you hear a mysterious sound. It seems like someone is following you. Tread lightly!",
                 "2": "The ground is shaking as you try to continue your journey through the woods. Someone is crying for their mother. What is going on?",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations! That's how you met their mother!"
             },
             "dialogue": [
                 {
@@ -74,7 +74,7 @@
 				"0": "Defeating the mother of all slimes sure left you scarred. Hoping to find out who did this to them, you follow the road. Until ...",
                 "1": "That didn't seem to be all of them. More are coming and they seem more aggressive. Watch out!",
                 "2": "The warning about this golem called Moleg sure sounded scary. Wait... Why does this rock have a mustache?",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations! Moleg is defeated!"
             },
             "dialogue": [
                 {
@@ -85,7 +85,7 @@
                 {
                     "triggerFunctionString":"return mission.waveCounter==1;",
                     "blocking":"true",
-                    "text": [["slime3","You sure are strong, but Moleg the golem will avenge us and our mother for your crimes."], ["player", "A golem? I thought golems were nonexistant in these lands..."]]
+                    "text": [["slime3","You sure are strong, but Moleg the golem will avenge us and our mother for your crimes."], ["player", "A golem? I thought golems were nonexistent in these lands..."]]
                 },
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
@@ -110,10 +110,10 @@
                 ["goblin2", "goblin_general1", "goblin2"]
             ],
             "monologue": {
-                "0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its habitants. On your way to the port you encounter a goblin party.",
+                "0": "After defeating Moleg the golem, word has come around that the evil goblin general is pestering these lands and its inhabitants. On your way to the port you encounter a goblin party.",
                 "1": "More of them start to appear. They seem to have alarmed their general. Let's go!",
                 "2": "You hear the sound of a warhorn. It is him. The one responsible for innocent people dying. It is time to go all out.",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations! You survived the attack of the goblins!"
             },
             "dialogue": [
                 {
@@ -149,10 +149,10 @@
                 ["cactus2", "kingtus", "cactus2"]
             ],
             "monologue":{
-				"0": "The boat ride is finally over. On your way to find out, who this liberator is and what is causing the creatures to become mad, you enter the desert. Soon you feel like cactis are moving around. Wait, why is one of them getting closer to you?",
+                "0": "The boat ride is finally over. On your way to find out, who this liberator is and what is causing the creatures to become mad, you enter the desert. Soon you feel like cacti are moving around. Wait, why is one of them getting closer to you?",
                 "1": "That was weird. Why was it holding a spear? And why are you circled by more of them? Watch out!",
                 "2": "What is going on around here? Why do these cacti look like guards? And why are they so volatile? Walking towards the depths of the desert you see someone bulky lifting weights. Why are they in the desert though?",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations! That was thorny!"
             },
             "dialogue": [
                 {
@@ -178,10 +178,10 @@
                 ["wormling", "darude_sandworm", "wormling"]
             ],
             "monologue":{
-				"0": "After a heated and pointy battle with kingtus, he let you pass through and told you to head to the pyramid for clues that might help you solve the mystery about creatures drowning in madness. On your way some volatile cacti attack you.",
+                "0": "After a heated and pointy battle with Kingtus, he let you pass through and told you to head to the pyramid for clues that might help you solve the mystery about creatures drowning in madness. On your way some volatile cacti attack you.",
                 "1": "These cacti were acting weird. As if they were controlled by something or someone. Wait why are there worms appearing out of nowhere? Be careful.",
                 "2": "Below you the sand starts to sink in. They seem to have called for help. Oh dear, this is not good.",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations, master of worms!"
             },
             "dialogue": [
                 {
@@ -213,7 +213,7 @@
             "monologue": {
                 "0": "Ah the pyramid. You finally reached your destination. After all this mess from the kingdom of cacti to Darude Sandworm and his followers. It is time to enter. But wait? What are these hissing noises?",
                 "1": "After defeating the snakes you venture deeper into the pyramid just to see that there is only one room. The sarcophagus inside of it seems empty. You suddenly hear music and all you can think of dancing. What is going on?",
-                "2": "Congratulations! You won!"
+                "2": "Congratulations! You survived the party!"
             },
             "dialogue": [
                 {
@@ -242,7 +242,7 @@
 				"0": "Even around these Icy lands goblins are around. They seem much fiercer though than the ones at home",
                 "1": "A concert of King Janpuff?! In the middle of nowhere when it is freezing? How awful. Suddenly more goblins start to appear.",
                 "2": "That was some interesting information about this so called liberator. Who is he? Onwards you hear someone singing weird songs that makes you want to rest. What is going on?",
-                "3": "Congratulations! You won!"
+                "3": "Congratulations! The concert is over."
             },
             "dialogue": [
                 {
@@ -279,15 +279,15 @@
             ],
             "monologue": {
                 "0": "The time has come to fight the one who is responsible for this mess. As you try entering the tower you are greeted by the goblin general. Watch out!",
-                "1": "Inside the tower, ghosts start to appear out of no where. You got this!",
+                "1": "Inside the tower, ghosts start to appear out of nowhere. You got this!",
                 "2": "This is it. You've come this far and now the time has come to confront the evil behind all of this. But the sight of what you see at the peak of the tower shocks you.",
-                "3": "Congratulations! You finished the game!"
+                "3": "Congratulations! You've saved the realm!"
             },
             "dialogue": [
                 {
                     "triggerFunctionString":"return mission.waveCounter==0;",
                     "blocking":"true",
-                    "text": [["goblin_general2", "Wizard brat. So we finally meet again. I have been eager to kill you after our last meeting. You shall not pass."], ["player", "Don't stand in my way. The liberator is the reason for innocent bloodshedding. If you won't let me pass now, I will have to kill you."]]
+                    "text": [["goblin_general2", "Wizard brat. So we finally meet again. I have been eager to kill you after our last meeting. You shall not pass."], ["player", "Don't stand in my way. The liberator is the reason for innocent bloodshed. If you won't let me pass now, I will have to kill you."]]
                 },
                 {
                     "triggerFunctionString":"return mission.waveCounter==2;",
