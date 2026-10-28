@@ -29,6 +29,11 @@ npm install
 npm run dev
 ```
 
+## Tests
+
+Run `npm test` for the logic and rune-update regressions.
+Both GitHub Actions workflows run the tests before building.
+
 ## Credits
 
 Tobias Loch (software lead dev), Mustafa Mohsen (dev & inspiration), Florian Eyert (dev), Kejni Dema (dev), Maximilian Lukas Stamm (product management, card design, art), Alessio Nicolo Perna (scrum, devops & art), [Benjamin Bisping](https://bbisping.de) (additional software dev & coordination), [Malek El-Tannir (@Makelek)](https://www.makelek.com/) (music).

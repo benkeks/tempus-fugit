@@ -148,25 +148,31 @@ export class GameState {
                 continue;
             }
 
+            const variable = this.getVariable(v);
+            const oldVariable = variable.copy();
             const openEnded = end < 0;
             if (openEnded) {
-                end = this.variables[v].values.length;
                 if (direction > 0) {
-                    this.variables[v].defaultValueFuture = value
+                    const absoluteStart = offset + start;
+                    // Preserve the old default before the interval starts.
+                    if (absoluteStart > variable.values.length) {
+                        variable.setValue(variable.getValue(absoluteStart - 1), absoluteStart - 1);
+                    }
+                    end = variable.values.length - offset;
                 } else {
-                    this.variables[v].defaultValuePast = value
+                    end = variable.values.length;
                 }
             }
 
             let changes = {};
-            let oldVariable = this.getVariable(v).copy();
             for (let i = start; i < end; i+=direction) {
                 this.setVariable(v, value, offset+i, false, false);
                 changes[offset+i] = value;
             }
-            // When end is open-ended (-1), also update the default for all truly future
-            // (not yet explicitly tracked) states so they carry the intended value.
-            if (openEnded) this.getVariable(v).defaultValueFuture = value;
+            if (openEnded) {
+                if (direction > 0) variable.defaultValueFuture = value;
+                else variable.defaultValuePast = value;
+            }
 
             this.listener.map(obj => obj.variableChanged(this, oldVariable, this.getVariable(v), changes));
         }
@@ -256,15 +262,14 @@ export class GameState {
             this.variableStatus[name] = new VariableStatus();
         } else v = this.getVariable(name);
 
-        let oldVariable:Variable = v.copy();
-        let changes:{[state:number]:boolean} = {};
-
-        changes[state] = value;
+        const oldVariable = triggerEvent ? v.copy() : undefined;
         v.setValue(value, state);
 
         if (!user) this.getVariableStatus(name).userChanged[state] = false;
 
-        if (triggerEvent) this.listener.map(obj => obj.variableChanged(this, oldVariable, v, changes));
+        if (oldVariable) {
+            this.listener.map(obj => obj.variableChanged(this, oldVariable, v, {[state]: value}));
+        }
 
         return 0;
     }

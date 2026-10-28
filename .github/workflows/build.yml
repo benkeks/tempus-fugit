@@ -29,6 +29,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install # Install dependencies
+      - name: Run tests
+        run: npm test
       - name: Build project
         run: npm run build # Compile Code
       - name: Upload build artifact
