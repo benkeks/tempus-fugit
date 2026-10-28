@@ -25,6 +25,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     private properY: number;
     private dragOutlineVisible: boolean = false;
     private deathAnimationStarted: boolean = false;
+    private deathRemovalTimer: Phaser.Time.TimerEvent | null = null;
+    private bossDeathTween: Phaser.Tweens.Tween | null = null;
+    private deathInfo: Phaser.GameObjects.Container | null = null;
 
     public scene:MissionScene;
 
@@ -138,15 +141,55 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
     public die():void {
         if (this.deathAnimationStarted) {
-            if (!this.isDestroyed) {
-                this.isDestroyed = true;
-                this.destroy(true);
-                if (this.toolTip) this.toolTip.destroy(true);
-            }
+            this.destroy(true);
             return;
         }
 
         this.playDeathAnimation();
+    }
+
+    public destroy(fromScene?: boolean): void {
+        if (this.isDestroyed) return;
+        this.isDestroyed = true;
+        if (this.deathRemovalTimer) {
+            this.deathRemovalTimer.remove(false);
+            this.deathRemovalTimer = null;
+        }
+        if (this.bossDeathTween) {
+            this.bossDeathTween.stop();
+            this.bossDeathTween = null;
+        }
+        if (this.deathInfo) {
+            this.scene.tweens.killTweensOf(this.deathInfo);
+            this.deathInfo.destroy();
+            this.deathInfo = null;
+        }
+        this.disableListeners();
+        super.destroy(fromScene);
+    }
+
+    private fadeDeathInfo(): void {
+        const children = this.getAll().filter(child => child !== this.sprite && child !== this.toolTip);
+        if (children.length === 0) return;
+
+        const transform = this.getWorldTransformMatrix();
+        this.remove(children);
+        const info = this.scene.add.container(transform.tx, transform.ty, children);
+        info.setRotation(transform.rotation).setScale(transform.scaleX, transform.scaleY).setDepth(this.depth);
+        this.deathInfo = info;
+
+        this.scene.tweens.add({
+            targets: info,
+            alpha: 0,
+            scaleX: info.scaleX * 0.5,
+            scaleY: info.scaleY * 0.5,
+            duration: 180,
+            ease: "Cubic.easeIn",
+            onComplete: () => {
+                info.destroy();
+                this.deathInfo = null;
+            }
+        });
     }
 
     public updateEnemyAttributes():void {
@@ -197,8 +240,17 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
         this.clearDragOutline();
         this.disableInteractive();
-        if (this.toolTip) this.toolTip.enabled = false;
+        if (this.toolTip) {
+            this.toolTip.enabled = false;
+            if (this.toolTip.faderTimer) this.toolTip.faderTimer.destroy();
+        }
         this.disableListeners();
+        this.fadeDeathInfo();
+
+        if (this.enemy.key === "boss") {
+            this.playBossDeathAnimation();
+            return;
+        }
 
         if (smallEnemy) {
             const startX = this.x;
@@ -220,6 +272,12 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                     this.y = startY + initialVerticalSpeed * t + 0.5 * gravity * t * t;
                 }
             }));
+        } else {
+            const waveEnemies = this.scene.tfgame.getEnemies();
+            this.deathRemovalTimer = this.scene.time.delayedCall(1000, () => {
+                this.deathRemovalTimer = null;
+                if (waveEnemies.some(enemy => enemy.isAlive())) this.destroy(true);
+            });
         }
 
         this.scene.trackCombatAnimation(this.scene.tweens.add({
@@ -233,9 +291,33 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
                     return;
                 }
 
-                this.isDestroyed = true;
                 this.destroy(true);
-                if (this.toolTip) this.toolTip.destroy(true);
+            }
+        }));
+    }
+
+    private playBossDeathAnimation(): void {
+        const startX = this.x;
+        const startY = this.y;
+        const endY = -this.getBounds().height;
+        const startAngle = this.angle;
+
+        this.bossDeathTween = this.scene.trackCombatAnimation(this.scene.tweens.addCounter({
+            from: 0,
+            to: 1,
+            duration: 1200,
+            ease: "Cubic.easeIn",
+            onUpdate: tween => {
+                const progress = tween.getValue();
+                const phase = progress * Math.PI * 6;
+                const radius = 160 * Math.sin(progress * Math.PI);
+                this.x = startX + Math.sin(phase) * radius;
+                this.y = startY + (endY - startY) * progress;
+                this.angle = startAngle + 1080 * progress;
+            },
+            onComplete: () => {
+                this.bossDeathTween = null;
+                this.destroy(true);
             }
         }));
     }
@@ -276,6 +358,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public reposition() {
+        if (this.deathAnimationStarted) return;
         this.x = this.properX;
         this.y = this.properY;
     }
