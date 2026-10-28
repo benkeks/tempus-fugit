@@ -32,6 +32,7 @@ npm run dev
 ## Tests
 
 Run `npm test` for the logic and rune-update regressions.
+Both GitHub Actions workflows run the tests before building.
 
 ## Credits
 
