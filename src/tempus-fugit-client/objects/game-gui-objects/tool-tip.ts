@@ -7,7 +7,14 @@ export class ToolTip extends ListGUI {
 
     set enabled(value: boolean) {
         this._enabled = value;
-        if (!value) this.setVisible(false);
+        if (!value) {
+            if (this.faderTimer) {
+                this.faderTimer.remove(false);
+                this.faderTimer = undefined;
+            }
+            if (this.tween) this.tween.stop();
+            this.setVisible(false);
+        }
     }
     public gameObject;
 
@@ -28,6 +35,7 @@ export class ToolTip extends ListGUI {
         gameObject.setInteractive().on('pointerover',function(pointer){
             if (!this._enabled) return;
 
+            if (this.faderTimer) this.faderTimer.remove(false);
             this.faderTimer = this.scene.time.delayedCall(this.popUpDelay, this.fadeIn, [], this);
         }, this);
 
@@ -42,5 +50,14 @@ export class ToolTip extends ListGUI {
         this.setVisible(false);
     }
 
-    
+    public fadeIn(duration = 200, scale: boolean = false): void {
+        if (!this.enabled || !this.scene) return;
+        super.fadeIn(duration, scale);
+    }
+
+    public destroy(fromScene?: boolean): void {
+        if (!this.scene) return;
+        this.enabled = false;
+        super.destroy(fromScene);
+    }
 }

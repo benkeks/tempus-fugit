@@ -125,6 +125,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
             .setInteractive()
             .on('pointerover', () => {
                 if (!this.toolTip.enabled) return;
+                if (this.toolTip.faderTimer) this.toolTip.faderTimer.remove(false);
                 this.toolTip.faderTimer = this.scene.time.delayedCall(this.toolTip.popUpDelay, this.toolTip.fadeIn, [], this.toolTip);
             }, this)
             .on('pointerout', () => {
@@ -242,7 +243,6 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.disableInteractive();
         if (this.toolTip) {
             this.toolTip.enabled = false;
-            if (this.toolTip.faderTimer) this.toolTip.faderTimer.destroy();
         }
         this.disableListeners();
         this.fadeDeathInfo();

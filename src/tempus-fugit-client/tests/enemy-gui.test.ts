@@ -189,7 +189,6 @@ describe("Enemy defeat presentation", () => {
             targets: info, alpha: 0, scaleX: 0.5, scaleY: 0.5, duration: 180,
         });
         expect(toolTip.enabled).toBe(false);
-        expect(toolTip.faderTimer.destroy).toHaveBeenCalledOnce();
         gui.x += 100;
         gui.y -= 200;
         expect({x: info.x, y: info.y}).toEqual({x: 1500, y: 600});

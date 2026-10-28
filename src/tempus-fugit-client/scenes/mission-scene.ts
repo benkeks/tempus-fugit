@@ -454,7 +454,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public enableToolTips(value: boolean) {
         this.enemyGUI.enemies.forEach(e => {
-            e.toolTip.enabled = value;
+            e.toolTip.enabled = value && e.enemy.isAlive();
         });
     }
 
