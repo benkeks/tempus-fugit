@@ -69,6 +69,7 @@ export class TableGUI implements GameStateListener {
     private pendingCardRuneSource: RuneAnimationSource | null = null;
     private pendingCardRuneSourceClearTimer: Phaser.Time.TimerEvent | null = null;
     private hoveredVariableCellIndex: number | null = null;
+    private batchingRuneUpdates = false;
 
     private isDestroyed = false;
 
@@ -934,6 +935,12 @@ export class TableGUI implements GameStateListener {
         let index = column * Object.keys(this.variables).length + row;
         while (this.tableItems.length <= index) this.addColumns(1);
         this.tableItems[index].iconAlpha = Number(visible);
+        if (this.batchingRuneUpdates) return;
+        this.refreshRuneTable();
+    }
+
+    private refreshRuneTable(): void {
+        if (!this.isVariableTableReady()) return;
         this.variableTable.getElement('table').updateTable(true);
         this.refreshHoveredVariableCellVisual();
     }
@@ -1009,28 +1016,39 @@ export class TableGUI implements GameStateListener {
     }
 
     async variableChanged(gameState: GameState, oldVariable: Variable, variable: Variable, valueChanges: { [p: number]: boolean }) {
+        if (!this.isVariableTableReady()) return;
         const variableIndex = this.variables[variable.representation];
-        if (oldVariable.defaultValueFuture !== variable.defaultValueFuture) {
-            // defaultValueFuture changed: repaint every visible cell so the
-            // whole trace reflects the new open-ended value.
-            for (let row = 0; row < this.tableColumnCount; row++) {
-                this.toggleRune(variable.getValue(row), row, variableIndex);
+        this.batchingRuneUpdates = true;
+        try {
+            if (oldVariable.defaultValueFuture !== variable.defaultValueFuture) {
+                for (let row = 0; row < this.tableColumnCount; row++) {
+                    this.abortConflictingAnimations(row, variableIndex, null);
+                    this.toggleRune(variable.getValue(row), row, variableIndex);
+                }
+            } else {
+                for (let key in valueChanges) {
+                    const row = parseInt(key);
+                    if (row < 0 || row >= this.tableColumnCount) continue;
+                    const newValue = valueChanges[key];
+                    const isCurrentState = row === this.gameState.activeState;
+                    const oldValue = oldVariable.getValue(row);
+
+                    const pendingEnergy = isCurrentState
+                        ? this.consumePendingEnergyLink()
+                        : NO_PENDING_ENERGY;
+
+                    if (!this.getVariableIcon(row, variableIndex)) {
+                        this.toggleRune(newValue, row, variableIndex);
+                        continue;
+                    }
+                    const cardSource = this.pendingCardRuneSource;
+
+                    this.applyRuneTransition(row, variableIndex, oldValue, newValue, pendingEnergy, cardSource);
+                }
             }
-        } else {
-            for (let key in valueChanges) {
-                let row = parseInt(key);
-                let newValue = valueChanges[key];
-                const isCurrentState = row === this.gameState.activeState;
-                const oldValue = oldVariable.getValue(row);
-
-                const pendingEnergy = isCurrentState
-                    ? this.consumePendingEnergyLink()
-                    : NO_PENDING_ENERGY;
-
-                const cardSource = this.pendingCardRuneSource;
-
-                this.applyRuneTransition(row, variableIndex, oldValue, newValue, pendingEnergy, cardSource);
-            }
+        } finally {
+            this.batchingRuneUpdates = false;
+            this.refreshRuneTable();
         }
     }
 
@@ -1199,5 +1217,4 @@ export class TableGUI implements GameStateListener {
         this.updateArrowStates();
     }
 }
-
 
