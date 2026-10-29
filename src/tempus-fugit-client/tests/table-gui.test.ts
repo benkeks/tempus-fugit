@@ -21,8 +21,10 @@ function createTable(visible = true) {
             scene: {},
             getElement: () => ({
                 updateTable,
-                getCell: () => visible ? {getContainer: () => ({getElement: () => icon})} : null,
+                getCell: () => ({getContainer: () => visible ? {getElement: () => icon} : null}),
             }),
+            removeAllListeners: vi.fn(),
+            destroy: vi.fn(),
         },
         activeCellAnimations: new Map(),
         activeEnergyAnimations: new Map(),
@@ -100,5 +102,71 @@ describe("Rune table updates", () => {
         table["toggleRune"](false, 0, 0);
         expect(items[0].iconAlpha).toBe(0);
         expect(updateTable).toHaveBeenCalledExactlyOnceWith(true);
+    });
+
+    it("restores a refunded rune when its energy is reused by another cell", () => {
+        const {game, table, items} = createTable();
+        game.setVariable("l", true, 0, false, false);
+        items[0].iconAlpha = 0;
+        const cancelRefund = vi.fn();
+        table["startConflictAwareAnimation"](0, 0, 1, () => cancelRefund, () => {});
+
+        table["startConflictAwareAnimation"](1, 0, 1, () => () => {}, () => {});
+
+        expect(cancelRefund).toHaveBeenCalledOnce();
+        expect(items[0].iconAlpha).toBe(1);
+        expect(table["activeCellAnimations"].has("0:0")).toBe(false);
+    });
+
+    it("cancels a pending arrival even when the replacement update has no animation source", () => {
+        const {game, table, items} = createTable();
+        game.setVariable("l", true, 0, false, false);
+        const cancelArrival = vi.fn();
+        table["startConflictAwareAnimation"](0, 0, 1, () => cancelArrival, () => {});
+
+        game.setVariable("l", false);
+
+        expect(cancelArrival).toHaveBeenCalledOnce();
+        expect(items[0].iconAlpha).toBe(0);
+        expect(table["activeCellAnimations"].size).toBe(0);
+    });
+
+    it("does not retain an animation that finishes synchronously without endpoints", () => {
+        const {table} = createTable();
+        const completed = vi.fn();
+        table["startConflictAwareAnimation"](0, 0, 1, done => {
+            done();
+            return () => {};
+        }, completed);
+        expect(completed).toHaveBeenCalledOnce();
+        expect(table["activeCellAnimations"].size).toBe(0);
+        expect(table["activeEnergyAnimations"].size).toBe(0);
+    });
+
+    it("handles energy cells without rendered containers", () => {
+        const {table} = createTable();
+        table.energyTable = {
+            scene: {},
+            getElement: () => ({getCell: () => ({getContainer: () => null})}),
+        };
+        expect(table["getEnergyIcon"](1)).toBeNull();
+        expect(() => table["setEnergyIconColor"](true, 1)).not.toThrow();
+    });
+
+    it("cancels in-flight animations and source timers when the table is destroyed", () => {
+        const {game, table} = createTable();
+        const cancel = vi.fn();
+        const removeTimer = vi.fn();
+        table["startConflictAwareAnimation"](0, 0, 1, () => cancel, () => {});
+        Object.assign(table, {pendingCardRuneSourceClearTimer: {remove: removeTimer}});
+
+        table.destroy();
+        table.destroy();
+
+        expect(cancel).toHaveBeenCalledOnce();
+        expect(removeTimer).toHaveBeenCalledOnce();
+        expect(table["activeCellAnimations"].size).toBe(0);
+        expect(table["activeEnergyAnimations"].size).toBe(0);
+        expect(game.listener).not.toContain(table);
     });
 });

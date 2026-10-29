@@ -271,7 +271,7 @@ export class CardChannel extends Container {
     }
 
     public playCard(enemy: EnemyGUI | undefined, card: CardGUI) {
-        if (!this.canPlayCards()) return;
+        if (!this.canPlayCards() || (enemy && !enemy.enemy.isAlive())) return;
 
         const cardBounds = card.getBounds();
         this.missionScene.gameStateGUI.stagePendingCardRuneSource(cardBounds.centerX, cardBounds.centerY);

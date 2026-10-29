@@ -206,7 +206,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     public setDragOutline(color: number): void {
-        if (this.isDestroyed || !this.sprite || !(this.sprite as any).scene) return;
+        if (this.isDestroyed || this.deathAnimationStarted || !this.enemy.isAlive() || !this.sprite || !(this.sprite as any).scene) return;
 
         if (!this.dragOutlineVisible) {
             this.sprite.setPostPipeline('rexOutlinePostFx');
@@ -227,6 +227,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
     private isSmallEnemy(): boolean {
         return !this.enemy.size || this.enemy.size[0] <= 32;
+    }
+
+    public isHovered(xCursor: number, yCursor: number): boolean {
+        return this.enemy.isAlive() && !this.deathAnimationStarted && super.isHovered(xCursor, yCursor);
     }
 
     private playDeathAnimation(): void {

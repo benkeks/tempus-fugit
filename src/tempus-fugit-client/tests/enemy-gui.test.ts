@@ -6,6 +6,7 @@ const {baseDestroy} = vi.hoisted(() => ({baseDestroy: vi.fn()}));
 vi.mock("../objects/game-gui-objects/list-gui", () => ({
     ListGUI: class {
         destroy(fromScene?: boolean) { baseDestroy(fromScene); }
+        isHovered() { return true; }
     },
 }));
 vi.mock("../objects/game-gui-objects/tool-tip", () => ({ToolTip: class {}}));
@@ -205,5 +206,17 @@ describe("Enemy defeat presentation", () => {
         gui.destroy(true);
         expect(killTweensOf).toHaveBeenCalledExactlyOnceWith(info);
         expect(info.destroy).toHaveBeenCalledOnce();
+    });
+
+    it("rejects defeated enemies as targets before and throughout their death animation", () => {
+        const {gui, enemy} = createEnemyGUI();
+        enemy.currentHP = 100;
+        expect(gui.isHovered(1500, 580)).toBe(true);
+
+        enemy.currentHP = 0;
+        expect(gui.isHovered(1500, 580)).toBe(false);
+        expect(() => gui.setDragOutline(0xffffff)).not.toThrow();
+        gui.die();
+        expect(gui.isHovered(1500, 580)).toBe(false);
     });
 });
