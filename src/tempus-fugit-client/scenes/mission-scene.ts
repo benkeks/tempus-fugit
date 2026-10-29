@@ -101,7 +101,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     private isPlayerInteractionPhase(): boolean {
-        return this.tfgame.curPhase === Mission.ENERGY_PHASE || this.tfgame.curPhase === Mission.PLAY_PHASE;
+        return !this.tfgame.waveTransitionInProgress &&
+            (this.tfgame.curPhase === Mission.ENERGY_PHASE || this.tfgame.curPhase === Mission.PLAY_PHASE);
     }
 
     private scheduleSceneCallback(callback: () => void, delay: number = 0): void {
@@ -230,7 +231,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             await this.presentDialog(game, dialog);
         }
 
-        game.nextPhase(0);
+        game.startWaveCombat();
     }
 
     private hasPendingTurnStartDiscard(): boolean {
@@ -454,7 +455,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public enableToolTips(value: boolean) {
         this.enemyGUI.enemies.forEach(e => {
-            e.toolTip.enabled = value;
+            e.toolTip.enabled = value && e.enemy.isAlive();
         });
     }
 

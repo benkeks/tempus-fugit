@@ -57,9 +57,10 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     set active(value: boolean) {
+        value = value && !this.waveTransitionInProgress && !this.paused;
         this._active = value;
         this.player.active = value;
-        this.gameState.active = value;
+        this.gameState.active = value && this.curPhase === Mission.ENERGY_PHASE;
 
         this.listener.map(l => l.Activated(this, this.active));
     }
@@ -134,6 +135,11 @@ export class Mission implements EnemyListener, PlayerListener {
     private pendingWaveAdvance: number | null = null;
     private aliveEnemiesCount = -1;
     private baseAttackConsumedThisTurn: boolean = false;
+    private awaitingWavePresentation: boolean = false;
+
+    public get waveTransitionInProgress(): boolean {
+        return this.awaitingWavePresentation;
+    }
     // TODO: effect list
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {
@@ -188,6 +194,8 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         const scheduledFromWave = this.waveCounter;
+        this.awaitingWavePresentation = true;
+        this.active = false;
         this.debugFlow("nextWave:scheduled", { fromWave: scheduledFromWave, toWave: next, reason, delayMs: 350 });
         this.pendingWaveTransition = setTimeout(() => {
             this.pendingWaveTransition = null;
@@ -200,6 +208,8 @@ export class Mission implements EnemyListener, PlayerListener {
             this.aliveEnemiesCount = this.countAliveEnemies();
             if (this.aliveEnemiesCount > 0) {
                 this.debugFlow("nextWave:cancelled", { reason: "enemyRevivedOrWaveNotCleared", aliveEnemies: this.aliveEnemiesCount });
+                this.awaitingWavePresentation = false;
+                this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
                 return;
             }
 
@@ -380,6 +390,7 @@ export class Mission implements EnemyListener, PlayerListener {
      * increments turn counter every time player turn is reached
      */
     public async nextPhase(next: number = (this.curPhase + 1) % this.numPhases) {
+        if (this.waveTransitionInProgress) return;
         this.debugFlow("nextPhase:requested", { from: this.curPhase, to: next });
         if (this.requestAdvanceIfWaveCleared("nextPhase")) return;
 
@@ -401,6 +412,7 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public async nextPlayer() {
+        if (this.waveTransitionInProgress) return;
         this.debugFlow("nextPlayer:requested", { phase: this.curPhase, iteratorIndex: this.iteratorIndex });
         if (this.requestAdvanceIfWaveCleared("nextPlayer")) return;
 
@@ -426,6 +438,8 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public nextWave(next: number = this.waveCounter + 1): void {
         this.debugFlow("nextWave:start", { fromWave: this.waveCounter, toWave: next });
+        this.awaitingWavePresentation = true;
+        this.active = false;
         // Discard any phase/player continuations queued for the old wave: when called
         // while unpaused the queue is already empty; when called on resume after a
         // deferred wave advance (pendingWaveAdvance) those continuations are stale.
@@ -451,6 +465,12 @@ export class Mission implements EnemyListener, PlayerListener {
         this.listener.map(l => l.wavePresentationReady?.(this));
 
         this.debugFlow("nextWave:done", { wave: this.waveCounter });
+    }
+
+    public startWaveCombat(): void {
+        if (!this.waveTransitionInProgress || this.isGameOver()) return;
+        this.awaitingWavePresentation = false;
+        this.nextPhase(Mission.DRAW_PHASE);
     }
 
     public checkGameOver(): boolean {
@@ -480,7 +500,7 @@ export class Mission implements EnemyListener, PlayerListener {
 
     public tryConsumeBaseAttack(): boolean {
         const inPlayerActionPhase = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
-        if (!inPlayerActionPhase || this.baseAttackConsumedThisTurn) {
+        if (!this.active || !inPlayerActionPhase || this.baseAttackConsumedThisTurn) {
             return false;
         }
 

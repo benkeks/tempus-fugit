@@ -167,11 +167,14 @@ export class TableGUI implements GameStateListener {
             if (internalCancel) internalCancel();
             if (this.activeCellAnimations.get(cellKey) === wrappedCancel) this.activeCellAnimations.delete(cellKey);
             if (energyIndex !== null && this.activeEnergyAnimations.get(energyIndex) === wrappedCancel) this.activeEnergyAnimations.delete(energyIndex);
+            const variableName = this.getVariableNameForRow(variableIndex);
+            if (variableName) this.toggleRune(this.gameState.getVariable(variableName).getValue(row), row, variableIndex);
+            if (energyIndex !== null) this.setEnergyIconColor(energyIndex < this.gameState.energy, energyIndex);
         };
 
-        internalCancel = run(done);
         this.activeCellAnimations.set(cellKey, wrappedCancel);
         if (energyIndex !== null) this.activeEnergyAnimations.set(energyIndex, wrappedCancel);
+        internalCancel = run(done);
     }
 
     private getTableIconCenter(icon: Phaser.GameObjects.GameObject): { x: number; y: number } | null {
@@ -185,7 +188,7 @@ export class TableGUI implements GameStateListener {
         if (!this.isEnergyTableReady() || index < 0) return null;
         const cell = this.energyTable.getElement("table").getCell(index);
         if (!cell) return null;
-        return cell.getContainer().getElement("icon") || null;
+        return cell.getContainer()?.getElement("icon") || null;
     }
 
     private getVariableIcon(state: number, variableIndex: number): Phaser.GameObjects.GameObject | null {
@@ -193,7 +196,7 @@ export class TableGUI implements GameStateListener {
         const cellIndex = state * this.getVariableCount() + variableIndex;
         const cell = this.variableTable.getElement("table").getCell(cellIndex);
         if (!cell) return null;
-        return cell.getContainer().getElement("icon") || null;
+        return cell.getContainer()?.getElement("icon") || null;
     }
 
     private animateEnergyBallTransfer(from: Phaser.GameObjects.GameObject | null, to: Phaser.GameObjects.GameObject | null, onDone: () => void): () => void {
@@ -617,10 +620,18 @@ export class TableGUI implements GameStateListener {
     public destroy(): void {
         if (this.isDestroyed) return;
         this.isDestroyed = true;
+        for (const cancel of new Set([...this.activeCellAnimations.values(), ...this.activeEnergyAnimations.values()])) {
+            cancel();
+        }
+        this.gameState.removeListener(this);
 
         if (this.pendingEnergyLinkClearTimer) {
             this.pendingEnergyLinkClearTimer.remove(false);
             this.pendingEnergyLinkClearTimer = null;
+        }
+        if (this.pendingCardRuneSourceClearTimer) {
+            this.pendingCardRuneSourceClearTimer.remove(false);
+            this.pendingCardRuneSourceClearTimer = null;
         }
 
         if (this.overlay) {
@@ -957,9 +968,9 @@ export class TableGUI implements GameStateListener {
         this.energyTable
             .getElement("table")
             .getCell(index)
-            .getContainer()
-            .getElement("icon")
-            .setVisible(visible);
+            ?.getContainer()
+            ?.getElement("icon")
+            ?.setVisible(visible);
     }
 
     get gameState(): GameState {
@@ -1037,6 +1048,7 @@ export class TableGUI implements GameStateListener {
                         ? this.consumePendingEnergyLink()
                         : NO_PENDING_ENERGY;
 
+                    this.abortConflictingAnimations(row, variableIndex, pendingEnergy.index);
                     if (!this.getVariableIcon(row, variableIndex)) {
                         this.toggleRune(newValue, row, variableIndex);
                         continue;
@@ -1217,4 +1229,3 @@ export class TableGUI implements GameStateListener {
         this.updateArrowStates();
     }
 }
-
