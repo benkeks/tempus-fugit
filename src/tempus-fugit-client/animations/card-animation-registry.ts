@@ -1,4 +1,5 @@
 import type { MissionScene } from "../scenes/mission-scene";
+import type { Card } from "../objects/game-objects/card";
 
 export type CardAnimationPosition = { x: number; y: number; groundY: number };
 // Return a finite scene-clock tween, call impact when the spell connects, and clean up on complete/stop.
@@ -6,6 +7,7 @@ export type CardAnimation = (
     scene: MissionScene,
     targets: readonly CardAnimationPosition[],
     impact: () => void,
+    card?: Card,
 ) => Phaser.Tweens.Tween;
 
 export type CardDamageAnimation = (

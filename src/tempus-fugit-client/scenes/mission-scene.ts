@@ -30,6 +30,7 @@ import type { CardDamageAnimation } from "../animations/card-animation-registry"
 import { lightning } from "../animations/lightning";
 import { electrocution } from "../animations/electrocution";
 import { rootPierce } from "../animations/root-pierce";
+import { healing } from "../animations/healing";
 import type { CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
@@ -114,19 +115,21 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         // Cards opt in with an "animation" registry key to share effects and optional hit reactions.
         this.cardAnimations.register("lightning", lightning, electrocution);
         this.cardAnimations.register("root-pierce", rootPierce);
+        this.cardAnimations.register("healing", healing);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
         return this.cardDamageAnimation?.targets.includes(target) ? this.cardDamageAnimation.animation : undefined;
     }
 
-    public playCardAnimation(key: string, targets: readonly CardActionTarget[], impact: () => void, complete: () => void): void {
-        const animation = this.cardAnimations.get(key);
+    public playCardAnimation(card: Card, targets: readonly CardActionTarget[], impact: () => void, complete: () => void): void {
+        const key = card.animation;
+        const animation = key && this.cardAnimations.get(key);
         if (!animation) throw new Error("Unknown card animation: " + key);
 
         const positions = targets.filter(target => target !== null).map(target => {
             if (target === this.tfgame.player) {
-                const center = this.playerGUI.getCenter();
+                const center = this.playerGUI.getCenter(undefined, true);
                 return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y};
             }
             const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
@@ -148,7 +151,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
                 this.cardDamageAnimation = previousDamageAnimation;
             }
         };
-        this.trackCombatAnimation(animation(this, positions, applyImpact));
+        this.trackCombatAnimation(animation(this, positions, applyImpact, card));
         void this.waitForActionAnimations().then(async () => {
             if (epoch !== this.animationEpoch) return;
             if (!impacted) {
@@ -373,7 +376,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.listener.push(this);
         this.tfgame.cardActionAnimator = {
             has: key => this.cardAnimations.get(key) !== undefined,
-            play: (key, targets, impact, complete) => this.playCardAnimation(key, targets, impact, complete),
+            play: (card, targets, impact, complete) => this.playCardAnimation(card, targets, impact, complete),
         };
 
         MissionScene.latestData = {

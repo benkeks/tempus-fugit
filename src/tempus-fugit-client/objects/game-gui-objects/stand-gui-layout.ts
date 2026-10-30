@@ -18,6 +18,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     private stands: [Card | null, Card | null];
     private spritedStands: [Card | null, Card | null];
     private previewTweens: Array<Phaser.Tweens.Tween | null>;
+    private idleTweens: Array<Phaser.Tweens.Tween | null>;
     private previewActive: boolean = false;
 
     constructor(
@@ -34,11 +35,14 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
         this.roundList = [null, null];
         this.spritedStands = [null, null];
         this.previewTweens = [null, null];
+        this.idleTweens = [null, null];
 
         this.scene.add.existing(this);
     }
 
     private destroySlot(index: number): void {
+        this.idleTweens[index]?.stop();
+        this.idleTweens[index] = null;
         const sprite = this.elementList[index];
         const hoverElement = this.hoverElementList[index];
         const roundText = this.roundList[index];
@@ -83,7 +87,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
             desc.fadeOutAnimation();
         }, this);
 
-        this.scene.tweens.add({
+        this.idleTweens[index] = this.scene.tweens.add({
             targets: standImage,
             duration: 400,
             y: standImage.y - 5,
@@ -195,7 +199,25 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
 
 
 
+    public beginEffect(stand: Card): {sprite: Phaser.GameObjects.Sprite; restore: () => void} {
+        const index = this.spritedStands.indexOf(stand);
+        const sprite = this.elementList[index];
+        if (!sprite) throw new Error("Missing stand animation source: " + stand.name);
+        const idleTween = this.idleTweens[index];
+        const y = sprite.y;
+        idleTween?.pause();
+        return {
+            sprite,
+            restore: () => {
+                if (!sprite.active) return;
+                sprite.y = y;
+                idleTween?.resume();
+            },
+        };
+    }
+
     Attacking(stand: Card, index: number) {
+        if (stand.animation === "healing" && this.scene.cardAnimations.get("healing")) return;
         for (let i of [0, 1]) {
             if (this.stands[i] === stand) {
                 if (this.elementList[i]) {

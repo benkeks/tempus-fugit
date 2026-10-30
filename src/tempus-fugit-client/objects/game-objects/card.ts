@@ -27,6 +27,8 @@ export class Card {
     public maxCardsInDeck:number = 5;
     public formulaRepresentation:string | undefined = undefined;
     public animation: string | undefined;
+    // Healing actions and their heart streams use the same amount from the card data.
+    public healing: number | undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -48,6 +50,7 @@ export class Card {
         c.maxCardsInDeck = this.maxCardsInDeck;
         c.key = this.key;
         c.animation = this.animation;
+        c.healing = this.healing;
 
         return c;
     }
@@ -230,6 +233,12 @@ export class Card {
                     throw new TypeError("Invalid animation for card " + c.name);
                 }
                 new_c.animation = c.animation;
+            }
+            if (c.healing !== undefined) {
+                if (typeof c.healing !== "number" || !Number.isFinite(c.healing) || c.healing <= 0) {
+                    throw new TypeError("Invalid healing for card " + c.name);
+                }
+                new_c.healing = c.healing;
             }
 
             this.cards[new_c.key] = new_c;

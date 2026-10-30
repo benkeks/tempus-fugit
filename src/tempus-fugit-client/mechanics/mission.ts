@@ -160,12 +160,13 @@ export class Mission implements EnemyListener, PlayerListener {
             impacted = true;
             resolve(true);
         };
-        animator.play(card.animation, targets, impact, () => {
+        animator.play(card, targets, impact, () => {
             if (this.destroyed || completed) return;
             if (!impacted) {
                 throw new Error("Card animation settled without impact: " + card.animation);
             }
             completed = true;
+            if (card.stand()) this.standListener.forEach(l => l.updateStandGUI(this.stands));
             this.cardActionInProgress = false;
             this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
             this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
@@ -560,11 +561,13 @@ export class Mission implements EnemyListener, PlayerListener {
                 return;
             }
 
+            const visibleStands: [Card | null, Card | null] = [...this.stands];
             if (stand.getRoundsRemaining() <= 0) {
                 this.stands[i] = null;
             }
             for (var l of this.standListener) {
-                l.updateStandGUI(this.stands);
+                // An expiring animated stand must remain a visible effect source until its action settles.
+                l.updateStandGUI(this.cardActionInProgress ? visibleStands : this.stands);
                 if (attacked) l.Attacking(stand, this.iteratorIndex);
             }
         }

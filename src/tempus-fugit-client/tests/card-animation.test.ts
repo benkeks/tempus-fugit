@@ -23,12 +23,12 @@ function createBattle() {
     let impact: () => void;
     let complete: () => void;
     let targets: readonly CardActionTarget[];
-    const play = vi.fn((_key, resolvedTargets, onImpact, onComplete) => {
+    const play = vi.fn((_card: Card, resolvedTargets, onImpact, onComplete) => {
         targets = resolvedTargets;
         impact = onImpact;
         complete = onComplete;
     });
-    mission.cardActionAnimator = {has: key => key === "lightning" || key === "root-pierce", play};
+    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing"].includes(key), play};
     const card = Card.cards["Lightning strike"].copy();
     mission.player.hand.cards[0] = card;
     const attacking = vi.fn();
@@ -59,13 +59,19 @@ describe("Card animation metadata and registration", () => {
         ["Lightning stand", "lightning"],
         ["Root pierce", "root-pierce"],
         ["Lower woodland stand", "root-pierce"],
+        ["Natural heal", "healing"],
+        ["Unnatural heal", "healing"],
+        ["Heal stand", "healing"],
+        ["Higher heal stand", "healing"],
     ])("preserves %s animation metadata through card and deck copies", (name, animation) => {
         const card = Card.cards[name].copy();
         expect(card.animation).toBe(animation);
+        expect(card.healing).toBe(Card.cards[name].healing);
         const deck = new Deck();
         deck.deck = {[card.key]: card};
         deck.setUpDeck();
         expect(deck.copy().cards.every(copy => copy.animation === animation)).toBe(true);
+        expect(deck.copy().cards.every(copy => copy.healing === card.healing)).toBe(true);
     });
 
     it("looks up effects independently of card names and rejects duplicate registrations", () => {
@@ -93,6 +99,12 @@ describe("Card animation metadata and registration", () => {
         const json = JSON.parse(cardsJSON);
         json.cards[0].animation = {};
         expect(() => Card.createFromJSON(JSON.stringify(json))).toThrow("Invalid animation");
+    });
+
+    it.each([0, -1, "40", null, {}, Infinity])("rejects invalid healing strength %s", healing => {
+        const json = JSON.parse(cardsJSON);
+        json.cards.find(card => card.name === "Natural heal").healing = healing;
+        expect(() => Card.createFromJSON(JSON.stringify(json))).toThrow("Invalid healing for card Natural heal");
     });
 
     it.each([Card.DIRECTED, Card.RANDOM])("reports missing targets for a %s card", kind => {
@@ -202,7 +214,7 @@ describe("Animated card resolution", () => {
         const root = Card.cards["Root pierce"].copy();
         mission.player.hand.cards[0] = root;
         mission.player.applyCard(root, enemy, mission);
-        expect(play).toHaveBeenCalledWith("root-pierce", [enemy], expect.any(Function), expect.any(Function));
+        expect(play).toHaveBeenCalledWith(root, [enemy], expect.any(Function), expect.any(Function));
         expect(targets()).toEqual([enemy]);
         expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
         expect(mission.gameState.getVariable("t").getValue(1)).toBe(false);
@@ -225,7 +237,7 @@ describe("Animated card resolution", () => {
         for (let round = 0; round < 2; round++) {
             expect(stand.act(mission, mission.player)).toBe(true);
             expect(play).toHaveBeenCalledTimes(round + 1);
-            expect(play.mock.calls[round][0]).toBe("root-pierce");
+            expect(play.mock.calls[round][0]).toBe(stand);
             expect(targets()).toEqual([enemy, other]);
             expect([enemy.currentHP, other.currentHP]).toEqual([100 - round * 3, 100 - round * 3]);
             impact();
@@ -246,6 +258,95 @@ describe("Animated card resolution", () => {
         expect(random).toHaveBeenCalledOnce();
         expect([enemy.currentHP, other.currentHP]).toEqual([88, 100]);
         random.mockRestore();
+    });
+
+    it.each([
+        ["Natural heal", 40],
+        ["Unnatural heal", 100],
+    ])("delays %s healing and rune changes until the hearts reach the mage", (name, amount) => {
+        const {mission, play, impact, complete, targets, attacking} = createBattle();
+        const card = Card.cards[name].copy();
+        mission.player.hand.cards[0] = card;
+        mission.player.currentHP = 20;
+        mission.gameState.evaluate = () => true;
+        mission.gameState.setVariableValues({n: {0: true, 1: false}});
+        mission.player.applyCard(card, undefined, mission);
+        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function));
+        expect(targets()).toEqual([mission.player]);
+        expect(mission.player.currentHP).toBe(20);
+        expect(mission.active).toBe(false);
+        expect(mission.gameState.getVariable("n").getValue(0)).toBe(true);
+        expect(mission.gameState.getVariable("n").getValue(1)).toBe(false);
+        impact();
+        expect(mission.player.currentHP).toBe(20 + amount);
+        expect(mission.gameState.getVariable("n").getValue(name === "Natural heal" ? 1 : 0)).toBe(name === "Natural heal");
+        expect(attacking).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(true);
+        complete();
+        expect(mission.active).toBe(true);
+    });
+
+    it.each([
+        ["Heal stand", 50],
+        ["Higher heal stand", 100],
+    ])("passes the specific %s to the animator on every activation", (name, amount) => {
+        const {mission, play, impact, complete, targets} = createBattle();
+        const stand = Card.cards[name].copy();
+        mission.curPhase = Mission.STAND_PHASE;
+        mission.gameState.evaluate = () => true;
+        mission.player.currentHP = 20;
+        for (let round = 0; round < 2; round++) {
+            stand.act(mission, mission.player);
+            expect(play.mock.calls[round][0]).toBe(stand);
+            expect(targets()).toEqual([mission.player]);
+            expect(mission.player.currentHP).toBe(20 + round * amount);
+            impact();
+            expect(mission.player.currentHP).toBe(20 + (round + 1) * amount);
+            complete();
+            expect(mission.active).toBe(false);
+        }
+    });
+
+    it("finishes the first healing stand's stream before starting the second stand", () => {
+        const {mission, play, impact, complete} = createBattle();
+        const first = Card.cards["Heal stand"].copy();
+        const second = Card.cards["Higher heal stand"].copy();
+        mission.pushStand(first);
+        mission.pushStand(second);
+        mission.gameState.evaluate = () => true;
+        mission.nextPhase(Mission.STAND_PHASE);
+        mission.nextPlayer();
+        expect(play).toHaveBeenCalledOnce();
+        expect(play.mock.calls[0][0]).toBe(first);
+        impact();
+        expect(mission.player.currentHP).toBe(150);
+        complete();
+        expect(play).toHaveBeenCalledTimes(2);
+        expect(play.mock.calls[1][0]).toBe(second);
+        expect(mission.player.currentHP).toBe(150);
+        impact();
+        expect(mission.player.currentHP).toBe(250);
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+    });
+
+    it("keeps an expiring stand visible as the stream source until its final action settles", () => {
+        const {mission, impact, complete} = createBattle();
+        const stand = Card.cards["Heal stand"].copy();
+        stand.standRounds = 1;
+        mission.pushStand(stand);
+        mission.gameState.evaluate = () => true;
+        const updateStandGUI = vi.fn();
+        const attacking = vi.fn();
+        mission.standListener.push({updateStandGUI, Attacking: attacking});
+        mission.nextPhase(Mission.STAND_PHASE);
+        expect(stand.getRoundsRemaining()).toBe(0);
+        expect(updateStandGUI.mock.lastCall[0][0]).toBe(stand);
+        expect(attacking).toHaveBeenCalledWith(stand, 0);
+        impact();
+        expect(updateStandGUI.mock.lastCall[0][0]).toBe(stand);
+        complete();
+        expect(updateStandGUI.mock.lastCall[0][0]).toBeNull();
     });
 
     it("uses the same impact path for stand activations", () => {
