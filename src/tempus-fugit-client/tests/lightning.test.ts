@@ -42,7 +42,7 @@ function createEffect() {
         },
     });
     const impact = vi.fn();
-    const targets = [{x: 1500, y: 520}, {x: 1720, y: 500}];
+    const targets = [{x: 1500, y: 520, groundY: 600}, {x: 1720, y: 500, groundY: 580}];
     lightning(scene, targets, impact);
     return {
         scene, bolts, impact, targets,

@@ -8,6 +8,7 @@ import { FormulaGUI } from "./formula-gui";
 import { GameStateListener, GameState } from "../game-objects/game-state";
 import { GameInfo } from "../../game";
 import { formatEffectDescription } from "./effect-icon-text";
+import type { CardAnimationPosition } from "../../animations/card-animation-registry";
 
 /**
  * @author Mustafa
@@ -367,8 +368,9 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.y = this.properY;
     }
 
-    public getEffectPosition(): Phaser.Math.Vector2 {
-        return this.sprite.getCenter(undefined, true);
+    public getEffectPosition(): CardAnimationPosition {
+        const center = this.sprite.getCenter(undefined, true);
+        return {x: center.x, y: center.y, groundY: this.sprite.getBottomCenter(undefined, true).y};
     }
 
     /**

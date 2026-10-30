@@ -148,12 +148,14 @@ describe("Enemy hit reactions", () => {
 });
 
 describe("Enemy defeat presentation", () => {
-    it("anchors card effects to the sprite center in world space, not its parent-local position", () => {
+    it("anchors card effects to the sprite center and ground in world space", () => {
         const {gui} = createEnemyGUI();
         const getCenter = vi.fn(() => ({x: 1500, y: 520}));
-        Object.assign(gui, {sprite: {getCenter}});
-        expect(gui.getEffectPosition()).toEqual({x: 1500, y: 520});
+        const getBottomCenter = vi.fn(() => ({x: 1500, y: 600}));
+        Object.assign(gui, {sprite: {getCenter, getBottomCenter}});
+        expect(gui.getEffectPosition()).toEqual({x: 1500, y: 520, groundY: 600});
         expect(getCenter).toHaveBeenCalledWith(undefined, true);
+        expect(getBottomCenter).toHaveBeenCalledWith(undefined, true);
     });
 
     it("removes a large defeated enemy after exactly one second while its wave has survivors", () => {

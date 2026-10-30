@@ -29,6 +29,7 @@ import { CardAnimationRegistry } from "../animations/card-animation-registry";
 import type { CardDamageAnimation } from "../animations/card-animation-registry";
 import { lightning } from "../animations/lightning";
 import { electrocution } from "../animations/electrocution";
+import { rootPierce } from "../animations/root-pierce";
 import type { CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
@@ -110,8 +111,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         super({
             key: "MissionScene"
         });
-        // Cards opt in with "animation":"lightning"; Lightning rain can reuse the same effect and hit reaction.
+        // Cards opt in with an "animation" registry key to share effects and optional hit reactions.
         this.cardAnimations.register("lightning", lightning, electrocution);
+        this.cardAnimations.register("root-pierce", rootPierce);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
@@ -123,7 +125,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         if (!animation) throw new Error("Unknown card animation: " + key);
 
         const positions = targets.filter(target => target !== null).map(target => {
-            if (target === this.tfgame.player) return this.playerGUI.getCenter();
+            if (target === this.tfgame.player) {
+                const center = this.playerGUI.getCenter();
+                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y};
+            }
             const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
             if (!gui) throw new Error("Missing card animation target: " + target.name);
             return gui.getEffectPosition();

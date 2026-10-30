@@ -28,8 +28,8 @@ function createBattle() {
         impact = onImpact;
         complete = onComplete;
     });
-    mission.cardActionAnimator = {has: key => key === "lightning", play};
-    const card = Card.cards["Lightning Strike"].copy();
+    mission.cardActionAnimator = {has: key => key === "lightning" || key === "root-pierce", play};
+    const card = Card.cards["Lightning strike"].copy();
     mission.player.hand.cards[0] = card;
     const attacking = vi.fn();
     const cardPlayed = vi.fn();
@@ -53,13 +53,19 @@ afterEach(() => {
 });
 
 describe("Card animation metadata and registration", () => {
-    it.each(["Lightning Strike", "Lightning rain", "Lightning stand"])("preserves %s animation metadata through card and deck copies", name => {
+    it.each([
+        ["Lightning strike", "lightning"],
+        ["Lightning rain", "lightning"],
+        ["Lightning stand", "lightning"],
+        ["Root pierce", "root-pierce"],
+        ["Lower woodland stand", "root-pierce"],
+    ])("preserves %s animation metadata through card and deck copies", (name, animation) => {
         const card = Card.cards[name].copy();
-        expect(card.animation).toBe("lightning");
+        expect(card.animation).toBe(animation);
         const deck = new Deck();
         deck.deck = {[card.key]: card};
         deck.setUpDeck();
-        expect(deck.copy().cards.every(copy => copy.animation === "lightning")).toBe(true);
+        expect(deck.copy().cards.every(copy => copy.animation === animation)).toBe(true);
     });
 
     it("looks up effects independently of card names and rejects duplicate registrations", () => {
@@ -92,7 +98,7 @@ describe("Card animation metadata and registration", () => {
     it.each([Card.DIRECTED, Card.RANDOM])("reports missing targets for a %s card", kind => {
         const {mission, card} = createBattle();
         card.cardKind = kind;
-        expect(() => card.getActionTargets(mission, [])).toThrow("No targets for card Lightning Strike");
+        expect(() => card.getActionTargets(mission, [])).toThrow("No targets for card " + card.name);
     });
 });
 
@@ -188,6 +194,45 @@ describe("Animated card resolution", () => {
             complete();
             expect(mission.cardActionInProgress).toBe(false);
             expect(mission.active).toBe(false);
+        }
+    });
+
+    it("delays Root pierce's directed damage and rune effects until the root connects", () => {
+        const {mission, enemy, other, play, impact, complete, targets, attacking} = createBattle();
+        const root = Card.cards["Root pierce"].copy();
+        mission.player.hand.cards[0] = root;
+        mission.player.applyCard(root, enemy, mission);
+        expect(play).toHaveBeenCalledWith("root-pierce", [enemy], expect.any(Function), expect.any(Function));
+        expect(targets()).toEqual([enemy]);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        expect(mission.gameState.getVariable("t").getValue(1)).toBe(false);
+        expect(mission.gameState.getVariable("s").getValue(1)).toBe(false);
+        expect(mission.active).toBe(false);
+        impact();
+        expect([enemy.currentHP, other.currentHP]).toEqual([92, 100]);
+        expect(mission.gameState.getVariable("t").getValue(1)).toBe(true);
+        expect(mission.gameState.getVariable("t").getValue(2)).toBe(true);
+        expect(mission.gameState.getVariable("s").getValue(1)).toBe(true);
+        expect(attacking).not.toHaveBeenCalled();
+        complete();
+        expect(mission.active).toBe(true);
+    });
+
+    it("animates all Lower woodland stand targets on every activation", () => {
+        const {mission, enemy, other, play, impact, complete, targets} = createBattle();
+        const stand = Card.cards["Lower woodland stand"].copy();
+        mission.curPhase = Mission.STAND_PHASE;
+        for (let round = 0; round < 2; round++) {
+            expect(stand.act(mission, mission.player)).toBe(true);
+            expect(play).toHaveBeenCalledTimes(round + 1);
+            expect(play.mock.calls[round][0]).toBe("root-pierce");
+            expect(targets()).toEqual([enemy, other]);
+            expect([enemy.currentHP, other.currentHP]).toEqual([100 - round * 3, 100 - round * 3]);
+            impact();
+            expect([enemy.currentHP, other.currentHP]).toEqual([97 - round * 3, 97 - round * 3]);
+            expect(stand.getRoundsRemaining()).toBe(3 - round);
+            complete();
+            expect(mission.cardActionInProgress).toBe(false);
         }
     });
 

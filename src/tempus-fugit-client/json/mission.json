@@ -24,7 +24,7 @@
 				"0":"battle_theme"
 			},
             "loot": ["Root pierce", "Natural heal", "Guiding Light"],
-            "deck": ["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution"]
+            "deck": ["Fireball", "Lightning strike", "Lower woodland stand", "Anti-evolution"]
         },
         {
             "name": "Mother of slimes",
@@ -59,7 +59,7 @@
                 "2":"boss_theme"
 			},
 			"loot":["Light stand", "Unnatural heal"],
-            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
+            "deck":["Fireball", "Lightning strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light"]
         },
         {
             "name":"Moleg the Golem",
@@ -98,7 +98,7 @@
                 "2":"boss_theme"
 			},
 			"loot":["Higher nature stand", "Sun flare", "Heal stand"],
-            "deck":["Fireball", "Lightning Strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
+            "deck":["Fireball", "Lightning strike", "Lower woodland stand", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal"]
         },
         {
             "name":"Goblins everywhere",
@@ -137,7 +137,7 @@
                 "2":"boss_theme"
 			},
 			"loot":["Lightning stand", "Lightning rain", "Vase of Desire"],
-            "deck":["Fireball", "Lightning Strike", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
+            "deck":["Fireball", "Lightning strike", "Anti-evolution", "Root pierce", "Natural heal", "Guiding Light", "Light stand", "Unnatural heal", "Higher nature stand", "Sun flare", "Heal stand"]
         },
         {
             "name":"Cacti Party",

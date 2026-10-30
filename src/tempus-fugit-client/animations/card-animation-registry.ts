@@ -1,6 +1,6 @@
 import type { MissionScene } from "../scenes/mission-scene";
 
-export type CardAnimationPosition = { x: number; y: number };
+export type CardAnimationPosition = { x: number; y: number; groundY: number };
 // Return a finite scene-clock tween, call impact when the spell connects, and clean up on complete/stop.
 export type CardAnimation = (
     scene: MissionScene,
