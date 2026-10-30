@@ -4,7 +4,7 @@ import { GameState } from "../objects/game-objects/game-state";
 import { Enemy, EnemyListener } from "../objects/game-objects/enemy";
 import { StoryDialog } from "./story-dialog";
 import { Card } from "../objects/game-objects/card";
-import type { CardActionAnimator, CardActionTarget } from "./card-action-animation";
+import type { CardActionAnimator, CardActionSource, CardActionTarget } from "./card-action-animation";
 
 type PendingMissionContinuation =
     | { kind: "nextPhase"; next: number }
@@ -139,6 +139,7 @@ export class Mission implements EnemyListener, PlayerListener {
     private awaitingWavePresentation: boolean = false;
     public cardActionAnimator: CardActionAnimator | undefined;
     public cardActionInProgress: boolean = false;
+    private pendingCardActions = 0;
     private destroyed = false;
 
     public get waveTransitionInProgress(): boolean {
@@ -148,6 +149,7 @@ export class Mission implements EnemyListener, PlayerListener {
         card: Card,
         targets: readonly CardActionTarget[],
         resolve: (animated: boolean, hitTargets: readonly CardActionTarget[], final: boolean) => void,
+        source: CardActionSource = this.player,
     ): void {
         const animator = this.cardActionAnimator;
         if (!card.animation || !animator?.has(card.animation)) {
@@ -156,6 +158,7 @@ export class Mission implements EnemyListener, PlayerListener {
         }
 
         this.cardActionInProgress = true;
+        this.pendingCardActions++;
         this.active = false;
         let impacted = false;
         const hitIndices = new Set<number>();
@@ -179,11 +182,12 @@ export class Mission implements EnemyListener, PlayerListener {
             }
             completed = true;
             if (card.stand()) this.standListener.forEach(l => l.updateStandGUI(this.stands));
-            this.cardActionInProgress = false;
+            this.cardActionInProgress = --this.pendingCardActions > 0;
+            if (this.cardActionInProgress) return;
             this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
             this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
             this.flushPendingContinuations();
-        });
+        }, source);
     }
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {

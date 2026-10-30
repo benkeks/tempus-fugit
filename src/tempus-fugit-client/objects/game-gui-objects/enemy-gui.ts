@@ -416,6 +416,8 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
     }
 
     async Attacking(enemy: Enemy, specialAttackActive: boolean) {
+        const animation = enemy.specialAttack?.animation;
+        if (animation && this.scene.tfgame.cardActionAnimator?.has(animation)) return;
         this.scene.createAttackAnimation(this.scene, this, "-", 100, specialAttackActive ? 1 : 0);
     }
 

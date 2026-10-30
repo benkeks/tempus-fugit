@@ -107,13 +107,11 @@ export class Enemy {
     public applyCard(card: Card, mission: Mission): boolean {
         let val:boolean = mission.gameState.evaluate(card.getFormula());
         if (val) {
-            switch (card.getKind()) {
-                case Card.OTHER:
-                    card.action(mission, null);
-                    break;
-                case Card.DIRECTED:
-                    card.action(mission, mission.player);
-                    break;
+            if (card.getKind() === Card.OTHER || card.getKind() === Card.DIRECTED) {
+                const targets = [card.getKind() === Card.OTHER ? null : mission.player];
+                mission.performCardAction(card, targets, (_animated, hitTargets) => {
+                    for (const target of hitTargets) card.action(mission, target);
+                }, this);
             }
         }
 
@@ -124,7 +122,14 @@ export class Enemy {
         const specialAttackActive = this.specialAttack !== undefined && this.applyCard(this.specialAttack, mission);
 
         if (!specialAttackActive){
-            mission.player.takeHit(this.baseAttack);
+            const damage = this.baseAttack;
+            const hit = () => mission.player.takeHit(damage);
+            if (this.specialAttack) {
+                // Reuse the enemy's effect without executing its inactive special action.
+                mission.performCardAction(this.specialAttack, [mission.player], hit, this);
+            } else {
+                hit();
+            }
         }
 
         this.listener.map(l => l.Attacking(this, specialAttackActive));
@@ -178,6 +183,7 @@ export class Enemy {
             if (e.specialAttack) {
                 special = new Card(e.name + "_special_attack", "", "", e.specialAttack.formula,
                 Card.DIRECTED, false, 0,  e.specialAttack.action);
+                special.animation = Card.parseAnimation(e.specialAttack.animation, special.name);
                 if (e.specialAttack.formulaRepresentation) special.formulaRepresentation = e.specialAttack.formulaRepresentation;
             }
 

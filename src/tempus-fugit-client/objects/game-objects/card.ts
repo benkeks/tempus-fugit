@@ -195,6 +195,14 @@ export class Card {
         }*/
     }
 
+    public static parseAnimation(animation: unknown, cardName: string): string | undefined {
+        if (animation === undefined) return undefined;
+        if (typeof animation !== "string" || !animation.trim()) {
+            throw new TypeError("Invalid animation for card " + cardName);
+        }
+        return animation;
+    }
+
     public static createFromJSON(jString:string) {
         let json = JSON.parse(jString);
 
@@ -228,12 +236,7 @@ export class Card {
 
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
             if (c.key) new_c.key = c.key;
-            if (c.animation !== undefined) {
-                if (typeof c.animation !== "string" || !c.animation.trim()) {
-                    throw new TypeError("Invalid animation for card " + c.name);
-                }
-                new_c.animation = c.animation;
-            }
+            new_c.animation = Card.parseAnimation(c.animation, c.name);
             if (c.healing !== undefined) {
                 if (typeof c.healing !== "number" || !Number.isFinite(c.healing) || c.healing <= 0) {
                     throw new TypeError("Invalid healing for card " + c.name);

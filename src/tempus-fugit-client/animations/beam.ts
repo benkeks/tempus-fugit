@@ -1,13 +1,12 @@
 import type { CardAnimation } from "./card-animation-registry";
 
 function beam(light: boolean): CardAnimation {
-    return (scene, targets, impact, card) => {
+    return (scene, targets, impact, card, caster) => {
         const impactMs = 160;
         const holdEndMs = 220;
         const durationMs = 340;
         if (light && !card?.stand()) throw new Error("Light beam animation requires a stand card");
         const stand = light && card ? scene.standGUI.beginEffect(card) : undefined;
-        const source = stand ? stand.sprite : scene.playerGUI;
         const receivers = targets.filter(target => !target.sprite || target.sprite.scene);
         const rays = scene.add.graphics().setDepth(150)
             .setBlendMode(light ? Phaser.BlendModes.ADD : Phaser.BlendModes.NORMAL);
@@ -38,7 +37,9 @@ function beam(light: boolean): CardAnimation {
                 }
                 const progress = Math.max(0, Math.min(1, elapsed / impactMs));
                 const alpha = 1 - Math.max(0, Math.min(1, (elapsed - holdEndMs) / (durationMs - holdEndMs)));
-                const origin = source.getCenter(undefined, true);
+                const origin = stand?.sprite.getCenter(undefined, true)
+                    ?? caster?.sprite?.getCenter(undefined, true)
+                    ?? caster ?? scene.playerGUI.getCenter(undefined, true);
                 rays.clear();
                 receivers.forEach(target => {
                     const x = origin.x + (target.x - origin.x) * progress;

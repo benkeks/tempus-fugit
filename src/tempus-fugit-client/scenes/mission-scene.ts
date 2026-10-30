@@ -26,7 +26,7 @@ import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
 import { CardAnimationRegistry } from "../animations/card-animation-registry";
-import type { CardDamageAnimation } from "../animations/card-animation-registry";
+import type { CardAnimationPosition, CardDamageAnimation } from "../animations/card-animation-registry";
 import { lightning } from "../animations/lightning";
 import { electrocution } from "../animations/electrocution";
 import { rootPierce } from "../animations/root-pierce";
@@ -36,7 +36,11 @@ import { fireball, incinerate } from "../animations/fireball";
 import { lightBeam, darkBeam } from "../animations/beam";
 import { sunWave } from "../animations/sun-wave";
 import { magicBolts, magicRain } from "../animations/magic-particles";
-import type { CardActionImpact, CardActionTarget } from "../mechanics/card-action-animation";
+import { slash } from "../animations/slash";
+import { needleVolley } from "../animations/needle-volley";
+import { groundImpact } from "../animations/ground-impact";
+import { slimeSplash } from "../animations/slime-splash";
+import type { CardActionImpact, CardActionSource, CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
     game: Mission;
@@ -117,7 +121,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         super({
             key: "MissionScene"
         });
-        // Cards opt in with an "animation" registry key to share effects and optional hit reactions.
+        // Player cards and enemy attacks share effects and impact timing via their "animation" key.
         this.cardAnimations.register("lightning", lightning, electrocution);
         this.cardAnimations.register("root-pierce", rootPierce);
         this.cardAnimations.register("healing", healing);
@@ -130,27 +134,38 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardAnimations.register("sun-wave", sunWave);
         this.cardAnimations.register("magic-bolts", magicBolts);
         this.cardAnimations.register("magic-rain", magicRain);
+        this.cardAnimations.register("slash", slash);
+        this.cardAnimations.register("needle-volley", needleVolley);
+        this.cardAnimations.register("ground-impact", groundImpact);
+        this.cardAnimations.register("slime-splash", slimeSplash);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
         return this.cardDamageAnimation?.targets.includes(target) ? this.cardDamageAnimation.animation : undefined;
     }
 
-    public playCardAnimation(card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void): void {
+    private getCardAnimationPosition(actor: CardActionSource): CardAnimationPosition {
+        if (actor === this.tfgame.player) {
+            const center = this.playerGUI.getCenter(undefined, true);
+            return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI};
+        }
+        const gui = this.enemyGUI.enemies.find(gui => gui.enemy === actor);
+        if (!gui) throw new Error("Missing card animation actor: " + actor.name);
+        return gui.getEffectPosition();
+    }
+
+    public playCardAnimation(
+        card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void,
+        source: CardActionSource = this.tfgame.player,
+    ): void {
         const key = card.animation;
         const animation = key && this.cardAnimations.get(key);
         if (!animation) throw new Error("Unknown card animation: " + key);
 
-        const positions = targets.map((target, index) => {
-            if (target === null) return null;
-            if (target === this.tfgame.player) {
-                const center = this.playerGUI.getCenter(undefined, true);
-                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI, index};
-            }
-            const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
-            if (!gui) throw new Error("Missing card animation target: " + target.name);
-            return {...gui.getEffectPosition(), index};
-        }).filter(position => position !== null);
+        const positions = targets.map((target, index) =>
+            target === null ? null : {...this.getCardAnimationPosition(target), index})
+            .filter(position => position !== null);
+        const caster = this.getCardAnimationPosition(source);
         const epoch = this.animationEpoch;
         const damageAnimation = this.cardAnimations.getDamageAnimation(key);
         let impacted = false;
@@ -174,7 +189,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
                 this.cardDamageAnimation = previousDamageAnimation;
             }
         };
-        this.trackCombatAnimation(animation(this, positions, applyImpact, card));
+        this.trackCombatAnimation(animation(this, positions, applyImpact, card, caster));
         void this.waitForActionAnimations().then(async () => {
             if (epoch !== this.animationEpoch) return;
             if (!impacted) {
@@ -399,7 +414,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.listener.push(this);
         this.tfgame.cardActionAnimator = {
             has: key => this.cardAnimations.get(key) !== undefined,
-            play: (card, targets, impact, complete) => this.playCardAnimation(card, targets, impact, complete),
+            play: (card, targets, impact, complete, source) => this.playCardAnimation(card, targets, impact, complete, source),
         };
 
         MissionScene.latestData = {

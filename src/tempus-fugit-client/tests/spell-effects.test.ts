@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { lightBeam, darkBeam } from "../animations/beam";
 import { magicBolts, magicRain } from "../animations/magic-particles";
 import { sunWave } from "../animations/sun-wave";
+import { slash } from "../animations/slash";
+import { needleVolley } from "../animations/needle-volley";
+import { groundImpact } from "../animations/ground-impact";
+import { slimeSplash } from "../animations/slime-splash";
 import type { CardAnimation, CardAnimationPosition } from "../animations/card-animation-registry";
 import type { Card } from "../objects/game-objects/card";
 import type { MissionScene } from "../scenes/mission-scene";
@@ -16,13 +20,14 @@ type EffectConfig = {
 function createEffect(animation: CardAnimation, targets: readonly CardAnimationPosition[] = [
     {x: 1500, y: 520, groundY: 600},
     {x: 1720, y: 400, groundY: 640},
-], isStand = true) {
+], isStand = true, caster?: CardAnimationPosition) {
     vi.stubGlobal("Phaser", {BlendModes: {ADD: 1, NORMAL: 0}});
     const graphics = {
         setDepth: vi.fn().mockReturnThis(), setBlendMode: vi.fn().mockReturnThis(),
         lineStyle: vi.fn().mockReturnThis(), lineBetween: vi.fn().mockReturnThis(),
         fillStyle: vi.fn().mockReturnThis(), fillCircle: vi.fn().mockReturnThis(),
         fillEllipse: vi.fn().mockReturnThis(), strokeEllipse: vi.fn().mockReturnThis(),
+        fillPoints: vi.fn().mockReturnThis(), fillRect: vi.fn().mockReturnThis(),
         clear: vi.fn(), destroy: vi.fn(),
     };
     const emitters: Array<{
@@ -57,7 +62,7 @@ function createEffect(animation: CardAnimation, targets: readonly CardAnimationP
     const card: Card = Object.create(null);
     card.stand = () => isStand;
     const impact = vi.fn();
-    animation(scene, targets, impact, card);
+    animation(scene, targets, impact, card, caster);
     return {
         scene, card, targets, graphics, emitters, mageCenter, standCenter, beginEffect, restore, impact,
         config: () => config,
@@ -67,7 +72,39 @@ function createEffect(animation: CardAnimation, targets: readonly CardAnimationP
 
 afterEach(() => vi.unstubAllGlobals());
 
+function createCaster() {
+    const sprite: Phaser.GameObjects.Sprite = Object.create(null);
+    Object.assign(sprite, {
+        scene: {}, x: 16, y: 28, scaleX: 4, scaleY: 4,
+        getBottomCenter: function(this: Phaser.GameObjects.Sprite) {
+            return {x: this.x, y: this.y + 16 * this.scaleY};
+        },
+        setPosition: function(this: Phaser.GameObjects.Sprite, x: number, y: number) {
+            this.x = x;
+            this.y = y;
+            return this;
+        },
+        setScale: function(this: Phaser.GameObjects.Sprite, x: number, y: number) {
+            this.scaleX = x;
+            this.scaleY = y;
+            return this;
+        },
+    });
+    return sprite;
+}
+
 describe("Light and dark beams", () => {
+    it("casts a dark beam from the specific enemy toward the mage", () => {
+        const {graphics, mageCenter, beginEffect, advance} = createEffect(
+            darkBeam, [{x: 300, y: 460, groundY: 620}], false, {x: 1500, y: 520, groundY: 600});
+        advance(80);
+        expect(graphics.lineBetween).toHaveBeenCalledWith(1500, 520, 900, 490);
+        advance(160);
+        expect(graphics.lineBetween).toHaveBeenCalledWith(1500, 520, 300, 460);
+        expect(mageCenter).not.toHaveBeenCalled();
+        expect(beginEffect).not.toHaveBeenCalled();
+    });
+
     it("uses the exact stand as the light source and follows its live world position", () => {
         const {card, graphics, standCenter, mageCenter, beginEffect, restore, advance, config} = createEffect(lightBeam);
         expect(beginEffect).toHaveBeenCalledWith(card);
@@ -113,6 +150,19 @@ describe("Light and dark beams", () => {
 });
 
 describe("Rune magic particles", () => {
+    it("sends Bookworm Slime's sparse rune trail from the enemy to the mage", () => {
+        const {emitters, mageCenter} = createEffect(
+            magicBolts, [{x: 300, y: 460, groundY: 620}], false, {x: 1500, y: 520, groundY: 600});
+        expect(mageCenter).not.toHaveBeenCalled();
+        expect(emitters).toHaveLength(1);
+        expect(emitters[0].explode).toHaveBeenCalledWith(6);
+        expect(emitters[0].config).toMatchObject({
+            x: {min: 1492, max: 1508}, y: {min: 510, max: 530},
+            moveToX: 300, moveToY: 460, delay: {start: 0, end: 90, steps: 6},
+            scale: {start: 1.02, end: 0.3},
+        });
+    });
+
     it("sends only six additive rune particles from the mage for Anti-evolution", () => {
         const {scene, emitters, targets, mageCenter, advance, impact} = createEffect(magicBolts);
         expect(mageCenter).toHaveBeenCalledWith(undefined, true);
@@ -124,6 +174,7 @@ describe("Rune magic particles", () => {
                 x: {min: 292, max: 308}, y: {min: 450, max: 470},
                 moveToX: targets[i].x, moveToY: targets[i].y, lifespan: 240,
                 delay: {start: 0, end: 90, steps: 6},
+                scale: {start: 1.02, end: 0.3},
             });
         });
         advance(239);
@@ -143,6 +194,7 @@ describe("Rune magic particles", () => {
                 y: {min: 1080 * 0.245, max: Math.max(1080 * 0.245 + 40, targets[i].y - 180)},
                 moveToX: targets[i].x, moveToY: targets[i].y, lifespan: 300,
                 delay: {start: 0, end: 80, steps: 32},
+                scale: {start: 1.32, end: 0.3},
             });
         });
         advance(299);
@@ -203,9 +255,221 @@ describe("Sun flare's travelling light wave", () => {
     });
 });
 
+describe("Goblin slash", () => {
+    function goblinSlash() {
+        const sprite: Phaser.GameObjects.Sprite = Object.create(null);
+        Object.assign(sprite, {scene: {}, x: 16});
+        const effect = createEffect(slash, [{x: 300, y: 460, groundY: 620}], false,
+            {x: 1500, y: 520, groundY: 600, sprite});
+        return {...effect, sprite};
+    }
+
+    it("winds up, slashes across the mage, and applies one hit at the 140ms contact", () => {
+        const {graphics, sprite, advance, impact, config} = goblinSlash();
+        advance(0);
+        expect(graphics.fillPoints).not.toHaveBeenCalled();
+        advance(100);
+        expect(sprite.x).toBeLessThan(16);
+        expect(graphics.fillPoints).toHaveBeenCalledTimes(3);
+        expect(impact).not.toHaveBeenCalled();
+        advance(139);
+        expect(impact).not.toHaveBeenCalled();
+        advance(140);
+        expect(sprite.x).toBeCloseTo(-12);
+        const points = graphics.fillPoints.mock.lastCall[0];
+        expect(points[0]).toEqual({x: 234, y: 376});
+        expect(points[2]).toEqual({x: 366, y: 544});
+        const outerPoints = graphics.fillPoints.mock.calls[graphics.fillPoints.mock.calls.length - 3][0];
+        expect(outerPoints[3].x - outerPoints[1].x).toBeCloseTo(26.4);
+        expect(impact).toHaveBeenCalledOnce();
+        config().onComplete();
+        expect(sprite.x).toBe(16);
+        expect(impact).toHaveBeenCalledOnce();
+    });
+
+    it("restores the casting goblin's pose on interruption without dealing premature damage", () => {
+        const {sprite, advance, impact, config} = goblinSlash();
+        advance(90);
+        expect(sprite.x).toBeLessThan(16);
+        config().onStop();
+        expect(sprite.x).toBe(16);
+        expect(impact).not.toHaveBeenCalled();
+    });
+
+    it("does not restore a destroyed casting sprite", () => {
+        const {sprite, advance, config} = goblinSlash();
+        advance(90);
+        Object.assign(sprite, {scene: undefined, x: 80});
+        config().onStop();
+        expect(sprite.x).toBe(80);
+    });
+});
+
+describe("Cactus needle volley", () => {
+    it("launches five staggered, layered needles from the exact caster to the mage", () => {
+        const {graphics, mageCenter, advance, impact, config} = createEffect(
+            needleVolley, [{x: 300, y: 460, groundY: 620}], false, {x: 1500, y: 520, groundY: 600});
+        advance(0);
+        expect(graphics.fillPoints).toHaveBeenCalledTimes(2);
+        expect(graphics.fillPoints.mock.calls[0][0][0]).toEqual({x: 1500, y: 510});
+        graphics.fillPoints.mockClear();
+        advance(28);
+        expect(graphics.fillPoints).toHaveBeenCalledTimes(6);
+        graphics.fillPoints.mockClear();
+        advance(56);
+        expect(graphics.fillPoints).toHaveBeenCalledTimes(10);
+        expect(impact).not.toHaveBeenCalled();
+        advance(179);
+        expect(impact).not.toHaveBeenCalled();
+        advance(180);
+        expect(graphics.fillPoints).toHaveBeenCalledWith(
+            expect.arrayContaining([{x: 300, y: 432}]), true);
+        expect(impact).toHaveBeenCalledOnce();
+        advance(236);
+        expect(graphics.fillPoints.mock.lastCall[0][0]).toEqual({x: 300, y: 488});
+        expect(graphics.destroy).not.toHaveBeenCalled();
+        config().onComplete();
+        expect(impact).toHaveBeenCalledOnce();
+        expect(config().duration).toBe(320);
+        expect(mageCenter).not.toHaveBeenCalled();
+    });
+
+    it("skips destroyed receivers but still renders a volley for each living target", () => {
+        const sprite: Phaser.GameObjects.Sprite = Object.create(null);
+        const {graphics, advance} = createEffect(needleVolley, [
+            {x: 0, y: 0, groundY: 0, sprite},
+            {x: 300, y: 460, groundY: 620},
+            {x: 600, y: 460, groundY: 620},
+        ]);
+        advance(180);
+        expect(graphics.fillPoints).toHaveBeenCalledTimes(20);
+        for (const [points] of graphics.fillPoints.mock.calls) {
+            expect(points.every(point => Number.isInteger(point.x) && Number.isInteger(point.y))).toBe(true);
+        }
+    });
+});
+
+describe("Ground impact", () => {
+    it("builds pressure at each target's feet, then bursts into twelve dust chips and a shockwave", () => {
+        const {graphics, advance, impact, config} = createEffect(
+            groundImpact, [{x: 300, y: 460, groundY: 620}]);
+        advance(159);
+        expect(graphics.fillEllipse).toHaveBeenCalledWith(300, 618, expect.any(Number), 12);
+        expect(graphics.strokeEllipse).not.toHaveBeenCalled();
+        expect(graphics.fillRect).not.toHaveBeenCalled();
+        expect(impact).not.toHaveBeenCalled();
+        advance(160);
+        expect(graphics.strokeEllipse).toHaveBeenCalledWith(300, 616, 56, 14);
+        expect(graphics.fillRect).toHaveBeenCalledTimes(12);
+        expect(impact).toHaveBeenCalledOnce();
+        advance(260);
+        expect(graphics.strokeEllipse).toHaveBeenCalledWith(300, 616, 146, 34);
+        for (const [x, y] of graphics.fillRect.mock.calls) {
+            expect(Number.isInteger(x) && Number.isInteger(y)).toBe(true);
+            expect(y).toBeLessThan(620);
+        }
+        config().onComplete();
+        expect(impact).toHaveBeenCalledOnce();
+        expect(config().duration).toBe(360);
+    });
+
+    it("gives the casting character a small stomp without moving its parent container", () => {
+        const sprite = createCaster();
+        const {advance, config} = createEffect(groundImpact, undefined, false,
+            {x: 1500, y: 520, groundY: 600, sprite});
+        advance(80);
+        expect(sprite.y).toBe(14);
+        expect(sprite.x).toBe(16);
+        advance(160);
+        expect(sprite.y).toBeCloseTo(28);
+        config().onComplete();
+        expect(sprite.y).toBe(28);
+    });
+});
+
+describe("Slime squash and splash", () => {
+    it("anchors the squash, hops to the mage's feet in parent space, splashes, and hops home", () => {
+        const sprite = createCaster();
+        const applyInverse = vi.fn(() => ({x: 100, y: 120}));
+        Object.assign(sprite, {parentContainer: {getWorldTransformMatrix: () => ({applyInverse})}});
+        const {graphics, advance, impact, config} = createEffect(
+            slimeSplash, [{x: 300, y: 460, groundY: 620}], false, {x: 1500, y: 520, groundY: 600, sprite});
+        expect(applyInverse).toHaveBeenCalledWith(300, 620);
+        advance(70);
+        expect(sprite.scaleX).toBe(5);
+        expect(sprite.scaleY).toBe(3);
+        expect(sprite.getBottomCenter()).toEqual({x: 16, y: 92});
+        expect(graphics.fillRect).not.toHaveBeenCalled();
+        advance(150);
+        expect(sprite.x).toBeCloseTo(58);
+        expect(sprite.y).toBeCloseTo(-38);
+        advance(229);
+        expect(impact).not.toHaveBeenCalled();
+        advance(230);
+        expect(sprite.getBottomCenter()).toEqual({x: 100, y: 120});
+        expect(graphics.fillRect).toHaveBeenCalledTimes(10);
+        expect(graphics.fillEllipse).toHaveBeenCalledWith(300, 618, 54, 12);
+        expect(impact).toHaveBeenCalledOnce();
+        advance(245);
+        expect(sprite.getBottomCenter()).toEqual({x: 100, y: 120});
+        expect(sprite.scaleY).toBeLessThan(4);
+        advance(340);
+        expect(sprite.x).toBeCloseTo(58);
+        expect(sprite.y).toBeCloseTo(-18);
+        advance(420);
+        config().onComplete();
+        expect(sprite.x).toBe(16);
+        expect(sprite.y).toBe(28);
+        expect(sprite.scaleX).toBe(4);
+        expect(sprite.scaleY).toBe(4);
+        expect(impact).toHaveBeenCalledOnce();
+        expect(config().duration).toBe(420);
+    });
+
+    it("uses world coordinates directly for a caster without a parent", () => {
+        const sprite = createCaster();
+        const {advance} = createEffect(slimeSplash, [{x: 300, y: 460, groundY: 620}], false,
+            {x: 16, y: 28, groundY: 92, sprite});
+        advance(230);
+        expect(sprite.getBottomCenter()).toEqual({x: 300, y: 620});
+    });
+});
+
+describe.each([groundImpact, slimeSplash])("Enemy character pose cleanup", animation => {
+    it("restores the original pose when an attack is interrupted", () => {
+        const sprite = createCaster();
+        const {advance, impact, config} = createEffect(animation, undefined, false,
+            {x: 1500, y: 520, groundY: 600, sprite});
+        advance(70);
+        expect(sprite.y).not.toBe(28);
+        config().onStop();
+        config().onStop();
+        expect(sprite.x).toBe(16);
+        expect(sprite.y).toBe(28);
+        expect(sprite.scaleX).toBe(4);
+        expect(sprite.scaleY).toBe(4);
+        expect(impact).not.toHaveBeenCalled();
+    });
+
+    it("does not animate or restore a destroyed casting character", () => {
+        const sprite = createCaster();
+        const {advance, config} = createEffect(animation, undefined, false,
+            {x: 1500, y: 520, groundY: 600, sprite});
+        advance(70);
+        Object.assign(sprite, {scene: undefined, x: 90, y: 95, scaleX: 2, scaleY: 2});
+        advance(200);
+        config().onStop();
+        expect(sprite.x).toBe(90);
+        expect(sprite.y).toBe(95);
+        expect(sprite.scaleX).toBe(2);
+        expect(sprite.scaleY).toBe(2);
+    });
+});
+
 describe.each([
     ["light beam", lightBeam], ["dark beam", darkBeam], ["magic bolts", magicBolts],
-    ["magic rain", magicRain], ["sun wave", sunWave],
+    ["magic rain", magicRain], ["sun wave", sunWave], ["goblin slash", slash],
+    ["needle volley", needleVolley], ["ground impact", groundImpact], ["slime splash", slimeSplash],
 ] as const)("%s lifecycle", (_name, animation) => {
     it("settles on a slow frame and cleans up exactly once", () => {
         const {impact, graphics, emitters, config} = createEffect(animation);

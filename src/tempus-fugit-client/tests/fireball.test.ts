@@ -13,7 +13,7 @@ type EffectConfig = {
 function createEffect(targets: readonly CardAnimationPosition[] = [
     {x: 1500, y: 520, groundY: 600},
     {x: 1720, y: 400, groundY: 640},
-], animation: CardAnimation = fireball) {
+], animation: CardAnimation = fireball, caster?: CardAnimationPosition) {
     vi.stubGlobal("Phaser", {Textures: {FilterMode: {NEAREST: 0}}});
     const projectiles: Array<{
         x: number; y: number; alpha: number;
@@ -46,7 +46,7 @@ function createEffect(targets: readonly CardAnimationPosition[] = [
         tweens: {addCounter: vi.fn(options => { config = options; return {}; })},
     });
     const impact = vi.fn();
-    animation(scene, targets, impact);
+    animation(scene, targets, impact, undefined, caster);
     return {
         scene, projectiles, getCenter, targets, impact, config: () => config,
         advance: (elapsed: number) => config.onUpdate({getValue: () => elapsed}),
@@ -56,6 +56,20 @@ function createEffect(targets: readonly CardAnimationPosition[] = [
 afterEach(() => vi.unstubAllGlobals());
 
 describe("Fireball projectile", () => {
+    it("reverses the projectile from an enemy's world position toward the mage", () => {
+        const {projectiles, advance, getCenter, impact, scene} = createEffect(
+            [{x: 300, y: 460, groundY: 620}], fireball, {x: 1500, y: 520, groundY: 600});
+        expect(getCenter).not.toHaveBeenCalled();
+        expect(scene.add.image).toHaveBeenCalledWith(1500, 520, "fireball");
+        expect(projectiles[0].setRotation).toHaveBeenCalledWith(Math.atan2(-60, -1200) + Math.PI / 4);
+        advance(125);
+        expect([projectiles[0].x, projectiles[0].y]).toEqual([900, 490]);
+        expect(impact).not.toHaveBeenCalled();
+        advance(250);
+        expect([projectiles[0].x, projectiles[0].y]).toEqual([300, 460]);
+        expect(impact).toHaveBeenCalledOnce();
+    });
+
     it("launches one pixel-filtered card sprite per target from the mage's world center", () => {
         const {scene, projectiles, getCenter} = createEffect();
         expect(getCenter).toHaveBeenCalledWith(undefined, true);

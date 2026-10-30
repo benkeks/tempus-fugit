@@ -7,6 +7,7 @@
             "maxHP": 15,
             "baseAttack": 2,
             "specialAttack": {
+                "animation": "slime-splash",
                 "description": "The player takes 5 {atk}.",
                 "shortDescription": "5{atk}",
                 "formula": "!(n|l)",
@@ -26,6 +27,7 @@
             "maxHP": 20,
             "baseAttack": 3,
             "specialAttack": {
+                "animation": "magic-bolts",
                 "description": "The player takes 10 {atk}.",
                 "shortDescription": "10{atk}",
                 "formula": "l&t",
@@ -45,6 +47,7 @@
             "maxHP": 25,
             "baseAttack": 4,
             "specialAttack": {
+                "animation": "fireball",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "!n&s&t",
@@ -64,6 +67,7 @@
             "maxHP": 60,
             "baseAttack": 5,
             "specialAttack": {
+                "animation": "slime-splash",
                 "description": "The player takes 20 {atk}.",
                 "shortDescription": "20{atk}",
                 "formula": "!(n|l|s)",
@@ -83,6 +87,7 @@
             "maxHP": 25,
             "baseAttack": 3,
             "specialAttack": {
+                "animation": "slash",
                 "description": "The player takes 10 {atk}.",
                 "shortDescription": "10{atk}",
                 "formula": "#O(l&t)",
@@ -102,6 +107,7 @@
             "maxHP": 40,
             "baseAttack": 6,
             "specialAttack": {
+                "animation": "slash",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "#O(l&t)",
@@ -121,6 +127,7 @@
             "maxHP": 90,
             "baseAttack": 8,
             "specialAttack": {
+                "animation": "slash",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "#O(l&t)",
@@ -140,6 +147,7 @@
             "maxHP": 100,
             "baseAttack": 13,
             "specialAttack": {
+                "animation": "slash",
                 "description": "The player takes 20 {atk}.",
                 "shortDescription": "20{atk}",
                 "formula": "!(s|t)",
@@ -159,6 +167,7 @@
             "maxHP": 300,
             "baseAttack": 20,
             "specialAttack": {
+                "animation": "slash",
                 "description": "You take 50 {atk}.",
                 "shortDescription": "50{atk}",
                 "formula": "n&s&t",
@@ -178,6 +187,7 @@
             "maxHP": 90,
             "baseAttack": 12,
             "specialAttack": {
+                "animation": "ground-impact",
                 "description": "The player takes 25 {atk}.",
                 "shortDescription": "25{atk}",
                 "formula": "n&t&l",
@@ -197,6 +207,7 @@
             "maxHP": 45,
             "baseAttack": 10,
             "specialAttack": {
+                "animation": "needle-volley",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "G(!s)",
@@ -216,6 +227,7 @@
             "maxHP": 50,
             "baseAttack": 11,
             "specialAttack": {
+                "animation": "needle-volley",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "n&l",
@@ -235,6 +247,7 @@
             "maxHP": 120,
             "baseAttack": 20,
             "specialAttack": {
+                "animation": "needle-volley",
                 "description": "The player takes 28 {atk}.",
                 "shortDescription": "28{atk}",
                 "formula": "n&l&F(s&l)",
@@ -254,6 +267,7 @@
             "maxHP": 55,
             "baseAttack": 10,
             "specialAttack": {
+                "animation": "ground-impact",
                 "description": "The player takes 15 {atk}.",
                 "shortDescription": "15{atk}",
                 "formula": "#Ot&!n",
@@ -273,6 +287,7 @@
             "maxHP": 130,
             "baseAttack": 18,
             "specialAttack": {
+                "animation": "ground-impact",
                 "description": "The player takes 25 {atk}.",
                 "shortDescription": "25{atk}",
                 "formula": "!#Ot&!(s|n)",
@@ -330,6 +345,7 @@
             "maxHP": 130,
             "baseAttack": 22,
             "specialAttack": {
+                "animation": "dark-beam",
                 "description": "The player takes 30 {atk}.",
                 "shortDescription": "30{atk}",
                 "formula": "#G(!(s|t|n|l))",
@@ -406,6 +422,7 @@
             "maxHP": 110,
             "baseAttack": 20,
             "specialAttack": {
+                "animation": "dark-beam",
                 "description": "The player takes 25 {atk}.",
                 "shortDescription": "25{atk}",
                 "formula": "#Ot&t",

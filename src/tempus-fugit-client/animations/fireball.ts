@@ -1,11 +1,11 @@
 import type { CardAnimation } from "./card-animation-registry";
 
-const fireballs = (surround: boolean): CardAnimation => (scene, targets, impact) => {
+const fireballs = (surround: boolean): CardAnimation => (scene, targets, impact, _card, caster) => {
     const flightMs = 250;
     const durationMs = 320;
-    const mage = surround ? undefined : scene.playerGUI.getCenter(undefined, true);
+    const source = surround ? undefined : caster ?? scene.playerGUI.getCenter(undefined, true);
     const projectiles = targets.filter(target => !target.sprite || target.sprite.scene).flatMap(target => {
-        const origins = mage ? [mage] : Array.from({length: 5}, (_, i) => {
+        const origins = source ? [source] : Array.from({length: 5}, (_, i) => {
             const angle = -Math.PI / 2 + i * Math.PI * 2 / 5;
             return {
                 x: Math.max(64, Math.min(scene.cameras.main.width - 64, target.x + Math.cos(angle) * 200)),

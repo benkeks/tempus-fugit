@@ -1,15 +1,15 @@
 import type { CardAnimation } from "./card-animation-registry";
 
 function magicParticles(above: boolean): CardAnimation {
-    return (scene, targets, impact) => {
+    return (scene, targets, impact, _card, caster) => {
         const flightMs = above ? 300 : 240;
         const emissionMs = above ? 80 : 90;
         const count = above ? 32 : 6;
         const durationMs = flightMs + emissionMs + 60;
-        const mage = above ? undefined : scene.playerGUI.getCenter(undefined, true);
+        const source = above ? undefined : caster ?? scene.playerGUI.getCenter(undefined, true);
         const emitters = targets.filter(target => !target.sprite || target.sprite.scene).map(target => {
-            const x = mage ? mage.x : target.x;
-            const y = mage ? mage.y : Math.max(scene.cameras.main.height * 0.245, target.y - 300);
+            const x = source ? source.x : target.x;
+            const y = source ? source.y : Math.max(scene.cameras.main.height * 0.245, target.y - 300);
             // Match the book's casting particles: the four rune frames with additive blending.
             const emitter = scene.add.particles(0, 0, "runes", {
                 frame: [0, 1, 2, 3],
@@ -19,7 +19,7 @@ function magicParticles(above: boolean): CardAnimation {
                 moveToY: target.y,
                 lifespan: flightMs,
                 delay: {start: 0, end: emissionMs, steps: count},
-                scale: {start: above ? 1.1 : 0.85, end: 0.25},
+                scale: {start: above ? 1.32 : 1.02, end: 0.3},
                 blendMode: "ADD",
                 emitting: false,
                 frequency: -1,

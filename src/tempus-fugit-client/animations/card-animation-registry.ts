@@ -16,6 +16,7 @@ export type CardAnimation = (
     targets: readonly CardAnimationPosition[],
     impact: CardActionImpact,
     card?: Card,
+    caster?: CardAnimationPosition,
 ) => Phaser.Tweens.Tween;
 
 export type CardDamageAnimation = (
