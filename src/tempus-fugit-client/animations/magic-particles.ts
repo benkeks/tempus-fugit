@@ -1,10 +1,12 @@
 import type { CardAnimation } from "./card-animation-registry";
 
-function magicParticles(above: boolean): CardAnimation {
+function magicParticles(mode: "bolts" | "rain" | "swarm"): CardAnimation {
     return (scene, targets, impact, _card, caster) => {
-        const flightMs = above ? 300 : 240;
-        const emissionMs = above ? 80 : 90;
-        const count = above ? 32 : 6;
+        const above = mode === "rain";
+        const swarm = mode === "swarm";
+        const flightMs = above ? 300 : swarm ? 260 : 240;
+        const emissionMs = above ? 80 : swarm ? 130 : 90;
+        const count = above ? 32 : swarm ? 64 : 6;
         const durationMs = flightMs + emissionMs + 60;
         const source = above ? undefined : caster ?? scene.playerGUI.getCenter(undefined, true);
         const emitters = targets.filter(target => !target.sprite || target.sprite.scene).map(target => {
@@ -13,10 +15,11 @@ function magicParticles(above: boolean): CardAnimation {
             // Match the book's casting particles: the four rune frames with additive blending.
             const emitter = scene.add.particles(0, 0, "runes", {
                 frame: [0, 1, 2, 3],
-                x: {min: x - (above ? 120 : 8), max: x + (above ? 120 : 8)},
-                y: above ? {min: y, max: Math.max(y + 40, target.y - 180)} : {min: y - 10, max: y + 10},
-                moveToX: target.x,
-                moveToY: target.y,
+                x: {min: x - (above ? 120 : swarm ? 40 : 8), max: x + (above ? 120 : swarm ? 40 : 8)},
+                y: above ? {min: y, max: Math.max(y + 40, target.y - 180)}
+                    : {min: y - (swarm ? 50 : 10), max: y + (swarm ? 50 : 10)},
+                moveToX: swarm ? {min: target.x - 36, max: target.x + 36} : target.x,
+                moveToY: swarm ? {min: target.y - 54, max: target.y + 54} : target.y,
                 lifespan: flightMs,
                 delay: {start: 0, end: emissionMs, steps: count},
                 scale: {start: above ? 1.32 : 1.02, end: 0.3},
@@ -62,5 +65,6 @@ function magicParticles(above: boolean): CardAnimation {
     };
 }
 
-export const magicBolts = magicParticles(false);
-export const magicRain = magicParticles(true);
+export const magicBolts = magicParticles("bolts");
+export const magicRain = magicParticles("rain");
+export const magicSwarm = magicParticles("swarm");

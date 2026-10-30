@@ -10,10 +10,14 @@ export const slimeSplash: CardAnimation = (scene, targets, impact, _card, caster
     const actor = sprite?.scene && receivers.length ? (() => {
         const target = receivers[0];
         const foot = sprite.getBottomCenter();
+        const width = sprite.getBounds().width;
+        // Keep oversized attackers beside the victim instead of hiding them.
+        const clearance = Math.max(0, width - (target.sprite?.getBounds().width ?? width));
+        const landingX = target.x + Math.sign((caster?.x ?? target.x + 1) - target.x) * clearance;
         // Move only the character, in its parent's coordinates, leaving the enemy's stats in place.
         const destination = sprite.parentContainer
-            ? sprite.parentContainer.getWorldTransformMatrix().applyInverse(target.x, target.groundY)
-            : {x: target.x, y: target.groundY};
+            ? sprite.parentContainer.getWorldTransformMatrix().applyInverse(landingX, target.groundY)
+            : {x: landingX, y: target.groundY};
         return {
             sprite, scene: sprite.scene, x: sprite.x, y: sprite.y,
             scaleX: sprite.scaleX, scaleY: sprite.scaleY, foot,

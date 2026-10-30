@@ -1,6 +1,7 @@
 import type { CardAnimation } from "./card-animation-registry";
 
-function beam(light: boolean): CardAnimation {
+function beam(light: boolean, colors: readonly [number, number, number] =
+    light ? [0xffce68, 0xffecb0, 0xffffed] : [0x40225b, 0x12091e, 0xa579bb]): CardAnimation {
     return (scene, targets, impact, card, caster) => {
         const impactMs = 160;
         const holdEndMs = 220;
@@ -44,7 +45,6 @@ function beam(light: boolean): CardAnimation {
                 receivers.forEach(target => {
                     const x = origin.x + (target.x - origin.x) * progress;
                     const y = origin.y + (target.y - origin.y) * progress;
-                    const colors = light ? [0xffce68, 0xffecb0, 0xffffed] : [0x40225b, 0x12091e, 0xa579bb];
                     [34, 20, 7].forEach((width, layer) => {
                         rays.lineStyle(width, colors[layer], alpha * [0.25, 0.7, 0.9][layer]);
                         rays.lineBetween(origin.x, origin.y, x, y);
@@ -67,3 +67,5 @@ function beam(light: boolean): CardAnimation {
 
 export const lightBeam = beam(true);
 export const darkBeam = beam(false);
+export const greenBeam = beam(false, [0x527b36, 0x94c45b, 0xe9ffc1]);
+export const sandBeam = beam(false, [0x86623d, 0xc7a569, 0xffefd0]);

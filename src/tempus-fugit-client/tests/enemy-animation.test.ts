@@ -34,7 +34,7 @@ function createBattle(key = "slime3") {
         casts.push({card, targets, impact, complete, source});
     });
     mission.cardActionAnimator = {
-        has: key => ["fireball", "magic-bolts", "dark-beam", "slash", "needle-volley", "ground-impact", "slime-splash"].includes(key),
+        has: key => animatedEnemies.some(([, animation]) => animation === key),
         play,
     };
     const attacking = vi.fn();
@@ -69,9 +69,17 @@ const animatedEnemies = [
     ["cactus1", "needle-volley", 15],
     ["cactus2", "needle-volley", 15],
     ["kingtus", "needle-volley", 28],
-    ["moleg", "ground-impact", 25],
+    ["moleg", "stone-throw", 25],
     ["wormling", "ground-impact", 15],
     ["darude_sandworm", "ground-impact", 25],
+    ["snake", "green-beam", 17],
+    ["mummy", "sand-beam", 20],
+    ["bgpuff1", "puff-blast", 25],
+    ["bgpuff2", "puff-blast", 25],
+    ["jkpuff", "puff-blast", 25],
+    ["stand1", "dark-beam", 35],
+    ["stand2", "magic-bolts", 35],
+    ["boss", "magic-swarm", 50],
 ] as const;
 
 describe("Enemy animation metadata", () => {
@@ -88,11 +96,10 @@ describe("Enemy animation metadata", () => {
         expect(() => loadEnemies(JSON.stringify(json))).toThrow("Invalid animation for card Slime_special_attack");
     });
 
-    it("leaves enemies outside the animated batches on their existing attack path", () => {
+    it("provides animation metadata for every enemy in the real catalog", () => {
+        expect(Object.keys(Enemy.enemies).sort()).toEqual(animatedEnemies.map(([key]) => key).sort());
+        expect(animatedEnemies).toHaveLength(25);
         expect(Object.values(Enemy.enemies).filter(enemy => enemy.specialAttack.animation)).toHaveLength(animatedEnemies.length);
-        expect(Enemy.enemies.snake.specialAttack.animation).toBeUndefined();
-        expect(Enemy.enemies.mummy.specialAttack.animation).toBeUndefined();
-        expect(Enemy.enemies.boss.specialAttack.animation).toBeUndefined();
     });
 });
 

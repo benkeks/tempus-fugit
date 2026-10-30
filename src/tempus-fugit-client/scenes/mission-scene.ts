@@ -33,13 +33,15 @@ import { rootPierce } from "../animations/root-pierce";
 import { healing } from "../animations/healing";
 import { positiveAura, negativeAura } from "../animations/aura";
 import { fireball, incinerate } from "../animations/fireball";
-import { lightBeam, darkBeam } from "../animations/beam";
+import { lightBeam, darkBeam, greenBeam, sandBeam } from "../animations/beam";
 import { sunWave } from "../animations/sun-wave";
-import { magicBolts, magicRain } from "../animations/magic-particles";
+import { magicBolts, magicRain, magicSwarm } from "../animations/magic-particles";
 import { slash } from "../animations/slash";
 import { needleVolley } from "../animations/needle-volley";
 import { groundImpact } from "../animations/ground-impact";
 import { slimeSplash } from "../animations/slime-splash";
+import { stoneThrow } from "../animations/stone-throw";
+import { puffBlast } from "../animations/puff-blast";
 import type { CardActionImpact, CardActionSource, CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
@@ -131,13 +133,18 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardAnimations.register("incinerate", incinerate);
         this.cardAnimations.register("light-beam", lightBeam);
         this.cardAnimations.register("dark-beam", darkBeam);
+        this.cardAnimations.register("green-beam", greenBeam);
+        this.cardAnimations.register("sand-beam", sandBeam);
         this.cardAnimations.register("sun-wave", sunWave);
         this.cardAnimations.register("magic-bolts", magicBolts);
         this.cardAnimations.register("magic-rain", magicRain);
+        this.cardAnimations.register("magic-swarm", magicSwarm);
         this.cardAnimations.register("slash", slash);
         this.cardAnimations.register("needle-volley", needleVolley);
         this.cardAnimations.register("ground-impact", groundImpact);
         this.cardAnimations.register("slime-splash", slimeSplash);
+        this.cardAnimations.register("stone-throw", stoneThrow);
+        this.cardAnimations.register("puff-blast", puffBlast);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
