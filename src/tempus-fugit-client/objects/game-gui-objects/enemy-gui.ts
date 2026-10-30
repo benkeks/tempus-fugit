@@ -367,6 +367,10 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         this.y = this.properY;
     }
 
+    public getEffectPosition(): Phaser.Math.Vector2 {
+        return this.sprite.getCenter(undefined, true);
+    }
+
     /**
      * change HP display of enemy
      * @param changedTo
@@ -375,27 +379,33 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
         let font1: Object = { fontSize: '50px', fontFamily: 'pressStart', color: '#FF0000' }
         let diff = changedFrom - changedTo;
         if (diff >= 0) {
-            this.scene.trackCombatAnimation(this.scene.tweens.add({
-                targets: this.sprite,
-                angle: { from: 0, to: 10 },
-                duration: 150,
-                ease: "Linear",
-                yoyo: true,
-                repeat: 0
-            }));
+            const damageAnimation = this.scene.getCardDamageAnimation(enemy);
+            if (damageAnimation) {
+                this.scene.trackCombatAnimation(damageAnimation(this.scene, this.sprite));
+            } else {
+                this.scene.trackCombatAnimation(this.scene.tweens.add({
+                    targets: this.sprite,
+                    angle: { from: 0, to: 10 },
+                    duration: 150,
+                    ease: "Linear",
+                    yoyo: true,
+                    repeat: 0
+                }));
+            }
 
             let damageText = this.scene.add.text(this.x-20, this.y-50, diff.toString(), font1);
             this.scene.tweens.add({targets: damageText ,duration: 600, y: damageText.y-40, ease: "Linear", delay: 500,
             onComplete: function () {
                 damageText.destroy()
             }});
-            let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
-            //blood.setScale(0.2,0.2);
-            blood.alpha = 0;
-            this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
-                onComplete: function () {
-                    blood.destroy()
-                }});
+            if (!damageAnimation) {
+                let blood = this.scene.add.sprite(this.x, this.y+30, "blood");
+                blood.alpha = 0;
+                this.scene.tweens.add({targets: blood ,duration: 200, alpha: 1, ease: "power2", yoyo: true,
+                    onComplete: function () {
+                        blood.destroy()
+                    }});
+            }
         }
 
         if (changedFrom > 0 && changedTo <= 0) {

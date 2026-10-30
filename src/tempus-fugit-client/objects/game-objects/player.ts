@@ -134,6 +134,7 @@ export class Player {
      * @author Florian
      */
     public applyCard(card: Card, enemy: Enemy | undefined, mission: Mission): void {
+        if (mission.cardActionInProgress) return;
         let val: boolean = mission.gameState.evaluate(card.getFormula());
         //console.log("valid: " + val);
         if (!val) return;
@@ -143,35 +144,16 @@ export class Player {
             mission.pushStand(card);
             card.spawnStand(enemy, mission);
         } else {
-
-            switch (card.getKind()) {
-
-                case Card.OTHER:
-                    card.action(mission, null);
-                    break;
-                case Card.PLAYER:
-                    card.action(mission, mission.player);
-                    break;
-                case Card.GLOBAL:
-                    for (let e of mission.getEnemies()) {
-                        card.action(mission, e);
-                    }
-
+            const targets = card.getActionTargets(mission,
+                card.getKind() === Card.RANDOM ? mission.getEnemies() : enemy ? [enemy] : []);
+            mission.performCardAction(card, targets, animated => {
+                for (const target of targets) card.action(mission, target);
+                if (!animated && [Card.GLOBAL, Card.RANDOM, Card.DIRECTED].includes(card.getKind())) {
                     this.listener.map(l => l.Attacking(this, enemy));
-                    break;
-                case Card.RANDOM:
-                    var enemies = mission.getEnemies();
-                    var target = enemies[Math.floor(Math.random() * enemies.length)];
-                    card.action(mission, target);
-
-                    this.listener.map(l => l.Attacking(this, enemy));
-                    break;
-                case Card.DIRECTED:
-                    card.action(mission, enemy);
-
-                    this.listener.map(l => l.Attacking(this, enemy));
-                    break;
-            }
+                }
+                this.listener.map(l => l.cardPlayed(this, card));
+            });
+            return;
         }
 
         this.listener.map(l => l.cardPlayed(this, card));

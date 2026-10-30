@@ -25,6 +25,11 @@ import { HelpWindow } from "../objects/help-gui-objects/help-window";
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
+import { CardAnimationRegistry } from "../animations/card-animation-registry";
+import type { CardDamageAnimation } from "../animations/card-animation-registry";
+import { lightning } from "../animations/lightning";
+import { electrocution } from "../animations/electrocution";
+import type { CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
     game: Mission;
@@ -68,6 +73,12 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public delay:number = 1250;
     public readonly combatAnimationTimeoutMs: number = 2500;
     private pendingAnimations = 0;
+    private animationEpoch = 0;
+    public readonly cardAnimations = new CardAnimationRegistry();
+    private cardDamageAnimation: {
+        targets: readonly CardActionTarget[];
+        animation: CardDamageAnimation;
+    } | undefined;
     private animationWaiters: AnimationWaiter[] = [];
     private pendingTurnStartDiscard: Card | null = null;
     private pendingWavePresentation: PendingWavePresentation | null = null;
@@ -87,6 +98,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         }
 
         const waiters = this.animationWaiters;
+        this.animationEpoch++;
         this.animationWaiters = [];
         this.pendingAnimations = 0;
         waiters.forEach(resolve => resolve());
@@ -97,6 +109,49 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     constructor() {
         super({
             key: "MissionScene"
+        });
+        // Cards opt in with "animation":"lightning"; Lightning rain can reuse the same effect and hit reaction.
+        this.cardAnimations.register("lightning", lightning, electrocution);
+    }
+
+    public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
+        return this.cardDamageAnimation?.targets.includes(target) ? this.cardDamageAnimation.animation : undefined;
+    }
+
+    public playCardAnimation(key: string, targets: readonly CardActionTarget[], impact: () => void, complete: () => void): void {
+        const animation = this.cardAnimations.get(key);
+        if (!animation) throw new Error("Unknown card animation: " + key);
+
+        const positions = targets.filter(target => target !== null).map(target => {
+            if (target === this.tfgame.player) return this.playerGUI.getCenter();
+            const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
+            if (!gui) throw new Error("Missing card animation target: " + target.name);
+            return gui.getEffectPosition();
+        });
+        const epoch = this.animationEpoch;
+        const damageAnimation = this.cardAnimations.getDamageAnimation(key);
+        let impacted = false;
+        const applyImpact = () => {
+            if (impacted || epoch !== this.animationEpoch) return;
+            impacted = true;
+            const previousDamageAnimation = this.cardDamageAnimation;
+            // Scope special hit reactions to this action's targets; later ordinary hits must use the default.
+            this.cardDamageAnimation = damageAnimation ? {targets, animation: damageAnimation} : undefined;
+            try {
+                impact();
+            } finally {
+                this.cardDamageAnimation = previousDamageAnimation;
+            }
+        };
+        this.trackCombatAnimation(animation(this, positions, applyImpact));
+        void this.waitForActionAnimations().then(async () => {
+            if (epoch !== this.animationEpoch) return;
+            if (!impacted) {
+                console.warn("Card animation interrupted before impact: " + key);
+                applyImpact();
+                await this.waitForActionAnimations();
+            }
+            if (epoch === this.animationEpoch) complete();
         });
     }
 
@@ -261,6 +316,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
         this.pendingAnimations++;
+        const epoch = this.animationEpoch;
 
         let settled = false;
         let timeoutEvent: Phaser.Time.TimerEvent | null = null;
@@ -269,6 +325,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
             if (settled) return;
             settled = true;
             if (timeoutEvent) timeoutEvent.remove(false);
+            if (epoch !== this.animationEpoch) return;
             this.pendingAnimations--;
 
             if (this.pendingAnimations === 0) {
@@ -280,7 +337,11 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         tween.once("complete", finish);
         tween.once("stop", finish);
-        timeoutEvent = this.time.delayedCall(timeoutMs, finish, [], this);
+        timeoutEvent = this.time.delayedCall(timeoutMs, () => {
+            console.warn("Combat animation timed out after " + timeoutMs + "ms");
+            tween.stop();
+            finish();
+        }, [], this);
         return tween;
     }
 
@@ -305,6 +366,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.deck = data.deck;
         this.showCredits = data.showCredits;
         this.tfgame.listener.push(this);
+        this.tfgame.cardActionAnimator = {
+            has: key => this.cardAnimations.get(key) !== undefined,
+            play: (key, targets, impact, complete) => this.playCardAnimation(key, targets, impact, complete),
+        };
 
         MissionScene.latestData = {
             key: data.key,

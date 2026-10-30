@@ -2,6 +2,7 @@ import {Formula} from "../../temporal-logic/formula";
 import {Mission} from "../../mechanics/mission";
 import {Enemy} from "./enemy";
 import {Player} from "./player";
+import type {CardActionTarget} from "../../mechanics/card-action-animation";
 
 export class Card {
     public static cards:{[name:string]:Card} = {};
@@ -25,6 +26,7 @@ export class Card {
     public inDeckAtStart!:number;
     public maxCardsInDeck:number = 5;
     public formulaRepresentation:string | undefined = undefined;
+    public animation: string | undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -45,6 +47,7 @@ export class Card {
         c.action = this.action;
         c.maxCardsInDeck = this.maxCardsInDeck;
         c.key = this.key;
+        c.animation = this.animation;
 
         return c;
     }
@@ -137,28 +140,35 @@ export class Card {
         let val:boolean = mission.gameState.evaluate(this.getFormula());
         if (this.standRounds > 0) {
             if (val) {
-                if (this.cardKind == Card.RANDOM) {
-                    this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
-                } else if (this.cardKind == Card.DIRECTED) {
-                    for (var target of this.targets) {
-                        this.action(mission, target);
-                    }
-                } else if (this.cardKind == Card.GLOBAL) {
-                    for (let target of mission.getEnemies()) {
-                        this.action(mission, target);
-                    }
-                } else if (this.cardKind == Card.OTHER) {
-                    this.action(mission, null);
-                } else if (this.cardKind == Card.PLAYER) {
-                    this.action(mission, mission.player);
-                } else {
-                    throw new TypeError("Card Type of card " + this.name + " is wrong!");
-                }
+                const targets = this.getActionTargets(mission, this.targets);
+                mission.performCardAction(this, targets, () => {
+                    for (const target of targets) this.action(mission, target);
+                });
             }
             this.decreaseRoundsRemaining();
         }
 
         return val;
+    }
+
+    public getActionTargets(mission: Mission, targets: Enemy[]): CardActionTarget[] {
+        if ((this.cardKind === Card.RANDOM || this.cardKind === Card.DIRECTED) && targets.length === 0) {
+            throw new Error("No targets for card " + this.name);
+        }
+        switch (this.cardKind) {
+            case Card.RANDOM:
+                return [targets[Math.floor(Math.random() * targets.length)]];
+            case Card.DIRECTED:
+                return targets;
+            case Card.GLOBAL:
+                return [...mission.getEnemies()];
+            case Card.OTHER:
+                return [null];
+            case Card.PLAYER:
+                return [mission.player];
+            default:
+                throw new TypeError("Card Type of card " + this.name + " is wrong!");
+        }
     }
 
     public decreaseRoundsRemaining() {
@@ -215,6 +225,12 @@ export class Card {
 
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
             if (c.key) new_c.key = c.key;
+            if (c.animation !== undefined) {
+                if (typeof c.animation !== "string" || !c.animation.trim()) {
+                    throw new TypeError("Invalid animation for card " + c.name);
+                }
+                new_c.animation = c.animation;
+            }
 
             this.cards[new_c.key] = new_c;
         }

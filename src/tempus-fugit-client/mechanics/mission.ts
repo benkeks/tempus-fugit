@@ -4,6 +4,7 @@ import { GameState } from "../objects/game-objects/game-state";
 import { Enemy, EnemyListener } from "../objects/game-objects/enemy";
 import { StoryDialog } from "./story-dialog";
 import { Card } from "../objects/game-objects/card";
+import type { CardActionAnimator, CardActionTarget } from "./card-action-animation";
 
 type PendingMissionContinuation =
     | { kind: "nextPhase"; next: number }
@@ -57,7 +58,7 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     set active(value: boolean) {
-        value = value && !this.waveTransitionInProgress && !this.paused;
+        value = value && !this.waveTransitionInProgress && !this.paused && !this.cardActionInProgress;
         this._active = value;
         this.player.active = value;
         this.gameState.active = value && this.curPhase === Mission.ENERGY_PHASE;
@@ -136,11 +137,41 @@ export class Mission implements EnemyListener, PlayerListener {
     private aliveEnemiesCount = -1;
     private baseAttackConsumedThisTurn: boolean = false;
     private awaitingWavePresentation: boolean = false;
+    public cardActionAnimator: CardActionAnimator | undefined;
+    public cardActionInProgress: boolean = false;
+    private destroyed = false;
 
     public get waveTransitionInProgress(): boolean {
         return this.awaitingWavePresentation;
     }
-    // TODO: effect list
+    public performCardAction(card: Card, targets: readonly CardActionTarget[], resolve: (animated: boolean) => void): void {
+        const animator = this.cardActionAnimator;
+        if (!card.animation || !animator?.has(card.animation)) {
+            resolve(false);
+            return;
+        }
+
+        this.cardActionInProgress = true;
+        this.active = false;
+        let impacted = false;
+        let completed = false;
+        const impact = () => {
+            if (this.destroyed || impacted || completed) return;
+            impacted = true;
+            resolve(true);
+        };
+        animator.play(card.animation, targets, impact, () => {
+            if (this.destroyed || completed) return;
+            if (!impacted) {
+                throw new Error("Card animation settled without impact: " + card.animation);
+            }
+            completed = true;
+            this.cardActionInProgress = false;
+            this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
+            this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
+            this.flushPendingContinuations();
+        });
+    }
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {
         if (!Mission.DEBUG_FLOW) return;
@@ -289,7 +320,7 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private flushPendingContinuations(): void {
-        while (!this.paused && this.pendingContinuations.length > 0) {
+        while (!this.paused && !this.cardActionInProgress && this.pendingContinuations.length > 0) {
             const continuation = this.pendingContinuations.shift();
             if (!continuation) return;
 
@@ -394,7 +425,7 @@ export class Mission implements EnemyListener, PlayerListener {
         this.debugFlow("nextPhase:requested", { from: this.curPhase, to: next });
         if (this.requestAdvanceIfWaveCleared("nextPhase")) return;
 
-        if (this.paused) {
+        if (this.paused || this.cardActionInProgress) {
             this.debugFlow("nextPhase:queued", { requested: next });
             this.queueContinuation({ kind: "nextPhase", next });
             return;
@@ -416,7 +447,7 @@ export class Mission implements EnemyListener, PlayerListener {
         this.debugFlow("nextPlayer:requested", { phase: this.curPhase, iteratorIndex: this.iteratorIndex });
         if (this.requestAdvanceIfWaveCleared("nextPlayer")) return;
 
-        if (this.paused) {
+        if (this.paused || this.cardActionInProgress) {
             this.debugFlow("nextPlayer:queued", { phase: this.curPhase, iteratorIndex: this.iteratorIndex });
             this.queueContinuation({ kind: "nextPlayer" });
             return;
@@ -494,8 +525,7 @@ export class Mission implements EnemyListener, PlayerListener {
     private playPhase(): void {
         this.player.active = true;
         this.gameState.active = false;
-        this.baseAttackConsumedThisTurn = false;
-        this.listener.map(l => l.baseAttackPossible(this, true));
+        this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
     }
 
     public tryConsumeBaseAttack(): boolean {
@@ -622,6 +652,9 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public destroy(): void {
+        this.destroyed = true;
+        this.cardActionAnimator = undefined;
+        this.pendingContinuations = [];
         this.cancelPendingWaveTransition();
         this.player.listener = [];
         this.player.hand.listener = [];
