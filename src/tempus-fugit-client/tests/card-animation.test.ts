@@ -28,7 +28,7 @@ function createBattle() {
         impact = onImpact;
         complete = onComplete;
     });
-    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing", "positive-aura", "negative-aura"].includes(key), play};
+    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing", "positive-aura", "negative-aura", "fireball"].includes(key), play};
     const card = Card.cards["Lightning strike"].copy();
     mission.player.hand.cards[0] = card;
     const attacking = vi.fn();
@@ -54,6 +54,7 @@ afterEach(() => {
 
 describe("Card animation metadata and registration", () => {
     it.each([
+        ["Fireball", "fireball"],
         ["Lightning strike", "lightning"],
         ["Lightning rain", "lightning"],
         ["Lightning stand", "lightning"],
@@ -178,6 +179,55 @@ describe("Animated card resolution", () => {
         mission.player.applyCard(card, enemy, mission);
         mission.player.applyCard(card, enemy, mission);
         expect(play).toHaveBeenCalledOnce();
+    });
+
+    it("delays Fireball's damage and future strength until the projectile hits its chosen enemy", () => {
+        const {mission, enemy, other, play, impact, complete, targets, attacking} = createBattle();
+        const card = Card.cards["Fireball"].copy();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.setVariableValues({s: {0: true}});
+        mission.player.applyCard(card, enemy, mission);
+        expect(play).toHaveBeenCalledWith(card, [enemy], expect.any(Function), expect.any(Function));
+        expect(targets()).toEqual([enemy]);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        expect(mission.gameState.getVariable("s").getValue(2)).toBe(false);
+        expect(mission.active).toBe(false);
+        impact();
+        expect([enemy.currentHP, other.currentHP]).toEqual([92, 100]);
+        expect(mission.gameState.getVariable("s").getValue(2)).toBe(true);
+        expect(attacking).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(true);
+        impact();
+        expect(enemy.currentHP).toBe(92);
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+        expect(mission.active).toBe(true);
+    });
+
+    it("supports reusing the Fireball effect for multiple resolved targets", () => {
+        const {mission, enemy, other, impact, complete, targets} = createBattle();
+        const card = Card.cards["Fireball"].copy();
+        card.cardKind = Card.GLOBAL;
+        mission.gameState.setVariableValues({s: {0: true}});
+        mission.player.applyCard(card, undefined, mission);
+        expect(targets()).toEqual([enemy, other]);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        impact();
+        expect([enemy.currentHP, other.currentHP]).toEqual([92, 92]);
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+    });
+
+    it.each([undefined, "not-implemented"])("keeps Fireball's existing damage and movement fallback for %s", animation => {
+        const {mission, enemy, play, attacking} = createBattle();
+        const card = Card.cards["Fireball"].copy();
+        card.animation = animation;
+        mission.gameState.setVariableValues({s: {0: true}});
+        mission.player.applyCard(card, enemy, mission);
+        expect(enemy.currentHP).toBe(92);
+        expect(mission.gameState.getVariable("s").getValue(2)).toBe(true);
+        expect(attacking).toHaveBeenCalledOnce();
+        expect(play).not.toHaveBeenCalled();
     });
 
     it("uses Lightning rain's configured effect for all targets", () => {

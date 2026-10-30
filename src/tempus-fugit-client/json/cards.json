@@ -13,6 +13,7 @@
 		{"name":"Fireball",
 		"description":"Deals 8 {atk} to a foe, also sets {strength} two rounds from now",
 		"image":"fireball",
+		"animation":"fireball",
 		"formula":"s&(l|n)",
 		"cardKind":"directed",
 		"isStandCard":"false",

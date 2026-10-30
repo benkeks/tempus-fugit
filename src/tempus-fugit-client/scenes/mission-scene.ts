@@ -32,6 +32,7 @@ import { electrocution } from "../animations/electrocution";
 import { rootPierce } from "../animations/root-pierce";
 import { healing } from "../animations/healing";
 import { positiveAura, negativeAura } from "../animations/aura";
+import { fireball } from "../animations/fireball";
 import type { CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
@@ -119,6 +120,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardAnimations.register("healing", healing);
         this.cardAnimations.register("positive-aura", positiveAura);
         this.cardAnimations.register("negative-aura", negativeAura);
+        this.cardAnimations.register("fireball", fireball);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
