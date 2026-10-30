@@ -144,21 +144,33 @@ export class Mission implements EnemyListener, PlayerListener {
     public get waveTransitionInProgress(): boolean {
         return this.awaitingWavePresentation;
     }
-    public performCardAction(card: Card, targets: readonly CardActionTarget[], resolve: (animated: boolean) => void): void {
+    public performCardAction(
+        card: Card,
+        targets: readonly CardActionTarget[],
+        resolve: (animated: boolean, hitTargets: readonly CardActionTarget[], final: boolean) => void,
+    ): void {
         const animator = this.cardActionAnimator;
         if (!card.animation || !animator?.has(card.animation)) {
-            resolve(false);
+            resolve(false, targets, true);
             return;
         }
 
         this.cardActionInProgress = true;
         this.active = false;
         let impacted = false;
+        const hitIndices = new Set<number>();
         let completed = false;
-        const impact = () => {
+        const impact = (index?: number) => {
             if (this.destroyed || impacted || completed) return;
-            impacted = true;
-            resolve(true);
+            if (index !== undefined && (!Number.isInteger(index) || index < 0 || index >= targets.length)) {
+                throw new RangeError("Invalid card animation target index: " + index);
+            }
+            const indices = (index === undefined ? targets.map((_, i) => i) : [index])
+                .filter(i => !hitIndices.has(i));
+            if (index !== undefined && indices.length === 0) return;
+            indices.forEach(i => hitIndices.add(i));
+            impacted = hitIndices.size === targets.length;
+            resolve(true, indices.map(i => targets[i]), impacted);
         };
         animator.play(card, targets, impact, () => {
             if (this.destroyed || completed) return;

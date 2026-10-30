@@ -144,8 +144,8 @@ export class Card {
         if (this.standRounds > 0) {
             if (val) {
                 const targets = this.getActionTargets(mission, this.targets);
-                mission.performCardAction(this, targets, () => {
-                    for (const target of targets) this.action(mission, target);
+                mission.performCardAction(this, targets, (_animated, hitTargets) => {
+                    for (const target of hitTargets) this.action(mission, target);
                 });
             }
             this.decreaseRoundsRemaining();

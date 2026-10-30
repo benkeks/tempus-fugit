@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Mission } from "../mechanics/mission";
-import type { CardActionTarget } from "../mechanics/card-action-animation";
+import type { CardActionImpact, CardActionTarget } from "../mechanics/card-action-animation";
 import { Card } from "../objects/game-objects/card";
 import { Deck } from "../objects/game-objects/deck";
 import { Enemy } from "../objects/game-objects/enemy";
@@ -20,7 +20,7 @@ function createBattle() {
     mission.enemies = [[enemy, other]];
     mission.gameState.setVariableValues({l: {0: true}, n: {0: true}});
     mission.active = true;
-    let impact: () => void;
+    let impact: CardActionImpact;
     let complete: () => void;
     let targets: readonly CardActionTarget[];
     const play = vi.fn((_card: Card, resolvedTargets, onImpact, onComplete) => {
@@ -28,7 +28,13 @@ function createBattle() {
         impact = onImpact;
         complete = onComplete;
     });
-    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing", "positive-aura", "negative-aura", "fireball"].includes(key), play};
+    mission.cardActionAnimator = {
+        has: key => [
+            "lightning", "root-pierce", "healing", "positive-aura", "negative-aura", "fireball",
+            "light-beam", "dark-beam", "incinerate", "sun-wave", "magic-bolts", "magic-rain",
+        ].includes(key),
+        play,
+    };
     const card = Card.cards["Lightning strike"].copy();
     mission.player.hand.cards[0] = card;
     const attacking = vi.fn();
@@ -39,7 +45,7 @@ function createBattle() {
     });
     return {
         mission, enemy, other, card, play, attacking, cardPlayed,
-        impact: () => impact(), complete: () => complete(), targets: () => targets,
+        impact: (index?: number) => impact(index), complete: () => complete(), targets: () => targets,
     };
 }
 
@@ -67,6 +73,14 @@ describe("Card animation metadata and registration", () => {
         ["Strength", "positive-aura"],
         ["Guiding Light", "positive-aura"],
         ["Aura of Weakness", "negative-aura"],
+        ["Higher nature stand", "root-pierce"],
+        ["Light stand", "light-beam"],
+        ["Dark beam", "dark-beam"],
+        ["Incinerate", "incinerate"],
+        ["Sun flare", "sun-wave"],
+        ["Anti-evolution", "magic-bolts"],
+        ["Obliterate", "magic-rain"],
+        ["Tempus Fugit", "magic-rain"],
     ])("preserves %s animation metadata through card and deck copies", (name, animation) => {
         const card = Card.cards[name].copy();
         expect(card.animation).toBe(animation);
@@ -119,6 +133,143 @@ describe("Card animation metadata and registration", () => {
 });
 
 describe("Animated card resolution", () => {
+    it.each([
+        ["Dark beam", 50],
+        ["Incinerate", 100],
+        ["Anti-evolution", 16],
+    ])("delays %s's damage and rune changes until impact without multiplying damage", (name, damage) => {
+        const {mission, enemy, other, impact, complete, attacking, cardPlayed} = createBattle();
+        const card = Card.cards[name].copy();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.evaluate = () => true;
+        const runes = vi.spyOn(mission.gameState, "setVariableValues");
+        const allRunes = vi.spyOn(mission.gameState, "setAllVariableValues");
+        mission.player.applyCard(card, enemy, mission);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        expect(runes).not.toHaveBeenCalled();
+        expect(allRunes).not.toHaveBeenCalled();
+        impact();
+        expect([enemy.currentHP, other.currentHP]).toEqual([100 - damage, 100]);
+        if (name === "Anti-evolution") {
+            expect(mission.gameState.getVariable("n").getValue(0)).toBe(false);
+        } else if (name === "Dark beam") {
+            expect(mission.gameState.getVariable("l").getValue(0)).toBe(false);
+            expect(mission.gameState.getVariable("t").getValue(2)).toBe(true);
+        } else {
+            expect(mission.gameState.getVariable("n").getValue(0)).toBe(false);
+            expect(mission.gameState.getVariable("s").getValue(2)).toBe(true);
+        }
+        impact();
+        expect(enemy.currentHP).toBe(100 - damage);
+        expect(cardPlayed).toHaveBeenCalledOnce();
+        expect(attacking).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(true);
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+    });
+
+    it.each(["Obliterate", "Tempus Fugit"])("delays %s's entire global action until the rune rain hits", name => {
+        const {mission, enemy, other, impact, complete, targets} = createBattle();
+        const card = Card.cards[name].copy();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.evaluate = () => true;
+        const hits = [vi.spyOn(enemy, "takeHit"), vi.spyOn(other, "takeHit")];
+        const runes = vi.spyOn(mission.gameState, "setAllVariableValues");
+        mission.player.applyCard(card, undefined, mission);
+        expect(targets()).toEqual([enemy, other]);
+        expect(hits.every(hit => hit.mock.calls.length === 0)).toBe(true);
+        expect(mission.player.baseAttack).toBe(10);
+        expect(mission.player.currentHP).toBe(100);
+        expect(runes).not.toHaveBeenCalled();
+        impact();
+        impact();
+        hits.forEach(hit => expect(hit).toHaveBeenCalledOnce());
+        const remainingHP = 100 - (name === "Tempus Fugit" ? 10000 : 1000);
+        expect([enemy.currentHP, other.currentHP]).toEqual([remainingHP, remainingHP]);
+        expect(mission.gameState.getVariable("n").getValue(0)).toBe(name === "Tempus Fugit");
+        // Global action strings still execute once per enemy, including their existing player bonuses.
+        expect(mission.player.baseAttack).toBe(name === "Tempus Fugit" ? 30 : 10);
+        expect(mission.player.currentHP).toBe(name === "Tempus Fugit" ? 2100 : 100);
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+    });
+
+    it("hits Sun flare targets individually and emits cardPlayed only after the final contact", () => {
+        const {mission, enemy, other, impact, complete, cardPlayed} = createBattle();
+        mission.gameState.evaluate = () => true;
+        const card = Card.cards["Sun flare"].copy();
+        mission.player.hand.cards[0] = card;
+        mission.player.applyCard(card, undefined, mission);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        expect(mission.gameState.getVariable("s").getValue(0)).toBe(false);
+        impact(1);
+        impact(1);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 80]);
+        expect(mission.gameState.getVariable("s").getValue(2)).toBe(true);
+        expect(mission.gameState.getVariable("l").getValue(2)).toBe(true);
+        expect(cardPlayed).not.toHaveBeenCalled();
+        expect(mission.active).toBe(false);
+        expect(complete).toThrow("Card animation settled without impact: sun-wave");
+        impact(0);
+        impact();
+        expect([enemy.currentHP, other.currentHP]).toEqual([80, 80]);
+        expect(cardPlayed).toHaveBeenCalledOnce();
+        expect(mission.active).toBe(false);
+        complete();
+        expect(mission.active).toBe(true);
+    });
+
+    it("settles only unhit wave targets when an interrupted sweep falls back to full impact", () => {
+        const {mission, enemy, other, impact, complete, cardPlayed} = createBattle();
+        const card = Card.cards["Sun flare"].copy();
+        mission.gameState.evaluate = () => true;
+        mission.player.applyCard(card, undefined, mission);
+        impact(0);
+        expect([enemy.currentHP, other.currentHP]).toEqual([80, 100]);
+        impact();
+        impact(1);
+        expect([enemy.currentHP, other.currentHP]).toEqual([80, 80]);
+        expect(cardPlayed).toHaveBeenCalledOnce();
+        complete();
+        expect(mission.cardActionInProgress).toBe(false);
+    });
+
+    it.each([-1, 2, 0.5, NaN])("rejects invalid per-target impact index %s", index => {
+        const {mission, enemy, other, impact} = createBattle();
+        mission.gameState.evaluate = () => true;
+        mission.player.applyCard(Card.cards["Sun flare"].copy(), undefined, mission);
+        expect(() => impact(index)).toThrow("Invalid card animation target index");
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+    });
+
+    it("ignores remaining wave contacts after the mission is destroyed", () => {
+        const {mission, enemy, other, impact, complete, cardPlayed} = createBattle();
+        mission.gameState.evaluate = () => true;
+        mission.player.applyCard(Card.cards["Sun flare"].copy(), undefined, mission);
+        impact(0);
+        mission.destroy();
+        impact(1);
+        impact();
+        complete();
+        expect([enemy.currentHP, other.currentHP]).toEqual([80, 100]);
+        expect(cardPlayed).not.toHaveBeenCalled();
+    });
+
+    it("keeps Vase of Desire on its ordinary draw path with no combat effect", () => {
+        const {mission, play, attacking} = createBattle();
+        const card = Card.cards["Vase of Desire"].copy();
+        expect(card.animation).toBeUndefined();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.evaluate = () => true;
+        const drawn = ["Fireball", "Root pierce", "Natural heal"].map(name => Card.cards[name].copy());
+        mission.deck.cards = [...drawn];
+        mission.player.applyCard(card, undefined, mission);
+        expect(mission.player.hand.cards.filter(card => card !== null)).toEqual(expect.arrayContaining(drawn));
+        expect(mission.deck.cards).toHaveLength(0);
+        expect(play).not.toHaveBeenCalled();
+        expect(attacking).not.toHaveBeenCalled();
+    });
+
     it("delays HP and rune changes until impact, and locks inputs through the hit reaction", () => {
         const {mission, enemy, other, card, impact, complete, targets, attacking, cardPlayed} = createBattle();
         mission.player.applyCard(card, enemy, mission);
@@ -243,18 +394,18 @@ describe("Animated card resolution", () => {
         expect(mission.cardActionInProgress).toBe(false);
     });
 
-    it("uses Lightning stand's configured effect for all targets on each activation", () => {
+    it.each([["Lightning stand", 25], ["Light stand", 8]])("uses %s's configured effect for all targets on each activation", (name, damage) => {
         const {mission, enemy, other, play, impact, complete, targets} = createBattle();
-        const stand = Card.cards["Lightning stand"].copy();
+        const stand = Card.cards[name].copy();
         mission.gameState.evaluate = () => true;
         mission.curPhase = Mission.STAND_PHASE;
         for (let round = 0; round < 2; round++) {
             expect(stand.act(mission, mission.player)).toBe(true);
             expect(play).toHaveBeenCalledTimes(round + 1);
             expect(targets()).toEqual([enemy, other]);
-            expect([enemy.currentHP, other.currentHP]).toEqual([100 - round * 25, 100 - round * 25]);
+            expect([enemy.currentHP, other.currentHP]).toEqual([100 - round * damage, 100 - round * damage]);
             impact();
-            expect([enemy.currentHP, other.currentHP]).toEqual([75 - round * 25, 75 - round * 25]);
+            expect([enemy.currentHP, other.currentHP]).toEqual([100 - (round + 1) * damage, 100 - (round + 1) * damage]);
             expect(stand.getRoundsRemaining()).toBe(3 - round);
             complete();
             expect(mission.cardActionInProgress).toBe(false);
@@ -448,9 +599,9 @@ describe("Animated card resolution", () => {
         expect(mission.cardActionInProgress).toBe(false);
     });
 
-    it("keeps an expiring stand visible as the stream source until its final action settles", () => {
+    it.each(["Heal stand", "Light stand"])("keeps an expiring %s visible as the source until its final action settles", name => {
         const {mission, impact, complete} = createBattle();
-        const stand = Card.cards["Heal stand"].copy();
+        const stand = Card.cards[name].copy();
         stand.standRounds = 1;
         mission.pushStand(stand);
         mission.gameState.evaluate = () => true;

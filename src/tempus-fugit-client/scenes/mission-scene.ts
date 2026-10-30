@@ -32,8 +32,11 @@ import { electrocution } from "../animations/electrocution";
 import { rootPierce } from "../animations/root-pierce";
 import { healing } from "../animations/healing";
 import { positiveAura, negativeAura } from "../animations/aura";
-import { fireball } from "../animations/fireball";
-import type { CardActionTarget } from "../mechanics/card-action-animation";
+import { fireball, incinerate } from "../animations/fireball";
+import { lightBeam, darkBeam } from "../animations/beam";
+import { sunWave } from "../animations/sun-wave";
+import { magicBolts, magicRain } from "../animations/magic-particles";
+import type { CardActionImpact, CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
     game: Mission;
@@ -121,37 +124,52 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardAnimations.register("positive-aura", positiveAura);
         this.cardAnimations.register("negative-aura", negativeAura);
         this.cardAnimations.register("fireball", fireball);
+        this.cardAnimations.register("incinerate", incinerate);
+        this.cardAnimations.register("light-beam", lightBeam);
+        this.cardAnimations.register("dark-beam", darkBeam);
+        this.cardAnimations.register("sun-wave", sunWave);
+        this.cardAnimations.register("magic-bolts", magicBolts);
+        this.cardAnimations.register("magic-rain", magicRain);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
         return this.cardDamageAnimation?.targets.includes(target) ? this.cardDamageAnimation.animation : undefined;
     }
 
-    public playCardAnimation(card: Card, targets: readonly CardActionTarget[], impact: () => void, complete: () => void): void {
+    public playCardAnimation(card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void): void {
         const key = card.animation;
         const animation = key && this.cardAnimations.get(key);
         if (!animation) throw new Error("Unknown card animation: " + key);
 
-        const positions = targets.filter(target => target !== null).map(target => {
+        const positions = targets.map((target, index) => {
+            if (target === null) return null;
             if (target === this.tfgame.player) {
                 const center = this.playerGUI.getCenter(undefined, true);
-                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI};
+                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI, index};
             }
             const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
             if (!gui) throw new Error("Missing card animation target: " + target.name);
-            return gui.getEffectPosition();
-        });
+            return {...gui.getEffectPosition(), index};
+        }).filter(position => position !== null);
         const epoch = this.animationEpoch;
         const damageAnimation = this.cardAnimations.getDamageAnimation(key);
         let impacted = false;
-        const applyImpact = () => {
+        const hitIndices = new Set<number>();
+        const applyImpact: CardActionImpact = index => {
             if (impacted || epoch !== this.animationEpoch) return;
-            impacted = true;
+            if (index !== undefined && (!Number.isInteger(index) || index < 0 || index >= targets.length)) {
+                throw new RangeError("Invalid card animation target index: " + index);
+            }
+            const indices = (index === undefined ? targets.map((_, i) => i) : [index])
+                .filter(i => !hitIndices.has(i));
+            if (index !== undefined && indices.length === 0) return;
+            indices.forEach(i => hitIndices.add(i));
+            impacted = hitIndices.size === targets.length;
             const previousDamageAnimation = this.cardDamageAnimation;
             // Scope special hit reactions to this action's targets; later ordinary hits must use the default.
-            this.cardDamageAnimation = damageAnimation ? {targets, animation: damageAnimation} : undefined;
+            this.cardDamageAnimation = damageAnimation ? {targets: indices.map(i => targets[i]), animation: damageAnimation} : undefined;
             try {
-                impact();
+                impact(index);
             } finally {
                 this.cardDamageAnimation = previousDamageAnimation;
             }

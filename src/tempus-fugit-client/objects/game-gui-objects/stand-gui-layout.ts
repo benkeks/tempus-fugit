@@ -217,7 +217,7 @@ export class StandGUILayout extends Phaser.GameObjects.Container implements Stan
     }
 
     Attacking(stand: Card, index: number) {
-        if (stand.animation === "healing" && this.scene.cardAnimations.get("healing")) return;
+        if ((stand.animation === "healing" || stand.animation === "light-beam") && this.scene.cardAnimations.get(stand.animation)) return;
         for (let i of [0, 1]) {
             if (this.stands[i] === stand) {
                 if (this.elementList[i]) {

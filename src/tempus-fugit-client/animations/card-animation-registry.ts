@@ -1,17 +1,20 @@
 import type { MissionScene } from "../scenes/mission-scene";
 import type { Card } from "../objects/game-objects/card";
+import type { CardActionImpact } from "../mechanics/card-action-animation";
 
 export type CardAnimationPosition = {
     x: number;
     y: number;
     groundY: number;
     sprite?: Phaser.GameObjects.Sprite;
+    // Original action-target index, retained when nonvisual targets are filtered out.
+    index?: number;
 };
 // Return a finite scene-clock tween, call impact when the spell connects, and clean up on complete/stop.
 export type CardAnimation = (
     scene: MissionScene,
     targets: readonly CardAnimationPosition[],
-    impact: () => void,
+    impact: CardActionImpact,
     card?: Card,
 ) => Phaser.Tweens.Tween;
 

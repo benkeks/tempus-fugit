@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fireball } from "../animations/fireball";
-import type { CardAnimationPosition } from "../animations/card-animation-registry";
+import { fireball, incinerate } from "../animations/fireball";
+import type { CardAnimation, CardAnimationPosition } from "../animations/card-animation-registry";
 import type { MissionScene } from "../scenes/mission-scene";
 
 type EffectConfig = {
@@ -13,7 +13,7 @@ type EffectConfig = {
 function createEffect(targets: readonly CardAnimationPosition[] = [
     {x: 1500, y: 520, groundY: 600},
     {x: 1720, y: 400, groundY: 640},
-]) {
+], animation: CardAnimation = fireball) {
     vi.stubGlobal("Phaser", {Textures: {FilterMode: {NEAREST: 0}}});
     const projectiles: Array<{
         x: number; y: number; alpha: number;
@@ -29,6 +29,7 @@ function createEffect(targets: readonly CardAnimationPosition[] = [
     const scene: MissionScene = Object.create(null);
     Object.assign(scene, {
         playerGUI: {getCenter},
+        cameras: {main: {width: 1920, height: 1080}},
         add: {image: vi.fn((x: number, y: number) => {
             const sprite = {
                 x, y, alpha: 1,
@@ -45,7 +46,7 @@ function createEffect(targets: readonly CardAnimationPosition[] = [
         tweens: {addCounter: vi.fn(options => { config = options; return {}; })},
     });
     const impact = vi.fn();
-    fireball(scene, targets, impact);
+    animation(scene, targets, impact);
     return {
         scene, projectiles, getCenter, targets, impact, config: () => config,
         advance: (elapsed: number) => config.onUpdate({getValue: () => elapsed}),
@@ -66,6 +67,65 @@ describe("Fireball projectile", () => {
             expect(sprite.setDepth).toHaveBeenCalledWith(150);
             expect(sprite.texture.setFilter).toHaveBeenCalledWith(0);
         }
+    });
+
+    describe("Incinerate projectiles", () => {
+        it("launches exactly five pixel-art fireballs per enemy from five distinct incoming directions", () => {
+            const {projectiles, targets, getCenter} = createEffect(undefined, incinerate);
+            expect(getCenter).not.toHaveBeenCalled();
+            expect(projectiles).toHaveLength(10);
+            targets.forEach((target, index) => {
+                const incoming = projectiles.slice(index * 5, (index + 1) * 5);
+                const directions = incoming.map(sprite => Math.atan2(target.y - sprite.y, target.x - sprite.x));
+                expect(new Set(directions).size).toBe(5);
+                expect(incoming.some(sprite => sprite.x < target.x)).toBe(true);
+                expect(incoming.some(sprite => sprite.x > target.x)).toBe(true);
+                expect(incoming.some(sprite => sprite.y < target.y)).toBe(true);
+                expect(incoming.some(sprite => sprite.y > target.y)).toBe(true);
+                incoming.forEach(sprite => {
+                    expect(sprite.setScale).toHaveBeenCalledWith(3);
+                    expect(sprite.texture.setFilter).toHaveBeenCalledWith(0);
+                    // Origins are rounded for pixel rendering; rotation uses their unrounded coordinates.
+                    const rotation = sprite.setRotation.mock.calls[0][0];
+                    expect(rotation).toBeCloseTo(Math.atan2(target.y - sprite.y, target.x - sprite.x) + Math.PI / 4, 2);
+                });
+            });
+        });
+
+        it("converges all five fireballs at 250ms but delivers only one action impact", () => {
+            const {projectiles, targets, advance, impact, config} = createEffect(undefined, incinerate);
+            const origins = projectiles.map(sprite => ({x: sprite.x, y: sprite.y}));
+            advance(125);
+            projectiles.forEach((sprite, index) => {
+                expect(sprite.x).toBeCloseTo((origins[index].x + targets[Math.floor(index / 5)].x) / 2, 0);
+            });
+            advance(249);
+            expect(impact).not.toHaveBeenCalled();
+            advance(250);
+            targets.forEach((target, index) => {
+                expect(projectiles.slice(index * 5, (index + 1) * 5).map(sprite => [sprite.x, sprite.y]))
+                    .toEqual(Array.from({length: 5}, () => [target.x, target.y]));
+            });
+            expect(impact).toHaveBeenCalledOnce();
+            config().onComplete();
+            config().onComplete();
+            expect(impact).toHaveBeenCalledOnce();
+            projectiles.forEach(sprite => expect(sprite.destroy).toHaveBeenCalledOnce());
+        });
+
+        it("keeps incoming fireballs above the lower interface and inside the horizontal viewport", () => {
+            const {projectiles} = createEffect([{x: 1780, y: 570, groundY: 640}], incinerate);
+            expect(projectiles.every(sprite => sprite.x >= 64 && sprite.x <= 1856 && sprite.y <= 656)).toBe(true);
+        });
+
+        it("removes all five approaches if the cast is interrupted", () => {
+            const {projectiles, advance, impact, config} = createEffect(undefined, incinerate);
+            advance(100);
+            config().onStop();
+            config().onStop();
+            expect(impact).not.toHaveBeenCalled();
+            projectiles.forEach(sprite => expect(sprite.destroy).toHaveBeenCalledOnce());
+        });
     });
 
     it("rotates the diagonal artwork so each flame head points along its own flight", () => {

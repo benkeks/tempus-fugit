@@ -16,6 +16,7 @@ function createStands() {
     const createAttackAnimation = vi.fn();
     const cardAnimations = new CardAnimationRegistry();
     cardAnimations.register("healing", vi.fn());
+    cardAnimations.register("light-beam", vi.fn());
     const gui: StandGUILayout = Object.create(StandGUILayout.prototype);
     Object.assign(gui, {
         stands: [first, second],
@@ -57,8 +58,9 @@ describe("Stand effect sources", () => {
         expect(idleTweens[0].resume).not.toHaveBeenCalled();
     });
 
-    it("lets the healing effect own vertical motion instead of playing the horizontal attack", () => {
+    it.each(["healing", "light-beam"])("lets %s own the cast instead of playing the horizontal attack", animation => {
         const {gui, first, createAttackAnimation} = createStands();
+        first.animation = animation;
         gui.Attacking(first, 0);
         expect(createAttackAnimation).not.toHaveBeenCalled();
     });
@@ -70,8 +72,9 @@ describe("Stand effect sources", () => {
         expect(createAttackAnimation).toHaveBeenCalledWith(gui.scene, sprites[0], "+");
     });
 
-    it("preserves default movement when healing has no registered implementation", () => {
+    it.each(["healing", "light-beam"])("preserves default movement when %s has no registered implementation", animation => {
         const {gui, first, createAttackAnimation} = createStands();
+        first.animation = animation;
         Object.assign(gui.scene, {cardAnimations: new CardAnimationRegistry()});
         gui.Attacking(first, 0);
         expect(createAttackAnimation).toHaveBeenCalledOnce();

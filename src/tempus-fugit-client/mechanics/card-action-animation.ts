@@ -4,7 +4,10 @@ import type { Card } from "../objects/game-objects/card";
 
 export type CardActionTarget = Enemy | Player | null;
 
+// Omit the index to hit all remaining targets; sweeps can hit individual targets as they pass.
+export type CardActionImpact = (targetIndex?: number) => void;
+
 export interface CardActionAnimator {
     has(key: string): boolean;
-    play(card: Card, targets: readonly CardActionTarget[], impact: () => void, complete: () => void): void;
+    play(card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void): void;
 }

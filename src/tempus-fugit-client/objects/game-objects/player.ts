@@ -146,12 +146,12 @@ export class Player {
         } else {
             const targets = card.getActionTargets(mission,
                 card.getKind() === Card.RANDOM ? mission.getEnemies() : enemy ? [enemy] : []);
-            mission.performCardAction(card, targets, animated => {
-                for (const target of targets) card.action(mission, target);
+            mission.performCardAction(card, targets, (animated, hitTargets, final) => {
+                for (const target of hitTargets) card.action(mission, target);
                 if (!animated && [Card.GLOBAL, Card.RANDOM, Card.DIRECTED].includes(card.getKind())) {
                     this.listener.map(l => l.Attacking(this, enemy));
                 }
-                this.listener.map(l => l.cardPlayed(this, card));
+                if (final) this.listener.map(l => l.cardPlayed(this, card));
             });
             return;
         }
