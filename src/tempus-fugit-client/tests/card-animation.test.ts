@@ -338,7 +338,7 @@ describe("Animated card resolution", () => {
         mission.player.hand.cards[0] = card;
         mission.gameState.setVariableValues({s: {0: true}});
         mission.player.applyCard(card, enemy, mission);
-        expect(play).toHaveBeenCalledWith(card, [enemy], expect.any(Function), expect.any(Function), mission.player);
+        expect(play).toHaveBeenCalledWith(card, [enemy], expect.any(Function), expect.any(Function), mission.player, false);
         expect(targets()).toEqual([enemy]);
         expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
         expect(mission.gameState.getVariable("s").getValue(2)).toBe(false);
@@ -418,7 +418,7 @@ describe("Animated card resolution", () => {
         const root = Card.cards["Root pierce"].copy();
         mission.player.hand.cards[0] = root;
         mission.player.applyCard(root, enemy, mission);
-        expect(play).toHaveBeenCalledWith(root, [enemy], expect.any(Function), expect.any(Function), mission.player);
+        expect(play).toHaveBeenCalledWith(root, [enemy], expect.any(Function), expect.any(Function), mission.player, false);
         expect(targets()).toEqual([enemy]);
         expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
         expect(mission.gameState.getVariable("t").getValue(1)).toBe(false);
@@ -475,7 +475,7 @@ describe("Animated card resolution", () => {
         mission.gameState.evaluate = () => true;
         mission.gameState.setVariableValues({n: {0: true, 1: false}});
         mission.player.applyCard(card, undefined, mission);
-        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function), mission.player);
+        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function), mission.player, false);
         expect(targets()).toEqual([mission.player]);
         expect(mission.player.currentHP).toBe(20);
         expect(mission.active).toBe(false);
@@ -499,7 +499,7 @@ describe("Animated card resolution", () => {
         mission.player.hand.cards[0] = card;
         mission.gameState.evaluate = () => true;
         mission.player.applyCard(card, undefined, mission);
-        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function), mission.player);
+        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function), mission.player, false);
         expect(targets()).toEqual([mission.player]);
         expect(mission.player.baseAttack).toBe(10);
         expect(mission.gameState.getVariable(variable).getValue(1)).toBe(false);
@@ -524,7 +524,7 @@ describe("Animated card resolution", () => {
         mission.gameState.evaluate = () => true;
         other.baseAttack = 2;
         mission.player.applyCard(card, undefined, mission);
-        expect(play).toHaveBeenCalledWith(card, [enemy, other], expect.any(Function), expect.any(Function), mission.player);
+        expect(play).toHaveBeenCalledWith(card, [enemy, other], expect.any(Function), expect.any(Function), mission.player, false);
         expect(targets()).toEqual([enemy, other]);
         expect([enemy.baseAttack, other.baseAttack]).toEqual([10, 2]);
         expect(mission.active).toBe(false);

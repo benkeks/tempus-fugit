@@ -10,5 +10,9 @@ export type CardActionImpact = (targetIndex?: number) => void;
 
 export interface CardActionAnimator {
     has(key: string): boolean;
-    play(card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void, source: CardActionSource): void;
+    // Repeat the visuals, not the action's damage or other gameplay effects.
+    play(
+        card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void,
+        source: CardActionSource, repeat?: boolean,
+    ): void;
 }

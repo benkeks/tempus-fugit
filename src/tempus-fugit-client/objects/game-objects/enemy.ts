@@ -111,7 +111,7 @@ export class Enemy {
                 const targets = [card.getKind() === Card.OTHER ? null : mission.player];
                 mission.performCardAction(card, targets, (_animated, hitTargets) => {
                     for (const target of hitTargets) card.action(mission, target);
-                }, this);
+                }, this, true);
             }
         }
 

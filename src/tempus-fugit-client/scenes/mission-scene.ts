@@ -164,6 +164,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public playCardAnimation(
         card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void,
         source: CardActionSource = this.tfgame.player,
+        repeat: boolean = false,
     ): void {
         const key = card.animation;
         const animation = key && this.cardAnimations.get(key);
@@ -196,7 +197,27 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
                 this.cardDamageAnimation = previousDamageAnimation;
             }
         };
-        this.trackCombatAnimation(animation(this, positions, applyImpact, card, caster));
+        const finishSequence = repeat ? this.beginCombatAnimation() : undefined;
+        const playEffect = (again: boolean) => {
+            const tween = animation(this, positions, applyImpact, card, caster);
+            let settled = false;
+            const finish = (completed: boolean) => {
+                if (settled) return;
+                settled = true;
+                if (completed && again) {
+                    // Phaser emits completion before effect cleanup; restore poses before starting the replay.
+                    queueMicrotask(() => {
+                        if (epoch === this.animationEpoch) playEffect(false);
+                    });
+                } else {
+                    finishSequence?.();
+                }
+            };
+            tween.once("complete", () => finish(true));
+            tween.once("stop", () => finish(false));
+            this.trackCombatAnimation(tween);
+        };
+        playEffect(repeat);
         void this.waitForActionAnimations().then(async () => {
             if (epoch !== this.animationEpoch) return;
             if (!impacted) {
@@ -367,25 +388,32 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.handGUI.discardCard(card);
     }
 
-    public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
+    private beginCombatAnimation(): () => void {
         this.pendingAnimations++;
         const epoch = this.animationEpoch;
-
         let settled = false;
-        let timeoutEvent: Phaser.Time.TimerEvent | null = null;
-
-        const finish = () => {
+        return () => {
             if (settled) return;
             settled = true;
-            if (timeoutEvent) timeoutEvent.remove(false);
             if (epoch !== this.animationEpoch) return;
             this.pendingAnimations--;
-
             if (this.pendingAnimations === 0) {
                 const waiters = this.animationWaiters;
                 this.animationWaiters = [];
                 waiters.forEach(resolve => resolve());
             }
+        };
+    }
+
+    public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
+        const release = this.beginCombatAnimation();
+        let settled = false;
+        let timeoutEvent: Phaser.Time.TimerEvent | null = null;
+        const finish = () => {
+            if (settled) return;
+            settled = true;
+            if (timeoutEvent) timeoutEvent.remove(false);
+            release();
         };
 
         tween.once("complete", finish);
@@ -421,7 +449,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.listener.push(this);
         this.tfgame.cardActionAnimator = {
             has: key => this.cardAnimations.get(key) !== undefined,
-            play: (card, targets, impact, complete, source) => this.playCardAnimation(card, targets, impact, complete, source),
+            play: (card, targets, impact, complete, source, repeat) => this.playCardAnimation(card, targets, impact, complete, source, repeat),
         };
 
         MissionScene.latestData = {

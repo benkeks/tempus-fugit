@@ -26,12 +26,12 @@ function createBattle(key = "slime3") {
     mission.curPhase = Mission.ENEMY_PHASE;
     mission.gameState.evaluate = () => true;
     const casts: Array<{
-        card: Card; targets: readonly CardActionTarget[]; source: CardActionSource;
+        card: Card; targets: readonly CardActionTarget[]; source: CardActionSource; repeat: boolean;
         impact: CardActionImpact; complete: () => void;
     }> = [];
     const play = vi.fn((card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact,
-        complete: () => void, source: CardActionSource) => {
-        casts.push({card, targets, impact, complete, source});
+        complete: () => void, source: CardActionSource, repeat = false) => {
+        casts.push({card, targets, impact, complete, source, repeat});
     });
     mission.cardActionAnimator = {
         has: key => animatedEnemies.some(([, animation]) => animation === key),
@@ -108,7 +108,7 @@ describe("Enemy special resolution", () => {
         const {mission, enemy, other, casts, play, attacking} = createBattle(key);
         enemy.performTurn(mission);
         expect(play).toHaveBeenCalledExactlyOnceWith(
-            enemy.specialAttack, [mission.player], expect.any(Function), expect.any(Function), enemy);
+            enemy.specialAttack, [mission.player], expect.any(Function), expect.any(Function), enemy, true);
         expect(mission.player.currentHP).toBe(500);
         expect(mission.cardActionInProgress).toBe(true);
         expect(mission.active).toBe(false);
@@ -136,7 +136,7 @@ describe("Enemy special resolution", () => {
         const damage = enemy.baseAttack;
         enemy.performTurn(mission);
         expect(play).toHaveBeenCalledExactlyOnceWith(
-            enemy.specialAttack, [mission.player], expect.any(Function), expect.any(Function), enemy);
+            enemy.specialAttack, [mission.player], expect.any(Function), expect.any(Function), enemy, false);
         expect(mission.player.currentHP).toBe(500);
         expect(mission.cardActionInProgress).toBe(true);
         expect(attacking).toHaveBeenCalledWith(enemy, false);

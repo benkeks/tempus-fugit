@@ -150,6 +150,7 @@ export class Mission implements EnemyListener, PlayerListener {
         targets: readonly CardActionTarget[],
         resolve: (animated: boolean, hitTargets: readonly CardActionTarget[], final: boolean) => void,
         source: CardActionSource = this.player,
+        repeat: boolean = false,
     ): void {
         const animator = this.cardActionAnimator;
         if (!card.animation || !animator?.has(card.animation)) {
@@ -187,7 +188,7 @@ export class Mission implements EnemyListener, PlayerListener {
             this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
             this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
             this.flushPendingContinuations();
-        }, source);
+        }, source, repeat);
     }
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {
