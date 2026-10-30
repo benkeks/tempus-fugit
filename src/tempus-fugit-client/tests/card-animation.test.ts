@@ -28,7 +28,7 @@ function createBattle() {
         impact = onImpact;
         complete = onComplete;
     });
-    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing"].includes(key), play};
+    mission.cardActionAnimator = {has: key => ["lightning", "root-pierce", "healing", "positive-aura", "negative-aura"].includes(key), play};
     const card = Card.cards["Lightning strike"].copy();
     mission.player.hand.cards[0] = card;
     const attacking = vi.fn();
@@ -63,6 +63,9 @@ describe("Card animation metadata and registration", () => {
         ["Unnatural heal", "healing"],
         ["Heal stand", "healing"],
         ["Higher heal stand", "healing"],
+        ["Strength", "positive-aura"],
+        ["Guiding Light", "positive-aura"],
+        ["Aura of Weakness", "negative-aura"],
     ])("preserves %s animation metadata through card and deck copies", (name, animation) => {
         const card = Card.cards[name].copy();
         expect(card.animation).toBe(animation);
@@ -284,6 +287,71 @@ describe("Animated card resolution", () => {
         expect(mission.cardActionInProgress).toBe(true);
         complete();
         expect(mission.active).toBe(true);
+    });
+
+    it.each([
+        {name: "Strength", amount: 4, variable: "s", lastRound: 2},
+        {name: "Guiding Light", amount: 2, variable: "l", lastRound: 5},
+    ])("delays $name's attack and rune buffs until the positive aura peaks", ({name, amount, variable, lastRound}) => {
+        const {mission, play, impact, complete, targets, attacking} = createBattle();
+        const card = Card.cards[name].copy();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.evaluate = () => true;
+        mission.player.applyCard(card, undefined, mission);
+        expect(play).toHaveBeenCalledWith(card, [mission.player], expect.any(Function), expect.any(Function));
+        expect(targets()).toEqual([mission.player]);
+        expect(mission.player.baseAttack).toBe(10);
+        expect(mission.gameState.getVariable(variable).getValue(1)).toBe(false);
+        expect(mission.active).toBe(false);
+        impact();
+        expect(mission.player.baseAttack).toBe(10 + amount);
+        expect(mission.player.currentHP).toBe(100);
+        expect(mission.gameState.getVariable(variable).getValue(1)).toBe(true);
+        expect(mission.gameState.getVariable(variable).getValue(lastRound)).toBe(true);
+        expect(attacking).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(true);
+        impact();
+        expect(mission.player.baseAttack).toBe(10 + amount);
+        complete();
+        expect(mission.active).toBe(true);
+    });
+
+    it("weakens all enemies together at the dark aura's impact without dealing damage or lunging", () => {
+        const {mission, enemy, other, play, impact, complete, targets, attacking} = createBattle();
+        const card = Card.cards["Aura of Weakness"].copy();
+        mission.player.hand.cards[0] = card;
+        mission.gameState.evaluate = () => true;
+        other.baseAttack = 2;
+        mission.player.applyCard(card, undefined, mission);
+        expect(play).toHaveBeenCalledWith(card, [enemy, other], expect.any(Function), expect.any(Function));
+        expect(targets()).toEqual([enemy, other]);
+        expect([enemy.baseAttack, other.baseAttack]).toEqual([10, 2]);
+        expect(mission.active).toBe(false);
+        impact();
+        expect([enemy.baseAttack, other.baseAttack]).toEqual([7, 0]);
+        expect([enemy.currentHP, other.currentHP]).toEqual([100, 100]);
+        expect(attacking).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(true);
+        complete();
+        expect(mission.active).toBe(true);
+    });
+
+    it.each(["Strength", "Guiding Light", "Aura of Weakness"])("preserves %s's synchronous fallback without an aura implementation", name => {
+        const {mission, enemy, play, attacking} = createBattle();
+        const card = Card.cards[name].copy();
+        const baseAttack = mission.player.baseAttack;
+        card.animation = "not-implemented";
+        mission.gameState.evaluate = () => true;
+        mission.player.applyCard(card, undefined, mission);
+        expect(play).not.toHaveBeenCalled();
+        expect(mission.cardActionInProgress).toBe(false);
+        if (name === "Aura of Weakness") {
+            expect(enemy.baseAttack).toBe(7);
+            expect(attacking).toHaveBeenCalledOnce();
+        } else {
+            expect(mission.player.baseAttack).toBe(baseAttack + (name === "Strength" ? 4 : 2));
+            expect(attacking).not.toHaveBeenCalled();
+        }
     });
 
     it.each([

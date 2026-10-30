@@ -31,6 +31,7 @@ import { lightning } from "../animations/lightning";
 import { electrocution } from "../animations/electrocution";
 import { rootPierce } from "../animations/root-pierce";
 import { healing } from "../animations/healing";
+import { positiveAura, negativeAura } from "../animations/aura";
 import type { CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
@@ -116,6 +117,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.cardAnimations.register("lightning", lightning, electrocution);
         this.cardAnimations.register("root-pierce", rootPierce);
         this.cardAnimations.register("healing", healing);
+        this.cardAnimations.register("positive-aura", positiveAura);
+        this.cardAnimations.register("negative-aura", negativeAura);
     }
 
     public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
@@ -130,7 +133,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         const positions = targets.filter(target => target !== null).map(target => {
             if (target === this.tfgame.player) {
                 const center = this.playerGUI.getCenter(undefined, true);
-                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y};
+                return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI};
             }
             const gui = this.enemyGUI.enemies.find(gui => gui.enemy === target);
             if (!gui) throw new Error("Missing card animation target: " + target.name);

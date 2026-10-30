@@ -370,7 +370,7 @@ export class EnemyGUI extends ListGUI implements EnemyListener, GameStateListene
 
     public getEffectPosition(): CardAnimationPosition {
         const center = this.sprite.getCenter(undefined, true);
-        return {x: center.x, y: center.y, groundY: this.sprite.getBottomCenter(undefined, true).y};
+        return {x: center.x, y: center.y, groundY: this.sprite.getBottomCenter(undefined, true).y, sprite: this.sprite};
     }
 
     /**

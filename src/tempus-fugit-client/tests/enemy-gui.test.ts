@@ -152,8 +152,9 @@ describe("Enemy defeat presentation", () => {
         const {gui} = createEnemyGUI();
         const getCenter = vi.fn(() => ({x: 1500, y: 520}));
         const getBottomCenter = vi.fn(() => ({x: 1500, y: 600}));
-        Object.assign(gui, {sprite: {getCenter, getBottomCenter}});
-        expect(gui.getEffectPosition()).toEqual({x: 1500, y: 520, groundY: 600});
+        const sprite = {getCenter, getBottomCenter};
+        Object.assign(gui, {sprite});
+        expect(gui.getEffectPosition()).toEqual({x: 1500, y: 520, groundY: 600, sprite});
         expect(getCenter).toHaveBeenCalledWith(undefined, true);
         expect(getBottomCenter).toHaveBeenCalledWith(undefined, true);
     });
