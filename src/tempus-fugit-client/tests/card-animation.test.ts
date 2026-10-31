@@ -618,6 +618,38 @@ describe("Animated card resolution", () => {
         expect(updateStandGUI.mock.lastCall[0][0]).toBeNull();
     });
 
+    it.each([0, 1])("retains concurrent expiring stands when action %i completes first", firstCompleted => {
+        const {mission, play} = createBattle();
+        const stands = ["Heal stand", "Higher heal stand"].map(name => Card.cards[name].copy());
+        const actions: {impact: CardActionImpact; complete: () => void}[] = [];
+        play.mockImplementation((_card, _targets, impact, complete) => actions.push({impact, complete}));
+        for (const stand of stands) {
+            stand.standRounds = 1;
+            mission.pushStand(stand);
+        }
+        mission.gameState.evaluate = () => true;
+        mission.iterateEachParticipand = false;
+        const updateStandGUI = vi.fn();
+        mission.standListener.push({updateStandGUI, Attacking: vi.fn()});
+
+        mission.nextPhase(Mission.STAND_PHASE);
+        expect(play).toHaveBeenCalledTimes(2);
+        expect(mission.getStands()).toEqual([null, null]);
+        expect(updateStandGUI.mock.lastCall[0]).toEqual(stands);
+        actions[firstCompleted].impact();
+        actions[firstCompleted].complete();
+        expect(updateStandGUI.mock.lastCall[0]).toEqual(
+            stands.map((stand, index) => index === firstCompleted ? null : stand),
+        );
+        expect(mission.cardActionInProgress).toBe(true);
+
+        actions[1 - firstCompleted].impact();
+        actions[1 - firstCompleted].complete();
+        expect(updateStandGUI.mock.lastCall[0]).toEqual([null, null]);
+        expect(mission.cardActionInProgress).toBe(false);
+        expect(mission.player.currentHP).toBe(250);
+    });
+
     it("uses the same impact path for stand activations", () => {
         const {mission, enemy, card, impact, complete} = createBattle();
         card.isStandCard = true;

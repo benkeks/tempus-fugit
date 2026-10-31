@@ -262,6 +262,48 @@ describe("Enemy special resolution", () => {
         expect(mission.active).toBe(true);
     });
 
+    it.each([true, false])("does not launch the queued next enemy after a lethal %s attack", special => {
+        const {mission, casts, play} = createBattle();
+        mission.gameState.evaluate = () => special;
+        mission.player.currentHP = 1;
+        mission.nextPlayer();
+        mission.nextPlayer();
+        casts[0].impact();
+        expect(mission.player.currentHP).toBe(0);
+        casts[0].complete();
+        expect(play).toHaveBeenCalledOnce();
+        mission.nextPlayer();
+        mission.nextPhase(Mission.ENERGY_PHASE);
+        mission.active = true;
+        expect(play).toHaveBeenCalledOnce();
+        expect(mission.curPhase).toBe(Mission.ENEMY_PHASE);
+        expect(mission.active).toBe(false);
+    });
+
+    it("ends a parallel enemy batch instead of replaying it as a serial batch", () => {
+        const {mission, casts, play} = createBattle();
+        mission.iterateEachParticipand = false;
+        mission.nextPhase(Mission.ENEMY_PHASE);
+        const nextPhase = vi.spyOn(mission, "nextPhase").mockImplementation(async () => {});
+        mission.nextPlayer();
+        for (const cast of casts) {
+            cast.impact();
+            cast.complete();
+        }
+        expect(play).toHaveBeenCalledTimes(2);
+        expect(nextPhase).toHaveBeenCalledExactlyOnceWith(Mission.DRAW_PHASE);
+    });
+
+    it("skips defeated enemies in a parallel batch", () => {
+        const {mission, enemy, other, casts} = createBattle();
+        enemy.currentHP = 0;
+        mission.iterateEachParticipand = false;
+        mission.nextPhase(Mission.ENEMY_PHASE);
+        expect(casts).toHaveLength(1);
+        expect(casts[0].source).toBe(other);
+        expect(mission.iteratorIndex).toBe(2);
+    });
+
     it("does not advance an enemy turn while paused, even if a completion callback arrives", () => {
         const {mission, casts, play} = createBattle();
         mission.nextPlayer();

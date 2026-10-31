@@ -17,6 +17,7 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
         card: Card
     ) {
         super(scene);
+        scene.tfgame.active = false;
 
         //console.log('discardCard');
 
@@ -62,16 +63,16 @@ export class DiscardGUI extends Phaser.GameObjects.Container {
                     // remove clicked card from hand
                     hand.removeCard(this.card);
                     if (this.card != card) hand.addCardToGUI(card);
-                    hand.discardGUIStarted = false;
-                    if (hand.cardQueue.length == 0) {
+                    const advance = () => {
+                        hand.discardGUIStarted = false;
                         hand.playNextCard();
+                        scene.onDiscardDialogClosed();
+                    };
+                    if (hand.cardQueue.length == 0) {
+                        advance();
                     } else {
-                        setTimeout(() => {
-                            hand.playNextCard();
-                        }, 250);
+                        scene.time.delayedCall(250, advance);
                     }
-
-                    scene.onDiscardDialogClosed();
                 });
         }
     }
