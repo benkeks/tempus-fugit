@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Enemy } from "../objects/game-objects/enemy";
+import { Card } from "../objects/game-objects/card";
 import { EnemyGUI } from "../objects/game-gui-objects/enemy-gui";
+import type { CardDamageAnimation } from "../animations/card-animation-registry";
 
 const {baseDestroy} = vi.hoisted(() => ({baseDestroy: vi.fn()}));
 vi.mock("../objects/game-gui-objects/list-gui", () => ({
@@ -35,6 +37,8 @@ function createEnemyGUI(key = "moleg", size = [64, 64], survivors = true) {
     const counters: DeathAnimation[] = [];
     const stop = vi.fn();
     const trackCombatAnimation = vi.fn(tween => tween);
+    const getCardDamageAnimation = vi.fn((_enemy: Enemy): CardDamageAnimation | undefined => undefined);
+    const createAttackAnimation = vi.fn();
     const timerRemove = vi.fn();
     const sprite = {angle: 0, anims: {stop: vi.fn()}};
     const toolTip = {enabled: true, faderTimer: {destroy: vi.fn()}};
@@ -49,6 +53,8 @@ function createEnemyGUI(key = "moleg", size = [64, 64], survivors = true) {
         destroy: vi.fn(),
     };
     const addContainer = vi.fn(() => info);
+    const addText = vi.fn((x: number, y: number, text: string) => ({x, y, text, destroy: vi.fn()}));
+    const addSprite = vi.fn(() => ({alpha: 0, destroy: vi.fn()}));
     const gui: EnemyGUI = Object.create(EnemyGUI.prototype);
     Object.assign(gui, {
         enemy,
@@ -61,7 +67,7 @@ function createEnemyGUI(key = "moleg", size = [64, 64], survivors = true) {
         getWorldTransformMatrix: () => ({tx: 1500, ty: 600, rotation: 0, scaleX: 1, scaleY: 1}),
         remove,
         scene: {
-            add: {container: addContainer},
+            add: {container: addContainer, text: addText, sprite: addSprite},
             tfgame: {getEnemies},
             time: {
                 delayedCall: (delay: number, callback: () => void) => {
@@ -75,16 +81,19 @@ function createEnemyGUI(key = "moleg", size = [64, 64], survivors = true) {
                 killTweensOf,
             },
             trackCombatAnimation,
+            getCardDamageAnimation,
+            createAttackAnimation,
         },
         getBounds: () => ({height: 320}),
         clearDragOutline: vi.fn(),
         disableInteractive: vi.fn(),
         removeEnemyListener: vi.fn(),
         removeGameStateListener: vi.fn(),
+        updateEnemyAttributes: vi.fn(),
     });
     return {
         gui, enemy, other, getEnemies, rotations, counters, stop, trackCombatAnimation, timerRemove,
-        infoParts, info, remove, addContainer, killTweensOf, toolTip,
+        infoParts, info, remove, addContainer, killTweensOf, toolTip, sprite, getCardDamageAnimation, createAttackAnimation, addText, addSprite,
     };
 }
 
@@ -94,7 +103,93 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 
+describe("Enemy attack presentation", () => {
+    it.each([true, false])("lets a registered effect own its attack when special is %s", async special => {
+        const {gui, enemy, createAttackAnimation} = createEnemyGUI();
+        enemy.specialAttack = new Card("Fire breath", "", "", "l", Card.DIRECTED, false, 0, "");
+        enemy.specialAttack.animation = "fireball";
+        Object.assign(gui.scene.tfgame, {cardActionAnimator: {has: () => true, play: vi.fn()}});
+        await gui.Attacking(enemy, special);
+        expect(createAttackAnimation).not.toHaveBeenCalled();
+    });
+
+    it.each([undefined, "not-implemented", "fireball"])("keeps the existing special lunge for %s without an animator", async animation => {
+        const {gui, enemy, createAttackAnimation} = createEnemyGUI();
+        enemy.specialAttack = new Card("Special", "", "", "l", Card.DIRECTED, false, 0, "");
+        enemy.specialAttack.animation = animation;
+        await gui.Attacking(enemy, true);
+        expect(createAttackAnimation).toHaveBeenCalledWith(gui.scene, gui, "-", 100, 1);
+    });
+
+    it("keeps the basic lunge when no animation implementation is registered", async () => {
+        const {gui, enemy, createAttackAnimation} = createEnemyGUI();
+        enemy.specialAttack = new Card("Special", "", "", "l", Card.DIRECTED, false, 0, "");
+        enemy.specialAttack.animation = "fireball";
+        Object.assign(gui.scene.tfgame, {cardActionAnimator: {has: () => false, play: vi.fn()}});
+        await gui.Attacking(enemy, false);
+        expect(createAttackAnimation).toHaveBeenCalledWith(gui.scene, gui, "-", 100, 0);
+    });
+});
+
+describe("Enemy hit reactions", () => {
+    it("tracks a registered special reaction instead of the default recoil and blood, retaining damage text", async () => {
+        const {gui, enemy, sprite, getCardDamageAnimation, trackCombatAnimation, rotations, addText, addSprite} = createEnemyGUI();
+        enemy.currentHP = 88;
+        const tween: Phaser.Tweens.Tween = Object.create(null);
+        const damageAnimation = vi.fn(() => tween);
+        getCardDamageAnimation.mockReturnValue(damageAnimation);
+        await gui.enemyHpChanged(enemy, 100, 88);
+        expect(damageAnimation).toHaveBeenCalledExactlyOnceWith(gui.scene, sprite);
+        expect(trackCombatAnimation).toHaveBeenCalledExactlyOnceWith(tween);
+        expect(rotations).toHaveLength(1);
+        expect(addText.mock.calls[0][2]).toBe("12");
+        expect(addSprite).not.toHaveBeenCalled();
+        expect(gui.updateEnemyAttributes).toHaveBeenCalledOnce();
+    });
+
+    it("keeps the normal recoil, blood, and damage text for an unregistered reaction", async () => {
+        const {gui, enemy, sprite, rotations, addText, addSprite, trackCombatAnimation} = createEnemyGUI();
+        enemy.currentHP = 88;
+        await gui.enemyHpChanged(enemy, 100, 88);
+        expect(rotations[0]).toMatchObject({targets: sprite, angle: {from: 0, to: 10}, duration: 150});
+        expect(trackCombatAnimation).toHaveBeenCalledOnce();
+        expect(addText.mock.calls[0][2]).toBe("12");
+        expect(addSprite).toHaveBeenCalledWith(1500, 630, "blood");
+    });
+
+    it("still performs a lethal hit's death animation alongside electrocution", async () => {
+        const {gui, enemy, getCardDamageAnimation, counters, trackCombatAnimation} = createEnemyGUI("boss");
+        const tween: Phaser.Tweens.Tween = Object.create(null);
+        getCardDamageAnimation.mockReturnValue(() => tween);
+        await gui.enemyHpChanged(enemy, 12, 0);
+        expect(counters[0].duration).toBe(1200);
+        expect(trackCombatAnimation).toHaveBeenCalledTimes(2);
+        expect(gui.updateEnemyAttributes).not.toHaveBeenCalled();
+    });
+
+    it("does not play a damage reaction for healing", async () => {
+        const {gui, enemy, getCardDamageAnimation, trackCombatAnimation, addSprite} = createEnemyGUI();
+        enemy.currentHP = 100;
+        await gui.enemyHpChanged(enemy, 88, 100);
+        expect(getCardDamageAnimation).not.toHaveBeenCalled();
+        expect(trackCombatAnimation).not.toHaveBeenCalled();
+        expect(addSprite).not.toHaveBeenCalled();
+        expect(gui.updateEnemyAttributes).toHaveBeenCalledOnce();
+    });
+});
+
 describe("Enemy defeat presentation", () => {
+    it("anchors card effects to the sprite center and ground in world space", () => {
+        const {gui} = createEnemyGUI();
+        const getCenter = vi.fn(() => ({x: 1500, y: 520}));
+        const getBottomCenter = vi.fn(() => ({x: 1500, y: 600}));
+        const sprite = {getCenter, getBottomCenter};
+        Object.assign(gui, {sprite});
+        expect(gui.getEffectPosition()).toEqual({x: 1500, y: 520, groundY: 600, sprite});
+        expect(getCenter).toHaveBeenCalledWith(undefined, true);
+        expect(getBottomCenter).toHaveBeenCalledWith(undefined, true);
+    });
+
     it("removes a large defeated enemy after exactly one second while its wave has survivors", () => {
         const {gui, rotations} = createEnemyGUI();
         gui.die();

@@ -311,6 +311,32 @@ export class NavigationScene extends Phaser.Scene {
         };
     }
 
+    private createOverviewMage(x: number, y: number): Sprite {
+        const key = "player_overview";
+        const frame = this.textures.getFrame("player");
+        if (!frame) throw new Error("Missing player texture for overview mage");
+
+        if (!this.textures.exists(key)) {
+            // Coarsen only the overview's pixels; battles keep the original player texture.
+            const image = frame.source.image;
+            if (image instanceof Uint8Array) throw new Error("Overview mage requires an image-based player texture");
+            const texture = this.textures.createCanvas(key,
+                Math.max(1, Math.round(frame.cutWidth / 2)),
+                Math.max(1, Math.round(frame.cutHeight / 2)));
+            if (!texture) throw new Error("Could not create overview mage texture");
+            const context = texture.getContext();
+            context.imageSmoothingEnabled = false;
+            context.drawImage(image, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight,
+                0, 0, texture.width, texture.height);
+            texture.refresh();
+            texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        }
+
+        return this.add.sprite(x, y, key)
+            .setDisplaySize(frame.cutWidth * 0.3, frame.cutHeight * 0.3)
+            .setDepth(4);
+    }
+
     public animateMageToLevel(targetIndex:number, onComplete:() => void): void {
         if (!this.mage || this.currentMageLevelIndex === targetIndex) {
             onComplete();
@@ -332,6 +358,7 @@ export class NavigationScene extends Phaser.Scene {
             }
 
             let pos = this.getMagePositionForLevel(path[pathIndex]);
+            if (pos.x !== this.mage.x) this.mage.setFlipX(pos.x < this.mage.x);
             this.tweens.add({
                 targets: this.mage,
                 x: pos.x,
@@ -546,14 +573,10 @@ export class NavigationScene extends Phaser.Scene {
         this.currentMageLevelIndex = this.getInitialMageLevelIndex();
         let initialMagePosition = this.getMagePositionForLevel(this.currentMageLevelIndex);
 
-        this.mage = this.add.sprite(
+        this.mage = this.createOverviewMage(
             initialMagePosition.x,
-            initialMagePosition.y,
-            "player",
-            0
+            initialMagePosition.y
         );
-        this.mage.setScale(0.3);
-        this.mage.setDepth(4);
         this.worldContainer.add(this.mage);
 
         // clouds

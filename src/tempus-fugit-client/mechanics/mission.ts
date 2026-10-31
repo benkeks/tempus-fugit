@@ -4,6 +4,7 @@ import { GameState } from "../objects/game-objects/game-state";
 import { Enemy, EnemyListener } from "../objects/game-objects/enemy";
 import { StoryDialog } from "./story-dialog";
 import { Card } from "../objects/game-objects/card";
+import type { CardActionAnimator, CardActionSource, CardActionTarget } from "./card-action-animation";
 
 type PendingMissionContinuation =
     | { kind: "nextPhase"; next: number }
@@ -57,7 +58,8 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     set active(value: boolean) {
-        value = value && !this.waveTransitionInProgress && !this.paused;
+        value = value && !this.destroyed && this.player.isAlive() && !this.player.hand.discardGUIStarted &&
+            !this.waveTransitionInProgress && !this.paused && !this.cardActionInProgress;
         this._active = value;
         this.player.active = value;
         this.gameState.active = value && this.curPhase === Mission.ENERGY_PHASE;
@@ -124,6 +126,14 @@ export class Mission implements EnemyListener, PlayerListener {
     public _active: boolean = true;
 
     private stands: [Card | null, Card | null] = [null, null];
+    private animatedStandSources: [Card | null, Card | null] = [null, null];
+
+    private getVisibleStands(): [Card | null, Card | null] {
+        return [
+            this.stands[0] ?? this.animatedStandSources[0],
+            this.stands[1] ?? this.animatedStandSources[1],
+        ];
+    }
 
     public loot: Card[] = []; // card name and maximal number of occurances
 
@@ -136,11 +146,74 @@ export class Mission implements EnemyListener, PlayerListener {
     private aliveEnemiesCount = -1;
     private baseAttackConsumedThisTurn: boolean = false;
     private awaitingWavePresentation: boolean = false;
+    public cardActionAnimator: CardActionAnimator | undefined;
+    public cardActionInProgress: boolean = false;
+    private pendingActions = 0;
+    private destroyed = false;
 
     public get waveTransitionInProgress(): boolean {
         return this.awaitingWavePresentation;
     }
-    // TODO: effect list
+
+    public beginAction(): () => void {
+        this.pendingActions++;
+        this.cardActionInProgress = true;
+        this.active = false;
+        let completed = false;
+        return () => {
+            if (this.destroyed || completed) return;
+            completed = true;
+            this.cardActionInProgress = --this.pendingActions > 0;
+            if (this.cardActionInProgress) return;
+            this.active = this.curPhase === Mission.ENERGY_PHASE || this.curPhase === Mission.PLAY_PHASE;
+            this.listener.forEach(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
+            this.flushPendingContinuations();
+        };
+    }
+
+    public performCardAction(
+        card: Card,
+        targets: readonly CardActionTarget[],
+        resolve: (animated: boolean, hitTargets: readonly CardActionTarget[], final: boolean) => void,
+        source: CardActionSource = this.player,
+        repeat: boolean = false,
+    ): void {
+        if (this.destroyed) return;
+        const animator = this.cardActionAnimator;
+        if (!card.animation || !animator?.has(card.animation)) {
+            resolve(false, targets, true);
+            return;
+        }
+
+        const standIndex = card.stand() ? this.stands.indexOf(card) : -1;
+        if (standIndex >= 0) this.animatedStandSources[standIndex] = card;
+        const finish = this.beginAction();
+        let impacted = false;
+        const hitIndices = new Set<number>();
+        let completed = false;
+        const impact = (index?: number) => {
+            if (this.destroyed || impacted || completed) return;
+            if (index !== undefined && (!Number.isInteger(index) || index < 0 || index >= targets.length)) {
+                throw new RangeError("Invalid card animation target index: " + index);
+            }
+            const indices = (index === undefined ? targets.map((_, i) => i) : [index])
+                .filter(i => !hitIndices.has(i));
+            if (index !== undefined && indices.length === 0) return;
+            indices.forEach(i => hitIndices.add(i));
+            impacted = hitIndices.size === targets.length;
+            resolve(true, indices.map(i => targets[i]), impacted);
+        };
+        animator.play(card, targets, impact, () => {
+            if (this.destroyed || completed) return;
+            if (!impacted) {
+                throw new Error("Card animation settled without impact: " + card.animation);
+            }
+            completed = true;
+            if (standIndex >= 0) this.animatedStandSources[standIndex] = null;
+            if (card.stand()) this.standListener.forEach(l => l.updateStandGUI(this.getVisibleStands()));
+            finish();
+        }, source, repeat);
+    }
 
     private debugFlow(event: string, details: { [key: string]: unknown } = {}): void {
         if (!Mission.DEBUG_FLOW) return;
@@ -289,7 +362,7 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private flushPendingContinuations(): void {
-        while (!this.paused && this.pendingContinuations.length > 0) {
+        while (!this.paused && !this.cardActionInProgress && this.pendingContinuations.length > 0) {
             const continuation = this.pendingContinuations.shift();
             if (!continuation) return;
 
@@ -390,11 +463,11 @@ export class Mission implements EnemyListener, PlayerListener {
      * increments turn counter every time player turn is reached
      */
     public async nextPhase(next: number = (this.curPhase + 1) % this.numPhases) {
-        if (this.waveTransitionInProgress) return;
+        if (this.destroyed || !this.player.isAlive() || this.waveTransitionInProgress) return;
         this.debugFlow("nextPhase:requested", { from: this.curPhase, to: next });
         if (this.requestAdvanceIfWaveCleared("nextPhase")) return;
 
-        if (this.paused) {
+        if (this.paused || this.cardActionInProgress) {
             this.debugFlow("nextPhase:queued", { requested: next });
             this.queueContinuation({ kind: "nextPhase", next });
             return;
@@ -412,11 +485,11 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public async nextPlayer() {
-        if (this.waveTransitionInProgress) return;
+        if (this.destroyed || !this.player.isAlive() || this.waveTransitionInProgress) return;
         this.debugFlow("nextPlayer:requested", { phase: this.curPhase, iteratorIndex: this.iteratorIndex });
         if (this.requestAdvanceIfWaveCleared("nextPlayer")) return;
 
-        if (this.paused) {
+        if (this.paused || this.cardActionInProgress) {
             this.debugFlow("nextPlayer:queued", { phase: this.curPhase, iteratorIndex: this.iteratorIndex });
             this.queueContinuation({ kind: "nextPlayer" });
             return;
@@ -492,10 +565,8 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     private playPhase(): void {
-        this.player.active = true;
-        this.gameState.active = false;
-        this.baseAttackConsumedThisTurn = false;
-        this.listener.map(l => l.baseAttackPossible(this, true));
+        this.active = true;
+        this.listener.map(l => l.baseAttackPossible(this, !this.baseAttackConsumedThisTurn));
     }
 
     public tryConsumeBaseAttack(): boolean {
@@ -534,7 +605,8 @@ export class Mission implements EnemyListener, PlayerListener {
                 this.stands[i] = null;
             }
             for (var l of this.standListener) {
-                l.updateStandGUI(this.stands);
+                // Retain every expiring source, including stands casting concurrently.
+                l.updateStandGUI(this.getVisibleStands());
                 if (attacked) l.Attacking(stand, this.iteratorIndex);
             }
         }
@@ -577,7 +649,13 @@ export class Mission implements EnemyListener, PlayerListener {
             if (stand != null) stand.turnNormal();
         }
 
-        if (!this.iterateEachParticipand) this.getEnemies().map(e => e.performTurn(this));
+        if (!this.iterateEachParticipand) {
+            const enemies = this.getEnemies();
+            this.iteratorIndex = enemies.length;
+            for (const enemy of enemies) {
+                if (enemy.isAlive() && this.player.isAlive()) enemy.performTurn(this);
+            }
+        }
     }
 
     private endOfRound(): void {
@@ -622,6 +700,11 @@ export class Mission implements EnemyListener, PlayerListener {
     }
 
     public destroy(): void {
+        this.destroyed = true;
+        this._active = false;
+        this.cardActionAnimator = undefined;
+        this.pendingContinuations = [];
+        this.animatedStandSources = [null, null];
         this.cancelPendingWaveTransition();
         this.player.listener = [];
         this.player.hand.listener = [];

@@ -25,6 +25,24 @@ import { HelpWindow } from "../objects/help-gui-objects/help-window";
 import { TutorialButton } from "../objects/tutorial-objects/tutorial-button";
 import { MusicScene } from "./music-scene";
 import { SoundButton } from "../objects/sound-button";
+import { CardAnimationRegistry } from "../animations/card-animation-registry";
+import type { CardAnimationPosition, CardDamageAnimation } from "../animations/card-animation-registry";
+import { lightning } from "../animations/lightning";
+import { electrocution } from "../animations/electrocution";
+import { rootPierce } from "../animations/root-pierce";
+import { healing } from "../animations/healing";
+import { positiveAura, negativeAura } from "../animations/aura";
+import { fireball, incinerate } from "../animations/fireball";
+import { lightBeam, darkBeam, greenBeam, sandBeam } from "../animations/beam";
+import { sunWave } from "../animations/sun-wave";
+import { magicBolts, magicRain, magicSwarm } from "../animations/magic-particles";
+import { slash } from "../animations/slash";
+import { needleVolley } from "../animations/needle-volley";
+import { groundImpact } from "../animations/ground-impact";
+import { slimeSplash } from "../animations/slime-splash";
+import { stoneThrow } from "../animations/stone-throw";
+import { puffBlast } from "../animations/puff-blast";
+import type { CardActionImpact, CardActionSource, CardActionTarget } from "../mechanics/card-action-animation";
 
 type PendingWavePresentation = {
     game: Mission;
@@ -68,12 +86,25 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     public delay:number = 1250;
     public readonly combatAnimationTimeoutMs: number = 2500;
     private pendingAnimations = 0;
+    private animationEpoch = 0;
+    public readonly cardAnimations = new CardAnimationRegistry();
+    private cardDamageAnimation: {
+        targets: readonly CardActionTarget[];
+        animation: CardDamageAnimation;
+    } | undefined;
     private animationWaiters: AnimationWaiter[] = [];
     private pendingTurnStartDiscard: Card | null = null;
     private pendingWavePresentation: PendingWavePresentation | null = null;
+    private phaseIteration: {phase: number; wave: number; turn: number} | null = null;
+    private ending = false;
     public showCredits:boolean = false;
 
+    private readonly handleScenePause = (): void => {
+        this.tfgame.setPaused(true);
+    };
+
     private readonly handleSceneResume = (): void => {
+        this.tfgame.setPaused(false);
         this.updateMissionInteractivity();
         this.scheduleTurnStartDiscardCheck();
     };
@@ -81,16 +112,20 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     private readonly handleSceneShutdown = (): void => {
         this.pendingWavePresentation = null;
         this.pendingTurnStartDiscard = null;
+        this.phaseIteration = null;
+        this.ending = false;
 
         if (this.tfgame) {
             this.tfgame.destroy();
         }
 
         const waiters = this.animationWaiters;
+        this.animationEpoch++;
         this.animationWaiters = [];
         this.pendingAnimations = 0;
         waiters.forEach(resolve => resolve());
 
+        this.events.off('pause', this.handleScenePause, this);
         this.events.off('resume', this.handleSceneResume, this);
     };
 
@@ -98,25 +133,126 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         super({
             key: "MissionScene"
         });
+        // Player cards and enemy attacks share effects and impact timing via their "animation" key.
+        this.cardAnimations.register("lightning", lightning, electrocution);
+        this.cardAnimations.register("root-pierce", rootPierce);
+        this.cardAnimations.register("healing", healing);
+        this.cardAnimations.register("positive-aura", positiveAura);
+        this.cardAnimations.register("negative-aura", negativeAura);
+        this.cardAnimations.register("fireball", fireball);
+        this.cardAnimations.register("incinerate", incinerate);
+        this.cardAnimations.register("light-beam", lightBeam);
+        this.cardAnimations.register("dark-beam", darkBeam);
+        this.cardAnimations.register("green-beam", greenBeam);
+        this.cardAnimations.register("sand-beam", sandBeam);
+        this.cardAnimations.register("sun-wave", sunWave);
+        this.cardAnimations.register("magic-bolts", magicBolts);
+        this.cardAnimations.register("magic-rain", magicRain);
+        this.cardAnimations.register("magic-swarm", magicSwarm);
+        this.cardAnimations.register("slash", slash);
+        this.cardAnimations.register("needle-volley", needleVolley);
+        this.cardAnimations.register("ground-impact", groundImpact);
+        this.cardAnimations.register("slime-splash", slimeSplash);
+        this.cardAnimations.register("stone-throw", stoneThrow);
+        this.cardAnimations.register("puff-blast", puffBlast);
+    }
+
+    public getCardDamageAnimation(target: CardActionTarget): CardDamageAnimation | undefined {
+        return this.cardDamageAnimation?.targets.includes(target) ? this.cardDamageAnimation.animation : undefined;
+    }
+
+    private getCardAnimationPosition(actor: CardActionSource): CardAnimationPosition {
+        if (actor === this.tfgame.player) {
+            const center = this.playerGUI.getCenter(undefined, true);
+            return {x: center.x, y: center.y, groundY: this.playerGUI.getBottomCenter(undefined, true).y, sprite: this.playerGUI};
+        }
+        const gui = this.enemyGUI.enemies.find(gui => gui.enemy === actor);
+        if (!gui) throw new Error("Missing card animation actor: " + actor.name);
+        return gui.getEffectPosition();
+    }
+
+    public playCardAnimation(
+        card: Card, targets: readonly CardActionTarget[], impact: CardActionImpact, complete: () => void,
+        source: CardActionSource = this.tfgame.player,
+        repeat: boolean = false,
+    ): void {
+        const key = card.animation;
+        const animation = key && this.cardAnimations.get(key);
+        if (!animation) throw new Error("Unknown card animation: " + key);
+
+        const positions = targets.map((target, index) =>
+            target === null ? null : {...this.getCardAnimationPosition(target), index})
+            .filter(position => position !== null);
+        const caster = this.getCardAnimationPosition(source);
+        const epoch = this.animationEpoch;
+        const damageAnimation = this.cardAnimations.getDamageAnimation(key);
+        let impacted = false;
+        const hitIndices = new Set<number>();
+        const applyImpact: CardActionImpact = index => {
+            if (impacted || epoch !== this.animationEpoch) return;
+            if (index !== undefined && (!Number.isInteger(index) || index < 0 || index >= targets.length)) {
+                throw new RangeError("Invalid card animation target index: " + index);
+            }
+            const indices = (index === undefined ? targets.map((_, i) => i) : [index])
+                .filter(i => !hitIndices.has(i));
+            if (index !== undefined && indices.length === 0) return;
+            indices.forEach(i => hitIndices.add(i));
+            impacted = hitIndices.size === targets.length;
+            const previousDamageAnimation = this.cardDamageAnimation;
+            // Scope special hit reactions to this action's targets; later ordinary hits must use the default.
+            this.cardDamageAnimation = damageAnimation ? {targets: indices.map(i => targets[i]), animation: damageAnimation} : undefined;
+            try {
+                impact(index);
+            } finally {
+                this.cardDamageAnimation = previousDamageAnimation;
+            }
+        };
+        const finishSequence = repeat ? this.beginCombatAnimation() : undefined;
+        const playEffect = (again: boolean) => {
+            const tween = animation(this, positions, applyImpact, card, caster);
+            let settled = false;
+            const finish = (completed: boolean) => {
+                if (settled) return;
+                settled = true;
+                if (completed && again) {
+                    // Phaser emits completion before effect cleanup; restore poses before starting the replay.
+                    queueMicrotask(() => {
+                        if (epoch === this.animationEpoch) playEffect(false);
+                    });
+                } else {
+                    finishSequence?.();
+                }
+            };
+            tween.once("complete", () => finish(true));
+            tween.once("stop", () => finish(false));
+            this.trackCombatAnimation(tween);
+        };
+        playEffect(repeat);
+        void this.waitForActionAnimations().then(async () => {
+            if (epoch !== this.animationEpoch) return;
+            if (!impacted) {
+                console.warn("Card animation interrupted before impact: " + key);
+                applyImpact();
+                await this.waitForActionAnimations();
+            }
+            if (epoch === this.animationEpoch) complete();
+        });
     }
 
     private isPlayerInteractionPhase(): boolean {
-        return !this.tfgame.waveTransitionInProgress &&
+        return !this.ending && !this.tfgame.waveTransitionInProgress &&
             (this.tfgame.curPhase === Mission.ENERGY_PHASE || this.tfgame.curPhase === Mission.PLAY_PHASE);
     }
 
     private scheduleSceneCallback(callback: () => void, delay: number = 0): void {
-        this.time.delayedCall(delay, callback, [], this);
+        const epoch = this.animationEpoch;
+        this.time.delayedCall(delay, () => {
+            if (epoch === this.animationEpoch) callback();
+        }, [], this);
     }
 
     private updateMissionInteractivity(): void {
-        const interactive = !this.tfgame.paused && this.isPlayerInteractionPhase();
-        this.tfgame.active = interactive;
-        // In PLAY_PHASE, gameState (variable table) must remain inactive
-        // even when player interaction is re-enabled after a dialog/discard.
-        if (interactive && this.tfgame.curPhase === Mission.PLAY_PHASE) {
-            this.tfgame.gameState.active = false;
-        }
+        this.tfgame.active = !this.tfgame.paused && this.isPlayerInteractionPhase();
     }
 
     private async withMissionPresentation<T>(
@@ -124,6 +260,8 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         options: { blocking: boolean; suspendPlayerOnly?: boolean },
         present: () => T,
     ): Promise<void> {
+        if (game !== this.tfgame) return;
+        const epoch = this.animationEpoch;
         const restorePlayerInteractivity = !options.blocking && !!options.suspendPlayerOnly;
 
         if (options.blocking) {
@@ -142,7 +280,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
             await this.wait(0);
         } finally {
-            if (restorePlayerInteractivity) {
+            if (restorePlayerInteractivity && epoch === this.animationEpoch) {
                 this.updateMissionInteractivity();
             }
         }
@@ -209,17 +347,20 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     private async flushWavePresentation(game: Mission): Promise<void> {
         if (!this.pendingWavePresentation || this.pendingWavePresentation.game !== game) return;
 
+        const epoch = this.animationEpoch;
         const presentation = this.pendingWavePresentation;
         this.pendingWavePresentation = null;
 
         if (presentation.monolog) {
             await this.presentMonolog(game, presentation.monolog);
+            if (epoch !== this.animationEpoch) return;
         }
 
         if (presentation.enemies) {
             this.enemyGUI.setEnemies(presentation.enemies, game.waveCounter > 0);
             if (game.waveCounter > 0) {
                 await this.wait(this.enemyGUI.fadeInDuration);
+                if (epoch !== this.animationEpoch) return;
             }
         }
 
@@ -229,6 +370,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
         for (const dialog of presentation.dialogs) {
             await this.presentDialog(game, dialog);
+            if (epoch !== this.animationEpoch) return;
         }
 
         game.startWaveCombat();
@@ -259,38 +401,53 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.handGUI.discardCard(card);
     }
 
-    public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
+    private beginCombatAnimation(): () => void {
         this.pendingAnimations++;
-
+        const epoch = this.animationEpoch;
         let settled = false;
-        let timeoutEvent: Phaser.Time.TimerEvent | null = null;
-
-        const finish = () => {
+        return () => {
             if (settled) return;
             settled = true;
-            if (timeoutEvent) timeoutEvent.remove(false);
+            if (epoch !== this.animationEpoch) return;
             this.pendingAnimations--;
-
             if (this.pendingAnimations === 0) {
                 const waiters = this.animationWaiters;
                 this.animationWaiters = [];
                 waiters.forEach(resolve => resolve());
             }
         };
+    }
+
+    public trackCombatAnimation(tween: Phaser.Tweens.Tween, timeoutMs: number = this.combatAnimationTimeoutMs): Phaser.Tweens.Tween {
+        const release = this.beginCombatAnimation();
+        let settled = false;
+        let timeoutEvent: Phaser.Time.TimerEvent | null = null;
+        const finish = () => {
+            if (settled) return;
+            settled = true;
+            if (timeoutEvent) timeoutEvent.remove(false);
+            release();
+        };
 
         tween.once("complete", finish);
         tween.once("stop", finish);
-        timeoutEvent = this.time.delayedCall(timeoutMs, finish, [], this);
+        timeoutEvent = this.time.delayedCall(timeoutMs, () => {
+            console.warn("Combat animation timed out after " + timeoutMs + "ms");
+            tween.stop();
+            finish();
+        }, [], this);
         return tween;
     }
 
     private async waitForCombatAnimationsToSettle(): Promise<void> {
+        const epoch = this.animationEpoch;
         // Allow same-frame listener callbacks to enqueue their tracked tweens.
         await this.wait(0);
 
-        if (this.pendingAnimations === 0) return;
+        if (epoch !== this.animationEpoch || this.pendingAnimations === 0) return;
 
         await this.waitForActionAnimations();
+        if (epoch !== this.animationEpoch) return;
         await this.wait(300);
     }
 
@@ -305,6 +462,10 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tfgame.deck = data.deck;
         this.showCredits = data.showCredits;
         this.tfgame.listener.push(this);
+        this.tfgame.cardActionAnimator = {
+            has: key => this.cardAnimations.get(key) !== undefined,
+            play: (card, targets, impact, complete, source, repeat) => this.playCardAnimation(card, targets, impact, complete, source, repeat),
+        };
 
         MissionScene.latestData = {
             key: data.key,
@@ -434,6 +595,7 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
         this.tutorialButton = new TutorialButton(this, 1690, 310);
         this.soundButton = new SoundButton(this, 1780, 310);
 
+        this.events.on('pause', this.handleScenePause, this);
         this.events.on('resume', this.handleSceneResume, this);
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleSceneShutdown, this);
     }
@@ -483,20 +645,57 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     async playPhase(game: Mission) { this.scheduleTurnStartDiscardCheck(); }
 
+    public async endPlayerTurn(withBaseAttack: boolean): Promise<void> {
+        const game = this.tfgame;
+        if (!game.active || !this.isPlayerInteractionPhase()) return;
+        if (withBaseAttack && !game.tryConsumeBaseAttack()) return;
+        const epoch = this.animationEpoch;
+        const wave = game.waveCounter;
+        // Share the action lock so cards, resume handlers and duplicate clicks cannot reopen the turn.
+        const finish = game.beginAction();
+        try {
+            if (withBaseAttack) {
+                game.player.attackWithBaseAttack(game);
+                await this.wait(500);
+                if (epoch !== this.animationEpoch) return;
+            }
+            await this.waitForActionAnimations();
+            if (epoch !== this.animationEpoch) return;
+            while (game.paused) {
+                await this.waitForSceneResume();
+                if (epoch !== this.animationEpoch) return;
+            }
+            if (game.waveCounter !== wave || !game.player.isAlive() || !this.isPlayerInteractionPhase()) return;
+            if (withBaseAttack) game.player.takeCard(game.deck);
+            game.nextPhase(Mission.STAND_PHASE);
+        } finally {
+            finish();
+        }
+    }
+
     async iteratePhases(phase: number, delay: number) {
-        if (this.tfgame.curPhase != phase) return;
-
-        const waveAtStart = this.tfgame.waveCounter;
-
-        await this.wait(delay);
-
-        if (this.tfgame.curPhase != phase || this.tfgame.paused || this.tfgame.waveCounter !== waveAtStart) return;
-
-        this.tfgame.nextPlayer();
-        await this.waitForActionAnimations();
-
-        if (this.tfgame.curPhase == phase && !this.tfgame.paused && this.tfgame.waveCounter === waveAtStart) {
-            this.iteratePhases(phase, delay);
+        const game = this.tfgame;
+        const epoch = this.animationEpoch;
+        if (game.curPhase != phase) return;
+        const wave = game.waveCounter;
+        const turn = game.curTurn;
+        if (this.phaseIteration?.phase === phase && this.phaseIteration.wave === wave && this.phaseIteration.turn === turn) return;
+        const iteration = {phase, wave, turn};
+        this.phaseIteration = iteration;
+        const isCurrent = () => this.phaseIteration === iteration && epoch === this.animationEpoch &&
+            game.curPhase === phase && game.waveCounter === wave && game.curTurn === turn &&
+            game.player.isAlive() && !this.ending;
+        try {
+            while (isCurrent()) {
+                await this.wait(delay);
+                if (!isCurrent()) return;
+                while (game.paused && isCurrent()) await this.waitForSceneResume();
+                if (!isCurrent()) return;
+                game.nextPlayer();
+                await this.waitForActionAnimations();
+            }
+        } finally {
+            if (this.phaseIteration === iteration) this.phaseIteration = null;
         }
     }
 
@@ -515,12 +714,17 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     async gameover(game: Mission, gameWon: boolean) {
+        if (game !== this.tfgame || this.ending) return;
+        this.ending = true;
+        const epoch = this.animationEpoch;
         await this.waitForCombatAnimationsToSettle();
+        if (epoch !== this.animationEpoch) return;
 
         if (!gameWon) {
-            this.scene.start("DeathScene", { mission: this.tfgame, index: this.missionIndex });
+            this.scene.start("DeathScene", { mission: game, index: this.missionIndex });
         } else {
             await this.presentWinMonologIfNeeded(game);
+            if (epoch !== this.animationEpoch) return;
             this.finishWonMission();
         }
         this.updateHelp();
@@ -543,7 +747,9 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
     }
 
     private async startWavePresentationAfterCombat(game: Mission): Promise<void> {
+        const epoch = this.animationEpoch;
         await this.waitForCombatAnimationsToSettle();
+        if (epoch !== this.animationEpoch) return;
         this.startWavePresentation(game);
     }
 
@@ -576,7 +782,14 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     private wait(delay: number): Promise<void> {
         return new Promise(resolve => {
-            this.time.delayedCall(delay, () => resolve(), [], this);
+            // Scene-clock timers are removed on shutdown; release their promises as well.
+            const finish = () => {
+                timer.remove(false);
+                this.events.off(Phaser.Scenes.Events.SHUTDOWN, finish);
+                resolve();
+            };
+            const timer = this.time.delayedCall(delay, finish, [], this);
+            this.events.once(Phaser.Scenes.Events.SHUTDOWN, finish);
         });
     }
 
@@ -592,7 +805,13 @@ export class MissionScene extends Phaser.Scene implements MissionListener {
 
     private waitForSceneResume(): Promise<void> {
         return new Promise(resolve => {
-            this.events.once('resume', () => resolve());
+            const finish = () => {
+                this.events.off('resume', finish);
+                this.events.off(Phaser.Scenes.Events.SHUTDOWN, finish);
+                resolve();
+            };
+            this.events.once('resume', finish);
+            this.events.once(Phaser.Scenes.Events.SHUTDOWN, finish);
         });
     }
 
