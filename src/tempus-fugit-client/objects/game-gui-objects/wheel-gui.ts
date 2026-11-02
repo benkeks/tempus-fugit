@@ -1,14 +1,14 @@
-import { Scene, Game } from "phaser";
 import { GameInfo } from "../../game";
 import { Mission, MissionListener } from "../../mechanics/mission";
 import { Enemy } from "../game-objects/enemy";
 import { StoryDialog } from "../../mechanics/story-dialog";
 import { ToolTip } from "./tool-tip";
 import { ListGUI } from "./list-gui";
+import type { MissionScene } from "../../scenes/mission-scene";
 
 export class WheelGUI extends Phaser.GameObjects.Container implements MissionListener {
 
-    public scene: Phaser.Scene;
+    public scene: MissionScene;
     public wheel: Phaser.GameObjects.Sprite;
     public box: Phaser.GameObjects.Rectangle;
     public pulseBackground: Phaser.GameObjects.Rectangle;
@@ -30,7 +30,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
 
     private baseAttackAllowed: boolean = true;
 
-    constructor(scene: Scene,
+    constructor(scene: MissionScene,
         game: Mission,
         x: number = undefined,
         y: number = undefined,
@@ -132,28 +132,7 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
                 this.box.setStrokeStyle(2, 0x000000);
             }, this)
             .on('pointerdown', function (pointer, localX, localY, event) {
-                if (this.baseAttackAllowed) {
-                    if (!this.game.tryConsumeBaseAttack()) {
-                        return;
-                    }
-
-                    this.box.disableInteractive();
-                    this.box.setStrokeStyle(2, 0x000000);
-                    const currentWave = this.game.waveCounter;
-                    this.game.player.attackWithBaseAttack(this.game);
-                    this.scene.time.delayedCall(500, () => {
-                        if (this.game.waveCounter !== currentWave) return;
-                        if (this.game.paused) return;
-                        if (this.game.curPhase !== Mission.ENERGY_PHASE && this.game.curPhase !== Mission.PLAY_PHASE) return;
-
-                        this.game.player.takeCard(this.game.deck);
-                        this.game.nextPhase(Mission.STAND_PHASE);
-                    }, [], this)
-                } else {
-                    this.box.disableInteractive();
-                    this.box.setStrokeStyle(2, 0x000000);
-                    this.game.nextPhase(Mission.STAND_PHASE);
-                }
+                void this.scene.endPlayerTurn(this.baseAttackAllowed);
             }, this);
 
         this.doneButtonTooltip = new ToolTip(this.scene, -width/2 - 20, -240, this.box);
@@ -276,4 +255,4 @@ export class WheelGUI extends Phaser.GameObjects.Container implements MissionLis
         }
     }
 
-}
+}

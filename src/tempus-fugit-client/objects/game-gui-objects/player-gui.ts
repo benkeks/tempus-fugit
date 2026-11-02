@@ -71,14 +71,16 @@ export class PlayerGUI extends Phaser.GameObjects.Sprite implements PlayerListen
                 }
             });
         } else if (changedBy < 0) {
-            this.scene.trackCombatAnimation(this.scene.tweens.add({
-                targets: this,
-                angle: { from: 0, to: -10 },
-                duration: 150,
-                ease: "Linear",
-                yoyo: true,
-                repeat: 0
-            }));
+            if (!this.isDead) {
+                this.scene.trackCombatAnimation(this.scene.tweens.add({
+                    targets: this,
+                    angle: { from: 0, to: -10 },
+                    duration: 150,
+                    ease: "Linear",
+                    yoyo: true,
+                    repeat: 0
+                }));
+            }
 
             let damageText = this.scene.add.text(this.x - 20, this.y - 100, Math.abs(changedBy).toString(), font1);
             this.scene.tweens.add({

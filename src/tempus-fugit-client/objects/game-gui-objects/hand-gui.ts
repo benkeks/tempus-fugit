@@ -86,6 +86,7 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
         if (!this.canHoverCard(card))
             return;
+        const request = ++this.hoverRequest;
 
         let allTweensDone = true;
         for (let c of this.cardGUIs)
@@ -94,16 +95,13 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
 
         // if tween animations are not done wait 100 msec(duration of tweens)
         // and try again
-        let self = this;
         if (!allTweensDone) {
-            new Promise(resolve => setTimeout(resolve, 100))
-                .then(() => {
-                    if (!this.canHoverCard(card)) return;
-                    self.unhoverAll();
-                    if (!unhover)
-                        card.hover()
-                    self.syncStandReplacePreview(card, unhover);
-                })
+            this.scene.time.delayedCall(100, () => {
+                if (request !== this.hoverRequest || !this.canHoverCard(card)) return;
+                this.unhoverAll();
+                if (!unhover) card.hover();
+                this.syncStandReplacePreview(card, unhover);
+            });
         } else {
 
             this.unhoverAll();
@@ -130,8 +128,10 @@ export class HandGUI extends Phaser.GameObjects.Container implements HandListene
         }
     }
 
+    private hoverRequest = 0;
+
     private canHoverCard(card: CardGUI): boolean {
-        return this.cardGUIs.includes(card)
+        return this.hand.active && this.cardGUIs.includes(card)
             && card.active
             && !!card.scene
             && !!card.scene.tweens;

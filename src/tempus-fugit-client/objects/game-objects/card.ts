@@ -2,6 +2,7 @@ import {Formula} from "../../temporal-logic/formula";
 import {Mission} from "../../mechanics/mission";
 import {Enemy} from "./enemy";
 import {Player} from "./player";
+import type {CardActionTarget} from "../../mechanics/card-action-animation";
 
 export class Card {
     public static cards:{[name:string]:Card} = {};
@@ -25,6 +26,9 @@ export class Card {
     public inDeckAtStart!:number;
     public maxCardsInDeck:number = 5;
     public formulaRepresentation:string | undefined = undefined;
+    public animation: string | undefined;
+    // Healing actions and their heart streams use the same amount from the card data.
+    public healing: number | undefined;
 
     public stand(): boolean {
         return this.isStandCard;
@@ -45,6 +49,8 @@ export class Card {
         c.action = this.action;
         c.maxCardsInDeck = this.maxCardsInDeck;
         c.key = this.key;
+        c.animation = this.animation;
+        c.healing = this.healing;
 
         return c;
     }
@@ -137,28 +143,35 @@ export class Card {
         let val:boolean = mission.gameState.evaluate(this.getFormula());
         if (this.standRounds > 0) {
             if (val) {
-                if (this.cardKind == Card.RANDOM) {
-                    this.action(mission, this.targets[Math.floor(Math.random() * this.targets.length)])
-                } else if (this.cardKind == Card.DIRECTED) {
-                    for (var target of this.targets) {
-                        this.action(mission, target);
-                    }
-                } else if (this.cardKind == Card.GLOBAL) {
-                    for (let target of mission.getEnemies()) {
-                        this.action(mission, target);
-                    }
-                } else if (this.cardKind == Card.OTHER) {
-                    this.action(mission, null);
-                } else if (this.cardKind == Card.PLAYER) {
-                    this.action(mission, mission.player);
-                } else {
-                    throw new TypeError("Card Type of card " + this.name + " is wrong!");
-                }
+                const targets = this.getActionTargets(mission, this.targets);
+                mission.performCardAction(this, targets, (_animated, hitTargets) => {
+                    for (const target of hitTargets) this.action(mission, target);
+                });
             }
             this.decreaseRoundsRemaining();
         }
 
         return val;
+    }
+
+    public getActionTargets(mission: Mission, targets: Enemy[]): CardActionTarget[] {
+        if ((this.cardKind === Card.RANDOM || this.cardKind === Card.DIRECTED) && targets.length === 0) {
+            throw new Error("No targets for card " + this.name);
+        }
+        switch (this.cardKind) {
+            case Card.RANDOM:
+                return [targets[Math.floor(Math.random() * targets.length)]];
+            case Card.DIRECTED:
+                return targets;
+            case Card.GLOBAL:
+                return [...mission.getEnemies()];
+            case Card.OTHER:
+                return [null];
+            case Card.PLAYER:
+                return [mission.player];
+            default:
+                throw new TypeError("Card Type of card " + this.name + " is wrong!");
+        }
     }
 
     public decreaseRoundsRemaining() {
@@ -180,6 +193,14 @@ export class Card {
         /*for (let i in this.listener) {
             this.listener[i].turnNormal();
         }*/
+    }
+
+    public static parseAnimation(animation: unknown, cardName: string): string | undefined {
+        if (animation === undefined) return undefined;
+        if (typeof animation !== "string" || !animation.trim()) {
+            throw new TypeError("Invalid animation for card " + cardName);
+        }
+        return animation;
     }
 
     public static createFromJSON(jString:string) {
@@ -215,6 +236,13 @@ export class Card {
 
             if (c.maxCardsInDeck) new_c.maxCardsInDeck = c.maxCardsInDeck;
             if (c.key) new_c.key = c.key;
+            new_c.animation = Card.parseAnimation(c.animation, c.name);
+            if (c.healing !== undefined) {
+                if (typeof c.healing !== "number" || !Number.isFinite(c.healing) || c.healing <= 0) {
+                    throw new TypeError("Invalid healing for card " + c.name);
+                }
+                new_c.healing = c.healing;
+            }
 
             this.cards[new_c.key] = new_c;
         }
